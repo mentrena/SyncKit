@@ -1,0 +1,12 @@
+#use_frameworks!
+
+target 'SyncKit_Example' do
+  pod 'SyncKit', :path => '../'
+
+  target 'SyncKit_Tests' do
+    inherit! :search_paths
+
+	pod 'OCMock'
+    
+  end
+end

@@ -1,0 +1,1 @@
+../../../../../SyncKit/Classes/CoreData/QSCoreDataStack.h

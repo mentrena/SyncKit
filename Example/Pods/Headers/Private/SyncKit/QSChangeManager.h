@@ -1,0 +1,1 @@
+../../../../../SyncKit/Classes/QSSynchronizer/QSChangeManager.h
