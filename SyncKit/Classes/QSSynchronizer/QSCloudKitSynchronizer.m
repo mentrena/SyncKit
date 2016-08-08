@@ -40,6 +40,8 @@ static NSString * const QSCloudKitDeviceUUIDKey = @"QSCloudKitDeviceUUIDKey";
 @property (nonatomic, strong, readwrite) id<QSChangeManager> changeManager;
 @property (nonatomic, strong) NSString *deviceIdentifier;
 
+@property (nonatomic, assign) BOOL cancelSync;
+
 @property (nonatomic, copy) void(^completion)(NSError *error);
 
 @end
@@ -58,7 +60,7 @@ static NSString * const QSCloudKitDeviceUUIDKey = @"QSCloudKitDeviceUUIDKey";
         if (!container) {
             return nil;
         }
-        
+
         self.database = [container privateCloudDatabase];
         self.customZoneID = zoneID;
         [self setupCustomZoneWithCompletion:nil];
@@ -113,6 +115,7 @@ static NSString * const QSCloudKitDeviceUUIDKey = @"QSCloudKitDeviceUUIDKey";
     }
     
     DLog(@"QSCloudKitSynchronizer >> Initiating synchronization");
+    self.cancelSync = NO;
     self.syncing = YES;
     
     if (!self.customZone) {
@@ -135,6 +138,11 @@ static NSString * const QSCloudKitDeviceUUIDKey = @"QSCloudKitDeviceUUIDKey";
     }
 }
 
+- (void)cancelSynchronization
+{
+    self.cancelSync = YES;
+}
+
 - (void)eraseLocal
 {
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:QSCloudKitFetchChangesServerTokenKey];
@@ -144,8 +152,10 @@ static NSString * const QSCloudKitDeviceUUIDKey = @"QSCloudKitDeviceUUIDKey";
 
 - (void)eraseRemoteData
 {
+    __weak QSCloudKitSynchronizer *weakSelf = self;
     [self.database deleteRecordZoneWithID:self.customZoneID completionHandler:^(CKRecordZoneID * _Nullable zoneID, NSError * _Nullable error) {
         if (!error) {
+            weakSelf.customZone = nil;
             DLog(@"QSCloudKitSynchronizer >> Deleted zone");
         } else {
             DLog(@"QSCloudKitSynchronizer >> Error: %@", error);
@@ -176,41 +186,53 @@ static NSString * const QSCloudKitDeviceUUIDKey = @"QSCloudKitDeviceUUIDKey";
 
 - (void)synchronizationFetchChanges
 {
-    [[NSNotificationCenter defaultCenter] postNotificationName:QSCloudKitSynchronizerWillFetchChangesNotification object:self];
-    [self fetchChangesWithCompletion:^(NSError *error) {
-        if (error) {
-            [self finishSynchronizationWithError:error];
-        } else {
-            [self synchronizationMergeChanges];
-        }
-    }];
+    if (self.cancelSync) {
+        [self finishSynchronizationWithError:[NSError errorWithDomain:@"QSCloudKitSynchronizer" code:0 userInfo:@{QSCloudKitSynchronizerErrorKey: @"Synchronization was canceled"}]];
+    } else {
+        [[NSNotificationCenter defaultCenter] postNotificationName:QSCloudKitSynchronizerWillFetchChangesNotification object:self];
+        [self fetchChangesWithCompletion:^(NSError *error) {
+            if (error) {
+                [self finishSynchronizationWithError:error];
+            } else {
+                [self synchronizationMergeChanges];
+            }
+        }];
+    }
 }
 
 - (void)synchronizationMergeChanges
 {
-    [self.changeManager persistImportedChangesWithCompletion:^(NSError *error) {
-        if (error) {
-            [self finishSynchronizationWithError:error];
-        } else {
-            [self saveServerChangeToken:self.serverChangeToken];
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self synchronizationUploadChanges];
-            });
-        }
-    }];
+    if (self.cancelSync) {
+        [self finishSynchronizationWithError:[NSError errorWithDomain:@"QSCloudKitSynchronizer" code:0 userInfo:@{QSCloudKitSynchronizerErrorKey: @"Synchronization was canceled"}]];
+    } else {
+        [self.changeManager persistImportedChangesWithCompletion:^(NSError *error) {
+            if (error) {
+                [self finishSynchronizationWithError:error];
+            } else {
+                [self saveServerChangeToken:self.serverChangeToken];
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self synchronizationUploadChanges];
+                });
+            }
+        }];
+    }
 }
 
 - (void)synchronizationUploadChanges
 {
-    [[NSNotificationCenter defaultCenter] postNotificationName:QSCloudKitSynchronizerWillUploadChangesNotification object:self];
-    [self uploadChangesWithCompletion:^(NSError *error) {
-        if (error) {
-            [self finishSynchronizationWithError:error];
-        } else {
-            [self synchronizationUpdateServerToken];
-        }
-    }];
+    if (self.cancelSync) {
+        [self finishSynchronizationWithError:[NSError errorWithDomain:@"QSCloudKitSynchronizer" code:0 userInfo:@{QSCloudKitSynchronizerErrorKey: @"Synchronization was canceled"}]];
+    } else {
+        [[NSNotificationCenter defaultCenter] postNotificationName:QSCloudKitSynchronizerWillUploadChangesNotification object:self];
+        [self uploadChangesWithCompletion:^(NSError *error) {
+            if (error) {
+                [self finishSynchronizationWithError:error];
+            } else {
+                [self synchronizationUpdateServerToken];
+            }
+        }];
+    }
 }
 
 - (void)synchronizationUpdateServerToken
@@ -234,6 +256,7 @@ static NSString * const QSCloudKitDeviceUUIDKey = @"QSCloudKitDeviceUUIDKey";
 {
     dispatch_async(dispatch_get_main_queue(), ^{
         self.syncing = NO;
+        self.cancelSync = NO;
 
         [self.changeManager didFinishImportWithError:error];
         if (error) {
@@ -269,17 +292,21 @@ static NSString * const QSCloudKitDeviceUUIDKey = @"QSCloudKitDeviceUUIDKey";
 
 - (void)uploadChangesWithCompletion:(void(^)(NSError *error))completion
 {
-    [self uploadEntitiesWithCompletion:^(NSInteger count, BOOL pendingUploads, NSError *error) {
-        if (error) {
-            callBlockIfNotNil(completion, error);
-        } else {
-            if (pendingUploads) {
-                [self uploadChangesWithCompletion:completion];
+    if (self.cancelSync) {
+        [self finishSynchronizationWithError:[NSError errorWithDomain:@"QSCloudKitSynchronizer" code:0 userInfo:@{QSCloudKitSynchronizerErrorKey: @"Synchronization was canceled"}]];
+    } else {
+        [self uploadEntitiesWithCompletion:^(NSInteger count, BOOL pendingUploads, NSError *error) {
+            if (error) {
+                callBlockIfNotNil(completion, error);
             } else {
-                [self removeDeletedEntitiesWithCompletion:completion];
+                if (pendingUploads) {
+                    [self uploadChangesWithCompletion:completion];
+                } else {
+                    [self removeDeletedEntitiesWithCompletion:completion];
+                }
             }
-        }
-    }];
+        }];
+    }
 }
 
 - (void)uploadEntitiesWithCompletion:(void(^)(NSInteger count, BOOL pendingUploads, NSError *error))completion
@@ -312,6 +339,8 @@ static NSString * const QSCloudKitDeviceUUIDKey = @"QSCloudKitDeviceUUIDKey";
             } else if (self.batchSize < QSDefaultBatchSize) {
                 self.batchSize++;
             }
+            
+            DLog(@"QSCloudKitSynchronizer >> Uploaded %ld records", (unsigned long)savedRecords.count);
             
             dispatch_async(dispatch_get_main_queue(), ^{
                 callBlockIfNotNil(completion, savedRecords.count, recordCount >= requestedBatchSize, operationError);
@@ -384,7 +413,11 @@ static NSString * const QSCloudKitDeviceUUIDKey = @"QSCloudKitDeviceUUIDKey";
         }
         
         if (weakOperation.moreComing && !operationError) {
-            [weakSelf fetchChangesWithCompletion:completion];
+            if (weakSelf.cancelSync) {
+                callBlockIfNotNil(completion, [NSError errorWithDomain:@"QSCloudKitSynchronizer" code:0 userInfo:@{QSCloudKitSynchronizerErrorKey: @"Synchronization was canceled"}]);
+            } else {
+                [weakSelf fetchChangesWithCompletion:completion];
+            }
         } else {
             callBlockIfNotNil(completion, operationError);
         }

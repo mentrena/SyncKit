@@ -56,6 +56,11 @@
 - (void)synchronizeWithCompletion:(void(^)(NSError *error))completion;
 
 /**
+ *  Cancel an ongoing synchronization.
+ */
+- (void)cancelSynchronization;
+
+/**
  *  Creates a new subscription with CloudKit so the application can receive notifications when new changes happen. The application is responsible for registering for remote notifications and initiating synchronization when a notification is received. @see `CKSubscription`
  *
  *  @param completion Block that will be called after subscription is created, with an optional error.
