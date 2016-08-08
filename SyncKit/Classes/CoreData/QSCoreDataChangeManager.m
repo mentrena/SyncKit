@@ -193,12 +193,15 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
 
 - (void)deleteSyncedEntity:(QSSyncedEntity *)syncedEntity
 {
-    [self.targetImportContext performBlockAndWait:^{
-        NSManagedObject *managedObject = [self managedObjectForIDURIRepresentationString:syncedEntity.originIdentifier.originObjectID];
-        if (managedObject) {
-            [self.targetImportContext deleteObject:managedObject];
-        }
-    }];
+    NSString *originObjectID = syncedEntity.originIdentifier.originObjectID;
+    if ([syncedEntity.state integerValue] != QSSyncedEntityStateDeleted && originObjectID) {
+        [self.targetImportContext performBlockAndWait:^{
+            NSManagedObject *managedObject = [self managedObjectForIDURIRepresentationString:originObjectID];
+            if (managedObject) {
+                [self.targetImportContext deleteObject:managedObject];
+            }
+        }];
+    }
     
     [self.privateContext deleteObject:syncedEntity];
 }
@@ -429,10 +432,12 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
                 QSSyncedEntity *targetSyncedEntity = [self syncedEntityWithIdentifier:pendingRelationship.targetIdentifier];
                 NSString *targetObjectID = targetSyncedEntity.originIdentifier.originObjectID;
                 NSString *relationshipName = pendingRelationship.relationshipName;
-                [self.targetImportContext performBlockAndWait:^{
-                    NSManagedObject *targetManagedObject = [self managedObjectForIDURIRepresentationString:targetObjectID];
-                    [managedObject setValue:targetManagedObject forKey:relationshipName];
-                }];
+                if (targetObjectID && relationshipName) {
+                    [self.targetImportContext performBlockAndWait:^{
+                        NSManagedObject *targetManagedObject = [self managedObjectForIDURIRepresentationString:targetObjectID];
+                        [managedObject setValue:targetManagedObject forKey:relationshipName];
+                    }];
+                }
             }
         }
         
@@ -455,6 +460,10 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
 
 - (NSManagedObject *)managedObjectForIDURIRepresentationString:(NSString *)objectIDURIString
 {
+    if (!objectIDURIString) {
+        return nil;
+    }
+    
     NSManagedObjectID *originalObjectID = [self.targetImportContext.persistentStoreCoordinator managedObjectIDForURIRepresentation:[NSURL URLWithString:objectIDURIString]];
     NSManagedObject *originalObject = [self.targetImportContext objectWithID:originalObjectID];
     return originalObject;
@@ -671,6 +680,10 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
     QSSyncedEntity *syncedEntity = [self syncedEntityWithIdentifier:record.recordID.recordName];
     if (!syncedEntity) {
         syncedEntity = [self createSyncedEntityForRecord:record];
+    }
+    
+    if ([syncedEntity.state integerValue] == QSSyncedEntityStateDeleted) {
+        return;
     }
     
     NSArray *entityChangedKeys = [syncedEntity.changedKeys componentsSeparatedByString:@","];
