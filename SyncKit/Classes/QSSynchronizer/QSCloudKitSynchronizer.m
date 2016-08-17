@@ -43,6 +43,7 @@ static NSString * const QSCloudKitDeviceUUIDKey = @"QSCloudKitDeviceUUIDKey";
 @property (nonatomic, assign) BOOL cancelSync;
 
 @property (nonatomic, copy) void(^completion)(NSError *error);
+@property (nonatomic, weak) CKOperation *currentOperation;
 
 @end
 
@@ -141,6 +142,7 @@ static NSString * const QSCloudKitDeviceUUIDKey = @"QSCloudKitDeviceUUIDKey";
 - (void)cancelSynchronization
 {
     self.cancelSync = YES;
+    [self.currentOperation cancel];
 }
 
 - (void)eraseLocal
@@ -347,6 +349,7 @@ static NSString * const QSCloudKitDeviceUUIDKey = @"QSCloudKitDeviceUUIDKey";
             });
         };
         
+        self.currentOperation = modifyRecordsOperation;
         [self.database addOperation:modifyRecordsOperation];
     }
 }
@@ -378,6 +381,7 @@ static NSString * const QSCloudKitDeviceUUIDKey = @"QSCloudKitDeviceUUIDKey";
             });
         };
         
+        self.currentOperation = modifyRecordsOperation;
         [self.database addOperation:modifyRecordsOperation];
     }
 }
@@ -423,6 +427,7 @@ static NSString * const QSCloudKitDeviceUUIDKey = @"QSCloudKitDeviceUUIDKey";
         }
     };
     
+    self.currentOperation = recordChangesOperation;
     [self.database addOperation:recordChangesOperation];
 }
 
@@ -464,6 +469,7 @@ static NSString * const QSCloudKitDeviceUUIDKey = @"QSCloudKitDeviceUUIDKey";
         }
     };
     
+    self.currentOperation = recordChangesOperation;
     [self.database addOperation:recordChangesOperation];
 }
 
