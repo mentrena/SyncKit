@@ -22,7 +22,8 @@ NSString * const QSCloudKitSynchronizerErrorKey = @"QSCloudKitSynchronizerErrorK
 static NSString * QSSubscriptionIdentifierKey = @"QSSubscriptionIdentifierKey";
 static const NSInteger QSDefaultBatchSize = 100;
 static NSString * const QSCloudKitFetchChangesServerTokenKey = @"QSCloudKitFetchChangesServerTokenKey";
-static NSString * const QSCloudKitDeviceUUIDKey = @"QSCloudKitDeviceUUIDKey";
+static NSString * const QSCloudKitCustomZoneCreatedKey = @"QSCloudKitCustomZoneCreatedKey";
+NSString * const QSCloudKitDeviceUUIDKey = @"QSCloudKitDeviceUUIDKey";
 
 @interface QSCloudKitSynchronizer ()
 
@@ -64,7 +65,6 @@ static NSString * const QSCloudKitDeviceUUIDKey = @"QSCloudKitDeviceUUIDKey";
 
         self.database = [container privateCloudDatabase];
         self.customZoneID = zoneID;
-        [self setupCustomZoneWithCompletion:nil];
     }
     return self;
 }
@@ -75,14 +75,19 @@ static NSString * const QSCloudKitDeviceUUIDKey = @"QSCloudKitDeviceUUIDKey";
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSManagedObjectContextWillSaveNotification object:nil];
 }
 
+- (NSString *)userDefaultsKeyForKey:(NSString *)key
+{
+    return [self.containerIdentifier stringByAppendingString:key];
+}
+
 - (NSString *)deviceIdentifier
 {
     if (!_deviceIdentifier) {
-        _deviceIdentifier = [[NSUserDefaults standardUserDefaults] objectForKey:QSCloudKitDeviceUUIDKey];
-        if (_deviceIdentifier) {
+        _deviceIdentifier = [[NSUserDefaults standardUserDefaults] objectForKey:[self userDefaultsKeyForKey:QSCloudKitDeviceUUIDKey]];
+        if (!_deviceIdentifier) {
             NSUUID *UUID = [NSUUID UUID];
             _deviceIdentifier = [UUID UUIDString];
-            [[NSUserDefaults standardUserDefaults] setObject:_deviceIdentifier forKey:QSCloudKitDeviceUUIDKey];
+            [[NSUserDefaults standardUserDefaults] setObject:_deviceIdentifier forKey:[self userDefaultsKeyForKey:QSCloudKitDeviceUUIDKey]];
         }
     }
     return _deviceIdentifier;
@@ -92,15 +97,27 @@ static NSString * const QSCloudKitDeviceUUIDKey = @"QSCloudKitDeviceUUIDKey";
 {
     if (!self.customZone) {
         [self.database fetchRecordZoneWithID:self.customZoneID completionHandler:^(CKRecordZone * _Nullable zone, NSError * _Nullable error) {
+            
             if (zone) {
+                DLog(@"QSCloudKitSynchronizer >> Fetched custom record zone");
                 self.customZone = zone;
+                [[NSUserDefaults standardUserDefaults] setBool:YES forKey:[self userDefaultsKeyForKey:QSCloudKitCustomZoneCreatedKey]];
                 callBlockIfNotNil(completionBlock, error);
-            } else {
+            } else if (error.code  == CKErrorZoneNotFound &&
+                       [[NSUserDefaults standardUserDefaults] boolForKey:[self userDefaultsKeyForKey:QSCloudKitCustomZoneCreatedKey]] == NO) {
                 self.customZone = [[CKRecordZone alloc] initWithZoneID:self.customZoneID];
                 [self.database saveRecordZone:self.customZone completionHandler:^(CKRecordZone * _Nullable zone, NSError * _Nullable error) {
+                    if (!error && zone) {
+                        DLog(@"QSCloudKitSynchronizer >> Created custom record zone");
+                        self.customZone = zone;
+                        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:[self userDefaultsKeyForKey:QSCloudKitCustomZoneCreatedKey]];
+                    }
                     callBlockIfNotNil(completionBlock, error);
                 }];
+            } else {
+                callBlockIfNotNil(completionBlock, error);
             }
+            
         }];
     } else {
         callBlockIfNotNil(completionBlock, nil);
@@ -123,13 +140,16 @@ static NSString * const QSCloudKitDeviceUUIDKey = @"QSCloudKitDeviceUUIDKey";
         __weak QSCloudKitSynchronizer *weakSelf = self;
         [self setupCustomZoneWithCompletion:^(NSError *error) {
             if (error) {
-                self.syncing = NO;
+                weakSelf.syncing = NO;
                 callBlockIfNotNil(completion, error);
                 
-                [[NSNotificationCenter defaultCenter] postNotificationName:QSCloudKitSynchronizerDidFailToSynchronizeNotification
-                                                                    object:self
-                                                                  userInfo:@{QSCloudKitSynchronizerErrorKey : error}];
+                if (weakSelf) {
+                    [[NSNotificationCenter defaultCenter] postNotificationName:QSCloudKitSynchronizerDidFailToSynchronizeNotification
+                                                                        object:weakSelf
+                                                                      userInfo:@{QSCloudKitSynchronizerErrorKey : error}];
+                }
             } else {
+                weakSelf.completion = completion;
                 [weakSelf performSynchronization];
             }
         }];
@@ -147,20 +167,24 @@ static NSString * const QSCloudKitDeviceUUIDKey = @"QSCloudKitDeviceUUIDKey";
 
 - (void)eraseLocal
 {
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:QSCloudKitFetchChangesServerTokenKey];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:[self userDefaultsKeyForKey:QSCloudKitFetchChangesServerTokenKey]];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:[self userDefaultsKeyForKey:QSSubscriptionIdentifierKey]];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:[self userDefaultsKeyForKey:QSCloudKitCustomZoneCreatedKey]];
     
     [self.changeManager deleteChangeTracking];
 }
 
-- (void)eraseRemoteData
+- (void)eraseRemoteAndLocalDataWithCompletion:(void(^)(NSError *error))completion
 {
     __weak QSCloudKitSynchronizer *weakSelf = self;
     [self.database deleteRecordZoneWithID:self.customZoneID completionHandler:^(CKRecordZoneID * _Nullable zoneID, NSError * _Nullable error) {
         if (!error) {
             weakSelf.customZone = nil;
             DLog(@"QSCloudKitSynchronizer >> Deleted zone");
+            [weakSelf eraseLocal];
         } else {
             DLog(@"QSCloudKitSynchronizer >> Error: %@", error);
+            callBlockIfNotNil(completion, error);
         }
     }];
 }
@@ -280,7 +304,7 @@ static NSString * const QSCloudKitDeviceUUIDKey = @"QSCloudKitDeviceUUIDKey";
 
 - (void)restoreServerChangeToken
 {
-    NSData *encodedToken = [[NSUserDefaults standardUserDefaults] objectForKey:QSCloudKitFetchChangesServerTokenKey];
+    NSData *encodedToken = [[NSUserDefaults standardUserDefaults] objectForKey:[self userDefaultsKeyForKey:QSCloudKitFetchChangesServerTokenKey]];
     if (encodedToken) {
         self.serverChangeToken = [NSKeyedUnarchiver unarchiveObjectWithData:encodedToken];
     }
@@ -289,7 +313,7 @@ static NSString * const QSCloudKitDeviceUUIDKey = @"QSCloudKitDeviceUUIDKey";
 - (void)saveServerChangeToken:(CKServerChangeToken *)token
 {
     NSData *encodedToken = [NSKeyedArchiver archivedDataWithRootObject:token];
-    [[NSUserDefaults standardUserDefaults] setObject:encodedToken forKey:QSCloudKitFetchChangesServerTokenKey];
+    [[NSUserDefaults standardUserDefaults] setObject:encodedToken forKey:[self userDefaultsKeyForKey:QSCloudKitFetchChangesServerTokenKey]];
 }
 
 - (void)uploadChangesWithCompletion:(void(^)(NSError *error))completion
@@ -394,7 +418,9 @@ static NSString * const QSCloudKitDeviceUUIDKey = @"QSCloudKitDeviceUUIDKey";
     __block NSInteger changeCount = 0;
     
     recordChangesOperation.recordChangedBlock = ^(CKRecord *record) {
-        [weakSelf.changeManager saveChangesInRecord:record];
+        if ([record[QSCloudKitDeviceUUIDKey] isEqual:self.deviceIdentifier] == NO) {
+            [weakSelf.changeManager saveChangesInRecord:record];
+        }
         changeCount++;
     };
     
@@ -475,7 +501,7 @@ static NSString * const QSCloudKitDeviceUUIDKey = @"QSCloudKitDeviceUUIDKey";
 
 - (void)subscribeForChangesInRecordZoneWithCompletion:(void(^)(NSError *error))completion
 {
-    if ([[NSUserDefaults standardUserDefaults] objectForKey:QSSubscriptionIdentifierKey]) {
+    if ([[NSUserDefaults standardUserDefaults] objectForKey:[self userDefaultsKeyForKey:QSSubscriptionIdentifierKey]]) {
         callBlockIfNotNil(completion, nil);
         return;
     }
@@ -488,7 +514,7 @@ static NSString * const QSCloudKitDeviceUUIDKey = @"QSCloudKitDeviceUUIDKey";
     
     [self.database saveSubscription:subscription completionHandler:^(CKSubscription * _Nullable subscription, NSError * _Nullable error) {
         if (!error) {
-            [[NSUserDefaults standardUserDefaults] setObject:subscription.subscriptionID forKey:QSSubscriptionIdentifierKey];
+            [[NSUserDefaults standardUserDefaults] setObject:subscription.subscriptionID forKey:[self userDefaultsKeyForKey:QSSubscriptionIdentifierKey]];
         }
         callBlockIfNotNil(completion, error);
     }];
@@ -496,14 +522,14 @@ static NSString * const QSCloudKitDeviceUUIDKey = @"QSCloudKitDeviceUUIDKey";
 
 - (void)cancelSubscriptionForChangesInRecordZoneWithCompletion:(void(^)(NSError *error))completion
 {
-    NSString *subscriptionID = [[NSUserDefaults standardUserDefaults] objectForKey:QSSubscriptionIdentifierKey];
+    NSString *subscriptionID = [[NSUserDefaults standardUserDefaults] objectForKey:[self userDefaultsKeyForKey:QSSubscriptionIdentifierKey]];
     if (!subscriptionID) {
         callBlockIfNotNil(completion, nil);
         return;
     }
     
     [self.database deleteSubscriptionWithID:subscriptionID completionHandler:^(NSString * _Nullable subscriptionID, NSError * _Nullable error) {
-        [[NSUserDefaults standardUserDefaults] removeObjectForKey:QSSubscriptionIdentifierKey];
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:[self userDefaultsKeyForKey:QSSubscriptionIdentifierKey]];
         callBlockIfNotNil(completion, error);
     }];
 }

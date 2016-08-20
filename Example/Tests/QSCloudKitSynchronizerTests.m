@@ -247,7 +247,9 @@
         called = YES;
     };
     
-    [self.synchronizer eraseRemoteData];
+    [self.synchronizer eraseRemoteAndLocalDataWithCompletion:^(NSError *error) {
+        
+    }];
     
     XCTAssert(called == YES);
 }

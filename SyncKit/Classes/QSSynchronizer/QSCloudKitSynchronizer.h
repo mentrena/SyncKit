@@ -11,6 +11,8 @@
 
 @class CKRecordZoneID;
 
+FOUNDATION_EXPORT NSString * const QSCloudKitDeviceUUIDKey;
+
 /**
     A `QSCloudKitSynchronizer` object takes care of making all the required calls to CloudKit to keep your model synchronized, using the provided
     `QSChangeManager` to interact with it.
@@ -82,7 +84,7 @@
 /**
  *  Erase all data currently in CloudKit. This will delete the `CKRecordZone` that was used by the synchronizer.
  */
-- (void)eraseRemoteData;
+- (void)eraseRemoteAndLocalDataWithCompletion:(void(^)(NSError *error))completion;
 
 @end
 

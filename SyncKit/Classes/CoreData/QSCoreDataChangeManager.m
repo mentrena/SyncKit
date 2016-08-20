@@ -13,6 +13,7 @@
 #import "QSOriginObjectIdentifier.h"
 #import "QSPendingRelationship.h"
 #import "NSManagedObjectContext+QSFetch.h"
+#import "QSCloudKitSynchronizer.h"
 #import <CloudKit/CloudKit.h>
 
 static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
@@ -493,7 +494,7 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
             case QSCloudKitSynchronizerMergePolicyServer:
             {
                 for (NSString *key in record.allKeys) {
-                    if ([key isEqualToString:QSCloudKitTimestampKey]) {
+                    if ([self shouldIgnoreKey:key]) {
                         continue;
                     }
                     if (![record[key] isKindOfClass:[CKReference class]]) {
@@ -505,7 +506,7 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
             case QSCloudKitSynchronizerMergePolicyClient:
             {
                 for (NSString *key in record.allKeys) {
-                    if ([key isEqualToString:QSCloudKitTimestampKey]) {
+                    if ([self shouldIgnoreKey:key]) {
                         continue;
                     }
                     if (![record[key] isKindOfClass:[CKReference class]]) {
@@ -534,7 +535,7 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
         }
     } else {
         for (NSString *key in record.allKeys) {
-            if ([key isEqualToString:QSCloudKitTimestampKey]) {
+            if ([self shouldIgnoreKey:key]) {
                 continue;
             }
             if (![record[key] isKindOfClass:[CKReference class]]) {
@@ -542,6 +543,11 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
             }
         }
     }
+}
+
+- (BOOL)shouldIgnoreKey:(NSString *)key
+{
+    return ([key isEqualToString:QSCloudKitTimestampKey] || [key isEqualToString:QSCloudKitDeviceUUIDKey]);
 }
 
 
