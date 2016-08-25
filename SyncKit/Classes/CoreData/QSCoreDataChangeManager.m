@@ -466,6 +466,10 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
     }
     
     NSManagedObjectID *originalObjectID = [self.targetImportContext.persistentStoreCoordinator managedObjectIDForURIRepresentation:[NSURL URLWithString:objectIDURIString]];
+    if (originalObjectID.temporaryID) {
+        return nil;
+    }
+    
     NSManagedObject *originalObject = [self.targetImportContext objectWithID:originalObjectID];
     return originalObject;
 }
@@ -652,20 +656,27 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
 
 - (void)mergeChangesIntoTargetContextWithCompletion:(void(^)(NSError *error))completion
 {
-    [self.delegate changeManagerRequestsContextSave:self completion:^{
-        self.mergingImportedChanges = YES;
-        [self.delegate changeManager:self didImportChanges:self.targetImportContext completion:^(BOOL saved, NSError *error) {
-            self.mergingImportedChanges = NO;
-            if (!error) {
-                [self savePrivateContext];
-                completion(nil);
-            } else {
-                [self.privateContext performBlockAndWait:^{
-                    [self.privateContext reset];
-                }];
-                completion(error);
-            }
-        }];
+    [self.delegate changeManagerRequestsContextSave:self completion:^(NSError *error){
+        if (error) {
+            [self.privateContext performBlockAndWait:^{
+                [self.privateContext reset];
+            }];
+            completion(error);
+        } else {
+            self.mergingImportedChanges = YES;
+            [self.delegate changeManager:self didImportChanges:self.targetImportContext completion:^(NSError *error) {
+                self.mergingImportedChanges = NO;
+                if (!error) {
+                    [self savePrivateContext];
+                    completion(nil);
+                } else {
+                    [self.privateContext performBlockAndWait:^{
+                        [self.privateContext reset];
+                    }];
+                    completion(error);
+                }
+            }];
+        }
     }];
 }
 

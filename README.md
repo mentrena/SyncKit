@@ -7,7 +7,7 @@
 
 SyncKit is a library for iOS and OS X that automates the process of synchronizing Core Data models using CloudKit.
 
-SyncKit relies on the flexibility of Core Data and uses instrospection to work with any Core Data model. It sits next to your Core Data stack, making it easy to opt in or out of synchronization without imposing any requirements on your model.
+SyncKit relies on the flexibility of Core Data and uses introspection to work with any Core Data model. It sits next to your Core Data stack, making it easy to opt in or out of synchronization without imposing any requirements on your model.
 
 ## Adding SyncKit to your project using Cocoapods
 
@@ -63,21 +63,26 @@ QSCoreDataChangeManager will track changes in your local model and coordinate wh
 
 ```objc
 //Change manager requests you save your managed object context
-- (void)changeManagerRequestsContextSave:(QSCoreDataChangeManager *)changeManager completion:(void (^)())completion
+- (void)changeManagerRequestsContextSave:(QSCoreDataChangeManager *)changeManager completion:(void (^)(NSError *))completion
 {
-    [self.managedObjectContext save:nil];
-    completion();
+    NSError *error = nil;
+    [self.managedObjectContext save:&error];
+    completion(error);
 }
 
 //Change manager provides a child context of your local managed object context, containing changes downloaded from CloudKit. Save the import context, then your local context to persist these changes.
 - (void)changeManager:(QSCoreDataChangeManager *)changeManager didImportChanges:(NSManagedObjectContext *)importContext completion:(void (^)(BOOL, NSError *))completion
 {
+    NSError *error = nil;
     [importContext performBlockAndWait:^{
-        [importContext save:nil];
+        [importContext save:&error];
     }];
 
-    [self.managedObjectContext save:nil];
-    completion(YES, nil); //return YES if saved, or NO if you ignored these changes
+    if (!error) {
+        [self.managedObjectContext save:&error];
+    }
+
+    completion(error);
 }
 ```
 

@@ -34,16 +34,16 @@
     self.coreDataStack = [[QSCoreDataStack alloc] initWithStoreType:NSInMemoryStoreType model:[QSCoreDataChangeManager persistenceModel] storePath:nil dispatchImmediately:YES];
 }
 
-- (void)changeManagerRequestsContextSave:(QSCoreDataChangeManager *)changeManager completion:(void(^)())completion
+- (void)changeManagerRequestsContextSave:(QSCoreDataChangeManager *)changeManager completion:(void(^)(NSError *))completion
 {
     self.didCallRequestContextSave = YES;
     [self.targetCoreDataStack.managedObjectContext performBlockAndWait:^{
         [self.targetCoreDataStack.managedObjectContext save:nil];
     }];
-    completion();
+    completion(nil);
 }
 
-- (void)changeManager:(QSCoreDataChangeManager *)changeManager didImportChanges:(NSManagedObjectContext *)importContext completion:(void(^)(BOOL saved, NSError *error))completion
+- (void)changeManager:(QSCoreDataChangeManager *)changeManager didImportChanges:(NSManagedObjectContext *)importContext completion:(void(^)(NSError *error))completion
 {
     self.didCallImportChanges = YES;
     [importContext performBlockAndWait:^{
@@ -51,7 +51,7 @@
         [self.targetCoreDataStack.managedObjectContext performBlockAndWait:^{
             [self.targetCoreDataStack.managedObjectContext save:nil];
         }];
-        completion(YES, nil);
+        completion(nil);
     }];
 }
 

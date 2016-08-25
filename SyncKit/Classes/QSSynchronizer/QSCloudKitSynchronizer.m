@@ -161,8 +161,10 @@ NSString * const QSCloudKitDeviceUUIDKey = @"QSCloudKitDeviceUUIDKey";
 
 - (void)cancelSynchronization
 {
-    self.cancelSync = YES;
-    [self.currentOperation cancel];
+    if (self.isSyncing) {
+        self.cancelSync = YES;
+        [self.currentOperation cancel];
+    }
 }
 
 - (void)eraseLocal
@@ -516,6 +518,7 @@ NSString * const QSCloudKitDeviceUUIDKey = @"QSCloudKitDeviceUUIDKey";
         if (!error) {
             [[NSUserDefaults standardUserDefaults] setObject:subscription.subscriptionID forKey:[self userDefaultsKeyForKey:QSSubscriptionIdentifierKey]];
         }
+        
         callBlockIfNotNil(completion, error);
     }];
 }

@@ -149,20 +149,24 @@
 
 #pragma mark - QSCoreDataChangeManagerDelegate
 
-- (void)changeManagerRequestsContextSave:(QSCoreDataChangeManager *)changeManager completion:(void (^)())completion
+- (void)changeManagerRequestsContextSave:(QSCoreDataChangeManager *)changeManager completion:(void (^)(NSError *))completion
 {
-    [self.managedObjectContext save:nil];
-    completion();
+    __block NSError *error = nil;
+    [self.managedObjectContext save:&error];
+    completion(error);
 }
 
-- (void)changeManager:(QSCoreDataChangeManager *)changeManager didImportChanges:(NSManagedObjectContext *)importContext completion:(void (^)(BOOL, NSError *))completion
+- (void)changeManager:(QSCoreDataChangeManager *)changeManager didImportChanges:(NSManagedObjectContext *)importContext completion:(void (^)(NSError *))completion
 {
+    __block NSError *error = nil;
     [importContext performBlockAndWait:^{
-        [importContext save:nil];
+        [importContext save:&error];
     }];
     
-    [self.managedObjectContext save:nil];
-    completion(YES, nil);
+    if (!error) {
+        [self.managedObjectContext save:&error];
+    }
+    completion(error);
 }
 
 

@@ -43,7 +43,7 @@ typedef NS_ENUM(NSInteger, QSCloudKitSynchronizerMergePolicy) {
  *  @param changeManager The `QSCoreDataChangeManager` requesting the delegate to save.
  *  @param completion    Block to be called once the managed object context has been saved.
  */
-- (void)changeManagerRequestsContextSave:(QSCoreDataChangeManager *)changeManager completion:(void(^)())completion;
+- (void)changeManagerRequestsContextSave:(QSCoreDataChangeManager *)changeManager completion:(void(^)(NSError *error))completion;
 
 /**
  *  Tells the delegate to merge downloaded changes into the managed object context. First, the `importContext` must be saved by using `performBlock`. Then, the target managed object context must be saved to persist those changes and the completion block must be called to finalize the synchronization process.
@@ -52,7 +52,7 @@ typedef NS_ENUM(NSInteger, QSCloudKitSynchronizerMergePolicy) {
  *  @param importContext `NSManagedObjectContext` containing all downloaded changes. This context has the target context as its parent context.
  *  @param completion    Block to be called once contexts have been saved.
  */
-- (void)changeManager:(QSCoreDataChangeManager *)changeManager didImportChanges:(NSManagedObjectContext *)importContext completion:(void(^)(BOOL saved, NSError *error))completion;
+- (void)changeManager:(QSCoreDataChangeManager *)changeManager didImportChanges:(NSManagedObjectContext *)importContext completion:(void(^)(NSError *error))completion;
 
 @optional
 
