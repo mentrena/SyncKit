@@ -61,7 +61,7 @@ static NSString * const QSChangeManagerHasChangesNotification = @"QSChangeManage
  *
  *  @return Array of `CKRecordID`.
  */
-- (NSArray *)recordIDsMarkedForDeletion;
+- (NSArray *)recordIDsMarkedForDeletionWithLimit:(NSInteger)limit;
 /**
  *  Tells the change manager that these record identifiers were deleted successfully.
  *

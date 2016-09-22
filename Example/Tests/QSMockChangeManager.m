@@ -82,10 +82,13 @@
     self.toUpload = [toUpload2 copy];
 }
 
-- (NSArray *)recordIDsMarkedForDeletion
+- (NSArray *)recordIDsMarkedForDeletionWithLimit:(NSInteger)limit
 {
     NSMutableArray *recordIDs = [NSMutableArray array];
     for (QSObject *object in self.toDelete) {
+        if (recordIDs.count >= limit) {
+            break;
+        }
         [recordIDs addObject:[object recordID]];
     }
     return [recordIDs copy];

@@ -320,7 +320,7 @@
     OCMExpect([mock deleteRecordWithID:[OCMArg any]]).andForwardToRealObject();
     [[[[mock expect] ignoringNonObjectArgs] andForwardToRealObject] recordsToUploadWithLimit:1];
     OCMExpect([mock didUploadRecords:[OCMArg any]]).andForwardToRealObject();
-    OCMExpect([mock recordIDsMarkedForDeletion]).andForwardToRealObject();
+    [[[[mock expect] ignoringNonObjectArgs] andForwardToRealObject] recordIDsMarkedForDeletionWithLimit:1];
     OCMExpect([mock didDeleteRecordIDs:[OCMArg any]]).andForwardToRealObject();
     OCMExpect([mock persistImportedChangesWithCompletion:[OCMArg any]]).andForwardToRealObject();
     OCMExpect([mock didFinishImportWithError:[OCMArg any]]).andForwardToRealObject();

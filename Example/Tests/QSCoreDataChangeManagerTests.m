@@ -160,7 +160,7 @@
     
     //Try to sync again
     [changeManager prepareForImport];
-    NSArray *records = [changeManager recordIDsMarkedForDeletion];
+    NSArray *records = [changeManager recordIDsMarkedForDeletionWithLimit:1000];
     [changeManager didFinishImportWithError:nil];
     
     XCTAssertTrue(records.count > 0);
@@ -372,7 +372,7 @@
 {
     [changeManager prepareForImport];
     NSArray *recordsToUpload = [changeManager recordsToUploadWithLimit:1000];
-    NSArray *recordIDsToDelete = [changeManager recordIDsMarkedForDeletion];
+    NSArray *recordIDsToDelete = [changeManager recordIDsMarkedForDeletionWithLimit:1000];
     [changeManager didUploadRecords:recordsToUpload];
     [changeManager didDeleteRecordIDs:recordIDsToDelete];
     [changeManager persistImportedChangesWithCompletion:^(NSError *error) {

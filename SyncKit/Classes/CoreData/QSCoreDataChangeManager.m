@@ -759,7 +759,7 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
     }];
 }
 
-- (NSArray *)recordIDsMarkedForDeletion
+- (NSArray *)recordIDsMarkedForDeletionWithLimit:(NSInteger)limit
 {
     __block NSArray *recordIDArray = nil;
     [self.privateContext performBlockAndWait:^{
@@ -769,9 +769,17 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
         } else {
             NSMutableArray *recordIDs = [NSMutableArray array];
             
-            for (QSSyncedEntity *entity in deletedEntities) {
+            for (QSSyncedEntity *entity in [deletedEntities copy]) {
                 CKRecord *record = [self recordForSyncedEntity:entity];
-                [recordIDs addObject:record.recordID];
+                if (record) {
+                    [recordIDs addObject:record.recordID];
+                } else {
+                    [self.privateContext deleteObject:entity];
+                }
+                
+                if (recordIDs.count >= limit) {
+                    break;
+                }
             }
             
             recordIDArray = recordIDs;
