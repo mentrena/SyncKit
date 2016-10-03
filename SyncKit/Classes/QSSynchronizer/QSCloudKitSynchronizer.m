@@ -174,6 +174,7 @@ NSString * const QSCloudKitDeviceUUIDKey = @"QSCloudKitDeviceUUIDKey";
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:[self userDefaultsKeyForKey:QSCloudKitFetchChangesServerTokenKey]];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:[self userDefaultsKeyForKey:QSSubscriptionIdentifierKey]];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:[self userDefaultsKeyForKey:QSCloudKitCustomZoneCreatedKey]];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:[self userDefaultsKeyForKey:QSCloudKitDeviceUUIDKey]];
     
     [self.changeManager deleteChangeTracking];
 }

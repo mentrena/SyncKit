@@ -694,26 +694,28 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
 
 - (void)saveChangesInRecord:(CKRecord *)record
 {
-    QSSyncedEntity *syncedEntity = [self syncedEntityWithIdentifier:record.recordID.recordName];
-    if (!syncedEntity) {
-        syncedEntity = [self createSyncedEntityForRecord:record];
-    }
-    
-    if ([syncedEntity.state integerValue] == QSSyncedEntityStateDeleted) {
-        return;
-    }
-    
-    NSArray *entityChangedKeys = [syncedEntity.changedKeys componentsSeparatedByString:@","];
-    NSString *objectID = syncedEntity.originIdentifier.originObjectID;
-    QSSyncedEntityState entityState = [syncedEntity.state integerValue];
-    [self.targetImportContext performBlockAndWait:^{
-        NSManagedObject *managedObject = [self managedObjectForIDURIRepresentationString:objectID];
-        [self applyAttributeChangesInRecord:record toManagedObject:managedObject withSyncedState:entityState changedKeys:entityChangedKeys];
+    [self.privateContext performBlock:^{
+        QSSyncedEntity *syncedEntity = [self syncedEntityWithIdentifier:record.recordID.recordName];
+        if (!syncedEntity) {
+            syncedEntity = [self createSyncedEntityForRecord:record];
+        }
+        
+        if ([syncedEntity.state integerValue] == QSSyncedEntityStateDeleted) {
+            return;
+        }
+        
+        NSArray *entityChangedKeys = [syncedEntity.changedKeys componentsSeparatedByString:@","];
+        NSString *objectID = syncedEntity.originIdentifier.originObjectID;
+        QSSyncedEntityState entityState = [syncedEntity.state integerValue];
+        [self.targetImportContext performBlockAndWait:^{
+            NSManagedObject *managedObject = [self managedObjectForIDURIRepresentationString:objectID];
+            [self applyAttributeChangesInRecord:record toManagedObject:managedObject withSyncedState:entityState changedKeys:entityChangedKeys];
+        }];
+        
+        [self saveRelationshipChangesInRecord:record forEntity:syncedEntity];
+        syncedEntity.updated = record[QSCloudKitTimestampKey];
+        [self saveRecord:record forSyncedEntity:syncedEntity];
     }];
-    
-    [self saveRelationshipChangesInRecord:record forEntity:syncedEntity];
-    syncedEntity.updated = record[QSCloudKitTimestampKey];
-    [self saveRecord:record forSyncedEntity:syncedEntity];
 }
 
 - (void)deleteRecordWithID:(CKRecordID *)recordID
