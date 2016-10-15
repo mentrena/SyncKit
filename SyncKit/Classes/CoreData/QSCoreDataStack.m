@@ -24,29 +24,14 @@
 
 @implementation QSCoreDataStack
 
-- (NSString *)applicationDocumentsDirectory
-{
-#if TARGET_OS_IPHONE
-    return [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask,YES) lastObject];
-#else
-    NSArray *urls = [[NSFileManager defaultManager] URLsForDirectory:NSApplicationSupportDirectory inDomains:NSUserDomainMask];
-    return [[[urls lastObject] URLByAppendingPathComponent:@"QSCoreDataStack"] path];
-#endif
-}
-
-- (NSString *)applicationStoresPath
-{
-    return [[self applicationDocumentsDirectory] stringByAppendingPathComponent:@"Stores"];
-}
-
 - (BOOL)ensureStoreDirectoryExists
 {
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSError *error = nil;
-    NSString * path = [self applicationStoresPath];
-    if ([fileManager fileExistsAtPath:path] == NO) {
-        if (![fileManager createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:&error]) {
-            DLog(@"QSCoreDataStack: FAILED to create directory: %@ :%@",path, error);
+    NSString * storeDirectory = [[self.storeURL path] stringByDeletingLastPathComponent];
+    if ([fileManager fileExistsAtPath:storeDirectory] == NO) {
+        if (![fileManager createDirectoryAtPath:storeDirectory withIntermediateDirectories:YES attributes:nil error:&error]) {
+            DLog(@"QSCoreDataStack: FAILED to create directory: %@ :%@",storeDirectory, error);
             return NO;
         }
     }
@@ -81,11 +66,16 @@
         options = @{NSMigratePersistentStoresAutomaticallyOption:@YES, NSInferMappingModelAutomaticallyOption:@YES};
     }
     NSError *error = nil;
+    @try {
     self.store = [self.persistentStoreCoordinator addPersistentStoreWithType:self.storeType
                                                                configuration:nil
                                                                          URL:self.storeURL
                                                                      options:options
                                                                        error:&error];
+    } @catch(NSException *error) {
+        NSLog(@"error: %@", error);
+    }
+    
     if (!self.store) {
         DLog(@"Failed to add store. Error: %@", error);
         abort();
