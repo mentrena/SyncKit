@@ -2,18 +2,18 @@
 //  QSRecord+CoreDataProperties.h
 //  Pods
 //
-//  Created by Manuel Entrena on 10/07/2016.
+//  Created by Manuel Entrena on 22/10/2016.
 //
-//
-//  Choose "Create NSManagedObject Subclass…" from the Core Data editor menu
-//  to delete and recreate this implementation file for your updated model.
 //
 
-#import "QSRecord.h"
+#import "QSRecord+CoreDataClass.h"
+
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface QSRecord (CoreDataProperties)
+
++ (NSFetchRequest<QSRecord *> *)fetchRequest;
 
 @property (nullable, nonatomic, retain) NSData *encodedRecord;
 @property (nullable, nonatomic, retain) QSSyncedEntity *forEntity;

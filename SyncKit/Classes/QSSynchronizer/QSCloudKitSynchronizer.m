@@ -7,7 +7,7 @@
 //
 
 #import "QSCloudKitSynchronizer.h"
-#import "QSRecord.h"
+#import "QSRecord+CoreDataClass.h"
 #import <CloudKit/CloudKit.h>
 
 #define callBlockIfNotNil(block, ...) if (block){block(__VA_ARGS__);}

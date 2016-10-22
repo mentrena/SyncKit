@@ -2,21 +2,21 @@
 //  QSPendingRelationship+CoreDataProperties.h
 //  Pods
 //
-//  Created by Manuel Entrena on 10/07/2016.
+//  Created by Manuel Entrena on 22/10/2016.
 //
-//
-//  Choose "Create NSManagedObject Subclass…" from the Core Data editor menu
-//  to delete and recreate this implementation file for your updated model.
 //
 
-#import "QSPendingRelationship.h"
+#import "QSPendingRelationship+CoreDataClass.h"
+
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface QSPendingRelationship (CoreDataProperties)
 
-@property (nullable, nonatomic, retain) NSString *relationshipName;
-@property (nullable, nonatomic, retain) NSString *targetIdentifier;
++ (NSFetchRequest<QSPendingRelationship *> *)fetchRequest;
+
+@property (nullable, nonatomic, copy) NSString *relationshipName;
+@property (nullable, nonatomic, copy) NSString *targetIdentifier;
 @property (nullable, nonatomic, retain) QSSyncedEntity *forEntity;
 
 @end

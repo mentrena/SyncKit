@@ -2,16 +2,17 @@
 //  QSRecord+CoreDataProperties.m
 //  Pods
 //
-//  Created by Manuel Entrena on 10/07/2016.
+//  Created by Manuel Entrena on 22/10/2016.
 //
-//
-//  Choose "Create NSManagedObject Subclass…" from the Core Data editor menu
-//  to delete and recreate this implementation file for your updated model.
 //
 
 #import "QSRecord+CoreDataProperties.h"
 
 @implementation QSRecord (CoreDataProperties)
+
++ (NSFetchRequest<QSRecord *> *)fetchRequest {
+	return [[NSFetchRequest alloc] initWithEntityName:@"QSRecord"];
+}
 
 @dynamic encodedRecord;
 @dynamic forEntity;

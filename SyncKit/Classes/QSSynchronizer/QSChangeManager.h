@@ -36,12 +36,21 @@ static NSString * const QSChangeManagerHasChangesNotification = @"QSChangeManage
  *  @param record `CKRecord` that was obtained from CloudKit.
  */
 - (void)saveChangesInRecord:(CKRecord *)record;
+
 /**
  *  Delete the local model object corresponding to the given record ID.
  *
  *  @param recordID Identifier of record that was deleted on CloudKit.
  */
 - (void)deleteRecordWithID:(CKRecordID *)recordID;
+
+/**
+ *  Tells the change manager to persist all downloaded changes in the current import operation.
+ *
+ *  @param completion Block to be called after changes have been persisted.
+ */
+- (void)persistImportedChangesWithCompletion:(void(^)(NSError *error))completion;
+
 /**
  *  Provides an array of up to `limit` records with changes that need to be uploaded to CloudKit.
  *
@@ -50,24 +59,28 @@ static NSString * const QSChangeManagerHasChangesNotification = @"QSChangeManage
  *  @return Array of `CKRecord`.
  */
 - (NSArray *)recordsToUploadWithLimit:(NSInteger)limit;
+
 /**
  *  Tells the change manager that these records were uploaded successfully.
  *
  *  @param savedRecords Records that were saved.
  */
 - (void)didUploadRecords:(NSArray *)savedRecords;
+
 /**
  *  Provides an array of record IDs to be deleted on CloudKit, for model objects that were deleted locally.
  *
  *  @return Array of `CKRecordID`.
  */
 - (NSArray *)recordIDsMarkedForDeletionWithLimit:(NSInteger)limit;
+
 /**
  *  Tells the change manager that these record identifiers were deleted successfully.
  *
  *  @param deletedRecordIDs Record IDs that were deleted on CloudKit.
  */
 - (void)didDeleteRecordIDs:(NSArray *)deletedRecordIDs;
+
 /**
  *  Asks the change manager whether it has a local object for the given record identifier.
  *
@@ -77,12 +90,6 @@ static NSString * const QSChangeManagerHasChangesNotification = @"QSChangeManage
  */
 - (BOOL)hasRecordID:(CKRecordID *)recordID;
 
-/**
- *  Tells the change manager to persist all downloaded changes in the current import operation.
- *
- *  @param completion Block to be called after changes have been persisted.
- */
-- (void)persistImportedChangesWithCompletion:(void(^)(NSError *error))completion;
 /**
  *  Tells the change manager that the current import operation finished.
  *

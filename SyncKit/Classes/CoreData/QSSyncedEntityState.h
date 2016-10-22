@@ -13,7 +13,8 @@ typedef NS_ENUM(NSInteger, QSSyncedEntityState) {
     QSSyncedEntityStateNew = 0,
     QSSyncedEntityStateChanged,
     QSSyncedEntityStateDeleted,
-    QSSyncedEntityStateSynced
+    QSSyncedEntityStateSynced,
+    QSSyncedEntityStateInserted
 };
 
 #endif /* QSSyncedEntityState_h */

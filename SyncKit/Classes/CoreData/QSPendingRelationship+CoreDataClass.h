@@ -1,8 +1,8 @@
 //
-//  QSPendingRelationship.h
+//  QSPendingRelationship+CoreDataClass.h
 //  Pods
 //
-//  Created by Manuel Entrena on 10/07/2016.
+//  Created by Manuel Entrena on 22/10/2016.
 //
 //
 
@@ -14,8 +14,6 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface QSPendingRelationship : NSManagedObject
-
-// Insert code here to declare functionality of your managed object subclass
 
 @end
 

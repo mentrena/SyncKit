@@ -264,6 +264,41 @@
     XCTAssertTrue([company.name isEqualToString:@"new company"]);
 }
 
+- (void)testSync_multipleObjects_preservesRelationships
+{
+    QSCoreDataChangeManager *changeManager = [[QSCoreDataChangeManager alloc] initWithPersistenceStack:self.coreDataStack targetContext:self.targetCoreDataStack.managedObjectContext recordZoneID:[[CKRecordZoneID alloc] initWithZoneName:@"zone" ownerName:@"owner"] delegate:self];
+    
+    CKRecord *companyRecord = [[CKRecord alloc] initWithRecordType:@"QSCompany" recordID:[[CKRecordID alloc] initWithRecordName:@"QSCompany"]];
+    companyRecord[@"name"] = @"new company";
+    
+    CKRecord *employeeRecord = [[CKRecord alloc] initWithRecordType:@"QSEmployee" recordID:[[CKRecordID alloc] initWithRecordName:@"QSEmployee"]];
+    employeeRecord[@"name"] = @"new employee";
+    employeeRecord[@"company"] = [[CKReference alloc] initWithRecordID:companyRecord.recordID action:CKReferenceActionNone];
+    
+    XCTestExpectation *expectation = [self expectationWithDescription:@"merged changes"];
+    
+    //Start sync and delete object
+    [changeManager prepareForImport];
+    [changeManager saveChangesInRecord:employeeRecord];
+    [changeManager saveChangesInRecord:companyRecord];
+    [changeManager persistImportedChangesWithCompletion:^(NSError *error) {
+        [expectation fulfill];
+    }];
+    [changeManager didFinishImportWithError:nil];
+    
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    
+    NSArray *objects = [self.targetCoreDataStack.managedObjectContext executeFetchRequestWithEntityName:@"QSCompany" error:nil];
+    XCTAssertTrue(objects.count == 1);
+    QSCompany *company = [objects firstObject];
+    XCTAssertTrue([company.name isEqualToString:@"new company"]);
+    XCTAssertTrue(company.employees.count == 1);
+    if (company.employees.count) {
+        QSEmployee *employee = (QSEmployee *)[company.employees anyObject];
+        XCTAssertTrue([employee.name isEqualToString:@"new employee"]);
+    }
+}
+
 - (void)testHasRecordID_missingObject_returnsNO
 {
     //Insert object in context

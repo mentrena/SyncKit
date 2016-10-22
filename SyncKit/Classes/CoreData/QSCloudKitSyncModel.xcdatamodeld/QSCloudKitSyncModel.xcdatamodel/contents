@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="10171" systemVersion="15D21" minimumToolsVersion="Xcode 7.0">
-    <entity name="QSOriginObjectIdentifier" representedClassName="QSOriginObjectIdentifier" syncable="YES">
-        <attribute name="originObjectID" optional="YES" attributeType="String" syncable="YES"/>
-        <relationship name="forSyncedEntity" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="QSSyncedEntity" inverseName="originIdentifier" inverseEntity="QSSyncedEntity" syncable="YES"/>
-    </entity>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="11232" systemVersion="16A323" minimumToolsVersion="Xcode 7.0" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="">
     <entity name="QSPendingRelationship" representedClassName="QSPendingRelationship" syncable="YES">
         <attribute name="relationshipName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="targetIdentifier" optional="YES" attributeType="String" syncable="YES"/>
@@ -16,17 +12,16 @@
     <entity name="QSSyncedEntity" representedClassName="QSSyncedEntity" syncable="YES">
         <attribute name="changedKeys" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="entityType" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="identifier" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="state" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
-        <attribute name="updated" optional="YES" attributeType="Date" syncable="YES"/>
-        <relationship name="originIdentifier" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="QSOriginObjectIdentifier" inverseName="forSyncedEntity" inverseEntity="QSOriginObjectIdentifier" syncable="YES"/>
+        <attribute name="identifier" optional="YES" attributeType="String" indexed="YES" syncable="YES"/>
+        <attribute name="originObjectID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="state" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="updated" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <relationship name="pendingRelationships" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="QSPendingRelationship" inverseName="forEntity" inverseEntity="QSPendingRelationship" syncable="YES"/>
         <relationship name="record" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="QSRecord" inverseName="forEntity" inverseEntity="QSRecord" syncable="YES"/>
     </entity>
     <elements>
-        <element name="QSOriginObjectIdentifier" positionX="-99" positionY="-63" width="128" height="73"/>
         <element name="QSPendingRelationship" positionX="-362" positionY="279" width="128" height="88"/>
         <element name="QSRecord" positionX="-72" positionY="339" width="128" height="75"/>
-        <element name="QSSyncedEntity" positionX="-405" positionY="-18" width="128" height="163"/>
+        <element name="QSSyncedEntity" positionX="-405" positionY="-18" width="128" height="165"/>
     </elements>
 </model>

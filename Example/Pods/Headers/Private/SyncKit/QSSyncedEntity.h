@@ -1,1 +1,0 @@
-../../../../../SyncKit/Classes/CoreData/QSSyncedEntity.h

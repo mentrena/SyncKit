@@ -1,0 +1,1 @@
+../../../../../SyncKit/Classes/CoreData/QSRecord+CoreDataClass.h
