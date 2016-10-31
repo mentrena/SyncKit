@@ -10,7 +10,7 @@
 
 @implementation QSRecord (CoreDataProperties)
 
-+ (NSFetchRequest<QSRecord *> *)fetchRequest {
++ (NSFetchRequest *)fetchRequest {
 	return [[NSFetchRequest alloc] initWithEntityName:@"QSRecord"];
 }
 

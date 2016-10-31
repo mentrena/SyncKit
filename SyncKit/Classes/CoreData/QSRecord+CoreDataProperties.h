@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface QSRecord (CoreDataProperties)
 
-+ (NSFetchRequest<QSRecord *> *)fetchRequest;
++ (NSFetchRequest *)fetchRequest;
 
 @property (nullable, nonatomic, retain) NSData *encodedRecord;
 @property (nullable, nonatomic, retain) QSSyncedEntity *forEntity;

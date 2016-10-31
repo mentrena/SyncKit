@@ -10,7 +10,7 @@
 
 @implementation QSSyncedEntity (CoreDataProperties)
 
-+ (NSFetchRequest<QSSyncedEntity *> *)fetchRequest {
++ (NSFetchRequest *)fetchRequest {
 	return [[NSFetchRequest alloc] initWithEntityName:@"QSSyncedEntity"];
 }
 

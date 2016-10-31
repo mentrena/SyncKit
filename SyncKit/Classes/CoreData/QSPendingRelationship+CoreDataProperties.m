@@ -10,7 +10,7 @@
 
 @implementation QSPendingRelationship (CoreDataProperties)
 
-+ (NSFetchRequest<QSPendingRelationship *> *)fetchRequest {
++ (NSFetchRequest *)fetchRequest {
 	return [[NSFetchRequest alloc] initWithEntityName:@"QSPendingRelationship"];
 }
 
