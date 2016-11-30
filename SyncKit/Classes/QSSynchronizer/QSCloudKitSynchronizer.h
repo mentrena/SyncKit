@@ -12,6 +12,12 @@
 @class CKRecordZoneID;
 
 FOUNDATION_EXPORT NSString * const QSCloudKitDeviceUUIDKey;
+FOUNDATION_EXPORT NSString * const QSCloudKitSynchronizerErrorDomain;
+
+typedef NS_ENUM(NSInteger, QSCloudKitSynchronizerErrorCode)
+{
+    QSCloudKitSynchronizerErrorAlreadySyncing
+};
 
 /**
     A `QSCloudKitSynchronizer` object takes care of making all the required calls to CloudKit to keep your model synchronized, using the provided
@@ -75,6 +81,12 @@ FOUNDATION_EXPORT NSString * const QSCloudKitDeviceUUIDKey;
  *  @param completion Block that will be called after subscription is deleted, with an optional error.
  */
 - (void)deleteSubscriptionWithCompletion:(void(^)(NSError *error))completion;
+
+
+/**
+ *  Returns YES if there is an existing `CKSubscription` for changes in CloudKit.
+ */
+- (BOOL)isSubscribedForUpdateNotifications;
 
 /**
  *  Erase all local change tracking to stop synchronizing.

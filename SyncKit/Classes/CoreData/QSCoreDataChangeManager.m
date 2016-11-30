@@ -83,6 +83,11 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
             [self performInitialSetup];
         } else {
             [self updateHasChanges];
+            if (self.hasChanges) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [[NSNotificationCenter defaultCenter] postNotificationName:QSChangeManagerHasChangesNotification object:self];
+                });
+            }
         }
     }];
 }
@@ -108,6 +113,11 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
         
         [self.privateContext performBlock:^{
             [self updateHasChanges];
+            if (self.hasChanges) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [[NSNotificationCenter defaultCenter] postNotificationName:QSChangeManagerHasChangesNotification object:self];
+                });
+            }
         }];
     }];
 }
@@ -122,12 +132,7 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
                                                                                error:&error];
     
     NSInteger count = [[fetchedObjects firstObject] integerValue];
-    if (count > 0) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            self.hasChanges = YES;
-            [[NSNotificationCenter defaultCenter] postNotificationName:QSChangeManagerHasChangesNotification object:self];
-        });
-    }
+    self.hasChanges = count > 0;
 }
 
 #pragma mark - Persistence management
@@ -846,12 +851,14 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
 
 - (void)didFinishImportWithError:(NSError *)error
 {
-    if (!error) {
-        self.hasChanges = NO;
-    }
-    
     [self.privateContext performBlockAndWait:^{
         [self savePrivateContext];
+        [self updateHasChanges];
+        if (self.hasChanges) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [[NSNotificationCenter defaultCenter] postNotificationName:QSChangeManagerHasChangesNotification object:self];
+            });
+        }
     }];
     
     [self clearImportContext];

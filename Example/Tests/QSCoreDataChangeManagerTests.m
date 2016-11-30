@@ -17,7 +17,6 @@
 
 @property (nonatomic, strong) QSCoreDataStack *targetCoreDataStack;
 @property (nonatomic, strong) QSCoreDataStack *coreDataStack;
-@property (nonatomic, strong) QSCoreDataChangeManager *changeManager;
 
 @property (nonatomic, assign) BOOL didCallRequestContextSave;
 @property (nonatomic, assign) BOOL didCallImportChanges;
@@ -393,6 +392,30 @@
     XCTAssertTrue(changeManager.hasChanges);
 }
 
+- (void)testHasChanges_afterSuccessfulSync_returnsNO
+{
+    //Insert object in context
+    QSCompany *company = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass([QSCompany class]) inManagedObjectContext:self.targetCoreDataStack.managedObjectContext];
+    company.name = @"name 1";
+    NSError *error = nil;
+    [self.targetCoreDataStack.managedObjectContext save:&error];
+    
+    QSCoreDataChangeManager *changeManager = [[QSCoreDataChangeManager alloc] initWithPersistenceStack:self.coreDataStack targetContext:self.targetCoreDataStack.managedObjectContext recordZoneID:[[CKRecordZoneID alloc] initWithZoneName:@"zone" ownerName:@"owner"] delegate:self];
+    
+    XCTestExpectation *expectation = [self expectationWithDescription:@"synced"];
+    
+    company.name = @"name 2";
+    [self.targetCoreDataStack.managedObjectContext save:&error];
+    
+    [self fullySyncChangeManager:changeManager completion:^(NSArray *uploadedRecords, NSArray *deletedRecordIDs, NSError *error) {
+        [expectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    
+    XCTAssertFalse(changeManager.hasChanges);
+}
+
 - (void)testDeleteChangeTracking_deletesStore
 {
     //Insert object in context
@@ -403,6 +426,37 @@
     XCTAssertNil(self.coreDataStack.managedObjectContext);
 }
 
+- (void)testRecordsToUpload_partialUploadSuccess_stillReturnsPendingRecords
+{
+    //Insert object in context
+    QSCompany *company = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass([QSCompany class]) inManagedObjectContext:self.targetCoreDataStack.managedObjectContext];
+    company.name = @"company 1";
+    QSCompany *company2 = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass([QSCompany class]) inManagedObjectContext:self.targetCoreDataStack.managedObjectContext];
+    company2.name = @"company 2";
+    NSError *error = nil;
+    [self.targetCoreDataStack.managedObjectContext save:&error];
+    
+    QSCoreDataChangeManager *changeManager = [[QSCoreDataChangeManager alloc] initWithPersistenceStack:self.coreDataStack targetContext:self.targetCoreDataStack.managedObjectContext recordZoneID:[[CKRecordZoneID alloc] initWithZoneName:@"zone" ownerName:@"owner"] delegate:self];
+    
+    XCTestExpectation *expectation = [self expectationWithDescription:@"synced"];
+    
+    //Sync
+    [changeManager prepareForImport];
+    NSArray *recordsToUpload = [changeManager recordsToUploadWithLimit:1000];
+    [changeManager didUploadRecords:@[recordsToUpload.firstObject]];
+    [changeManager persistImportedChangesWithCompletion:^(NSError *error) {
+        [changeManager didFinishImportWithError:error];
+        [expectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    
+    NSArray *recordsToUploadAfterSync = [changeManager recordsToUploadWithLimit:1000];
+ 
+    XCTAssertTrue(recordsToUpload.count == 2);
+    XCTAssertTrue(recordsToUploadAfterSync.count == 1);
+}
+
 - (void)fullySyncChangeManager:(QSCoreDataChangeManager *)changeManager completion:(void(^)(NSArray *uploadedRecords, NSArray *deletedRecordIDs, NSError *error))completion;
 {
     [changeManager prepareForImport];
@@ -411,8 +465,8 @@
     [changeManager didUploadRecords:recordsToUpload];
     [changeManager didDeleteRecordIDs:recordIDsToDelete];
     [changeManager persistImportedChangesWithCompletion:^(NSError *error) {
-        completion(recordsToUpload, recordIDsToDelete, error);
         [changeManager didFinishImportWithError:nil];
+        completion(recordsToUpload, recordIDsToDelete, error);
     }];
 }
 

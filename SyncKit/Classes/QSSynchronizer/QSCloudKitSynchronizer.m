@@ -12,6 +12,7 @@
 
 #define callBlockIfNotNil(block, ...) if (block){block(__VA_ARGS__);}
 
+NSString * const QSCloudKitSynchronizerErrorDomain = @"QSCloudKitSynchronizerErrorDomain";
 NSString * const QSCloudKitSynchronizerWillSynchronizeNotification = @"QSCloudKitSynchronizerWillSynchronizeNotification";
 NSString * const QSCloudKitSynchronizerWillFetchChangesNotification = @"QSCloudKitSynchronizerWillFetchChangesNotification";
 NSString * const QSCloudKitSynchronizerWillUploadChangesNotification = @"QSCloudKitSynchronizerWillUploadChangesNotification";
@@ -129,6 +130,7 @@ NSString * const QSCloudKitDeviceUUIDKey = @"QSCloudKitDeviceUUIDKey";
 - (void)synchronizeWithCompletion:(void(^)(NSError *error))completion
 {
     if (self.isSyncing) {
+        callBlockIfNotNil(completion, [NSError errorWithDomain:QSCloudKitSynchronizerErrorDomain code:QSCloudKitSynchronizerErrorAlreadySyncing userInfo:nil]);
         return;
     }
     
@@ -541,7 +543,7 @@ NSString * const QSCloudKitDeviceUUIDKey = @"QSCloudKitDeviceUUIDKey";
 
 - (void)subscribeForChangesInRecordZoneWithCompletion:(void(^)(NSError *error))completion
 {
-    if ([[NSUserDefaults standardUserDefaults] objectForKey:[self userDefaultsKeyForKey:QSSubscriptionIdentifierKey]]) {
+    if ([self isSubscribedForUpdateNotifications]) {
         callBlockIfNotNil(completion, nil);
         return;
     }
@@ -573,6 +575,11 @@ NSString * const QSCloudKitDeviceUUIDKey = @"QSCloudKitDeviceUUIDKey";
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:[self userDefaultsKeyForKey:QSSubscriptionIdentifierKey]];
         callBlockIfNotNil(completion, error);
     }];
+}
+
+- (BOOL)isSubscribedForUpdateNotifications
+{
+    return [[NSUserDefaults standardUserDefaults] objectForKey:[self userDefaultsKeyForKey:QSSubscriptionIdentifierKey]] != nil;
 }
 
 @end
