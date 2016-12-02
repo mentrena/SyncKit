@@ -854,11 +854,6 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
     [self.privateContext performBlockAndWait:^{
         [self savePrivateContext];
         [self updateHasChanges];
-        if (self.hasChanges) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [[NSNotificationCenter defaultCenter] postNotificationName:QSChangeManagerHasChangesNotification object:self];
-            });
-        }
     }];
     
     [self clearImportContext];
