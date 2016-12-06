@@ -130,6 +130,12 @@ In QSAppDelegate replace the sample container name with yours:
 
 You should then be able to run the sample app. 
 
+## Limitations
+
+CloudKit doesn't support ordered relations or many-to-many relationships, so those won't work.
+
+Currently, SyncKit can't keep track of changes in your model if you perform a model migration (even if it's a lightweight migration), since Core Data will likely change your objectIDs. While a solution for this is implemented it is recommended to recreate your data from iCloud if you need to migrate your model.
+
 ## Author
 
 Manuel Entrena, manuel@mentrena.com
