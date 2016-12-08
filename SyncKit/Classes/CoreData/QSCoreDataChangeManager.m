@@ -584,7 +584,16 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
         NSMutableDictionary *identifiersAndChanges = [NSMutableDictionary dictionary];
         for (NSManagedObject *object in updated) {
             NSString *identifier = [object.objectID.URIRepresentation absoluteString];
-            identifiersAndChanges[identifier] = [object.changedValues allKeys];
+            NSMutableArray *changedValueKeys = [NSMutableArray array];
+            for (NSString *key in [object.changedValues allKeys]) {
+                if (object.entity.attributesByName[key] ||
+                    (object.entity.relationshipsByName[key] && object.entity.relationshipsByName[key].isToMany == NO)) {
+                    [changedValueKeys addObject:key];
+                }
+            }
+            if (changedValueKeys.count) {
+                identifiersAndChanges[identifier] = [changedValueKeys copy];
+            }
         }
         
         [self.privateContext performBlock:^{
@@ -630,7 +639,7 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
             
             [updatedIDs enumerateObjectsUsingBlock:^(NSManagedObjectID * _Nonnull objectID, NSUInteger idx, BOOL * _Nonnull stop) {
                 QSSyncedEntity *entity = [self syncedEntityWithOriginObjectIdentifier:[objectID.URIRepresentation absoluteString]];
-                if ([entity.state integerValue] == QSSyncedEntityStateSynced) {
+                if ([entity.state integerValue] == QSSyncedEntityStateSynced && entity.changedKeys.length) {
                     entity.state = @(QSSyncedEntityStateChanged);
                 }
                 entity.updated = [NSDate date];

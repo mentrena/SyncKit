@@ -457,7 +457,55 @@
     XCTAssertTrue(recordsToUploadAfterSync.count == 1);
 }
 
-- (void)fullySyncChangeManager:(QSCoreDataChangeManager *)changeManager completion:(void(^)(NSArray *uploadedRecords, NSArray *deletedRecordIDs, NSError *error))completion;
+- (void)testRecordsToUpload_doesNotIncludeObjectsWithOnlyToManyRelationshipChanges
+{
+    //Insert objects in context
+    QSCompany *company = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass([QSCompany class]) inManagedObjectContext:self.targetCoreDataStack.managedObjectContext];
+    company.name = @"name 1";
+    NSError *error = nil;
+    
+    QSEmployee *employee1 = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass([QSEmployee class]) inManagedObjectContext:self.targetCoreDataStack.managedObjectContext];
+    employee1.name = @"employee1";
+    QSEmployee *employee2 = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass([QSEmployee class]) inManagedObjectContext:self.targetCoreDataStack.managedObjectContext];
+    employee1.name = @"employee2";
+    
+    [self.targetCoreDataStack.managedObjectContext save:&error];
+    
+    //Create change manager and sync
+    QSCoreDataChangeManager *changeManager = [[QSCoreDataChangeManager alloc] initWithPersistenceStack:self.coreDataStack targetContext:self.targetCoreDataStack.managedObjectContext recordZoneID:[[CKRecordZoneID alloc] initWithZoneName:@"zone" ownerName:@"owner"] delegate:self];
+    
+    XCTestExpectation *expectation = [self expectationWithDescription:@"synced"];
+    
+    [self fullySyncChangeManager:changeManager completion:^(NSArray *uploadedRecords, NSArray *deletedRecordIDs, NSError *error) {
+        [expectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    
+    //Now change to-many relationship
+    company.employees = [NSSet setWithObjects:employee1, employee2, nil];
+    [self.targetCoreDataStack.managedObjectContext save:&error];
+    
+    //Try to sync again and check that we don't get a record for the company object
+    [changeManager prepareForImport];
+    NSArray *records = [changeManager recordsToUploadWithLimit:10];
+    [changeManager didFinishImportWithError:nil];
+    
+    CKRecord *companyRecord = nil;
+    NSMutableSet *employeeRecords = [NSMutableSet set];
+    for (CKRecord *record in records) {
+        if ([record.recordType isEqualToString:@"QSCompany"]) {
+            companyRecord = record;
+        } else if ([record.recordType isEqualToString:@"QSEmployee"]) {
+            [employeeRecords addObject:record];
+        }
+    }
+    XCTAssertTrue(records.count == 2);
+    XCTAssertTrue(employeeRecords.count == 2);
+    XCTAssertNil(companyRecord);
+}
+
+- (void)fullySyncChangeManager:(QSCoreDataChangeManager *)changeManager completion:(void(^)(NSArray *uploadedRecords, NSArray *deletedRecordIDs, NSError *error))completion
 {
     [changeManager prepareForImport];
     NSArray *recordsToUpload = [changeManager recordsToUploadWithLimit:1000];
