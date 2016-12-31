@@ -26,6 +26,11 @@
 
 - (NSArray *)executeFetchRequestWithEntityName:(NSString *)entityName predicate:(NSPredicate *)predicate fetchLimit:(NSInteger)limit resultType:(NSFetchRequestResultType)resultType error:(NSError **)error
 {
+    return [self executeFetchRequestWithEntityName:entityName predicate:predicate fetchLimit:limit resultType:resultType propertiesToFetch:nil error:error];
+}
+
+- (NSArray *)executeFetchRequestWithEntityName:(NSString *)entityName predicate:(NSPredicate *)predicate fetchLimit:(NSInteger)limit resultType:(NSFetchRequestResultType)resultType propertiesToFetch:(NSArray *)propertiesToFetch error:(NSError **)error
+{
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
     NSEntityDescription *entity = [NSEntityDescription entityForName:entityName inManagedObjectContext:self];
     [fetchRequest setEntity:entity];
@@ -33,6 +38,9 @@
     fetchRequest.predicate = predicate;
     if (limit) {
         fetchRequest.fetchLimit = limit;
+    }
+    if (propertiesToFetch) {
+        fetchRequest.propertiesToFetch = propertiesToFetch;
     }
     
     return [self executeFetchRequest:fetchRequest error:error];

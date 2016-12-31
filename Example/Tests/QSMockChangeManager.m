@@ -24,6 +24,11 @@
     
 }
 
+- (BOOL)hasChanges
+{
+    return self.toUpload.count + self.toDelete.count > 0;
+}
+
 - (void)saveChangesInRecord:(CKRecord *)record
 {
     BOOL assigned = NO;

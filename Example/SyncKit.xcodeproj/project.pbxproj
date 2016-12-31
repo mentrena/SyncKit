@@ -24,6 +24,12 @@
 		64000CB01D451F68006ACD20 /* QSMockChangeManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 64000CA61D451F5A006ACD20 /* QSMockChangeManager.m */; };
 		64000CB11D451F68006ACD20 /* QSMockDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 64000CA81D451F5A006ACD20 /* QSMockDatabase.m */; };
 		64000CB21D451F68006ACD20 /* QSObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 64000CAA1D451F5A006ACD20 /* QSObject.m */; };
+		6402A0121E16CBE6005FE304 /* QSExample2.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6402A0101E16CBE6005FE304 /* QSExample2.xcdatamodeld */; };
+		6402A03B1E16D303005FE304 /* QSCompany2.m in Sources */ = {isa = PBXBuildFile; fileRef = 6402A0341E16D303005FE304 /* QSCompany2.m */; };
+		6402A03C1E16D303005FE304 /* QSCompany2+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 6402A0361E16D303005FE304 /* QSCompany2+CoreDataProperties.m */; };
+		6402A03D1E16D303005FE304 /* QSEmployee2.m in Sources */ = {isa = PBXBuildFile; fileRef = 6402A0381E16D303005FE304 /* QSEmployee2.m */; };
+		6402A03E1E16D303005FE304 /* QSEmployee2+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 6402A03A1E16D303005FE304 /* QSEmployee2+CoreDataProperties.m */; };
+		6402A03F1E16D5C0005FE304 /* QSExample2.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6402A0101E16CBE6005FE304 /* QSExample2.xcdatamodeld */; };
 		642E328D1D4FF92800ED4100 /* QSEmployeeTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 642E328C1D4FF92800ED4100 /* QSEmployeeTableViewController.m */; };
 		64310E551D4AAD8500628C4B /* QSCompany+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 64310E4E1D4AAD8500628C4B /* QSCompany+CoreDataProperties.m */; };
 		64310E561D4AAD8500628C4B /* QSCompany.m in Sources */ = {isa = PBXBuildFile; fileRef = 64310E501D4AAD8500628C4B /* QSCompany.m */; };
@@ -78,6 +84,15 @@
 		64000CA81D451F5A006ACD20 /* QSMockDatabase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QSMockDatabase.m; sourceTree = "<group>"; };
 		64000CA91D451F5A006ACD20 /* QSObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QSObject.h; sourceTree = "<group>"; };
 		64000CAA1D451F5A006ACD20 /* QSObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QSObject.m; sourceTree = "<group>"; };
+		6402A0111E16CBE6005FE304 /* QSExample2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = QSExample2.xcdatamodel; sourceTree = "<group>"; };
+		6402A0331E16D303005FE304 /* QSCompany2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QSCompany2.h; sourceTree = "<group>"; };
+		6402A0341E16D303005FE304 /* QSCompany2.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QSCompany2.m; sourceTree = "<group>"; };
+		6402A0351E16D303005FE304 /* QSCompany2+CoreDataProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "QSCompany2+CoreDataProperties.h"; sourceTree = "<group>"; };
+		6402A0361E16D303005FE304 /* QSCompany2+CoreDataProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "QSCompany2+CoreDataProperties.m"; sourceTree = "<group>"; };
+		6402A0371E16D303005FE304 /* QSEmployee2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QSEmployee2.h; sourceTree = "<group>"; };
+		6402A0381E16D303005FE304 /* QSEmployee2.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QSEmployee2.m; sourceTree = "<group>"; };
+		6402A0391E16D303005FE304 /* QSEmployee2+CoreDataProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "QSEmployee2+CoreDataProperties.h"; sourceTree = "<group>"; };
+		6402A03A1E16D303005FE304 /* QSEmployee2+CoreDataProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "QSEmployee2+CoreDataProperties.m"; sourceTree = "<group>"; };
 		642E328A1D4FF81200ED4100 /* SyncKit_Example.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = SyncKit_Example.entitlements; sourceTree = "<group>"; };
 		642E328B1D4FF92800ED4100 /* QSEmployeeTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QSEmployeeTableViewController.h; sourceTree = "<group>"; };
 		642E328C1D4FF92800ED4100 /* QSEmployeeTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QSEmployeeTableViewController.m; sourceTree = "<group>"; };
@@ -231,7 +246,7 @@
 			name = "Podspec Metadata";
 			sourceTree = "<group>";
 		};
-		644B20321D4811B200C131CD /* Model */ = {
+		6402A00E1E16CBBE005FE304 /* Model1 */ = {
 			isa = PBXGroup;
 			children = (
 				64310E4D1D4AAD8500628C4B /* QSCompany+CoreDataProperties.h */,
@@ -243,6 +258,31 @@
 				64310E531D4AAD8500628C4B /* QSEmployee.h */,
 				64310E541D4AAD8500628C4B /* QSEmployee.m */,
 				644B20331D4811BE00C131CD /* QSExample.xcdatamodeld */,
+			);
+			name = Model1;
+			sourceTree = "<group>";
+		};
+		6402A00F1E16CBC7005FE304 /* Model2 */ = {
+			isa = PBXGroup;
+			children = (
+				6402A0331E16D303005FE304 /* QSCompany2.h */,
+				6402A0341E16D303005FE304 /* QSCompany2.m */,
+				6402A0351E16D303005FE304 /* QSCompany2+CoreDataProperties.h */,
+				6402A0361E16D303005FE304 /* QSCompany2+CoreDataProperties.m */,
+				6402A0371E16D303005FE304 /* QSEmployee2.h */,
+				6402A0381E16D303005FE304 /* QSEmployee2.m */,
+				6402A0391E16D303005FE304 /* QSEmployee2+CoreDataProperties.h */,
+				6402A03A1E16D303005FE304 /* QSEmployee2+CoreDataProperties.m */,
+				6402A0101E16CBE6005FE304 /* QSExample2.xcdatamodeld */,
+			);
+			name = Model2;
+			sourceTree = "<group>";
+		};
+		644B20321D4811B200C131CD /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				6402A00E1E16CBBE005FE304 /* Model1 */,
+				6402A00F1E16CBC7005FE304 /* Model2 */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -314,6 +354,7 @@
 				TargetAttributes = {
 					6003F589195388D20070C39A = {
 						DevelopmentTeam = 2UHP7K87SQ;
+						LastSwiftMigration = 0810;
 					};
 					6003F5AD195388D20070C39A = {
 						TestTargetID = 6003F589195388D20070C39A;
@@ -459,14 +500,19 @@
 			buildActionMask = 2147483647;
 			files = (
 				6003F59E195388D20070C39A /* QSAppDelegate.m in Sources */,
+				6402A0121E16CBE6005FE304 /* QSExample2.xcdatamodeld in Sources */,
 				644B20351D4811BE00C131CD /* QSExample.xcdatamodeld in Sources */,
 				64310E581D4AAD8500628C4B /* QSEmployee.m in Sources */,
+				6402A03B1E16D303005FE304 /* QSCompany2.m in Sources */,
 				642E328D1D4FF92800ED4100 /* QSEmployeeTableViewController.m in Sources */,
+				6402A03E1E16D303005FE304 /* QSEmployee2+CoreDataProperties.m in Sources */,
 				64AEF0001D4E8E01003729A5 /* QSCompanyTableViewController.m in Sources */,
 				64310E561D4AAD8500628C4B /* QSCompany.m in Sources */,
 				64310E551D4AAD8500628C4B /* QSCompany+CoreDataProperties.m in Sources */,
 				64310E571D4AAD8500628C4B /* QSEmployee+CoreDataProperties.m in Sources */,
+				6402A03C1E16D303005FE304 /* QSCompany2+CoreDataProperties.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
+				6402A03D1E16D303005FE304 /* QSEmployee2.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -474,6 +520,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6402A03F1E16D5C0005FE304 /* QSExample2.xcdatamodeld in Sources */,
 				644B20361D4811CD00C131CD /* QSExample.xcdatamodeld in Sources */,
 				64000CB01D451F68006ACD20 /* QSMockChangeManager.m in Sources */,
 				64000CAF1D451F5E006ACD20 /* QSCloudKitSynchronizerTests.m in Sources */,
@@ -601,15 +648,19 @@
 			baseConfigurationReference = 0480DE43AF84354D4F90FA9B /* Pods-SyncKit_Example.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = SyncKit_Example.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SyncKit/SyncKit-Prefix.pch";
 				INFOPLIST_FILE = "SyncKit/SyncKit-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = com.synckit.example;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -619,14 +670,17 @@
 			baseConfigurationReference = 6C938FE36198D6DFB38A45ED /* Pods-SyncKit_Example.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = SyncKit_Example.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SyncKit/SyncKit-Prefix.pch";
 				INFOPLIST_FILE = "SyncKit/SyncKit-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = com.synckit.example;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -708,6 +762,16 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
+		6402A0101E16CBE6005FE304 /* QSExample2.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				6402A0111E16CBE6005FE304 /* QSExample2.xcdatamodel */,
+			);
+			currentVersion = 6402A0111E16CBE6005FE304 /* QSExample2.xcdatamodel */;
+			path = QSExample2.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
 		644B20331D4811BE00C131CD /* QSExample.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
