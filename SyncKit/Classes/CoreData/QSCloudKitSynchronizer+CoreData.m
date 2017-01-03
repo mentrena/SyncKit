@@ -51,4 +51,13 @@ static NSString * const QSCloudKitCustomZoneName = @"QSCloudKitCustomZoneName";
     return synchronizer;
 }
 
++ (NSEntityMigrationPolicy *)updateIdentifierMigrationPolicy
+{
+    if ([QSEntityIdentifierUpdateMigrationPolicy stack] == nil && [[NSFileManager defaultManager] fileExistsAtPath:[self storePath]]) {
+        QSCoreDataStack *stack = [[QSCoreDataStack alloc] initWithStoreType:NSSQLiteStoreType model:[QSCoreDataChangeManager persistenceModel] storePath:[self storePath]];
+        [QSEntityIdentifierUpdateMigrationPolicy setCoreDataStack:stack];
+    }
+    return [[QSEntityIdentifierUpdateMigrationPolicy alloc] init];
+}
+
 @end

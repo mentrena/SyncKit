@@ -1,6 +1,6 @@
 {
   "name": "SyncKit",
-  "version": "0.2.4",
+  "version": "0.3.0",
   "summary": "CloudKit synchronization for your Core Data model.",
   "description": "SyncKit automates the process of synchronizing your Core Data models using CloudKit. It can easily be plugged into (and removed from) your existing stack.",
   "homepage": "https://github.com/mentrena/SyncKit",
@@ -13,7 +13,7 @@
   },
   "source": {
     "git": "https://github.com/mentrena/SyncKit.git",
-    "tag": "0.2.4"
+    "tag": "0.3.0"
   },
   "platforms": {
     "ios": "8.0",

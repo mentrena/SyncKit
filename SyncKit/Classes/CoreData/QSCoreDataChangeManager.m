@@ -356,8 +356,10 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
     __block NSString *objectID = nil;
     [self.targetImportContext performBlockAndWait:^{
         NSManagedObject *object = [self insertManagedObjectWithEntityName:entityName];
-        objectID = [self uniqueIdentifierForObjectFromRecord:record];
-        if (!objectID) {
+        if ([self useUniqueIdentifierForEntityWithType:entityName]) {
+            objectID = [self uniqueIdentifierForObjectFromRecord:record];
+            [object setValue:objectID forKey:[self identifierFieldNameForEntityOfType:entityName]];
+        } else {
             objectID = [object.objectID.URIRepresentation absoluteString];
         }
     }];
@@ -385,10 +387,10 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
     [self.targetImportContext performBlockAndWait:^{
         originalObject = [self managedObjectWithEntityName:entityType identifier:objectID];
         entityDescription = [NSEntityDescription entityForName:entityType inManagedObjectContext:self.targetImportContext];
-        
+        NSString *primaryKey = [self identifierFieldNameForEntityOfType:entityType];
         //Add attributes
         [[entityDescription attributesByName] enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull attributeName, NSAttributeDescription * _Nonnull attributeDescription, BOOL * _Nonnull stop) {
-            if (entityState == QSSyncedEntityStateNew || [changedKeys containsObject:attributeName]) {
+            if ((entityState == QSSyncedEntityStateNew || [changedKeys containsObject:attributeName]) && [primaryKey isEqualToString:attributeName] == NO) {
                 record[attributeName] = [originalObject valueForKey:attributeName];
             }
         }];
@@ -680,6 +682,33 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
 - (BOOL)shouldIgnoreKey:(NSString *)key
 {
     return ([key isEqualToString:QSCloudKitTimestampKey] || [key isEqualToString:QSCloudKitDeviceUUIDKey]);
+}
+
+#pragma mark - Identifier update
+
+- (void)updateTrackingForObjectsWithPrimaryKey
+{
+    NSArray *entities = self.targetContext.persistentStoreCoordinator.managedObjectModel.entities;
+    for (NSEntityDescription *entity in entities) {
+        NSString *primaryKey = [self identifierFieldNameForEntityOfType:entity.name];
+        if (primaryKey) {
+            [self.targetContext performBlockAndWait:^{
+                NSError *error = nil;
+                NSArray *objects = [self.targetContext executeFetchRequestWithEntityName:entity.name error:&error];
+                for (NSManagedObject *object in objects) {
+                    NSManagedObjectID *objectID = object.objectID;
+                    NSString *newIdentifier = [object valueForKey:primaryKey];
+                    [self.privateContext performBlock:^{
+                        QSSyncedEntity *syncedEntity = [self syncedEntityWithOriginObjectIdentifier:objectID];
+                        if (syncedEntity) {
+                            syncedEntity.originObjectID = newIdentifier;
+                        }
+                        [self savePrivateContext];
+                    }];
+                }
+            }];
+        }
+    }
 }
 
 

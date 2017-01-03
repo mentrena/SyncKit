@@ -115,11 +115,15 @@ Your application should handle the cases where a user has not signed into an iCl
 By default SyncKit will use the NSManagedObjectID of your objects to keep track of them, this allows your model to be completely agnostic to whether SyncKit is in use or not. However, there's two possible cases where this won't be enough:
 
 - Objects A and A', created separately in different devices, should be considered the "same" object: You will likely have an identifier provided by yourself in this case and want object A to match A' when synchronizing your data.
-- Your Core Data model might change in the future: any resulting migration, even if it's a lightweight migration, might cause your object IDs to change, thus rendering all tracking data invalid.
+- Your Core Data model might change in the future: any resulting migration, even if it's a lightweight migration, might cause your object IDs to change, thus rendering all SyncKit tracking data invalid.
 
 To cope with these cases, as of version 0.3.0, your objects can conform to `QSPrimaryKey` and implement its `+ (nonnull NSString *)primaryKey` method to return the name of a stored property that should be used as primary key.
-If you were using SyncKit before 0.3.0 you can't just adopt QSPrimaryKey, currently working on a solution for this :)
-In the meantime you can erase all remote and local data and begin anew, conforming to QSPrimaryKey this time.
+If you were using SyncKit before 0.3.0 and you want to adopt the `QSPrimaryKey` protocol you have two courses of action:
+
+- If your objects already had a populated primary key: Make them implement `QSPrimaryKey` and call `updateTrackingForObjectsWithPrimaryKey` on the change manager to make it update its object tracking data so it uses the primary key.
+- If you need to change your model to add a primary key: you can use `QSEntityIdentifierUpdateMigrationPolicy` as the policy in your mapping model, just call `[QSCloudKitSynchronizer updateIdentifierMigrationPolicy];` before starting the migration.
+
+Or you could disable SyncKit and re-enable it with an empty NSPersistentStore to restore using data currently on iCloud.
 
 ## Example
 

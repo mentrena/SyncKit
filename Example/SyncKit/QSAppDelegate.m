@@ -152,7 +152,9 @@
 - (void)changeManagerRequestsContextSave:(QSCoreDataChangeManager *)changeManager completion:(void (^)(NSError *))completion
 {
     __block NSError *error = nil;
-    [self.managedObjectContext save:&error];
+    [self.managedObjectContext performBlockAndWait:^{
+        [self.managedObjectContext save:&error];
+    }];
     completion(error);
 }
 
@@ -164,7 +166,9 @@
     }];
     
     if (!error) {
-        [self.managedObjectContext save:&error];
+        [self.managedObjectContext performBlockAndWait:^{
+            [self.managedObjectContext save:&error];
+        }];
     }
     completion(error);
 }

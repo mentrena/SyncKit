@@ -114,5 +114,7 @@ typedef NS_ENUM(NSInteger, QSCloudKitSynchronizerMergePolicy) {
  */
 @property (nonatomic, assign) QSCloudKitSynchronizerMergePolicy mergePolicy;
 
+- (void)updateTrackingForObjectsWithPrimaryKey;
+
 
 @end

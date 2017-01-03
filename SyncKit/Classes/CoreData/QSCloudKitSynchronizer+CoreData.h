@@ -8,6 +8,7 @@
 
 #import "QSCloudKitSynchronizer.h"
 #import "QSCoreDataChangeManager.h"
+#import "QSEntityIdentifierUpdateMigrationPolicy.h"
 
 @interface QSCloudKitSynchronizer (CoreData)
 
@@ -21,5 +22,14 @@
  *  @return Initialized synchronizer.
  */
 + (QSCloudKitSynchronizer *)cloudKitSynchronizerWithContainerName:(NSString *)containerName managedObjectContext:(NSManagedObjectContext *)context changeManagerDelegate:(id<QSCoreDataChangeManagerDelegate>)delegate;
+
+/**
+ *  Creates a migration policy that can be used to perform a migration to a new model that supports the QSPrimaryKey protocol, 
+ *  for latest versions of SyncKit. By using this policy for classes that will add support for QSPrimaryKey after the migration we
+ *  ensure that existing tracking data will still be valid. Objects will get a value for their primary key as part of the policy.
+ *
+ *  @return Initialized migration policy.
+ */
++ (QSEntityIdentifierUpdateMigrationPolicy *)updateIdentifierMigrationPolicy;
 
 @end
