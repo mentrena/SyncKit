@@ -696,7 +696,7 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
                 NSError *error = nil;
                 NSArray *objects = [self.targetContext executeFetchRequestWithEntityName:entity.name error:&error];
                 for (NSManagedObject *object in objects) {
-                    NSManagedObjectID *objectID = object.objectID;
+                    NSString *objectID = [object.objectID.URIRepresentation absoluteString];
                     NSString *newIdentifier = [object valueForKey:primaryKey];
                     [self.privateContext performBlock:^{
                         QSSyncedEntity *syncedEntity = [self syncedEntityWithOriginObjectIdentifier:objectID];
