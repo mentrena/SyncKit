@@ -16,7 +16,8 @@ FOUNDATION_EXPORT NSString * const QSCloudKitSynchronizerErrorDomain;
 
 typedef NS_ENUM(NSInteger, QSCloudKitSynchronizerErrorCode)
 {
-    QSCloudKitSynchronizerErrorAlreadySyncing
+    QSCloudKitSynchronizerErrorAlreadySyncing,
+    QSCloudKitSynchronizerErrorHigherModelVersionFound
 };
 
 /**
@@ -43,6 +44,15 @@ typedef NS_ENUM(NSInteger, QSCloudKitSynchronizerErrorCode)
  *  Maximum number of items that will be included in an upload to CloudKit. (read-only)
  */
 @property (nonatomic, readonly) NSInteger batchSize;
+
+/**
+ *  If the version is set (!= 0) and the synchronizer downloads records with a higher version then
+ *  synchronization will end with the appropriate error.
+ */
+@property (nonatomic, assign) NSInteger compatibilityVersion;
+
++ (NSArray<NSString *> *)synchronizerMetadataKeys;
+
 
 
 /**

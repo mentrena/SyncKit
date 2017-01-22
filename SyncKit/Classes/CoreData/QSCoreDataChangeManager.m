@@ -681,7 +681,7 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
 
 - (BOOL)shouldIgnoreKey:(NSString *)key
 {
-    return ([key isEqualToString:QSCloudKitTimestampKey] || [key isEqualToString:QSCloudKitDeviceUUIDKey]);
+    return ([key isEqualToString:QSCloudKitTimestampKey] || [[QSCloudKitSynchronizer synchronizerMetadataKeys] containsObject:key]);
 }
 
 #pragma mark - Identifier update

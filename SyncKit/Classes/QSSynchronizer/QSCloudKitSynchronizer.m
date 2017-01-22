@@ -25,6 +25,7 @@ static const NSInteger QSDefaultBatchSize = 100;
 static NSString * const QSCloudKitFetchChangesServerTokenKey = @"QSCloudKitFetchChangesServerTokenKey";
 static NSString * const QSCloudKitCustomZoneCreatedKey = @"QSCloudKitCustomZoneCreatedKey";
 NSString * const QSCloudKitDeviceUUIDKey = @"QSCloudKitDeviceUUIDKey";
+NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompatibilityVersionKey";
 
 @interface QSCloudKitSynchronizer ()
 
@@ -58,6 +59,7 @@ NSString * const QSCloudKitDeviceUUIDKey = @"QSCloudKitDeviceUUIDKey";
         self.containerIdentifier = containerIdentifier;
         self.changeManager = changeManager;
         self.batchSize = QSDefaultBatchSize;
+        self.compatibilityVersion = 0;
         CKContainer *container = [CKContainer containerWithIdentifier:self.containerIdentifier];
         
         if (!container) {
@@ -126,6 +128,16 @@ NSString * const QSCloudKitDeviceUUIDKey = @"QSCloudKitDeviceUUIDKey";
 }
 
 #pragma mark - Public
+
++ (NSArray<NSString *> *)synchronizerMetadataKeys
+{
+    static NSArray *metadataKeys = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        metadataKeys = @[QSCloudKitDeviceUUIDKey, QSCloudKitModelCompatibilityVersionKey];
+    });
+    return metadataKeys;
+}
 
 - (void)synchronizeWithCompletion:(void(^)(NSError *error))completion
 {
@@ -378,8 +390,8 @@ NSString * const QSCloudKitDeviceUUIDKey = @"QSCloudKitDeviceUUIDKey";
         callBlockIfNotNil(completion, 0, NO, nil);
     } else {
         __weak QSCloudKitSynchronizer *weakSelf = self;
-        //Add device UUID
-        [self addDeviceUUIDToRecords:records];
+        //Add metadata: device UUID and model version
+        [self addMetadataToRecords:records];
         //Now perform the operation
         CKModifyRecordsOperation *modifyRecordsOperation = [[CKModifyRecordsOperation alloc] initWithRecordsToSave:records recordIDsToDelete:nil];
         
@@ -412,10 +424,13 @@ NSString * const QSCloudKitDeviceUUIDKey = @"QSCloudKitDeviceUUIDKey";
     }
 }
 
-- (void)addDeviceUUIDToRecords:(NSArray *)records
+- (void)addMetadataToRecords:(NSArray *)records
 {
     for (CKRecord *record in records) {
         record[QSCloudKitDeviceUUIDKey] = self.deviceIdentifier;
+        if (self.compatibilityVersion > 0) {
+            record[QSCloudKitModelCompatibilityVersionKey] = @(self.compatibilityVersion);
+        }
     }
 }
 
@@ -458,10 +473,16 @@ NSString * const QSCloudKitDeviceUUIDKey = @"QSCloudKitDeviceUUIDKey";
     __weak CKFetchRecordChangesOperation *weakOperation = recordChangesOperation;
     __weak QSCloudKitSynchronizer *weakSelf = self;
     __block NSInteger changeCount = 0;
+    __block BOOL higherModelVersionFound = NO;
     
     recordChangesOperation.recordChangedBlock = ^(CKRecord *record) {
         if ([record[QSCloudKitDeviceUUIDKey] isEqual:self.deviceIdentifier] == NO) {
-            [weakSelf.changeManager saveChangesInRecord:record];
+            NSNumber *version = record[QSCloudKitModelCompatibilityVersionKey];
+            if (self.compatibilityVersion > 0 && [version integerValue] > self.compatibilityVersion) {
+                higherModelVersionFound = YES;
+            } else {
+                [weakSelf.changeManager saveChangesInRecord:record];
+            }
         }
         changeCount++;
     };
@@ -484,9 +505,12 @@ NSString * const QSCloudKitDeviceUUIDKey = @"QSCloudKitDeviceUUIDKey";
             DLog(@"QSCloudKitSynchronizer >> Downloaded %ld changes", (unsigned long)changeCount);
         }
         
-        if (weakOperation.moreComing && !operationError) {
+        if (higherModelVersionFound) {
+            DLog(@"QSCloudKitSynchronizer >> Some downloaded records were uploaded with a newer version of the model. Canceling synchronization");
+            callBlockIfNotNil(completion, [NSError errorWithDomain:QSCloudKitSynchronizerErrorDomain code:QSCloudKitSynchronizerErrorHigherModelVersionFound userInfo:@{QSCloudKitSynchronizerErrorKey: @"Some downloaded records were uploaded with a newer version of the model"}]);
+        } else if (weakOperation.moreComing && !operationError) {
             if (weakSelf.cancelSync) {
-                callBlockIfNotNil(completion, [NSError errorWithDomain:@"QSCloudKitSynchronizer" code:0 userInfo:@{QSCloudKitSynchronizerErrorKey: @"Synchronization was canceled"}]);
+                callBlockIfNotNil(completion, [NSError errorWithDomain:QSCloudKitSynchronizerErrorDomain code:0 userInfo:@{QSCloudKitSynchronizerErrorKey: @"Synchronization was canceled"}]);
             } else {
                 [weakSelf fetchChangesWithCompletion:completion];
             }

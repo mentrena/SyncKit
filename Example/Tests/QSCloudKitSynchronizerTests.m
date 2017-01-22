@@ -335,6 +335,84 @@
     [mock stopMocking];
 }
 
+- (void)testSynchronize_newerModelVersion_cancelsSynchronizationWithError
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Sync finished"];
+    NSArray *objects = @[[[QSObject alloc] initWithIdentifier:@"1" number:@1],
+                         [[QSObject alloc] initWithIdentifier:@"2" number:@2],
+                         [[QSObject alloc] initWithIdentifier:@"3" number:@3]];
+    self.mockChangeManager.objects = objects;
+    [self.mockChangeManager markForUpload:objects];
+    
+    id mock = OCMPartialMock(self.mockChangeManager);
+    
+    self.synchronizer.compatibilityVersion = 2;
+    
+    [self.synchronizer synchronizeWithCompletion:^(NSError *error) {
+        [expectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    
+    self.mockDatabase.readyToFetchRecords = self.mockDatabase.receivedRecords;
+    
+    XCTestExpectation *expectation2 = [self expectationWithDescription:@"Sync finished"];
+    
+    //Now update compatibility version and fetch records
+    self.synchronizer.compatibilityVersion = 1;
+    __block NSError *syncError = nil;
+    
+    [self.synchronizer synchronizeWithCompletion:^(NSError *error) {
+        syncError = error;
+        [expectation2 fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    XCTAssertTrue([syncError.domain isEqualToString:QSCloudKitSynchronizerErrorDomain]);
+    XCTAssertTrue(syncError.code == QSCloudKitSynchronizerErrorHigherModelVersionFound);
+    
+    [mock stopMocking];
+}
+
+- (void)testSynchronize_usesModelVersion_synchronizesWithPreviousVersions
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Sync finished"];
+    NSArray *objects = @[[[QSObject alloc] initWithIdentifier:@"1" number:@1],
+                         [[QSObject alloc] initWithIdentifier:@"2" number:@2],
+                         [[QSObject alloc] initWithIdentifier:@"3" number:@3]];
+    self.mockChangeManager.objects = objects;
+    [self.mockChangeManager markForUpload:objects];
+    
+    id mock = OCMPartialMock(self.mockChangeManager);
+    
+    self.synchronizer.compatibilityVersion = 1;
+    
+    [self.synchronizer synchronizeWithCompletion:^(NSError *error) {
+        [expectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    
+    self.mockDatabase.readyToFetchRecords = self.mockDatabase.receivedRecords;
+    
+    XCTestExpectation *expectation2 = [self expectationWithDescription:@"Sync finished"];
+    
+    //Now update compatibility version and fetch records
+    self.synchronizer.compatibilityVersion = 2;
+    __block NSError *syncError = nil;
+    
+    [self.synchronizer synchronizeWithCompletion:^(NSError *error) {
+        syncError = error;
+        [expectation2 fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    XCTAssertNil(syncError);
+    
+    [mock stopMocking];
+}
+
+
 - (void)testPerformanceExample {
     // This is an example of a performance test case.
     [self measureBlock:^{
