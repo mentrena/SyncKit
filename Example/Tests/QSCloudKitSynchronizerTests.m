@@ -316,8 +316,8 @@
     id mock = OCMPartialMock(self.mockChangeManager);
     
     OCMExpect([mock prepareForImport]).andForwardToRealObject();
-    OCMExpect([mock saveChangesInRecord:[OCMArg any]]).andForwardToRealObject();
-    OCMExpect([mock deleteRecordWithID:[OCMArg any]]).andForwardToRealObject();
+    OCMExpect([mock saveChangesInRecords:[OCMArg any]]).andForwardToRealObject();
+    OCMExpect([mock deleteRecordsWithIDs:[OCMArg any]]).andForwardToRealObject();
     [[[[mock expect] ignoringNonObjectArgs] andForwardToRealObject] recordsToUploadWithLimit:1];
     OCMExpect([mock didUploadRecords:[OCMArg any]]).andForwardToRealObject();
     [[[[mock expect] ignoringNonObjectArgs] andForwardToRealObject] recordIDsMarkedForDeletionWithLimit:1];
@@ -354,15 +354,19 @@
     
     [self waitForExpectationsWithTimeout:1 handler:nil];
     
+    [self.synchronizer eraseLocal]; //For the test, to let the second synchronizer consider records uploaded from the same device
+    
+    QSCloudKitSynchronizer *synchronizer2 = [[QSCloudKitSynchronizer alloc] initWithContainerIdentifier:@"any" recordZoneID:[[CKRecordZoneID alloc] initWithZoneName:@"zone" ownerName:@"owner"] changeManager:self.mockChangeManager];
+    
     self.mockDatabase.readyToFetchRecords = self.mockDatabase.receivedRecords;
     
     XCTestExpectation *expectation2 = [self expectationWithDescription:@"Sync finished"];
     
     //Now update compatibility version and fetch records
-    self.synchronizer.compatibilityVersion = 1;
+    synchronizer2.compatibilityVersion = 1;
     __block NSError *syncError = nil;
     
-    [self.synchronizer synchronizeWithCompletion:^(NSError *error) {
+    [synchronizer2 synchronizeWithCompletion:^(NSError *error) {
         syncError = error;
         [expectation2 fulfill];
     }];

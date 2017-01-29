@@ -31,18 +31,18 @@ static NSString * const QSChangeManagerHasChangesNotification = @"QSChangeManage
 - (void)prepareForImport;
 
 /**
- *  Apply changes in the provided record to the local model object and save the record itself.
+ *  Apply changes in the provided record to the local model objects and save the records.
  *
- *  @param record `CKRecord` that was obtained from CloudKit.
+ *  @param records Array of `CKRecord` that were obtained from CloudKit.
  */
-- (void)saveChangesInRecord:(CKRecord *)record;
+- (void)saveChangesInRecords:(NSArray<CKRecord *> *)records;
 
 /**
- *  Delete the local model object corresponding to the given record ID.
+ *  Delete the local model objects corresponding to the given record IDs.
  *
- *  @param recordID Identifier of record that was deleted on CloudKit.
+ *  @param recordIDs Array of identifiers of records that were deleted on CloudKit.
  */
-- (void)deleteRecordWithID:(CKRecordID *)recordID;
+- (void)deleteRecordsWithIDs:(NSArray<CKRecordID *> *)recordIDs;
 
 /**
  *  Tells the change manager to persist all downloaded changes in the current import operation.

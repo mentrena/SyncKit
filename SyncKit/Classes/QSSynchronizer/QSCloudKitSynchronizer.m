@@ -395,15 +395,19 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
         //Now perform the operation
         CKModifyRecordsOperation *modifyRecordsOperation = [[CKModifyRecordsOperation alloc] initWithRecordsToSave:records recordIDsToDelete:nil];
         
+        NSMutableArray *recordsToSave = [NSMutableArray array];
         modifyRecordsOperation.perRecordCompletionBlock = ^(CKRecord *record, NSError *error) {
             if (error.code == CKErrorServerRecordChanged) {
                 //Update local data with server
                 CKRecord *record = error.userInfo[CKRecordChangedErrorServerRecordKey];
-                [weakSelf.changeManager saveChangesInRecord:record];
+                if (record) {
+                    [recordsToSave addObject:record];
+                }
             }
         };
         
         modifyRecordsOperation.modifyRecordsCompletionBlock = ^(NSArray <CKRecord *> *savedRecords, NSArray <CKRecordID *> *deletedRecordIDs, NSError *operationError) {
+            [weakSelf.changeManager saveChangesInRecords:recordsToSave];
             [weakSelf.changeManager didUploadRecords:savedRecords];
             
             DLog(@"QSCloudKitSynchronizer >> Uploaded %ld records", (unsigned long)savedRecords.count);
@@ -475,30 +479,33 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
     __block NSInteger changeCount = 0;
     __block BOOL higherModelVersionFound = NO;
     
+    NSMutableArray *recordsToSave = [NSMutableArray array];
+    NSMutableArray *recordIDsToDelete = [NSMutableArray array];
+    
     recordChangesOperation.recordChangedBlock = ^(CKRecord *record) {
         if ([record[QSCloudKitDeviceUUIDKey] isEqual:self.deviceIdentifier] == NO) {
             NSNumber *version = record[QSCloudKitModelCompatibilityVersionKey];
             if (self.compatibilityVersion > 0 && [version integerValue] > self.compatibilityVersion) {
                 higherModelVersionFound = YES;
             } else {
-                [weakSelf.changeManager saveChangesInRecord:record];
+                [recordsToSave addObject:record];
             }
         }
         changeCount++;
     };
     
     recordChangesOperation.recordWithIDWasDeletedBlock = ^(CKRecordID *recordID) {
-        [weakSelf.changeManager deleteRecordWithID:recordID];
+        [recordIDsToDelete addObject:recordID];
         changeCount++;
     };
     
     recordChangesOperation.fetchRecordChangesCompletionBlock = ^(CKServerChangeToken *serverChangeToken, NSData *clientChangeTokenData, NSError *operationError) {
         
         if (operationError.code == CKErrorChangeTokenExpired) {
-            self.serverChangeToken = nil;
-            [self saveServerChangeToken:self.serverChangeToken];
+            weakSelf.serverChangeToken = nil;
+            [weakSelf saveServerChangeToken:self.serverChangeToken];
         } else if (serverChangeToken) {
-            self.serverChangeToken = serverChangeToken;
+            weakSelf.serverChangeToken = serverChangeToken;
         }
         
         if (changeCount) {
@@ -508,14 +515,19 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
         if (higherModelVersionFound) {
             DLog(@"QSCloudKitSynchronizer >> Some downloaded records were uploaded with a newer version of the model. Canceling synchronization");
             callBlockIfNotNil(completion, [NSError errorWithDomain:QSCloudKitSynchronizerErrorDomain code:QSCloudKitSynchronizerErrorHigherModelVersionFound userInfo:@{QSCloudKitSynchronizerErrorKey: @"Some downloaded records were uploaded with a newer version of the model"}]);
-        } else if (weakOperation.moreComing && !operationError) {
-            if (weakSelf.cancelSync) {
-                callBlockIfNotNil(completion, [NSError errorWithDomain:QSCloudKitSynchronizerErrorDomain code:0 userInfo:@{QSCloudKitSynchronizerErrorKey: @"Synchronization was canceled"}]);
-            } else {
-                [weakSelf fetchChangesWithCompletion:completion];
-            }
         } else {
-            callBlockIfNotNil(completion, operationError);
+            [weakSelf.changeManager saveChangesInRecords:recordsToSave];
+            [weakSelf.changeManager deleteRecordsWithIDs:recordIDsToDelete];
+            
+            if (weakOperation.moreComing && !operationError) {
+                if (weakSelf.cancelSync) {
+                    callBlockIfNotNil(completion, [NSError errorWithDomain:QSCloudKitSynchronizerErrorDomain code:0 userInfo:@{QSCloudKitSynchronizerErrorKey: @"Synchronization was canceled"}]);
+                } else {
+                    [weakSelf fetchChangesWithCompletion:completion];
+                }
+            } else {
+                callBlockIfNotNil(completion, operationError);
+            }
         }
     };
     

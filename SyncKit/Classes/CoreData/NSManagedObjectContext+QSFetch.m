@@ -31,11 +31,24 @@
 
 - (NSArray *)executeFetchRequestWithEntityName:(NSString *)entityName predicate:(NSPredicate *)predicate fetchLimit:(NSInteger)limit resultType:(NSFetchRequestResultType)resultType propertiesToFetch:(NSArray *)propertiesToFetch error:(NSError **)error
 {
+    return [self executeFetchRequestWithEntityName:entityName predicate:predicate fetchLimit:limit resultType:resultType propertiesToFetch:propertiesToFetch preload:NO error:error];
+}
+
+- (NSArray *)executeFetchRequestWithEntityName:(NSString *)entityName predicate:(NSPredicate *)predicate fetchLimit:(NSInteger)limit preload:(BOOL)preload error:(NSError **)error
+{
+    return [self executeFetchRequestWithEntityName:entityName predicate:predicate fetchLimit:limit resultType:NSManagedObjectResultType propertiesToFetch:nil preload:preload error:error];
+}
+
+- (NSArray *)executeFetchRequestWithEntityName:(NSString *)entityName predicate:(NSPredicate *)predicate fetchLimit:(NSInteger)limit resultType:(NSFetchRequestResultType)resultType propertiesToFetch:(NSArray *)propertiesToFetch preload:(BOOL)preload error:(NSError **)error
+{
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
     NSEntityDescription *entity = [NSEntityDescription entityForName:entityName inManagedObjectContext:self];
     [fetchRequest setEntity:entity];
     fetchRequest.resultType = resultType;
     fetchRequest.predicate = predicate;
+    if (preload) {
+        fetchRequest.returnsObjectsAsFaults = NO;
+    }
     if (limit) {
         fetchRequest.fetchLimit = limit;
     }

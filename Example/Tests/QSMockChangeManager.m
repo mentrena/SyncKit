@@ -29,6 +29,13 @@
     return self.toUpload.count + self.toDelete.count > 0;
 }
 
+- (void)saveChangesInRecords:(NSArray<CKRecord *> *)records
+{
+    for (CKRecord *record in records) {
+        [self saveChangesInRecord:record];
+    }
+}
+
 - (void)saveChangesInRecord:(CKRecord *)record
 {
     BOOL assigned = NO;
@@ -43,6 +50,13 @@
     if (!assigned) {
         QSObject *object = [[QSObject alloc] initWithRecord:record];
         self.objects = [self.objects arrayByAddingObject:object];
+    }
+}
+
+- (void)deleteRecordsWithIDs:(NSArray<CKRecordID *> *)recordIDs
+{
+    for (CKRecordID *recordID in recordIDs) {
+        [self deleteRecordWithID:recordID];
     }
 }
 
