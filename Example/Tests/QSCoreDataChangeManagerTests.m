@@ -209,7 +209,7 @@
     
     //Start sync and delete object
     [changeManager prepareForImport];
-    [changeManager deleteRecordWithID:objectRecord.recordID];
+    [changeManager deleteRecordsWithIDs:@[objectRecord.recordID]];
     XCTestExpectation *expectation2 = [self expectationWithDescription:@"merged changes"];
     [changeManager persistImportedChangesWithCompletion:^(NSError *error) {
         [expectation2 fulfill];
@@ -248,7 +248,7 @@
     
     //Start sync and delete object
     [changeManager prepareForImport];
-    [changeManager saveChangesInRecord:objectRecord];
+    [changeManager saveChangesInRecords:@[objectRecord]];
     [changeManager persistImportedChangesWithCompletion:^(NSError *error) {
         [expectation2 fulfill];
     }];
@@ -271,7 +271,7 @@
     
     //Start sync and delete object
     [changeManager prepareForImport];
-    [changeManager saveChangesInRecord:objectRecord];
+    [changeManager saveChangesInRecords:@[objectRecord]];
     [changeManager persistImportedChangesWithCompletion:^(NSError *error) {
         [expectation fulfill];
     }];
@@ -300,8 +300,7 @@
     
     //Start sync and delete object
     [changeManager prepareForImport];
-    [changeManager saveChangesInRecord:employeeRecord];
-    [changeManager saveChangesInRecord:companyRecord];
+    [changeManager saveChangesInRecords:@[employeeRecord, companyRecord]];
     [changeManager persistImportedChangesWithCompletion:^(NSError *error) {
         [expectation fulfill];
     }];
@@ -558,7 +557,7 @@
     
     //Start sync and delete object
     [changeManager prepareForImport];
-    [changeManager saveChangesInRecord:objectRecord];
+    [changeManager saveChangesInRecords:@[objectRecord]];
     [changeManager persistImportedChangesWithCompletion:^(NSError *error) {
         [expectation2 fulfill];
     }];
@@ -801,12 +800,8 @@
 - (void)fullySyncChangeManager:(QSCoreDataChangeManager *)changeManager downloadedRecords:(NSArray *)records deletedRecordIDs:(NSArray *)recordIDs completion:(void(^)(NSArray *uploadedRecords, NSArray *deletedRecordIDs, NSError *error))completion
 {
     [changeManager prepareForImport];
-    for (CKRecord *record in records) {
-        [changeManager saveChangesInRecord:record];
-    }
-    for (CKRecordID *recordID in recordIDs) {
-        [changeManager deleteRecordWithID:recordID];
-    }
+    [changeManager saveChangesInRecords:records];
+    [changeManager deleteRecordsWithIDs:recordIDs];
     
     [changeManager persistImportedChangesWithCompletion:^(NSError *error) {
         NSArray *recordsToUpload = nil;

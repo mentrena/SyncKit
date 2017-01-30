@@ -60,6 +60,7 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
         self.changeManager = changeManager;
         self.batchSize = QSDefaultBatchSize;
         self.compatibilityVersion = 0;
+        self.syncMode = QSCloudKitSynchronizeModeSync;
         CKContainer *container = [CKContainer containerWithIdentifier:self.containerIdentifier];
         
         if (!container) {
@@ -261,7 +262,11 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
                 [self saveServerChangeToken:self.serverChangeToken];
                 
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    [self synchronizationUploadChanges];
+                    if (self.syncMode == QSCloudKitSynchronizeModeSync) {
+                        [self synchronizationUploadChanges];
+                    } else {
+                        [self finishSynchronizationWithError:nil];
+                    }
                 });
             }
         }];

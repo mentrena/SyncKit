@@ -177,7 +177,7 @@
     
     NSMutableArray *objects = [NSMutableArray array];
     for (NSInteger i = 0; i < self.synchronizer.batchSize + 10; i++) {
-        QSObject *object = [[QSObject alloc] initWithIdentifier:[NSString stringWithFormat:@"%ld", i] number:@(i)];
+        QSObject *object = [[QSObject alloc] initWithIdentifier:[NSString stringWithFormat:@"%ld", (long)i] number:@(i)];
         [objects addObject:object];
     }
     
@@ -416,6 +416,40 @@
     [mock stopMocking];
 }
 
+- (void)testSynchronize_downloadOnly_doesNotUploadChanges
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Sync finished"];
+    NSArray *objects = @[[[QSObject alloc] initWithIdentifier:@"1" number:@1],
+                         [[QSObject alloc] initWithIdentifier:@"2" number:@2],
+                         [[QSObject alloc] initWithIdentifier:@"3" number:@3]];
+    self.mockChangeManager.objects = objects;
+    [self.mockChangeManager markForUpload:objects];
+    
+    QSObject *object1 = [[QSObject alloc] initWithIdentifier:@"4" number:@4];
+    QSObject *object2 = [[QSObject alloc] initWithIdentifier:@"3" number:@5];
+    
+    self.mockDatabase.readyToFetchRecords = @[[object1 record], [object2 record]];
+    
+    self.synchronizer.syncMode = QSCloudKitSynchronizeModeDownload;
+    
+    [self.synchronizer synchronizeWithCompletion:^(NSError *error) {
+        [expectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    
+    QSObject *updatedObject = nil;
+    for (QSObject *object in self.mockChangeManager.objects) {
+        if ([object.identifier isEqualToString:@"3"]) {
+            updatedObject = object;
+            break;
+        }
+    }
+    
+    XCTAssertTrue(self.mockDatabase.receivedRecords.count == 0);
+    XCTAssertTrue(self.mockChangeManager.objects.count == 4);
+    XCTAssertTrue([updatedObject.number isEqual:@5]);
+}
 
 - (void)testPerformanceExample {
     // This is an example of a performance test case.

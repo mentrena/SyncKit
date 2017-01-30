@@ -19,7 +19,7 @@
 
 - (NSString *)serverToken
 {
-    return [NSString stringWithFormat:@"token%ld", self.tokenIndex];
+    return [NSString stringWithFormat:@"token%ld", (long)self.tokenIndex];
 }
 
 - (NSArray *)receivedRecords

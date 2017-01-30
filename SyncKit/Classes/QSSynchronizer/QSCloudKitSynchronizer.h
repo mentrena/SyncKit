@@ -20,6 +20,12 @@ typedef NS_ENUM(NSInteger, QSCloudKitSynchronizerErrorCode)
     QSCloudKitSynchronizerErrorHigherModelVersionFound
 };
 
+typedef NS_ENUM(NSInteger, QSCloudKitSynchronizeMode)
+{
+    QSCloudKitSynchronizeModeSync,
+    QSCloudKitSynchronizeModeDownload
+};
+
 /**
     A `QSCloudKitSynchronizer` object takes care of making all the required calls to CloudKit to keep your model synchronized, using the provided
     `QSChangeManager` to interact with it.
@@ -50,6 +56,11 @@ typedef NS_ENUM(NSInteger, QSCloudKitSynchronizerErrorCode)
  *  synchronization will end with the appropriate error.
  */
 @property (nonatomic, assign) NSInteger compatibilityVersion;
+
+/**
+ *  Sync mode: full sync or download only
+ */
+@property (nonatomic, assign) QSCloudKitSynchronizeMode syncMode;
 
 + (NSArray<NSString *> *)synchronizerMetadataKeys;
 
