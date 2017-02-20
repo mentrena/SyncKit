@@ -48,6 +48,8 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
 @property (nonatomic, copy) void(^completion)(NSError *error);
 @property (nonatomic, weak) CKOperation *currentOperation;
 
+@property (nonatomic, strong) dispatch_queue_t dispatchQueue;
+
 @end
 
 @implementation QSCloudKitSynchronizer
@@ -69,6 +71,7 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
 
         self.database = [container privateCloudDatabase];
         self.customZoneID = zoneID;
+        self.dispatchQueue = dispatch_queue_create("QSCloudKitSynchronizer", 0);
     }
     return self;
 }
@@ -223,13 +226,15 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
 
 - (void)performSynchronization
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [[NSNotificationCenter defaultCenter] postNotificationName:QSCloudKitSynchronizerWillSynchronizeNotification object:self];
+    dispatch_async(self.dispatchQueue, ^{
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [[NSNotificationCenter defaultCenter] postNotificationName:QSCloudKitSynchronizerWillSynchronizeNotification object:self];
+        });
+        
+        [self.changeManager prepareForImport];
+        [self restoreServerChangeToken];
+        [self synchronizationFetchChanges];
     });
-
-    [self.changeManager prepareForImport];
-    [self restoreServerChangeToken];
-    [self synchronizationFetchChanges];
 }
 
 - (void)synchronizationFetchChanges
@@ -256,19 +261,19 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
         [self finishSynchronizationWithError:[NSError errorWithDomain:@"QSCloudKitSynchronizer" code:0 userInfo:@{QSCloudKitSynchronizerErrorKey: @"Synchronization was canceled"}]];
     } else {
         [self.changeManager persistImportedChangesWithCompletion:^(NSError *error) {
-            if (error) {
-                [self finishSynchronizationWithError:error];
-            } else {
-                [self saveServerChangeToken:self.serverChangeToken];
-                
-                dispatch_async(dispatch_get_main_queue(), ^{
+            dispatch_async(self.dispatchQueue, ^{
+                if (error) {
+                    [self finishSynchronizationWithError:error];
+                } else {
+                    [self saveServerChangeToken:self.serverChangeToken];
+                    
                     if (self.syncMode == QSCloudKitSynchronizeModeSync) {
                         [self synchronizationUploadChanges];
                     } else {
                         [self finishSynchronizationWithError:nil];
                     }
-                });
-            }
+                }
+            });
         }];
     }
 }
@@ -310,26 +315,24 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
 
 - (void)finishSynchronizationWithError:(NSError *)error
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        self.syncing = NO;
-        self.cancelSync = NO;
+    self.syncing = NO;
+    self.cancelSync = NO;
 
-        [self.changeManager didFinishImportWithError:error];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (error) {
-                [[NSNotificationCenter defaultCenter] postNotificationName:QSCloudKitSynchronizerDidFailToSynchronizeNotification
-                                                                    object:self
-                                                                  userInfo:@{QSCloudKitSynchronizerErrorKey : error}];
-            } else {
-                [[NSNotificationCenter defaultCenter] postNotificationName:QSCloudKitSynchronizerDidSynchronizeNotification object:self];
-            }
-        });
+    [self.changeManager didFinishImportWithError:error];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (error) {
+            [[NSNotificationCenter defaultCenter] postNotificationName:QSCloudKitSynchronizerDidFailToSynchronizeNotification
+                                                                object:self
+                                                              userInfo:@{QSCloudKitSynchronizerErrorKey : error}];
+        } else {
+            [[NSNotificationCenter defaultCenter] postNotificationName:QSCloudKitSynchronizerDidSynchronizeNotification object:self];
+        }
         
         callBlockIfNotNil(self.completion, error);
         self.completion = nil;
-        
-        DLog(@"QSCloudKitSynchronizer >> Finishing synchronization");
     });
+    
+    DLog(@"QSCloudKitSynchronizer >> Finishing synchronization");
 }
 
 #pragma mark - CloudKit calls
@@ -402,28 +405,30 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
         
         NSMutableArray *recordsToSave = [NSMutableArray array];
         modifyRecordsOperation.perRecordCompletionBlock = ^(CKRecord *record, NSError *error) {
-            if (error.code == CKErrorServerRecordChanged) {
-                //Update local data with server
-                CKRecord *record = error.userInfo[CKRecordChangedErrorServerRecordKey];
-                if (record) {
-                    [recordsToSave addObject:record];
+            dispatch_async(self.dispatchQueue, ^{
+                if (error.code == CKErrorServerRecordChanged) {
+                    //Update local data with server
+                    CKRecord *record = error.userInfo[CKRecordChangedErrorServerRecordKey];
+                    if (record) {
+                        [recordsToSave addObject:record];
+                    }
                 }
-            }
+            });
         };
         
         modifyRecordsOperation.modifyRecordsCompletionBlock = ^(NSArray <CKRecord *> *savedRecords, NSArray <CKRecordID *> *deletedRecordIDs, NSError *operationError) {
-            [weakSelf.changeManager saveChangesInRecords:recordsToSave];
-            [weakSelf.changeManager didUploadRecords:savedRecords];
-            
-            DLog(@"QSCloudKitSynchronizer >> Uploaded %ld records", (unsigned long)savedRecords.count);
-            
-            if (operationError.code == CKErrorLimitExceeded) {
-                self.batchSize = self.batchSize / 2;
-            } else if (self.batchSize < QSDefaultBatchSize) {
-                self.batchSize++;
-            }
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
+            dispatch_async(self.dispatchQueue, ^{
+                [weakSelf.changeManager saveChangesInRecords:recordsToSave];
+                [weakSelf.changeManager didUploadRecords:savedRecords];
+                
+                DLog(@"QSCloudKitSynchronizer >> Uploaded %ld records", (unsigned long)savedRecords.count);
+                
+                if (operationError.code == CKErrorLimitExceeded) {
+                    self.batchSize = self.batchSize / 2;
+                } else if (self.batchSize < QSDefaultBatchSize) {
+                    self.batchSize++;
+                }
+                
                 callBlockIfNotNil(completion, savedRecords.count, recordCount >= requestedBatchSize, operationError);
             });
         };
@@ -455,18 +460,17 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
         //Now perform the operation
         CKModifyRecordsOperation *modifyRecordsOperation = [[CKModifyRecordsOperation alloc] initWithRecordsToSave:nil recordIDsToDelete:recordIDs];
         modifyRecordsOperation.modifyRecordsCompletionBlock = ^(NSArray <CKRecord *> *savedRecords, NSArray <CKRecordID *> *deletedRecordIDs, NSError *operationError) {
-            
-            DLog(@"QSCloudKitSynchronizer >> Deleted %ld records", (unsigned long)deletedRecordIDs.count);
-            
-            if (operationError.code == CKErrorLimitExceeded) {
-                self.batchSize = self.batchSize / 2;
-            } else if (self.batchSize < QSDefaultBatchSize) {
-                self.batchSize++;
-            }
-            
-            [self.changeManager didDeleteRecordIDs:deletedRecordIDs];
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
+            dispatch_async(self.dispatchQueue, ^{
+                DLog(@"QSCloudKitSynchronizer >> Deleted %ld records", (unsigned long)deletedRecordIDs.count);
+                
+                if (operationError.code == CKErrorLimitExceeded) {
+                    self.batchSize = self.batchSize / 2;
+                } else if (self.batchSize < QSDefaultBatchSize) {
+                    self.batchSize++;
+                }
+                
+                [self.changeManager didDeleteRecordIDs:deletedRecordIDs];
+                
                 callBlockIfNotNil(completion, deletedRecordIDs.count, recordCount >= requestedBatchSize, operationError);
             });
         };
@@ -488,52 +492,58 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
     NSMutableArray *recordIDsToDelete = [NSMutableArray array];
     
     recordChangesOperation.recordChangedBlock = ^(CKRecord *record) {
-        if ([record[QSCloudKitDeviceUUIDKey] isEqual:self.deviceIdentifier] == NO) {
-            NSNumber *version = record[QSCloudKitModelCompatibilityVersionKey];
-            if (self.compatibilityVersion > 0 && [version integerValue] > self.compatibilityVersion) {
-                higherModelVersionFound = YES;
-            } else {
-                [recordsToSave addObject:record];
+        dispatch_async(self.dispatchQueue, ^{
+            if ([record[QSCloudKitDeviceUUIDKey] isEqual:self.deviceIdentifier] == NO) {
+                NSNumber *version = record[QSCloudKitModelCompatibilityVersionKey];
+                if (self.compatibilityVersion > 0 && [version integerValue] > self.compatibilityVersion) {
+                    higherModelVersionFound = YES;
+                } else {
+                    [recordsToSave addObject:record];
+                }
             }
-        }
-        changeCount++;
+            changeCount++;
+        });
     };
     
     recordChangesOperation.recordWithIDWasDeletedBlock = ^(CKRecordID *recordID) {
-        [recordIDsToDelete addObject:recordID];
-        changeCount++;
+        dispatch_async(self.dispatchQueue, ^{
+            [recordIDsToDelete addObject:recordID];
+            changeCount++;
+        });
     };
     
     recordChangesOperation.fetchRecordChangesCompletionBlock = ^(CKServerChangeToken *serverChangeToken, NSData *clientChangeTokenData, NSError *operationError) {
         
-        if (operationError.code == CKErrorChangeTokenExpired) {
-            weakSelf.serverChangeToken = nil;
-            [weakSelf saveServerChangeToken:self.serverChangeToken];
-        } else if (serverChangeToken) {
-            weakSelf.serverChangeToken = serverChangeToken;
-        }
-        
-        if (changeCount) {
-            DLog(@"QSCloudKitSynchronizer >> Downloaded %ld changes", (unsigned long)changeCount);
-        }
-        
-        if (higherModelVersionFound) {
-            DLog(@"QSCloudKitSynchronizer >> Some downloaded records were uploaded with a newer version of the model. Canceling synchronization");
-            callBlockIfNotNil(completion, [NSError errorWithDomain:QSCloudKitSynchronizerErrorDomain code:QSCloudKitSynchronizerErrorHigherModelVersionFound userInfo:@{QSCloudKitSynchronizerErrorKey: @"Some downloaded records were uploaded with a newer version of the model"}]);
-        } else {
-            [weakSelf.changeManager saveChangesInRecords:recordsToSave];
-            [weakSelf.changeManager deleteRecordsWithIDs:recordIDsToDelete];
-            
-            if (weakOperation.moreComing && !operationError) {
-                if (weakSelf.cancelSync) {
-                    callBlockIfNotNil(completion, [NSError errorWithDomain:QSCloudKitSynchronizerErrorDomain code:0 userInfo:@{QSCloudKitSynchronizerErrorKey: @"Synchronization was canceled"}]);
-                } else {
-                    [weakSelf fetchChangesWithCompletion:completion];
-                }
-            } else {
-                callBlockIfNotNil(completion, operationError);
+        dispatch_async(self.dispatchQueue, ^{
+            if (operationError.code == CKErrorChangeTokenExpired) {
+                weakSelf.serverChangeToken = nil;
+                [weakSelf saveServerChangeToken:self.serverChangeToken];
+            } else if (serverChangeToken) {
+                weakSelf.serverChangeToken = serverChangeToken;
             }
-        }
+            
+            if (changeCount) {
+                DLog(@"QSCloudKitSynchronizer >> Downloaded %ld changes", (unsigned long)changeCount);
+            }
+            
+            if (higherModelVersionFound) {
+                DLog(@"QSCloudKitSynchronizer >> Some downloaded records were uploaded with a newer version of the model. Canceling synchronization");
+                callBlockIfNotNil(completion, [NSError errorWithDomain:QSCloudKitSynchronizerErrorDomain code:QSCloudKitSynchronizerErrorHigherModelVersionFound userInfo:@{QSCloudKitSynchronizerErrorKey: @"Some downloaded records were uploaded with a newer version of the model"}]);
+            } else {
+                [weakSelf.changeManager saveChangesInRecords:recordsToSave];
+                [weakSelf.changeManager deleteRecordsWithIDs:recordIDsToDelete];
+                
+                if (weakOperation.moreComing && !operationError) {
+                    if (weakSelf.cancelSync) {
+                        callBlockIfNotNil(completion, [NSError errorWithDomain:QSCloudKitSynchronizerErrorDomain code:0 userInfo:@{QSCloudKitSynchronizerErrorKey: @"Synchronization was canceled"}]);
+                    } else {
+                        [weakSelf fetchChangesWithCompletion:completion];
+                    }
+                } else {
+                    callBlockIfNotNil(completion, operationError);
+                }
+            }
+        });
     };
     
     self.currentOperation = recordChangesOperation;
@@ -562,20 +572,22 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
     };
     
     recordChangesOperation.fetchRecordChangesCompletionBlock = ^(CKServerChangeToken *serverChangeToken, NSData *clientChangeTokenData, NSError *operationError) {
-        if (hasChanged) {
-            DLog(@"QSCloudKitSynchronizer >> Detected changes after synchronization. Initiating sync");
-            callBlockIfNotNil(completion, YES, operationError);
-        } else {
-            if (serverChangeToken) {
-                self.serverChangeToken = serverChangeToken;
-            }
-            
-            if (weakOperation.moreComing) {
-                [weakSelf updateServerTokenWithCompletion:completion];
+        dispatch_async(self.dispatchQueue, ^{
+            if (hasChanged) {
+                DLog(@"QSCloudKitSynchronizer >> Detected changes after synchronization. Initiating sync");
+                callBlockIfNotNil(completion, YES, operationError);
             } else {
-                callBlockIfNotNil(completion, NO, operationError);
+                if (serverChangeToken) {
+                    self.serverChangeToken = serverChangeToken;
+                }
+                
+                if (weakOperation.moreComing) {
+                    [weakSelf updateServerTokenWithCompletion:completion];
+                } else {
+                    callBlockIfNotNil(completion, NO, operationError);
+                }
             }
-        }
+        });
     };
     
     self.currentOperation = recordChangesOperation;
