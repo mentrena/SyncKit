@@ -1,1 +1,1 @@
-../../../../../SyncKit/Classes/SyncKitLog.h
+../../../../../SyncKit/Classes/QSSynchronizer/SyncKitLog.h

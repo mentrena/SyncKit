@@ -1,0 +1,1 @@
+../../../../../SyncKit/Classes/Realm/QSRealmChangeManager.h

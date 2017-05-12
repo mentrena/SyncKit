@@ -1,1 +1,1 @@
-../../../../../SyncKit/Classes/CoreData/QSSyncedEntityState.h
+../../../../../SyncKit/Classes/QSSynchronizer/QSSyncedEntityState.h

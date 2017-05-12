@@ -186,6 +186,7 @@
     
     XCTAssertTrue(records.count > 0);
 }
+
 - (void)testDeleteRecordWithID_deletesCorrespondingObject
 {
     //Insert object in context
@@ -264,7 +265,7 @@
 {
     QSCoreDataChangeManager *changeManager = [[QSCoreDataChangeManager alloc] initWithPersistenceStack:self.coreDataStack targetContext:self.targetCoreDataStack.managedObjectContext recordZoneID:[[CKRecordZoneID alloc] initWithZoneName:@"zone" ownerName:@"owner"] delegate:self];
     
-    CKRecord *objectRecord = [[CKRecord alloc] initWithRecordType:@"QSCompany" recordID:[[CKRecordID alloc] initWithRecordName:@"QSCompany"]];
+    CKRecord *objectRecord = [[CKRecord alloc] initWithRecordType:@"QSCompany" recordID:[[CKRecordID alloc] initWithRecordName:@"1"]];
     objectRecord[@"name"] = @"new company";
     
     XCTestExpectation *expectation = [self expectationWithDescription:@"merged changes"];
@@ -797,7 +798,7 @@
     }];
 }
 
-- (void)fullySyncChangeManager:(QSCoreDataChangeManager *)changeManager downloadedRecords:(NSArray *)records deletedRecordIDs:(NSArray *)recordIDs completion:(void(^)(NSArray *uploadedRecords, NSArray *deletedRecordIDs, NSError *error))completion
+- (void)fullySyncChangeManager:(id<QSChangeManager>)changeManager downloadedRecords:(NSArray *)records deletedRecordIDs:(NSArray *)recordIDs completion:(void(^)(NSArray *uploadedRecords, NSArray *deletedRecordIDs, NSError *error))completion
 {
     [changeManager prepareForImport];
     [changeManager saveChangesInRecords:records];

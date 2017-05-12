@@ -12,24 +12,6 @@
 #import <CoreData/CoreData.h>
 #import <CloudKit/CloudKit.h>
 
-/**
- *  The merge policy to resolve change conflicts. Default value is `QSCloudKitSynchronizerMergePolicyServer`
- */
-typedef NS_ENUM(NSInteger, QSCloudKitSynchronizerMergePolicy) {
-    /**
-     *  Downloaded changes have preference.
-     */
-    QSCloudKitSynchronizerMergePolicyServer,
-    /**
-     *  Local changes have preference.
-     */
-    QSCloudKitSynchronizerMergePolicyClient,
-    /**
-     *  Delegate can resolve changes manually.
-     */
-    QSCloudKitSynchronizerMergePolicyCustom
-};
-
 @class QSCoreDataChangeManager;
 
 /**

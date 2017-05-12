@@ -5,9 +5,9 @@
 [![License](https://img.shields.io/cocoapods/l/SyncKit.svg?style=flat)](http://cocoapods.org/pods/SyncKit)
 [![Platform](https://img.shields.io/cocoapods/p/SyncKit.svg?style=flat)](http://cocoapods.org/pods/SyncKit)
 
-SyncKit is a library for iOS and OS X that automates the process of synchronizing Core Data models using CloudKit.
+SyncKit is a library for iOS and OS X that automates the process of synchronizing Core Data or Realm (ObjC) models using CloudKit.
 
-SyncKit relies on the flexibility of Core Data and uses introspection to work with any Core Data model. It sits next to your Core Data stack, making it easy to opt in or out of synchronization without imposing any requirements on your model.
+SyncKit uses introspection to work with any model. It sits next to your Core Data or Realm stack, making it easy to opt in or out of synchronization without imposing any requirements on your model.
 
 ## Adding SyncKit to your project using Cocoapods
 
@@ -17,14 +17,18 @@ SyncKit relies on the flexibility of Core Data and uses introspection to work wi
 $ gem install cocoapods
 ```
 
-And add SyncKit to your `Podfile`:
+And add SyncKit to your `Podfile`. Use the corresponding subspec based on what technology you use for you model:
 
 ```ruby
 source 'https://github.com/CocoaPods/Specs.git'
 platform :ios, '8.0'
 
-target 'TargetName' do
-pod 'SyncKit', '~> 0.1'
+target 'CoreDataTargetName' do
+pod 'SyncKit/CoreData', '~> 0.4'
+end
+
+target 'RealmTargetName' do
+pod 'SyncKit/Realm', '~> 0.4'
 end
 ```
 
@@ -45,7 +49,7 @@ $ brew install carthage
 Add SyncKit to your `Cartfile`:
 
 ```
-github "mentrena/SyncKit" ~> 0.1.0
+github "mentrena/SyncKit" ~> 0.4
 ```
 
 Run `carthage update` to create the framework, then import it into your project.
@@ -53,42 +57,20 @@ Run `carthage update` to create the framework, then import it into your project.
 
 ## Requirements
 
-Your application must have the right entitlements to use iCloud and CloudKit, and it must link against both the Core Data and CloudKit frameworks.
+Your application must have the right entitlements to use iCloud and CloudKit, and it must link against the CloudKit framework.
+Your app is also responsible for handling the cases where a user has not signed into an iCloud account or the current iCloud account changes.
 
 ## How to use
 
-There are two classes you need to be aware of: QSCoreDataChangeManager and QSCloudKitSynchronizer.
+There are two classes you need to be aware of: QSChangeManager and QSCloudKitSynchronizer.
 
-QSCoreDataChangeManager will track changes in your local model and coordinate what needs to be uploaded/downloaded to/from iCloud. It needs a QSCoreDataChangeManagerDelegate to save the local NSManagedObjectContext when needed. The simplest implementation of the delegate is as follows:
+QSChangeManager will track changes in your local model and coordinate what needs to be uploaded/downloaded to/from iCloud. Currently there are two implementations of the QSChangeManager protocol: QSCoreDataChangeManager and QSRealmChangeManager.
 
-```objc
-//Change manager requests you save your managed object context
-- (void)changeManagerRequestsContextSave:(QSCoreDataChangeManager *)changeManager completion:(void (^)(NSError *))completion
-{
-    NSError *error = nil;
-    [self.managedObjectContext save:&error];
-    completion(error);
-}
+QSCloudKitSynchronizer will upload any pending changes from your change manager to CloudKit, and will pass downloaded changes from CloudKit to your change manager.
 
-//Change manager provides a child context of your local managed object context, containing changes downloaded from CloudKit. Save the import context, then your local context to persist these changes.
-- (void)changeManager:(QSCoreDataChangeManager *)changeManager didImportChanges:(NSManagedObjectContext *)importContext completion:(void (^)(BOOL, NSError *))completion
-{
-    NSError *error = nil;
-    [importContext performBlockAndWait:^{
-        [importContext save:&error];
-    }];
+Import the right QSCloudKitSynchronizer category for your data stack and create a synchronizer:
 
-    if (!error) {
-        [self.managedObjectContext save:&error];
-    }
-
-    completion(error);
-}
-```
-
-But you might want to add some extra logic if you don't always want to persist CloudKit changes, if you use an undo manager, or if your Core Data stack is more complex.
-
-QSCloudKitSynchronizer will upload any pending changes from your change manager to CloudKit, and will pass downloaded changes from CloudKit to your change manager. To synchronize your model create a new instance of QSCloudKitSynchronizer:
+####Core Data
 
 ```objc
 
@@ -108,9 +90,61 @@ self.synchronizer = [QSCloudKitSynchronizer cloudKitSynchronizerWithContainerNam
 }];
 ```
 
-Your application should handle the cases where a user has not signed into an iCloud account or the current iCloud account changes.
+QSCoreDataChangeManager needs a QSCoreDataChangeManagerDelegate to save the local NSManagedObjectContext when needed. An example implementation:
+
+```objc
+//Change manager requests you save your managed object context
+- (void)changeManagerRequestsContextSave:(QSCoreDataChangeManager *)changeManager completion:(void (^)(NSError *))completion
+{
+    __block NSError *error = nil;
+    [self.managedObjectContext performBlockAndWait:^{
+        [self.managedObjectContext save:&error];
+    }];
+    completion(error);
+}
+
+//Change manager provides a child context of your local managed object context, containing changes downloaded from CloudKit. Save the import context, then your local context to persist these changes.
+- (void)changeManager:(QSCoreDataChangeManager *)changeManager didImportChanges:(NSManagedObjectContext *)importContext completion:(void (^)(BOOL, NSError *))completion
+{
+	__block NSError *error = nil;
+    [importContext performBlockAndWait:^{
+        [importContext save:&error];
+    }];
+    
+    if (!error) {
+        [self.managedObjectContext performBlockAndWait:^{
+            [self.managedObjectContext save:&error];
+        }];
+    }
+    completion(error);
+}
+```
+
+You might want to add some extra logic if you don't always want to persist CloudKit changes, if you use an undo manager, or if your Core Data stack is more complex.
+
+####Realm
+
+```objc
+
+#import <SyncKit/QSCloudKitSynchronizer+Realm.h>
+
+...
+
+self.synchronizer = [QSCloudKitSynchronizer cloudKitSynchronizerWithContainerName:@"your-container-name" realmConfiguration:self.realm.configuration];
+
+...
+
+//Synchronize
+[self.synchronizer synchronizeWithCompletion:^(NSError *error) {
+    if (error) {
+        //Handle error
+    }
+}];
+```
 
 ## Identifying objects
+
+####Core Data
 
 By default SyncKit will use the NSManagedObjectID of your objects to keep track of them, this allows your model to be completely agnostic to whether SyncKit is in use or not. However, there's two possible cases where this won't be enough:
 
@@ -124,6 +158,10 @@ If you were using SyncKit before 0.3.0 and you want to adopt the `QSPrimaryKey` 
 - If you need to change your model to add a primary key: you can use `QSEntityIdentifierUpdateMigrationPolicy` as the policy in your mapping model, just call `[QSCloudKitSynchronizer updateIdentifierMigrationPolicy];` before starting the migration.
 
 Or you could disable SyncKit and re-enable it with an empty NSPersistentStore to restore using data currently on iCloud.
+
+####Realm
+
+Your model classes must have a primary key.
 
 ## Example
 
@@ -148,6 +186,24 @@ You should then be able to run the sample app.
 ## Limitations
 
 CloudKit doesn't support ordered relations or many-to-many relationships, so those won't work.
+For the same reason, when using Realm, SyncKit will ignore your RLMArray properties, so it's recommended to model your many-to-one relationships using RLMLinkingObjects and Object properties:
+
+```objc
+@interface QSCompany : RLMObject
+
+@property (readonly) RLMLinkingObjects *employees;
+
+@end
+
+...
+
+@interface QSEmployee : RLMObject
+
+@property (nonatomic, strong) QSCompany *company;
+
+@end
+
+```
 
 ## Author
 

@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'SyncKit'
-  s.version          = '0.3.3'
+  s.version          = '0.4'
   s.summary          = 'CloudKit synchronization for your Core Data model.'
 
 # This description is used to generate tags and improve search results.
@@ -24,18 +24,26 @@ SyncKit automates the process of synchronizing your Core Data models using Cloud
   s.homepage         = 'https://github.com/mentrena/SyncKit'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
-  s.author           = { 'Manuel' => 'manuel@mentrena.com' }
+  s.author           = { 'Manuel Entrena' => 'manuel@mentrena.com' }
   s.source           = { :git => 'https://github.com/mentrena/SyncKit.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
 s.ios.deployment_target = '8.0'
 s.osx.deployment_target = '10.11'
 
-s.public_header_files = 'SyncKit/Classes/**/*.h'
-s.prefix_header_file = 'SyncKit/Classes/SyncKitPrefixHeader.pch'
-s.source_files = 'SyncKit/Classes/**/*.{h,m}'
-s.resources = 'SyncKit/Classes/CoreData/*.xcdatamodeld'
-s.frameworks = 'CoreData', 'CloudKit'
+	s.subspec 'CoreData' do |cs|
+		cs.public_header_files = 'SyncKit/Classes/QSSynchronizer/*.h', 'SyncKit/Classes/CoreData/*.h'
+		cs.source_files = 'SyncKit/Classes/QSSynchronizer/*.{h,m}', 'SyncKit/Classes/CoreData/*.{h,m}'
+		cs.resources = 'SyncKit/Classes/CoreData/*.xcdatamodeld'
+		cs.frameworks = 'CoreData', 'CloudKit'
+	end
+	
+	s.subspec 'Realm' do |cs|
+		cs.public_header_files = 'SyncKit/Classes/QSSynchronizer/*.h', 'SyncKit/Classes/Realm/*.h'
+		cs.source_files = 'SyncKit/Classes/QSSynchronizer/*.{h,m}', 'SyncKit/Classes/Realm/*.{h,m}'
+		cs.frameworks = 'CloudKit'
+		cs.dependency 'Realm'
+	end
 
   # s.resource_bundles = {
   #   'SyncKit' => ['SyncKit/Assets/*.png']

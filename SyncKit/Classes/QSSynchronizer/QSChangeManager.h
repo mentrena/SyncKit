@@ -10,6 +10,25 @@
 @class CKRecord;
 @class CKRecordID;
 
+
+/**
+ *  The merge policy to resolve change conflicts. Default value is `QSCloudKitSynchronizerMergePolicyServer`
+ */
+typedef NS_ENUM(NSInteger, QSCloudKitSynchronizerMergePolicy) {
+    /**
+     *  Downloaded changes have preference.
+     */
+    QSCloudKitSynchronizerMergePolicyServer,
+    /**
+     *  Local changes have preference.
+     */
+    QSCloudKitSynchronizerMergePolicyClient,
+    /**
+     *  Delegate can resolve changes manually.
+     */
+    QSCloudKitSynchronizerMergePolicyCustom
+};
+
 /**
  *  Posted whenever a change manager detects there are new local changes to sync.
  */
@@ -101,5 +120,10 @@ static NSString * const QSChangeManagerHasChangesNotification = @"QSChangeManage
  *  Deletes all tracking information and detaches from local model.
  */
 - (void)deleteChangeTracking;
+
+/**
+ *  Merge policy to be used in case of conflicts. Default value is `QSCloudKitSynchronizerMergePolicyServer`
+ */
+@property (nonatomic, assign) QSCloudKitSynchronizerMergePolicy mergePolicy;
 
 @end

@@ -1,12 +1,30 @@
 #use_frameworks!
 
-target 'SyncKit_Example' do
-  pod 'SyncKit', :path => '../'
+workspace 'SyncKit.xcworkspace'
 
-  target 'SyncKit_Tests' do
+target 'SyncKitCoreDataExample' do
+	
+  project 'SyncKitCoreDataExample'
+
+  pod 'SyncKit/CoreData', :path => '../'
+
+  target 'SyncKitCoreDataExampleTests' do
     inherit! :search_paths
 
 	pod 'OCMock'
     
   end
+end
+
+target 'SyncKitRealmExample' do
+
+	project 'SyncKitRealmExample'
+
+	pod 'SyncKit/Realm', :path => '../'
+
+	pod 'Realm'
+
+	target 'SyncKitRealmExampleTests' do
+		inherit! :search_paths
+	end
 end

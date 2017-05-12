@@ -12,6 +12,7 @@
 @interface QSMockChangeManager : NSObject <QSChangeManager>
 
 @property (nonatomic, strong) NSArray *objects;
+@property (nonatomic, assign) QSCloudKitSynchronizerMergePolicy mergePolicy;
 
 - (void)markForUpload:(NSArray *)objects;
 - (void)markForDeletion:(NSArray *)objects;

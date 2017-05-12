@@ -31,7 +31,6 @@
     NSString * storeDirectory = [[self.storeURL path] stringByDeletingLastPathComponent];
     if ([fileManager fileExistsAtPath:storeDirectory] == NO) {
         if (![fileManager createDirectoryAtPath:storeDirectory withIntermediateDirectories:YES attributes:nil error:&error]) {
-            DLog(@"QSCoreDataStack: FAILED to create directory: %@ :%@",storeDirectory, error);
             return NO;
         }
     }
@@ -77,10 +76,7 @@
     }
     
     if (!self.store) {
-        DLog(@"Failed to add store. Error: %@", error);
         abort();
-    } else {
-        DLog(@"Successfully added store: %@", self.store);
     }
 }
 

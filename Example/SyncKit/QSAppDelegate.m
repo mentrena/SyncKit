@@ -142,7 +142,7 @@
 - (QSCloudKitSynchronizer *)synchronizer
 {
     if (!_synchronizer) {
-        _synchronizer = [QSCloudKitSynchronizer cloudKitSynchronizerWithContainerName:@"iCloud.com.synckit.example" managedObjectContext:self.managedObjectContext changeManagerDelegate:self];
+        _synchronizer = [QSCloudKitSynchronizer cloudKitSynchronizerWithContainerName:@"your-container-name" managedObjectContext:self.managedObjectContext changeManagerDelegate:self];
     }
     return _synchronizer;
 }

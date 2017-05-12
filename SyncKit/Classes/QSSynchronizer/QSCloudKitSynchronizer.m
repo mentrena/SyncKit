@@ -7,7 +7,7 @@
 //
 
 #import "QSCloudKitSynchronizer.h"
-#import "QSRecord+CoreDataClass.h"
+#import "SyncKitLog.h"
 #import <CloudKit/CloudKit.h>
 
 #define callBlockIfNotNil(block, ...) if (block){block(__VA_ARGS__);}
@@ -74,12 +74,6 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
         self.dispatchQueue = dispatch_queue_create("QSCloudKitSynchronizer", 0);
     }
     return self;
-}
-
-- (void)dealloc
-{
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSManagedObjectContextDidSaveNotification object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSManagedObjectContextWillSaveNotification object:nil];
 }
 
 - (NSString *)userDefaultsKeyForKey:(NSString *)key
@@ -207,8 +201,8 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
             [weakSelf eraseLocal];
         } else {
             DLog(@"QSCloudKitSynchronizer >> Error: %@", error);
-            callBlockIfNotNil(completion, error);
         }
+        callBlockIfNotNil(completion, error);
     }];
 }
 
@@ -557,7 +551,7 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
     __weak QSCloudKitSynchronizer *weakSelf = self;
     __block BOOL hasChanged = NO;
     
-    recordChangesOperation.desiredKeys = @[@"recordID", @"modificationDate"];
+    recordChangesOperation.desiredKeys = @[@"recordID", QSCloudKitDeviceUUIDKey];
     
     recordChangesOperation.recordChangedBlock = ^(CKRecord *record) {
         if ([record[QSCloudKitDeviceUUIDKey] isEqual:self.deviceIdentifier] == NO) {
