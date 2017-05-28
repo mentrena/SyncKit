@@ -1,1 +1,0 @@
-../../../Realm/include/RLMSyncConfiguration.h

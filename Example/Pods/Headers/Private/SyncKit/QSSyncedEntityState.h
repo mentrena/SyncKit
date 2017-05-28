@@ -1,1 +1,0 @@
-../../../../../SyncKit/Classes/QSSynchronizer/QSSyncedEntityState.h
