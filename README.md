@@ -70,7 +70,7 @@ QSCloudKitSynchronizer will upload any pending changes from your change manager 
 
 Import the right QSCloudKitSynchronizer category for your data stack and create a synchronizer:
 
-####Core Data
+**Core Data**
 
 ```objc
 
@@ -122,7 +122,7 @@ QSCoreDataChangeManager needs a QSCoreDataChangeManagerDelegate to save the loca
 
 You might want to add some extra logic if you don't always want to persist CloudKit changes, if you use an undo manager, or if your Core Data stack is more complex.
 
-####Realm
+**Realm**
 
 ```objc
 
@@ -144,7 +144,7 @@ self.synchronizer = [QSCloudKitSynchronizer cloudKitSynchronizerWithContainerNam
 
 ## Identifying objects
 
-####Core Data
+**Core Data**
 
 By default SyncKit will use the NSManagedObjectID of your objects to keep track of them, this allows your model to be completely agnostic to whether SyncKit is in use or not. However, there's two possible cases where this won't be enough:
 
@@ -159,7 +159,7 @@ If you were using SyncKit before 0.3.0 and you want to adopt the `QSPrimaryKey` 
 
 Or you could disable SyncKit and re-enable it with an empty NSPersistentStore to restore using data currently on iCloud.
 
-####Realm
+**Realm**
 
 Your model classes must have a primary key.
 
