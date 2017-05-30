@@ -178,7 +178,7 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
         NSArray *entities = self.targetContext.persistentStoreCoordinator.managedObjectModel.entities;
         NSMutableDictionary *primaryKeys = [NSMutableDictionary dictionary];
         for (NSEntityDescription *entityDescription in entities) {
-            Class entityClass = NSClassFromString(entityDescription.name);
+            Class entityClass = NSClassFromString(entityDescription.managedObjectClassName);
             if ([entityClass conformsToProtocol:@protocol(QSPrimaryKey)]) {
                 primaryKeys[entityDescription.name] = [entityClass primaryKey];
             }
