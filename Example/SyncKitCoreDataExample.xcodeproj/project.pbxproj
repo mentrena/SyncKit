@@ -21,6 +21,8 @@
 		6402A03C1E16D303005FE304 /* QSCompany2+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 6402A0361E16D303005FE304 /* QSCompany2+CoreDataProperties.m */; };
 		6402A03D1E16D303005FE304 /* QSEmployee2.m in Sources */ = {isa = PBXBuildFile; fileRef = 6402A0381E16D303005FE304 /* QSEmployee2.m */; };
 		6402A03E1E16D303005FE304 /* QSEmployee2+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 6402A03A1E16D303005FE304 /* QSEmployee2+CoreDataProperties.m */; };
+		6409659E1EDF1588005BCF0F /* QSExample.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 644B20331D4811BE00C131CD /* QSExample.xcdatamodeld */; };
+		6409659F1EDF158D005BCF0F /* QSExample2.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6402A0101E16CBE6005FE304 /* QSExample2.xcdatamodeld */; };
 		641F76D71ED3EBBE00107A88 /* SyncKitCoreDataExampleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 641F76D61ED3EBBE00107A88 /* SyncKitCoreDataExampleTests.m */; };
 		641F76DE1ED3EBDA00107A88 /* QSCloudKitSynchronizerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 64000CA41D451F5A006ACD20 /* QSCloudKitSynchronizerTests.m */; };
 		641F76DF1ED3EBDC00107A88 /* QSCoreDataChangeManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 644B202D1D480F1700C131CD /* QSCoreDataChangeManagerTests.m */; };
@@ -548,9 +550,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				641F76DE1ED3EBDA00107A88 /* QSCloudKitSynchronizerTests.m in Sources */,
+				6409659F1EDF158D005BCF0F /* QSExample2.xcdatamodeld in Sources */,
 				64377B0B1ED6D394003FB86F /* QSMockDatabase.m in Sources */,
 				64377B0C1ED6D397003FB86F /* QSObject.m in Sources */,
 				641F76D71ED3EBBE00107A88 /* SyncKitCoreDataExampleTests.m in Sources */,
+				6409659E1EDF1588005BCF0F /* QSExample.xcdatamodeld in Sources */,
 				641F76DF1ED3EBDC00107A88 /* QSCoreDataChangeManagerTests.m in Sources */,
 				64377B0A1ED6D391003FB86F /* QSMockChangeManager.m in Sources */,
 			);
