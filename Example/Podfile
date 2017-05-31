@@ -5,6 +5,7 @@ workspace 'SyncKit.xcworkspace'
 target 'SyncKitCoreDataExample' do
 	
   project 'SyncKitCoreDataExample'
+  platform :ios, '9.0'
 
   pod 'SyncKit/CoreData', :path => '../'
 
@@ -19,6 +20,7 @@ end
 target 'SyncKitRealmExample' do
 
 	project 'SyncKitRealmExample'
+ 	platform :ios, '9.0'
 
 	pod 'SyncKit/Realm', :path => '../'
 

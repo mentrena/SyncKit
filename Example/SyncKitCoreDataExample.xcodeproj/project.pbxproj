@@ -681,6 +681,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SyncKit/SyncKitCoreDataExample-Prefix.pch";
 				INFOPLIST_FILE = "SyncKit/SyncKitCoreDataExample-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = com.synckit.SyncKitCoreDataExample;
@@ -704,6 +705,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SyncKit/SyncKitCoreDataExample-Prefix.pch";
 				INFOPLIST_FILE = "SyncKit/SyncKitCoreDataExample-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = com.synckit.SyncKitCoreDataExample;
