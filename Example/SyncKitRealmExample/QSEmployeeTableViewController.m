@@ -99,6 +99,14 @@
     }
 }
 
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    QSEmployee *employee = [self.employees objectAtIndex:indexPath.row];
+    [self.realm beginWriteTransaction];
+    employee.name = [employee.name stringByAppendingString:@"!"];
+    [self.realm commitWriteTransaction];
+}
+
 #pragma mark - Actions
 
 - (IBAction)insertNewEmployee:(id)sender

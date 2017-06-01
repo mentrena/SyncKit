@@ -185,8 +185,15 @@ You should then be able to run the sample app.
 
 ## Limitations
 
+**Core Data**
+
 CloudKit doesn't support ordered relations or many-to-many relationships, so those won't work.
-For the same reason, when using Realm, SyncKit will ignore your RLMArray properties, so it's recommended to model your many-to-one relationships using RLMLinkingObjects and Object properties:
+
+**Realm**
+
+At the moment, SyncKit can only track changes that were made in your Realm if they were made on the main thread.
+
+CloudKit doesn't support ordered relations or many-to-many relationships, so SyncKit will ignore your RLMArray properties. It is recommended to model your many-to-one relationships using RLMLinkingObjects and Object properties:
 
 ```objc
 @interface QSCompany : RLMObject
