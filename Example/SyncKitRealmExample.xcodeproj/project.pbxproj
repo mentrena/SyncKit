@@ -11,6 +11,7 @@
 		4B63AAD53E8AE3AA3B8D7D1F /* libPods-SyncKitRealmTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 912D5D1C21FE8F2AB9386170 /* libPods-SyncKitRealmTests.a */; };
 		640892771EBEFBE6006CD4F9 /* SyncKitRealmTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 640892761EBEFBE6006CD4F9 /* SyncKitRealmTests.m */; };
 		6408927E1EBEFBEA006CD4F9 /* QSRealmChangeManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6408926E1EBEF4C0006CD4F9 /* QSRealmChangeManagerTests.m */; };
+		6460A4151EE1D05B00C50931 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6460A4141EE1D05B00C50931 /* CloudKit.framework */; };
 		64F2927D1ECEA7C3000026F1 /* QSCompany.m in Sources */ = {isa = PBXBuildFile; fileRef = 64F2927A1ECEA7C3000026F1 /* QSCompany.m */; };
 		64F2927E1ECEA7C3000026F1 /* QSEmployee.m in Sources */ = {isa = PBXBuildFile; fileRef = 64F2927C1ECEA7C3000026F1 /* QSEmployee.m */; };
 		64F292941ECEA7F0000026F1 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 64F2928F1ECEA7F0000026F1 /* AppDelegate.m */; };
@@ -45,6 +46,7 @@
 		640892741EBEFBE5006CD4F9 /* SyncKitRealmExampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SyncKitRealmExampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		640892761EBEFBE6006CD4F9 /* SyncKitRealmTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SyncKitRealmTests.m; sourceTree = "<group>"; };
 		640892781EBEFBE6006CD4F9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6460A4141EE1D05B00C50931 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		64D5D2BF1EBB58630005BFCE /* SyncKitRealmExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SyncKitRealmExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		64F292781ECEA75E000026F1 /* SyncKitRealm.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = SyncKitRealm.entitlements; path = SyncKitRealmExample/SyncKitRealm.entitlements; sourceTree = SOURCE_ROOT; };
 		64F292791ECEA7C3000026F1 /* QSCompany.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QSCompany.h; path = SyncKitRealmExample/QSCompany.h; sourceTree = SOURCE_ROOT; };
@@ -84,6 +86,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6460A4151EE1D05B00C50931 /* CloudKit.framework in Frameworks */,
 				260FC208F1BF4066EC94E97D /* libPods-SyncKitRealm.a in Frameworks */,
 				6D42B3C56BDF35A8032F8B5B /* libPods-SyncKitRealmExample.a in Frameworks */,
 			);
@@ -95,6 +98,7 @@
 		088F106C9F89642E68B2749D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				6460A4141EE1D05B00C50931 /* CloudKit.framework */,
 				87C33DDCB8801A33C99C0236 /* libPods-SyncKitRealm.a */,
 				912D5D1C21FE8F2AB9386170 /* libPods-SyncKitRealmTests.a */,
 				BAAD33E0F60E6E3D6EBCE091 /* libPods-SyncKitRealmExample.a */,
@@ -261,7 +265,7 @@
 								enabled = 1;
 							};
 							com.apple.iCloud = {
-								enabled = 0;
+								enabled = 1;
 							};
 						};
 					};
