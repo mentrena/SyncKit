@@ -136,7 +136,7 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
         
         for (NSEntityDescription *entityDescription in entities) {
             NSError *error = nil;
-            NSString *primaryKey = [self identifierFieldNameForEntityOfType:entityDescription.managedObjectClassName];
+            NSString *primaryKey = [self identifierFieldNameForEntityOfType:entityDescription.name];
             NSArray *objectIDs;
             if (primaryKey) {
                 //Get object identifiers using primary key
