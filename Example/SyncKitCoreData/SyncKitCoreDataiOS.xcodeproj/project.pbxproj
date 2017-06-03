@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		649AF58E1EE31D07004A9220 /* QSCloudKitSyncModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 649AF58C1EE31D07004A9220 /* QSCloudKitSyncModel.xcdatamodeld */; };
 		64F292311ECEA5F1000026F1 /* SyncKitCoreData.h in Headers */ = {isa = PBXBuildFile; fileRef = 64F2922F1ECEA5F1000026F1 /* SyncKitCoreData.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		64F2923B1ECEA627000026F1 /* QSChangeManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 64F292371ECEA627000026F1 /* QSChangeManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		64F2923C1ECEA627000026F1 /* QSCloudKitSynchronizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 64F292381ECEA627000026F1 /* QSCloudKitSynchronizer.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -38,10 +39,10 @@
 		64F292711ECEA6DD000026F1 /* QSSyncedEntity+CoreDataClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 64F292651ECEA6DD000026F1 /* QSSyncedEntity+CoreDataClass.m */; };
 		64F292721ECEA6DD000026F1 /* QSSyncedEntity+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 64F292661ECEA6DD000026F1 /* QSSyncedEntity+CoreDataProperties.m */; };
 		64F292741ECEA6F8000026F1 /* QSSyncedEntityState.h in Headers */ = {isa = PBXBuildFile; fileRef = 64F292731ECEA6F8000026F1 /* QSSyncedEntityState.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		64F292771ECEA709000026F1 /* QSCloudKitSyncModel.xcdatamodeld in Resources */ = {isa = PBXBuildFile; fileRef = 64F292761ECEA709000026F1 /* QSCloudKitSyncModel.xcdatamodeld */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		649AF58D1EE31D07004A9220 /* QSCloudKitSyncModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = QSCloudKitSyncModel.xcdatamodel; sourceTree = "<group>"; };
 		64F2922C1ECEA5F1000026F1 /* SyncKitCoreData.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SyncKitCoreData.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		64F2922F1ECEA5F1000026F1 /* SyncKitCoreData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SyncKitCoreData.h; sourceTree = "<group>"; };
 		64F292301ECEA5F1000026F1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -75,7 +76,6 @@
 		64F292651ECEA6DD000026F1 /* QSSyncedEntity+CoreDataClass.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "QSSyncedEntity+CoreDataClass.m"; path = "../../../SyncKit/Classes/CoreData/QSSyncedEntity+CoreDataClass.m"; sourceTree = "<group>"; };
 		64F292661ECEA6DD000026F1 /* QSSyncedEntity+CoreDataProperties.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "QSSyncedEntity+CoreDataProperties.m"; path = "../../../SyncKit/Classes/CoreData/QSSyncedEntity+CoreDataProperties.m"; sourceTree = "<group>"; };
 		64F292731ECEA6F8000026F1 /* QSSyncedEntityState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = QSSyncedEntityState.h; path = ../../../SyncKit/Classes/QSSynchronizer/QSSyncedEntityState.h; sourceTree = "<group>"; };
-		64F292751ECEA709000026F1 /* QSCloudKitSyncModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = QSCloudKitSyncModel.xcdatamodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -108,7 +108,7 @@
 		64F2922E1ECEA5F1000026F1 /* SyncKitCoreData */ = {
 			isa = PBXGroup;
 			children = (
-				64F292761ECEA709000026F1 /* QSCloudKitSyncModel.xcdatamodeld */,
+				649AF58C1EE31D07004A9220 /* QSCloudKitSyncModel.xcdatamodeld */,
 				64F292731ECEA6F8000026F1 /* QSSyncedEntityState.h */,
 				64F2925B1ECEA6DD000026F1 /* NSManagedObjectContext+QSFetch.m */,
 				64F2925C1ECEA6DD000026F1 /* QSCloudKitSynchronizer+CoreData.m */,
@@ -232,7 +232,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				64F292771ECEA709000026F1 /* QSCloudKitSyncModel.xcdatamodeld in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -243,6 +242,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				649AF58E1EE31D07004A9220 /* QSCloudKitSyncModel.xcdatamodeld in Sources */,
 				64F292401ECEA632000026F1 /* QSCloudKitSynchronizer.m in Sources */,
 				64F292671ECEA6DD000026F1 /* NSManagedObjectContext+QSFetch.m in Sources */,
 				64F292681ECEA6DD000026F1 /* QSCloudKitSynchronizer+CoreData.m in Sources */,
@@ -420,15 +420,16 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
-		64F292761ECEA709000026F1 /* QSCloudKitSyncModel.xcdatamodeld */ = {
+		649AF58C1EE31D07004A9220 /* QSCloudKitSyncModel.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
-				64F292751ECEA709000026F1 /* QSCloudKitSyncModel.xcdatamodel */,
+				649AF58D1EE31D07004A9220 /* QSCloudKitSyncModel.xcdatamodel */,
 			);
-			currentVersion = 64F292751ECEA709000026F1 /* QSCloudKitSyncModel.xcdatamodel */;
+			currentVersion = 649AF58D1EE31D07004A9220 /* QSCloudKitSyncModel.xcdatamodel */;
 			name = QSCloudKitSyncModel.xcdatamodeld;
 			path = ../../../SyncKit/Classes/CoreData/QSCloudKitSyncModel.xcdatamodeld;
 			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
 		};
 /* End XCVersionGroup section */
 	};
