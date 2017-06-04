@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		260FC208F1BF4066EC94E97D /* libPods-SyncKitRealm.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 87C33DDCB8801A33C99C0236 /* libPods-SyncKitRealm.a */; };
-		4B63AAD53E8AE3AA3B8D7D1F /* libPods-SyncKitRealmTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 912D5D1C21FE8F2AB9386170 /* libPods-SyncKitRealmTests.a */; };
 		640892771EBEFBE6006CD4F9 /* SyncKitRealmTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 640892761EBEFBE6006CD4F9 /* SyncKitRealmTests.m */; };
 		6408927E1EBEFBEA006CD4F9 /* QSRealmChangeManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6408926E1EBEF4C0006CD4F9 /* QSRealmChangeManagerTests.m */; };
 		6460A4151EE1D05B00C50931 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6460A4141EE1D05B00C50931 /* CloudKit.framework */; };
@@ -48,6 +46,7 @@
 		640892781EBEFBE6006CD4F9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6460A4141EE1D05B00C50931 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		64D5D2BF1EBB58630005BFCE /* SyncKitRealmExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SyncKitRealmExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		64DC95F51EE484CF002497E1 /* libSyncKit-Core-Realm.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSyncKit-Core-Realm.a"; path = "../../../../Library/Developer/Xcode/DerivedData/SyncKit-fdmpfoenjjvidjgdyuqkgxiluvfm/Build/Products/Debug-iphonesimulator/SyncKit-Core-Realm/libSyncKit-Core-Realm.a"; sourceTree = "<group>"; };
 		64F292781ECEA75E000026F1 /* SyncKitRealm.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = SyncKitRealm.entitlements; path = SyncKitRealmExample/SyncKitRealm.entitlements; sourceTree = SOURCE_ROOT; };
 		64F292791ECEA7C3000026F1 /* QSCompany.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QSCompany.h; path = SyncKitRealmExample/QSCompany.h; sourceTree = SOURCE_ROOT; };
 		64F2927A1ECEA7C3000026F1 /* QSCompany.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = QSCompany.m; path = SyncKitRealmExample/QSCompany.m; sourceTree = SOURCE_ROOT; };
@@ -77,7 +76,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4B63AAD53E8AE3AA3B8D7D1F /* libPods-SyncKitRealmTests.a in Frameworks */,
 				8EDE0C2CEFC4E9E939841A6E /* libPods-SyncKitRealmExampleTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -87,7 +85,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				6460A4151EE1D05B00C50931 /* CloudKit.framework in Frameworks */,
-				260FC208F1BF4066EC94E97D /* libPods-SyncKitRealm.a in Frameworks */,
 				6D42B3C56BDF35A8032F8B5B /* libPods-SyncKitRealmExample.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -98,6 +95,7 @@
 		088F106C9F89642E68B2749D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				64DC95F51EE484CF002497E1 /* libSyncKit-Core-Realm.a */,
 				6460A4141EE1D05B00C50931 /* CloudKit.framework */,
 				87C33DDCB8801A33C99C0236 /* libPods-SyncKitRealm.a */,
 				912D5D1C21FE8F2AB9386170 /* libPods-SyncKitRealmTests.a */,
@@ -586,6 +584,7 @@
 				INFOPLIST_FILE = SyncKitRealmExample/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = com.mentrena.SyncKitRealmDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -605,6 +604,7 @@
 				INFOPLIST_FILE = SyncKitRealmExample/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = com.mentrena.SyncKitRealmDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
