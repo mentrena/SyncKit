@@ -416,6 +416,7 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
         return;
     }
     
+    [provider.persistenceRealm beginWriteTransaction];
     [provider.targetRealm beginWriteTransaction];
     for (QSPendingRelationship *relationship in pendingRelationships) {
         QSSyncedEntity *syncedEntity = relationship.forSyncedEntity;
@@ -438,7 +439,10 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
         RLMObject *targetObject = [targetObjectClass objectInRealm:provider.targetRealm forPrimaryKey:relationship.targetIdentifier];
         
         [origin setValue:targetObject forKey:relationship.relationshipName];
+        
+        [provider.persistenceRealm deleteObject:relationship];
     }
+    [provider.persistenceRealm commitWriteTransaction];
     [provider.targetRealm commitWriteTransaction];
 }
 
