@@ -14,6 +14,18 @@
 #import "QSPendingRelationship.h"
 #import "QSCloudKitSynchronizer.h"
 
+void runOnMainQueue(void (^block)(void))
+{
+    if ([NSThread isMainThread])
+    {
+        block();
+    }
+    else
+    {
+        dispatch_sync(dispatch_get_main_queue(), block);
+    }
+}
+
 @interface QSRealmProvider : NSObject
 
 @property (nonatomic, readonly, strong) RLMRealm *persistenceRealm;
@@ -91,7 +103,6 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
 @property (nonatomic, strong) QSRealmProvider *mainRealmProvider;
 
 @property (nonatomic, assign) BOOL hasChanges;
-@property (nonatomic, strong) dispatch_queue_t dispatchQueue;
 
 @end
 
@@ -104,13 +115,14 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
         self.persistenceConfiguration = configuration;
         self.targetConfiguration = targetRealmConfiguration;
         self.recordZoneID = zoneID;
-        self.dispatchQueue = dispatch_queue_create("QSRealmChangeManager", DISPATCH_QUEUE_CONCURRENT);
         
         self.objectNotificationTokens = [NSMutableDictionary dictionary];
         self.collectionNotificationTokens = [NSMutableArray array];
         self.pendingTrackingUpdates = [NSMutableArray array];
         
-        [self setup];
+        runOnMainQueue(^{
+            [self setup];
+        });
     }
     return self;
 }
@@ -132,14 +144,9 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
     return configuration;
 }
 
-- (QSRealmProvider *)defaultProvider
-{
-    return [[QSRealmProvider alloc] initWithPersistenceConfiguration:self.persistenceConfiguration targetConfiguration:self.targetConfiguration];
-}
-
 - (void)setup
 {
-    self.mainRealmProvider = [self defaultProvider];
+    self.mainRealmProvider = [[QSRealmProvider alloc] initWithPersistenceConfiguration:self.persistenceConfiguration targetConfiguration:self.targetConfiguration];
     
     BOOL needsInitialSetup = [[QSSyncedEntity allObjectsInRealm:self.mainRealmProvider.persistenceRealm] count] == 0;
     
@@ -219,12 +226,11 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
 
 - (void)updateObjectTracking
 {
-    QSRealmProvider *provider = [self defaultProvider];
     for (QSObjectUpdate *update in self.pendingTrackingUpdates) {
         if (update.updateType == QSObjectUpdateTypeInsertion) {
             [self updateTrackingForInsertedObject:update.object withIdentifier:update.identifier entityName:update.entityType provider:self.mainRealmProvider];
         } else {
-            [self updateTrackingForObjectIdentifier:update.identifier entityName:update.entityType inserted:NO deleted:(update.updateType == QSObjectUpdateTypeDeletion) changes:update.changes realmProvider:provider];
+            [self updateTrackingForObjectIdentifier:update.identifier entityName:update.entityType inserted:NO deleted:(update.updateType == QSObjectUpdateTypeDeletion) changes:update.changes realmProvider:self.mainRealmProvider];
         }
     }
     [self.pendingTrackingUpdates removeAllObjects];
@@ -234,7 +240,7 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
 {
     __weak QSRealmChangeManager *weakSelf = self;
     RLMNotificationToken *token = [object addNotificationBlock:^(BOOL deleted, NSArray<RLMPropertyChange *> * _Nullable changes, NSError * _Nullable error) {
-        [weakSelf updateTrackingForObjectIdentifier:identifier entityName:entityName inserted:NO deleted:deleted changes:changes realmProvider:self.mainRealmProvider];
+        [weakSelf updateTrackingForObjectIdentifier:identifier entityName:entityName inserted:NO deleted:deleted changes:changes realmProvider:provider];
     }];
     [self.objectNotificationTokens setObject:token forKey:identifier];
     
@@ -243,12 +249,10 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
 
 - (void)updateTrackingForObjectIdentifier:(NSString *)objectIdentifier entityName:(NSString *)entityName inserted:(BOOL)inserted deleted:(BOOL)deleted changes:(NSArray<RLMPropertyChange *> *)changes realmProvider:(QSRealmProvider *)provider
 {
-    BOOL isNewChange = NO;
     NSString *identifier = [NSString stringWithFormat:@"%@.%@", entityName, objectIdentifier];
-    QSSyncedEntity *syncedEntity = [self syncedEntityForObjectWithIdentifier:identifier inRealm:self.mainRealmProvider.persistenceRealm];
+    QSSyncedEntity *syncedEntity = [self syncedEntityForObjectWithIdentifier:identifier inRealm:provider.persistenceRealm];
     if (!syncedEntity) {
         syncedEntity = [self createSyncedEntityForObjectOfType:entityName identifier:objectIdentifier inRealm:provider.persistenceRealm];
-        isNewChange = YES;
     } else if (!inserted) {
         NSMutableSet *changedKeys;
         if (syncedEntity.changedKeys) {
@@ -258,20 +262,17 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
         }
         
         for (RLMPropertyChange *propertyChange in changes) {
-            if (!propertyChange.previousValue) {
-                [changedKeys addObject:propertyChange.name];
-                if (!isNewChange) {
-                    isNewChange = YES;
-                }
-            }
+            [changedKeys addObject:propertyChange.name];
         }
         
-        if (isNewChange || deleted) {
-            [provider.persistenceRealm beginWriteTransaction];
-            syncedEntity.state = deleted ? @(QSSyncedEntityStateDeleted) : @(QSSyncedEntityStateChanged);
-            syncedEntity.changedKeys = [[changedKeys allObjects] componentsJoinedByString:@","];
-            [provider.persistenceRealm commitWriteTransaction];
-        }
+        [provider.persistenceRealm beginWriteTransaction];
+        syncedEntity.changedKeys = [[changedKeys allObjects] componentsJoinedByString:@","];
+        if (deleted) {
+            syncedEntity.state = @(QSSyncedEntityStateDeleted);
+        } else if ([syncedEntity.state integerValue] == QSSyncedEntityStateSynced && syncedEntity.changedKeys.length) {
+            syncedEntity.state = @(QSSyncedEntityStateChanged);
+        } // If state was New then leave it as that
+        [provider.persistenceRealm commitWriteTransaction];
     }
     
     if (deleted) {
@@ -280,14 +281,11 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
             [self.objectNotificationTokens removeObjectForKey:objectIdentifier];
             [token stop];
         }
-        isNewChange = YES;
     }
     
-    if (!self.hasChanges && isNewChange) {
+    if (!self.hasChanges) {
         self.hasChanges = YES;
-        if (self.hasChanges) {
-            [[NSNotificationCenter defaultCenter] postNotificationName:QSChangeManagerHasChangesNotification object:self];
-        }
+        [[NSNotificationCenter defaultCenter] postNotificationName:QSChangeManagerHasChangesNotification object:self];
     }
 }
 
@@ -443,7 +441,7 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
         [provider.persistenceRealm deleteObject:relationship];
     }
     [provider.persistenceRealm commitWriteTransaction];
-    [provider.targetRealm commitWriteTransaction];
+    [self commitTargetWriteTransactionWithoutNotifying];
 }
 
 - (void)saveRecord:(CKRecord *)record forSyncedEntity:(QSSyncedEntity *)syncedEntity
@@ -533,6 +531,12 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
     return state + 1;
 }
 
+- (void)commitTargetWriteTransactionWithoutNotifying
+{
+    NSArray *tokens = [self.objectNotificationTokens allValues];
+    [self.mainRealmProvider.targetRealm commitWriteTransactionWithoutNotifying:tokens error:nil];
+}
+
 #pragma mark - QSChangeManager
 
 
@@ -546,30 +550,28 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
         return;
     }
     
-    dispatch_sync(self.dispatchQueue, ^{
-        QSRealmProvider *provider = [self defaultProvider];
-        
-        [provider.persistenceRealm beginWriteTransaction];
-        [provider.targetRealm beginWriteTransaction];
+    runOnMainQueue(^{
+        [self.mainRealmProvider.persistenceRealm beginWriteTransaction];
+        [self.mainRealmProvider.targetRealm beginWriteTransaction];
         for (CKRecord *record in records) {
-            QSSyncedEntity *syncedEntity = [self syncedEntityForObjectWithIdentifier:record.recordID.recordName inRealm:provider.persistenceRealm];
+            QSSyncedEntity *syncedEntity = [self syncedEntityForObjectWithIdentifier:record.recordID.recordName inRealm:self.mainRealmProvider.persistenceRealm];
             
             if (!syncedEntity) {
-                syncedEntity = [self createSyncedEntityForRecord:record realmProvider:provider];
+                syncedEntity = [self createSyncedEntityForRecord:record realmProvider:self.mainRealmProvider];
             }
             
             Class objectClass = NSClassFromString(record.recordType);
             NSString *objectIdentifier = [self objectIdentifierForSyncedEntity:syncedEntity];
-            RLMObject *object = [objectClass objectInRealm:provider.targetRealm forPrimaryKey:objectIdentifier];
+            RLMObject *object = [objectClass objectInRealm:self.mainRealmProvider.targetRealm forPrimaryKey:objectIdentifier];
             
-            [self applyChangesInRecord:record toObject:object withSyncedEntity:syncedEntity realmProvider:provider];
+            [self applyChangesInRecord:record toObject:object withSyncedEntity:syncedEntity realmProvider:self.mainRealmProvider];
             
             [self saveRecord:record forSyncedEntity:syncedEntity];
         }
         // Order is important here. Notifications might be delivered after targetRealm is saved and
         // it's convenient if the persistenceRealm is not in a write transaction
-        [provider.persistenceRealm commitWriteTransaction];
-        [provider.targetRealm commitWriteTransaction];
+        [self.mainRealmProvider.persistenceRealm commitWriteTransaction];
+        [self commitTargetWriteTransactionWithoutNotifying];
     });
 }
 
@@ -579,19 +581,17 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
         return;
     }
     
-    dispatch_sync(self.dispatchQueue, ^{
-        QSRealmProvider *provider = [self defaultProvider];
-        
-        [provider.persistenceRealm beginWriteTransaction];
-        [provider.targetRealm beginWriteTransaction];
+    runOnMainQueue(^{
+        [self.mainRealmProvider.persistenceRealm beginWriteTransaction];
+        [self.mainRealmProvider.targetRealm beginWriteTransaction];
         for (CKRecordID *recordID in recordIDs) {
-            QSSyncedEntity *syncedEntity = [self syncedEntityForObjectWithIdentifier:recordID.recordName inRealm:provider.persistenceRealm];
+            QSSyncedEntity *syncedEntity = [self syncedEntityForObjectWithIdentifier:recordID.recordName inRealm:self.mainRealmProvider.persistenceRealm];
             if (syncedEntity) {
                 Class objectClass = NSClassFromString(syncedEntity.entityType);
                 NSString *objectIdentifier = [self objectIdentifierForSyncedEntity:syncedEntity];
-                RLMObject *object = [objectClass objectInRealm:provider.targetRealm forPrimaryKey:objectIdentifier];
+                RLMObject *object = [objectClass objectInRealm:self.mainRealmProvider.targetRealm forPrimaryKey:objectIdentifier];
                 
-                [provider.persistenceRealm deleteObject:syncedEntity];
+                [self.mainRealmProvider.persistenceRealm deleteObject:syncedEntity];
                 
                 if (object) {
                     RLMNotificationToken *token = [self.objectNotificationTokens objectForKey:objectIdentifier];
@@ -602,12 +602,12 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
                         });
                     }
                     
-                    [provider.targetRealm deleteObject:object];
+                    [self.mainRealmProvider.targetRealm deleteObject:object];
                 }
             }
         }
-        [provider.persistenceRealm commitWriteTransaction];
-        [provider.targetRealm commitWriteTransaction];
+        [self.mainRealmProvider.persistenceRealm commitWriteTransaction];
+        [self commitTargetWriteTransactionWithoutNotifying];
     });
 }
 
@@ -615,9 +615,8 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
 - (void)persistImportedChangesWithCompletion:(void(^)(NSError *error))completion
 {
     //Apply pending relationships
-    dispatch_sync(self.dispatchQueue, ^{
-        QSRealmProvider *provider = [self defaultProvider];
-        [self applyPendingRelationshipsWithRealmProvider:provider];
+    runOnMainQueue(^{
+        [self applyPendingRelationshipsWithRealmProvider:self.mainRealmProvider];
     });
     
     completion(nil);
@@ -627,9 +626,7 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
 - (NSArray *)recordsToUploadWithLimit:(NSInteger)limit
 {
     __block NSArray *recordsArray = @[];
-    dispatch_sync(self.dispatchQueue, ^{
-        QSRealmProvider *provider = [[QSRealmProvider alloc] initWithPersistenceConfiguration:self.persistenceConfiguration targetConfiguration:self.targetConfiguration];
-        
+    runOnMainQueue(^{
         NSInteger recordLimit = limit;
         QSSyncedEntityState uploadingState = QSSyncedEntityStateNew;
         
@@ -637,7 +634,7 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
         
         NSInteger innerLimit = recordLimit;
         while (recordsArray.count < recordLimit && uploadingState < QSSyncedEntityStateDeleted) {
-            recordsArray = [recordsArray arrayByAddingObjectsFromArray:[self recordsToUploadWithState:uploadingState limit:innerLimit realmProvider:provider]];
+            recordsArray = [recordsArray arrayByAddingObjectsFromArray:[self recordsToUploadWithState:uploadingState limit:innerLimit realmProvider:self.mainRealmProvider]];
             uploadingState = [self nextStateToSyncAfter:uploadingState];
             innerLimit = recordLimit - recordsArray.count;
         }
@@ -649,14 +646,16 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
 
 - (void)didUploadRecords:(NSArray *)savedRecords
 {
-    dispatch_sync(self.dispatchQueue, ^{
-        QSRealmProvider *provider = [self defaultProvider];
-        [provider.persistenceRealm beginWriteTransaction];
+    runOnMainQueue(^{
+        [self.mainRealmProvider.persistenceRealm beginWriteTransaction];
         for (CKRecord *record in savedRecords) {
-            QSSyncedEntity *syncedEntity = [QSSyncedEntity objectInRealm:provider.persistenceRealm forPrimaryKey:record.recordID.recordName];
-            syncedEntity.state = @(QSSyncedEntityStateSynced);
+            QSSyncedEntity *syncedEntity = [QSSyncedEntity objectInRealm:self.mainRealmProvider.persistenceRealm forPrimaryKey:record.recordID.recordName];
+            if (syncedEntity) {
+                syncedEntity.state = @(QSSyncedEntityStateSynced);
+                [self saveRecord:record forSyncedEntity:syncedEntity];
+            }
         }
-        [provider.persistenceRealm commitWriteTransaction];
+        [self.mainRealmProvider.persistenceRealm commitWriteTransaction];
     });
 }
 
@@ -664,9 +663,8 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
 - (NSArray *)recordIDsMarkedForDeletionWithLimit:(NSInteger)limit
 {
     NSMutableArray *recordIDs = [NSMutableArray array];
-    dispatch_sync(self.dispatchQueue, ^{
-        QSRealmProvider *provider = [self defaultProvider];
-        RLMResults<QSSyncedEntity *> *deletedEntities = [QSSyncedEntity objectsInRealm:provider.persistenceRealm where:@"state == %@", @(QSSyncedEntityStateDeleted)];
+    runOnMainQueue(^{
+        RLMResults<QSSyncedEntity *> *deletedEntities = [QSSyncedEntity objectsInRealm:self.mainRealmProvider.persistenceRealm where:@"state == %@", @(QSSyncedEntityStateDeleted)];
         
         for (QSSyncedEntity *syncedEntity in deletedEntities) {
             if (recordIDs.count > limit) {
@@ -683,35 +681,35 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
 
 - (void)didDeleteRecordIDs:(NSArray *)deletedRecordIDs
 {
-    dispatch_sync(self.dispatchQueue, ^{
-        QSRealmProvider *provider = [self defaultProvider];
-        
-        [provider.persistenceRealm beginWriteTransaction];
+    runOnMainQueue(^{
+        [self.mainRealmProvider.persistenceRealm beginWriteTransaction];
         for (CKRecordID *recordID in deletedRecordIDs) {
             
-            QSSyncedEntity *syncedEntity = [[QSSyncedEntity objectsInRealm:provider.persistenceRealm where:@"identifier == %@", recordID.recordName] firstObject];
+            QSSyncedEntity *syncedEntity = [[QSSyncedEntity objectsInRealm:self.mainRealmProvider.persistenceRealm where:@"identifier == %@", recordID.recordName] firstObject];
             if (syncedEntity) {
-                [provider.persistenceRealm deleteObject:syncedEntity];
+                [self.mainRealmProvider.persistenceRealm deleteObject:syncedEntity];
             }
         }
-        [provider.persistenceRealm commitWriteTransaction];
+        [self.mainRealmProvider.persistenceRealm commitWriteTransaction];
     });
 }
 
 
 - (BOOL)hasRecordID:(CKRecordID *)recordID
 {
-    QSRealmProvider *provider = [self defaultProvider];
-    QSSyncedEntity *syncedEntity = [[QSSyncedEntity objectsInRealm:provider.persistenceRealm where:@"identifier == %@", recordID.recordName] firstObject];
-    return (syncedEntity != nil);
+    __block BOOL hasRecord = false;
+    runOnMainQueue(^{
+        QSSyncedEntity *syncedEntity = [[QSSyncedEntity objectsInRealm:self.mainRealmProvider.persistenceRealm where:@"identifier == %@", recordID.recordName] firstObject];
+        hasRecord = syncedEntity != nil;
+    });
+    return hasRecord;
 }
 
 
 - (void)didFinishImportWithError:(NSError *)error
 {
-    dispatch_sync(self.dispatchQueue, ^{
-        QSRealmProvider *provider = [self defaultProvider];
-        [self updateHasChangesWithRealm:provider.persistenceRealm];
+    runOnMainQueue(^{
+        [self updateHasChangesWithRealm:self.mainRealmProvider.persistenceRealm];
     });
 }
 

@@ -192,8 +192,6 @@ CloudKit doesn't support ordered relations or many-to-many relationships, so tho
 
 **Realm**
 
-At the moment, SyncKit can only track changes that were made in your Realm if they were made on the main thread.
-
 CloudKit doesn't support ordered relations or many-to-many relationships, so SyncKit will ignore your RLMArray properties. It is recommended to model your many-to-one relationships using RLMLinkingObjects and Object properties:
 
 ```objc

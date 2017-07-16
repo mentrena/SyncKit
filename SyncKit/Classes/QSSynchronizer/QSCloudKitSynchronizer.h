@@ -116,6 +116,7 @@ typedef NS_ENUM(NSInteger, QSCloudKitSynchronizeMode)
 
 /**
  *  Erase all data currently in CloudKit. This will delete the `CKRecordZone` that was used by the synchronizer.
+ *  The object will be unusable for future synchronization and a new QSCloudKitSynchronizer will have to be created.
  */
 - (void)eraseRemoteAndLocalDataWithCompletion:(void(^)(NSError *error))completion;
 
