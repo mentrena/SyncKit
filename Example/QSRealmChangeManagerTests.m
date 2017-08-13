@@ -222,12 +222,12 @@
 
 - (void)testSaveChangesInRecord_missingProperty_setsPropertyToNil
 {
-    RLMRealm *realm = [self realmWithIdentifier:@"t5"];
+    RLMRealm *realm = [self realmWithIdentifier:@"t24"];
     //Insert object in context
     QSCompany *company = [self insertCompanyWithValues:@{@"identifier": @"1", @"name": @"company1", @"sortIndex": @1} inRealm:realm];
     
     QSRealmChangeManager *changeManager = [self realmChangeManagerWithTarget:realm.configuration
-                                                                 persistence:[self persistenceConfigurationWithIdentifier:@"p5"]];
+                                                                 persistence:[self persistenceConfigurationWithIdentifier:@"p24"]];
     
     XCTestExpectation *expectation = [self expectationWithDescription:@"synced"];
     __block CKRecord *objectRecord = nil;
@@ -258,13 +258,13 @@
 
 - (void)testSaveChangesInRecord_missingRelationshipProperty_setsPropertyToNil
 {
-    RLMRealm *realm = [self realmWithIdentifier:@"t5"];
+    RLMRealm *realm = [self realmWithIdentifier:@"t25"];
     //Insert object in context
     QSCompany *company = [self insertCompanyWithValues:@{@"identifier": @"1", @"name": @"company1", @"sortIndex": @1} inRealm:realm];
     QSEmployee *employee = [self insertEmployeeWithValues:@{@"identifier": @"2", @"name": @"employee", @"company": company} inRealm:realm];
     
     QSRealmChangeManager *changeManager = [self realmChangeManagerWithTarget:realm.configuration
-                                                                 persistence:[self persistenceConfigurationWithIdentifier:@"p5"]];
+                                                                 persistence:[self persistenceConfigurationWithIdentifier:@"p25"]];
     
     XCTestExpectation *expectation = [self expectationWithDescription:@"synced"];
     __block CKRecord *objectRecord = nil;
