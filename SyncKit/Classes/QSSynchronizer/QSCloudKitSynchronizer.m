@@ -68,7 +68,7 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
         if (!container) {
             return nil;
         }
-
+        
         self.database = [container privateCloudDatabase];
         self.customZoneID = zoneID;
         self.dispatchQueue = dispatch_queue_create("QSCloudKitSynchronizer", 0);
@@ -311,7 +311,7 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
 {
     self.syncing = NO;
     self.cancelSync = NO;
-
+    
     [self.changeManager didFinishImportWithError:error];
     dispatch_async(dispatch_get_main_queue(), ^{
         if (error) {
@@ -476,9 +476,9 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
 
 - (void)fetchChangesWithCompletion:(void(^)(NSError *error))completion
 {
-    CKFetchRecordChangesOperation *recordChangesOperation = [[CKFetchRecordChangesOperation alloc] initWithRecordZoneID:self.customZoneID previousServerChangeToken:self.serverChangeToken];
-    __weak CKFetchRecordChangesOperation *weakOperation = recordChangesOperation;
     __weak QSCloudKitSynchronizer *weakSelf = self;
+    
+    __block CKFetchRecordChangesOperation *recordChangesOperation = [[CKFetchRecordChangesOperation alloc] initWithRecordZoneID:self.customZoneID previousServerChangeToken:self.serverChangeToken];
     __block NSInteger changeCount = 0;
     __block BOOL higherModelVersionFound = NO;
     
@@ -527,7 +527,7 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
                 [weakSelf.changeManager saveChangesInRecords:recordsToSave];
                 [weakSelf.changeManager deleteRecordsWithIDs:recordIDsToDelete];
                 
-                if (weakOperation.moreComing && !operationError) {
+                if (recordChangesOperation.moreComing && !operationError) {
                     if (weakSelf.cancelSync) {
                         callBlockIfNotNil(completion, [NSError errorWithDomain:QSCloudKitSynchronizerErrorDomain code:0 userInfo:@{QSCloudKitSynchronizerErrorKey: @"Synchronization was canceled"}]);
                     } else {
@@ -536,6 +536,8 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
                 } else {
                     callBlockIfNotNil(completion, operationError);
                 }
+                
+                recordChangesOperation = nil;
             }
         });
     };
