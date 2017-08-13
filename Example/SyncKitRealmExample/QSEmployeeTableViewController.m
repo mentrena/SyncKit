@@ -79,7 +79,7 @@
     
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
     QSEmployee *employee = [self.employees objectAtIndex:indexPath.row];
-    cell.textLabel.text = employee.name;
+    cell.textLabel.text = employee.name ?: @"Object name is nil";
     
     return cell;
 }
@@ -102,9 +102,24 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     QSEmployee *employee = [self.employees objectAtIndex:indexPath.row];
-    [self.realm beginWriteTransaction];
-    employee.name = [employee.name stringByAppendingString:@"!"];
-    [self.realm commitWriteTransaction];
+    
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Change name" message:nil preferredStyle:UIAlertControllerStyleAlert];
+    [alertController addTextFieldWithConfigurationHandler:nil];
+    [alertController addAction:[UIAlertAction actionWithTitle:@"Nil" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+        [self.realm beginWriteTransaction];
+        employee.name = nil;
+        [self.realm commitWriteTransaction];
+    }]];
+    
+    [alertController addAction:[UIAlertAction actionWithTitle:@"Ok" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [self.realm beginWriteTransaction];
+        employee.name = alertController.textFields.firstObject.text;
+        [self.realm commitWriteTransaction];
+    }]];
+    
+    [alertController addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
+    
+    [self presentViewController:alertController animated:YES completion:nil];
 }
 
 #pragma mark - Actions

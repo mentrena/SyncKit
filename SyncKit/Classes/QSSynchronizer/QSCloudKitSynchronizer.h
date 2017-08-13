@@ -105,9 +105,9 @@ typedef NS_ENUM(NSInteger, QSCloudKitSynchronizeMode)
 
 
 /**
- *  Returns YES if there is an existing `CKSubscription` for changes in CloudKit.
+ *  Returns identifier for a registered `CKSubscription` to track changes.
  */
-- (BOOL)isSubscribedForUpdateNotifications;
+@property (nonatomic, readonly) NSString *subscriptionID;
 
 /**
  *  Erase all local change tracking to stop synchronizing.

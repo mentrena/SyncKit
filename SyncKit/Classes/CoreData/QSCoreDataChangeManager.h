@@ -42,7 +42,7 @@
  *  Asks the delegate to resolve conflicts for a managed object. The delegate is expected to examine the change dictionary and optionally apply any of those changes to the managed object.
  *
  *  @param changeManager    The `QSCoreDataChangeManager` that is providing the changes.
- *  @param changeDictionary Dictionary containing keys and values with changes for the managed object.
+ *  @param changeDictionary Dictionary containing keys and values with changes for the managed object. Values could be [NSNull null] to represent a nil value.
  *  @param object           The `NSManagedObject` that has changed on iCloud.
  */
 - (void)changeManager:(QSCoreDataChangeManager *)changeManager gotChanges:(NSDictionary *)changeDictionary forObject:(NSManagedObject *)object;

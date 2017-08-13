@@ -119,6 +119,14 @@
     completionHandler(nil, nil);
 }
 
+- (void)fetchAllSubscriptionsWithCompletionHandler:(void (^)(NSArray<CKSubscription *> * _Nullable subscriptions, NSError * _Nullable error))completionHandler
+{
+    if (self.fetchAllSubscriptionsCalledBlock) {
+        self.fetchAllSubscriptionsCalledBlock();
+    }
+    completionHandler(self.subscriptions, nil);
+}
+
 - (void)deleteRecordZoneWithID:(CKRecordZoneID *)zoneID completionHandler:(void (^)(CKRecordZoneID * _Nullable zoneID, NSError * _Nullable error))completionHandler
 {
     if (self.deleteRecordZoneCalledBlock) {

@@ -202,6 +202,14 @@
         if (error) {
             UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:[NSString stringWithFormat:@"Error: %@", error] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
             [alertView show];
+        } else {
+            [self.synchronizer subscribeForUpdateNotificationsWithCompletion:^(NSError *error) {
+                if (error) {
+                    NSLog(@"Failed to subscribe with error: %@", error);
+                } else {
+                    NSLog(@"Subscribed for notifications");
+                }
+            }];
         }
     }];
 }

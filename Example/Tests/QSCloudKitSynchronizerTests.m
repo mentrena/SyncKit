@@ -19,6 +19,7 @@
 @property (nonatomic, strong) QSCloudKitSynchronizer *synchronizer;
 @property (nonatomic, strong) QSMockDatabase *mockDatabase;
 @property (nonatomic, strong) QSMockChangeManager *mockChangeManager;
+@property (nonatomic, strong) CKRecordZoneID *recordZoneID;
 @property (nonatomic, strong) id mockContainer;
 
 @end
@@ -38,12 +39,29 @@
     
     self.mockChangeManager = [[QSMockChangeManager alloc] init];
     
-    self.synchronizer = [[QSCloudKitSynchronizer alloc] initWithContainerIdentifier:@"any" recordZoneID:[[CKRecordZoneID alloc] initWithZoneName:@"zone" ownerName:@"owner"] changeManager:self.mockChangeManager];
+    self.recordZoneID = [[CKRecordZoneID alloc] initWithZoneName:@"zone" ownerName:@"owner"];
+    
+    self.synchronizer = [[QSCloudKitSynchronizer alloc] initWithContainerIdentifier:@"any" recordZoneID:self.recordZoneID changeManager:self.mockChangeManager];
 }
 
 - (void)tearDown {
     // Put teardown code here. This method is called after the invocation of each test method in the class.
     [super tearDown];
+}
+
+- (void)clearAllUserDefaults
+{
+    NSString *appDomain = [[NSBundle mainBundle] bundleIdentifier];
+    [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:appDomain];
+}
+
+- (CKSubscription *)subscription
+{
+    CKSubscription *subscription = [[CKSubscription alloc] initWithZoneID:self.recordZoneID options:0];
+    CKNotificationInfo *notificationInfo = [[CKNotificationInfo alloc] init];
+    notificationInfo.shouldSendContentAvailable = YES;
+    subscription.notificationInfo = notificationInfo;
+    return subscription;
 }
 
 - (void)testSynchronize_twoObjectsToUpload_uploadsThem
@@ -256,6 +274,8 @@
 
 - (void)testSubscribeForUpdateNotifications_savesToDatabase
 {
+    [self clearAllUserDefaults];
+    
     XCTestExpectation *expectation = [self expectationWithDescription:@"Save subscription called"];
     
     __block BOOL called = NO;
@@ -270,6 +290,32 @@
     [self waitForExpectationsWithTimeout:1 handler:nil];
 
     XCTAssertTrue(called);
+}
+
+- (void)testSubscribeForUpdateNotifications_existingSubscription_updatesSubscriptionID
+{
+    [self clearAllUserDefaults];
+    
+    CKSubscription *subscription = [self subscription];
+    self.mockDatabase.subscriptions = @[subscription];
+    
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Fetched subscriptions"];
+    
+    self.mockDatabase.fetchAllSubscriptionsCalledBlock = ^ {
+        [expectation fulfill];
+    };
+    
+    __block BOOL saveCalled = NO;
+    self.mockDatabase.saveSubscriptionCalledBlock = ^(CKSubscription *subscription) {
+        saveCalled = YES;
+    };
+    
+    [self.synchronizer subscribeForUpdateNotificationsWithCompletion:nil];
+    
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    
+    XCTAssertFalse(saveCalled);
+    XCTAssertEqual(self.synchronizer.subscriptionID, subscription.subscriptionID);
 }
 
 - (void)testDeleteSubscription_deletesOnDatabase
@@ -296,6 +342,28 @@
     [self waitForExpectationsWithTimeout:1 handler:nil];
     
     XCTAssertTrue(called);
+}
+
+- (void)testDeleteSubscription_noLocalSubscriptionButRemoteOne_deletesOnDatabase
+{
+    [self clearAllUserDefaults];
+    
+    CKSubscription *subscription = [self subscription];
+    self.mockDatabase.subscriptions = @[subscription];
+    
+    XCTestExpectation *deleted = [self expectationWithDescription:@"Save subscription called"];
+    
+    __block NSString *deletedSubscriptionID = nil;
+    self.mockDatabase.deleteSubscriptionCalledBlock = ^(NSString *subscriptionID) {
+        deletedSubscriptionID = subscriptionID;
+        [deleted fulfill];
+    };
+    
+    [self.synchronizer deleteSubscriptionWithCompletion:nil];
+    
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    
+    XCTAssertEqual(deletedSubscriptionID, subscription.subscriptionID);
 }
 
 - (void)testSynchronize_objectChanges_callsAllChangeManagerMethods

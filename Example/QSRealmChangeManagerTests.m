@@ -220,6 +220,83 @@
     XCTAssertTrue([company.identifier isEqualToString:@"1"]);
 }
 
+- (void)testSaveChangesInRecord_missingProperty_setsPropertyToNil
+{
+    RLMRealm *realm = [self realmWithIdentifier:@"t5"];
+    //Insert object in context
+    QSCompany *company = [self insertCompanyWithValues:@{@"identifier": @"1", @"name": @"company1", @"sortIndex": @1} inRealm:realm];
+    
+    QSRealmChangeManager *changeManager = [self realmChangeManagerWithTarget:realm.configuration
+                                                                 persistence:[self persistenceConfigurationWithIdentifier:@"p5"]];
+    
+    XCTestExpectation *expectation = [self expectationWithDescription:@"synced"];
+    __block CKRecord *objectRecord = nil;
+    
+    [self fullySyncChangeManager:changeManager completion:^(NSArray *uploadedRecords, NSArray *deletedRecordIDs, NSError *error) {
+        objectRecord = [uploadedRecords firstObject];
+        [expectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    
+    objectRecord[@"name"] = nil;
+    
+    XCTestExpectation *expectation2 = [self expectationWithDescription:@"merged changes"];
+    
+    //Start sync and delete object
+    [changeManager prepareForImport];
+    [changeManager saveChangesInRecords:@[objectRecord]];
+    [changeManager persistImportedChangesWithCompletion:^(NSError *error) {
+        [expectation2 fulfill];
+    }];
+    [changeManager didFinishImportWithError:nil];
+    
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    
+    XCTAssertNil(company.name);
+}
+
+- (void)testSaveChangesInRecord_missingRelationshipProperty_setsPropertyToNil
+{
+    RLMRealm *realm = [self realmWithIdentifier:@"t5"];
+    //Insert object in context
+    QSCompany *company = [self insertCompanyWithValues:@{@"identifier": @"1", @"name": @"company1", @"sortIndex": @1} inRealm:realm];
+    QSEmployee *employee = [self insertEmployeeWithValues:@{@"identifier": @"2", @"name": @"employee", @"company": company} inRealm:realm];
+    
+    QSRealmChangeManager *changeManager = [self realmChangeManagerWithTarget:realm.configuration
+                                                                 persistence:[self persistenceConfigurationWithIdentifier:@"p5"]];
+    
+    XCTestExpectation *expectation = [self expectationWithDescription:@"synced"];
+    __block CKRecord *objectRecord = nil;
+    
+    [self fullySyncChangeManager:changeManager completion:^(NSArray *uploadedRecords, NSArray *deletedRecordIDs, NSError *error) {
+        for (CKRecord *record in uploadedRecords) {
+            if ([record.recordID.recordName hasPrefix:@"QSEmployee"]) {
+                objectRecord = record;
+            }
+        }
+        [expectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    
+    objectRecord[@"company"] = nil;
+    
+    XCTestExpectation *expectation2 = [self expectationWithDescription:@"merged changes"];
+    
+    //Start sync and delete object
+    [changeManager prepareForImport];
+    [changeManager saveChangesInRecords:@[objectRecord]];
+    [changeManager persistImportedChangesWithCompletion:^(NSError *error) {
+        [expectation2 fulfill];
+    }];
+    [changeManager didFinishImportWithError:nil];
+    
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    
+    XCTAssertNil(employee.company);
+}
+
 - (void)testSync_multipleObjects_preservesRelationships
 {
     RLMRealm *realm = [self realmWithIdentifier:@"t7"];
@@ -535,6 +612,57 @@
     XCTAssertTrue(records.count == 2);
     XCTAssertTrue(employeeRecords.count == 2);
     XCTAssertNil(companyRecord);
+}
+
+- (void)testRecordsToUpload_whenRecordWasDownloadedForObject_usesCorrectRecordVersion
+{
+    RLMRealm *realm = [self realmWithIdentifier:@"t23"];
+    //Create change manager and sync
+    QSRealmChangeManager *changeManager = [self realmChangeManagerWithTarget:realm.configuration
+                                                                 persistence:[self persistenceConfigurationWithIdentifier:@"p23"]];
+    
+    // Can't set up CKRecord object so we'll use an existing one for the test
+    NSData *data = [NSData dataWithContentsOfURL:[[NSBundle bundleForClass:[self class]] URLForResource:@"QSCompany.1739C6A5-C07E-48A5-B83E-AB07694F23DF" withExtension:@""]];
+    NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
+    CKRecord *record = [[CKRecord alloc] initWithCoder:unarchiver];
+    [unarchiver finishDecoding];
+    
+    // Keep track of the record change tag
+    NSString *recordChangeTag = record.recordChangeTag;
+    
+    record[@"name"] = @"new company";
+    
+    XCTestExpectation *expectation = [self expectationWithDescription:@"merged changes"];
+    
+    //Start sync and save record
+    [changeManager prepareForImport];
+    [changeManager saveChangesInRecords:@[record]];
+    [changeManager persistImportedChangesWithCompletion:^(NSError *error) {
+        [expectation fulfill];
+    }];
+    [changeManager didFinishImportWithError:nil];
+    
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    
+    [realm refresh];
+    
+    // Now change object so it produces a record to upload
+    
+    QSCompany *company = [[QSCompany allObjectsInRealm:realm] firstObject];
+    
+    [realm beginWriteTransaction];
+    company.name = @"another name";
+    [realm commitWriteTransaction];
+    
+    [self waitForHasChangesNotificationFromChangeManager:changeManager];
+    
+    // Sync
+    [changeManager prepareForImport];
+    NSArray *records = [changeManager recordsToUploadWithLimit:10];
+    [changeManager didFinishImportWithError:nil];
+    
+    CKRecord *uploadedRecord = [records firstObject];
+    XCTAssertEqual(uploadedRecord.recordChangeTag, recordChangeTag);
 }
 
 #pragma mark - Unique objects

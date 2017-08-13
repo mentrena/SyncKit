@@ -249,11 +249,20 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
 
 - (void)updateTrackingForObjectIdentifier:(NSString *)objectIdentifier entityName:(NSString *)entityName inserted:(BOOL)inserted deleted:(BOOL)deleted changes:(NSArray<RLMPropertyChange *> *)changes realmProvider:(QSRealmProvider *)provider
 {
+    BOOL isNewChange = NO;
     NSString *identifier = [NSString stringWithFormat:@"%@.%@", entityName, objectIdentifier];
     QSSyncedEntity *syncedEntity = [self syncedEntityForObjectWithIdentifier:identifier inRealm:provider.persistenceRealm];
     if (!syncedEntity) {
         syncedEntity = [self createSyncedEntityForObjectOfType:entityName identifier:objectIdentifier inRealm:provider.persistenceRealm];
+        
+        if (inserted) {
+            isNewChange = YES;
+        }
+        
     } else if (!inserted) {
+        
+        isNewChange = YES;
+
         NSMutableSet *changedKeys;
         if (syncedEntity.changedKeys) {
             changedKeys = [NSMutableSet setWithArray:[syncedEntity.changedKeys componentsSeparatedByString:@","]];
@@ -276,6 +285,9 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
     }
     
     if (deleted) {
+        
+        isNewChange = YES;
+        
         RLMNotificationToken *token = [self.objectNotificationTokens objectForKey:objectIdentifier];
         if (token) {
             [self.objectNotificationTokens removeObjectForKey:objectIdentifier];
@@ -283,7 +295,7 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
         }
     }
     
-    if (!self.hasChanges) {
+    if (!self.hasChanges && isNewChange) {
         self.hasChanges = YES;
         [[NSNotificationCenter defaultCenter] postNotificationName:QSChangeManagerHasChangesNotification object:self];
     }
@@ -343,48 +355,61 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
 {
     if ([syncedEntity.state integerValue] == QSSyncedEntityStateChanged || [syncedEntity.state integerValue] == QSSyncedEntityStateNew) {
         if (self.mergePolicy == QSCloudKitSynchronizerMergePolicyServer) {
-            for (NSString *key in record.allKeys) {
-                if ([self shouldIgnoreKey:key]) {
+            
+            for (RLMProperty *property in object.objectSchema.properties) {
+                if ([self shouldIgnoreKey:property.name]) {
                     continue;
                 }
                 
-                [self applyChangeForProperty:key inRecord:record toObject:object withSyncedEntity:syncedEntity realmProvider:provider];
+                [self applyChangeForProperty:property.name inRecord:record toObject:object withSyncedEntity:syncedEntity realmProvider:provider];
             }
+            
         } else if (self.mergePolicy == QSCloudKitSynchronizerMergePolicyClient) {
+            
             NSArray *changedKeys = syncedEntity.changedKeys ? [syncedEntity.changedKeys componentsSeparatedByString:@","] : @[];
-            for (NSString *key in record.allKeys) {
-                if ([self shouldIgnoreKey:key] ||
-                    [changedKeys containsObject:key] ||
-                    ([syncedEntity.state integerValue] == QSSyncedEntityStateNew && [object valueForKey:key] != nil)) {
-                    continue;
+            
+            for (RLMProperty *property in object.objectSchema.properties) {
+                if (![self shouldIgnoreKey:property.name] &&
+                    ![changedKeys containsObject:property.name] &&
+                    [syncedEntity.state integerValue] != QSSyncedEntityStateNew) {
+                    
+                    [self applyChangeForProperty:property.name inRecord:record toObject:object withSyncedEntity:syncedEntity realmProvider:provider];
                 }
-                
-               [self applyChangeForProperty:key inRecord:record toObject:object withSyncedEntity:syncedEntity realmProvider:provider];
             }
+            
         } else if (self.mergePolicy == QSCloudKitSynchronizerMergePolicyCustom) {
+            
             NSMutableDictionary *recordChanges = [NSMutableDictionary dictionary];
-            [record.allKeys enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                if (![record[obj] isKindOfClass:[CKReference class]]) {
-                    recordChanges[obj] = record[obj];
+            
+            for (RLMProperty *property in object.objectSchema.properties) {
+                if (![self shouldIgnoreKey:property.name] &&
+                    ![record[property.name] isKindOfClass:[CKReference class]]) {
+                    recordChanges[property.name] = record[property.name] ?: [NSNull null];
                 }
-            }];
+            }
+            
             if ([self.delegate respondsToSelector:@selector(changeManager:gotChanges:forObject:)]) {
                 [self.delegate changeManager:self gotChanges:[recordChanges copy] forObject:object];
             }
         }
     } else {
-        for (NSString *key in record.allKeys) {
-            if ([self shouldIgnoreKey:key]) {
+        
+        for (RLMProperty *property in object.objectSchema.properties) {
+            if ([self shouldIgnoreKey:property.name]) {
                 continue;
             }
             
-            [self applyChangeForProperty:key inRecord:record toObject:object withSyncedEntity:syncedEntity realmProvider:provider];
+            [self applyChangeForProperty:property.name inRecord:record toObject:object withSyncedEntity:syncedEntity realmProvider:provider];
         }
     }
 }
 
 - (void)applyChangeForProperty:(NSString *)key inRecord:(CKRecord *)record toObject:(RLMObject *)object withSyncedEntity:(QSSyncedEntity *)syncedEntity realmProvider:(QSRealmProvider *)provider
 {
+    if ([key isEqualToString:object.objectSchema.primaryKeyProperty.name]) {
+        return; // This shouldn't happen
+    }
+    
     if ([record[key] isKindOfClass:[CKReference class]]) {
         // Save relationship to be applied after all records have been downloaded and persisted
         // to ensure target of the relationship has already been created
@@ -392,7 +417,8 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
         NSRange separatorRange = [reference.recordID.recordName rangeOfString:@"."];
         NSString *objectIdentifier = [reference.recordID.recordName substringFromIndex:separatorRange.location + 1];
         [self savePendingRelationshipWithName:key syncedEntity:syncedEntity targetIdentifier:objectIdentifier realm:provider.persistenceRealm];
-    } else if (![key isEqualToString:object.objectSchema.primaryKeyProperty.name]) {
+    } else {
+        // If property is not a relationship or property is nil
         [object setValue:record[key] forKey:key];
     }
 }
@@ -652,6 +678,7 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
             QSSyncedEntity *syncedEntity = [QSSyncedEntity objectInRealm:self.mainRealmProvider.persistenceRealm forPrimaryKey:record.recordID.recordName];
             if (syncedEntity) {
                 syncedEntity.state = @(QSSyncedEntityStateSynced);
+                syncedEntity.changedKeys = nil;
                 [self saveRecord:record forSyncedEntity:syncedEntity];
             }
         }

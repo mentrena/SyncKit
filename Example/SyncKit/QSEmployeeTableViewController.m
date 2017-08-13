@@ -143,7 +143,7 @@
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
     QSEmployee *employee = [self.fetchedResultsController objectAtIndexPath:indexPath];
-    cell.textLabel.text = employee.name;
+    cell.textLabel.text = employee.name ?: @"Object name is nil";
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
@@ -158,6 +158,31 @@
         [self.managedObjectContext deleteObject:employee];
         [self.managedObjectContext save:nil];
     }
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    QSEmployee *employee = [self.fetchedResultsController objectAtIndexPath:indexPath];
+    
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Change name" message:nil preferredStyle:UIAlertControllerStyleAlert];
+    [alertController addTextFieldWithConfigurationHandler:nil];
+    [alertController addAction:[UIAlertAction actionWithTitle:@"Nil" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+        employee.name = nil;
+        [self.managedObjectContext performBlock:^{
+            [self.managedObjectContext save:nil];
+        }];
+    }]];
+    
+    [alertController addAction:[UIAlertAction actionWithTitle:@"Ok" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        employee.name = alertController.textFields.firstObject.text;
+        [self.managedObjectContext performBlock:^{
+            [self.managedObjectContext save:nil];
+        }];
+    }]];
+    
+    [alertController addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
+    
+    [self presentViewController:alertController animated:YES completion:nil];
 }
 
 #pragma mark - Actions

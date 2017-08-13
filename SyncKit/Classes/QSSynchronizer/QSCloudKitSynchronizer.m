@@ -590,43 +590,91 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
 
 - (void)subscribeForChangesInRecordZoneWithCompletion:(void(^)(NSError *error))completion
 {
-    if ([self isSubscribedForUpdateNotifications]) {
+    if ([self subscriptionID] != nil) {
         callBlockIfNotNil(completion, nil);
         return;
+    } else {
+        // Check if existing subscription already in place
+        [self.database fetchAllSubscriptionsWithCompletionHandler:^(NSArray<CKSubscription *> * _Nullable subscriptions, NSError * _Nullable error) {
+            if (error) {
+                callBlockIfNotNil(completion, error);
+            } else {
+                NSString *existingSubscriptionIdentifier = nil;
+                for (CKSubscription *subscription in subscriptions) {
+                    if (subscription.subscriptionType == CKSubscriptionTypeRecordZone) {
+                        existingSubscriptionIdentifier = subscription.subscriptionID;
+                    }
+                }
+                
+                if (existingSubscriptionIdentifier) {
+                    // Found existing subscription
+                    [[NSUserDefaults standardUserDefaults] setObject:existingSubscriptionIdentifier forKey:[self userDefaultsKeyForKey:QSSubscriptionIdentifierKey]];
+                    callBlockIfNotNil(completion, nil);
+                } else {
+                    // Create new one
+                    CKSubscription *subscription = [[CKSubscription alloc] initWithZoneID:self.customZoneID options:0];
+                    
+                    CKNotificationInfo *notificationInfo = [[CKNotificationInfo alloc] init];
+                    notificationInfo.shouldSendContentAvailable = YES;
+                    subscription.notificationInfo = notificationInfo;
+                    
+                    [self.database saveSubscription:subscription completionHandler:^(CKSubscription * _Nullable subscription, NSError * _Nullable error) {
+                        if (!error) {
+                            [[NSUserDefaults standardUserDefaults] setObject:subscription.subscriptionID forKey:[self userDefaultsKeyForKey:QSSubscriptionIdentifierKey]];
+                        }
+                        
+                        callBlockIfNotNil(completion, error);
+                    }];
+
+                }
+            }
+        }];
     }
     
-    CKSubscription *subscription = [[CKSubscription alloc] initWithZoneID:self.customZoneID options:0];
-    
-    CKNotificationInfo *notificationInfo = [[CKNotificationInfo alloc] init];
-    notificationInfo.shouldSendContentAvailable = YES;
-    subscription.notificationInfo = notificationInfo;
-    
-    [self.database saveSubscription:subscription completionHandler:^(CKSubscription * _Nullable subscription, NSError * _Nullable error) {
-        if (!error) {
-            [[NSUserDefaults standardUserDefaults] setObject:subscription.subscriptionID forKey:[self userDefaultsKeyForKey:QSSubscriptionIdentifierKey]];
-        }
-        
-        callBlockIfNotNil(completion, error);
-    }];
 }
 
 - (void)cancelSubscriptionForChangesInRecordZoneWithCompletion:(void(^)(NSError *error))completion
 {
     NSString *subscriptionID = [[NSUserDefaults standardUserDefaults] objectForKey:[self userDefaultsKeyForKey:QSSubscriptionIdentifierKey]];
-    if (!subscriptionID) {
-        callBlockIfNotNil(completion, nil);
-        return;
-    }
     
+    if (subscriptionID) {
+        [self cancelSubscriptionWithID:subscriptionID withCompletion:completion];
+    } else {
+        // There might be an existing subscription in the server
+        [self.database fetchAllSubscriptionsWithCompletionHandler:^(NSArray<CKSubscription *> * _Nullable subscriptions, NSError * _Nullable error) {
+            if (error) {
+                callBlockIfNotNil(completion, error);
+            } else {
+                NSString *subscriptionID = nil;
+                for (CKSubscription *subscription in subscriptions) {
+                    if (subscription.subscriptionType == CKSubscriptionTypeRecordZone) {
+                        subscriptionID = subscription.subscriptionID;
+                        break;
+                    }
+                }
+                
+                if (subscriptionID) {
+                    [self cancelSubscriptionWithID:subscriptionID withCompletion:completion];
+                } else {
+                    // No subscription to cancel
+                    callBlockIfNotNil(completion, nil);
+                }
+            }
+        }];
+    }
+}
+
+- (void)cancelSubscriptionWithID:(NSString *)subscriptionID withCompletion:(void(^)(NSError *error))completion
+{
     [self.database deleteSubscriptionWithID:subscriptionID completionHandler:^(NSString * _Nullable subscriptionID, NSError * _Nullable error) {
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:[self userDefaultsKeyForKey:QSSubscriptionIdentifierKey]];
         callBlockIfNotNil(completion, error);
     }];
 }
 
-- (BOOL)isSubscribedForUpdateNotifications
+- (NSString *)subscriptionID
 {
-    return [[NSUserDefaults standardUserDefaults] objectForKey:[self userDefaultsKeyForKey:QSSubscriptionIdentifierKey]] != nil;
+    return [[NSUserDefaults standardUserDefaults] objectForKey:[self userDefaultsKeyForKey:QSSubscriptionIdentifierKey]];
 }
 
 @end

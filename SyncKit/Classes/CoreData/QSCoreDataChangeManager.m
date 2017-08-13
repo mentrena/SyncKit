@@ -238,7 +238,8 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
 
 - (void)createSyncedEntityWithIdentifier:(NSString *)identifier entityName:(NSString *)entityName
 {
-    QSSyncedEntity *syncedEntity = [[QSSyncedEntity alloc] initWithEntity:[NSEntityDescription entityForName:@"QSSyncedEntity" inManagedObjectContext:self.privateContext] insertIntoManagedObjectContext:self.privateContext];
+    NSEntityDescription *entityDescription = [NSEntityDescription entityForName:@"QSSyncedEntity" inManagedObjectContext:self.privateContext];
+    QSSyncedEntity *syncedEntity = [[QSSyncedEntity alloc] initWithEntity:entityDescription insertIntoManagedObjectContext:self.privateContext];
     
     syncedEntity.entityType = entityName;
     syncedEntity.state = @(QSSyncedEntityStateNew);
@@ -533,9 +534,9 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
     return [self.privateContext executeFetchRequest:fetchRequest error:&error];
 }
 
-- (void)saveRelationshipChangesInRecord:(CKRecord *)record forEntity:(QSSyncedEntity *)entity
+- (void)saveRelationshipChangesInRecord:(CKRecord *)record withNames:(NSArray *)relationshipsToSave forEntity:(QSSyncedEntity *)entity
 {
-    for (NSString *key in record.allKeys) {
+    for (NSString *key in relationshipsToSave) {
         //Assign attributes directly
         if ([record[key] isKindOfClass:[CKReference class]]) {
             CKReference *reference = record[key];
@@ -545,6 +546,20 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
             relationship.forEntity = entity;
         }
     }
+}
+
+// For relationships that are nil, this will make the property nil on the object. For those that have a value, this will return their names
+- (NSArray *)relationshipsToSaveForObject:(NSManagedObject *)object record:(CKRecord *)record
+{
+    NSMutableArray *relationshipsToSave = [NSMutableArray array];
+    for (NSString *relationshipName in [object.entity.relationshipsByName allKeys]) {
+        if (record[relationshipName]) {
+            [relationshipsToSave addObject:relationshipName];
+        } else {
+            [object setValue:nil forKey:relationshipName];
+        }
+    }
+    return [relationshipsToSave copy];
 }
 
 - (NSDictionary *)pendingRelationshipTargetIdentifiersForEntity:(QSSyncedEntity *)entity
@@ -720,39 +735,38 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
         switch (self.mergePolicy) {
             case QSCloudKitSynchronizerMergePolicyServer:
             {
-                for (NSString *key in record.allKeys) {
-                    if ([self shouldIgnoreKey:key]) {
-                        continue;
+                //Add attributes
+                [[managedObject.entity attributesByName] enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull attributeName, NSAttributeDescription * _Nonnull attributeDescription, BOOL * _Nonnull stop) {
+                    if (![self shouldIgnoreKey:attributeName] && ![record[attributeName] isKindOfClass:[CKReference class]]) {
+                        [managedObject setValue:record[attributeName] forKey:attributeName];
                     }
-                    if (![record[key] isKindOfClass:[CKReference class]]) {
-                        [managedObject setValue:record[key] forKey:key];
-                    }
-                }
+                }];
                 break;
             }
             case QSCloudKitSynchronizerMergePolicyClient:
             {
-                for (NSString *key in record.allKeys) {
-                    if ([self shouldIgnoreKey:key]) {
-                        continue;
+                //Add attributes
+                [[managedObject.entity attributesByName] enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull attributeName, NSAttributeDescription * _Nonnull attributeDescription, BOOL * _Nonnull stop) {
+                    if (![self shouldIgnoreKey:attributeName] &&
+                        ![record[attributeName] isKindOfClass:[CKReference class]] &&
+                        ![entityChangedKeys containsObject:attributeName] &&
+                        state != QSSyncedEntityStateNew) {
+                        
+                        [managedObject setValue:record[attributeName] forKey:attributeName];
                     }
-                    if (![record[key] isKindOfClass:[CKReference class]]) {
-                        if (![entityChangedKeys containsObject:key] &&
-                            (state != QSSyncedEntityStateNew || [managedObject valueForKey:key] == nil)) {
-                            [managedObject setValue:record[key] forKey:key];
-                        }
-                    }
-                }
+                }];
+                
                 break;
             }
             case QSCloudKitSynchronizerMergePolicyCustom:
             {
                 NSMutableDictionary *recordChanges = [NSMutableDictionary dictionary];
-                [record.allKeys enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                    if (![record[obj] isKindOfClass:[CKReference class]]) {
-                        recordChanges[obj] = record[obj];
+                [[managedObject.entity attributesByName] enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull attributeName, NSAttributeDescription * _Nonnull attributeDescription, BOOL * _Nonnull stop) {
+                    if (![record[attributeName] isKindOfClass:[CKReference class]]) {
+                        recordChanges[attributeName] = record[attributeName] ?: [NSNull null];
                     }
                 }];
+                
                 if ([self.delegate respondsToSelector:@selector(changeManager:gotChanges:forObject:)]) {
                     [self.delegate changeManager:self gotChanges:[recordChanges copy] forObject:managedObject];
                 }
@@ -762,14 +776,13 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
                 break;
         }
     } else {
-        for (NSString *key in record.allKeys) {
-            if ([self shouldIgnoreKey:key]) {
-                continue;
+        
+        //Add attributes
+        [[managedObject.entity attributesByName] enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull attributeName, NSAttributeDescription * _Nonnull attributeDescription, BOOL * _Nonnull stop) {
+            if (![self shouldIgnoreKey:attributeName] && ![record[attributeName] isKindOfClass:[CKReference class]]) {
+                [managedObject setValue:record[attributeName] forKey:attributeName];
             }
-            if (![record[key] isKindOfClass:[CKReference class]]) {
-                [managedObject setValue:record[key] forKey:key];
-            }
-        }
+        }];
     }
 }
 
@@ -964,6 +977,10 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
 
 - (void)saveChangesInRecords:(NSArray<CKRecord *> *)records
 {
+    if (records.count == 0) {
+        return;
+    }
+    
     [self.privateContext performBlock:^{
         DLog(@"Save changes in records");
         NSMutableDictionary *queryByEntityType = [NSMutableDictionary dictionary];
@@ -982,6 +999,7 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
             QSSyncedEntity *syncedEntity = entitiesByID[record.recordID.recordName];
             if (!syncedEntity) {
                 syncedEntity = [self createSyncedEntityForRecord:record];
+                entitiesByID[record.recordID.recordName] = syncedEntity;
             }
             
             if ([syncedEntity.state integerValue] == QSSyncedEntityStateDeleted) {
@@ -1001,13 +1019,9 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
             }
             
             queries[syncedEntity.originObjectID] = query;
-            
-            [self saveRelationshipChangesInRecord:record forEntity:syncedEntity];
-            syncedEntity.updated = record[QSCloudKitTimestampKey];
-            [self saveRecord:record forSyncedEntity:syncedEntity];
         }
         
-        [self.targetImportContext performBlock:^{
+        [self.targetImportContext performBlockAndWait:^{
             DLog(@"Applying attribute changes in records");
             for (NSString *entityType in [queryByEntityType allKeys]) {
                 NSDictionary *queries = queryByEntityType[entityType];
@@ -1015,41 +1029,30 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
                 for (NSManagedObject *object in objects) {
                     QSQueryData *query = queries[[self uniqueIdentifierForObject:object]];
                     [self applyAttributeChangesInRecord:query.record toManagedObject:object withSyncedState:[query.state integerValue] changedKeys:query.changedKeys];
+                    NSArray *relationshipsToSave = [self relationshipsToSaveForObject:object record:query.record];
+                    query.relationshipDictionary = @{@"relationshipsToSave": relationshipsToSave};
                 }
             }
         }];
-    }];
-}
-
-- (void)saveChangesInRecord:(CKRecord *)record
-{
-    [self.privateContext performBlock:^{
-        QSSyncedEntity *syncedEntity = [self syncedEntityWithIdentifier:record.recordID.recordName];
-        if (!syncedEntity) {
-            syncedEntity = [self createSyncedEntityForRecord:record];
+        
+        for (CKRecord *record in records) {
+            QSSyncedEntity *syncedEntity = entitiesByID[record.recordID.recordName];
+            NSMutableDictionary *queries = queryByEntityType[syncedEntity.entityType];
+            QSQueryData *query = queries[syncedEntity.originObjectID];
+            NSArray *relationshipsToSave = query.relationshipDictionary[@"relationshipsToSave"];
+            [self saveRelationshipChangesInRecord:query.record withNames:relationshipsToSave forEntity:syncedEntity];
+            syncedEntity.updated = record[QSCloudKitTimestampKey];
+            [self saveRecord:record forSyncedEntity:syncedEntity];
         }
-        
-        if ([syncedEntity.state integerValue] == QSSyncedEntityStateDeleted) {
-            return;
-        }
-        
-        NSArray *entityChangedKeys = [syncedEntity.changedKeys componentsSeparatedByString:@","];
-        NSString *objectID = syncedEntity.originObjectID;
-        NSString *entityType = syncedEntity.entityType;
-        QSSyncedEntityState entityState = [syncedEntity.state integerValue];
-        [self.targetImportContext performBlockAndWait:^{
-            NSManagedObject *managedObject = [self managedObjectWithEntityName:entityType identifier:objectID];
-            [self applyAttributeChangesInRecord:record toManagedObject:managedObject withSyncedState:entityState changedKeys:entityChangedKeys];
-        }];
-        
-        [self saveRelationshipChangesInRecord:record forEntity:syncedEntity];
-        syncedEntity.updated = record[QSCloudKitTimestampKey];
-        [self saveRecord:record forSyncedEntity:syncedEntity];
     }];
 }
 
 - (void)deleteRecordsWithIDs:(NSArray<CKRecordID *> *)recordIDs
 {
+    if (recordIDs.count == 0) {
+        return;
+    }
+    
     [self.privateContext performBlock:^{
         NSMutableArray *entities = [NSMutableArray array];
         for (CKRecordID *recordID in recordIDs) {
@@ -1112,6 +1115,7 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
             QSSyncedEntity *savedEntity = [self syncedEntityWithIdentifier:record.recordID.recordName];
             if ([record[QSCloudKitTimestampKey] isEqual:savedEntity.updated]) {
                 savedEntity.state = @(QSSyncedEntityStateSynced);
+                savedEntity.changedKeys = nil;
             }
             
             [self saveRecord:record forSyncedEntity:savedEntity];

@@ -23,9 +23,9 @@
 		6402A03E1E16D303005FE304 /* QSEmployee2+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 6402A03A1E16D303005FE304 /* QSEmployee2+CoreDataProperties.m */; };
 		6409659E1EDF1588005BCF0F /* QSExample.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 644B20331D4811BE00C131CD /* QSExample.xcdatamodeld */; };
 		6409659F1EDF158D005BCF0F /* QSExample2.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6402A0101E16CBE6005FE304 /* QSExample2.xcdatamodeld */; };
-		641F76D71ED3EBBE00107A88 /* SyncKitCoreDataExampleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 641F76D61ED3EBBE00107A88 /* SyncKitCoreDataExampleTests.m */; };
 		641F76DE1ED3EBDA00107A88 /* QSCloudKitSynchronizerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 64000CA41D451F5A006ACD20 /* QSCloudKitSynchronizerTests.m */; };
 		641F76DF1ED3EBDC00107A88 /* QSCoreDataChangeManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 644B202D1D480F1700C131CD /* QSCoreDataChangeManagerTests.m */; };
+		642B1C861F3139A800BD9764 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 642B1C851F3139A800BD9764 /* CloudKit.framework */; };
 		642E328D1D4FF92800ED4100 /* QSEmployeeTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 642E328C1D4FF92800ED4100 /* QSEmployeeTableViewController.m */; };
 		64310E551D4AAD8500628C4B /* QSCompany+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 64310E4E1D4AAD8500628C4B /* QSCompany+CoreDataProperties.m */; };
 		64310E561D4AAD8500628C4B /* QSCompany.m in Sources */ = {isa = PBXBuildFile; fileRef = 64310E501D4AAD8500628C4B /* QSCompany.m */; };
@@ -34,8 +34,8 @@
 		64377B0A1ED6D391003FB86F /* QSMockChangeManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 64000CA61D451F5A006ACD20 /* QSMockChangeManager.m */; };
 		64377B0B1ED6D394003FB86F /* QSMockDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 64000CA81D451F5A006ACD20 /* QSMockDatabase.m */; };
 		64377B0C1ED6D397003FB86F /* QSObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 64000CAA1D451F5A006ACD20 /* QSObject.m */; };
+		64488A561F3BA38600755D8E /* QSCompany.1739C6A5-C07E-48A5-B83E-AB07694F23DF in Resources */ = {isa = PBXBuildFile; fileRef = 64488A541F3BA2C000755D8E /* QSCompany.1739C6A5-C07E-48A5-B83E-AB07694F23DF */; };
 		644B20351D4811BE00C131CD /* QSExample.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 644B20331D4811BE00C131CD /* QSExample.xcdatamodeld */; };
-		649702A71ED8805300CDDDAC /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 649702A61ED8805300CDDDAC /* CloudKit.framework */; };
 		64AEF0001D4E8E01003729A5 /* QSCompanyTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 64AEEFFF1D4E8E01003729A5 /* QSCompanyTableViewController.m */; };
 		6D49297B61E7030F49DDD104 /* libPods-SyncKitCoreDataExampleTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 22D5A5F41A6AFB038AD7DDA6 /* libPods-SyncKitCoreDataExampleTests.a */; };
 		873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 873B8AEA1B1F5CCA007FD442 /* Main.storyboard */; };
@@ -91,8 +91,8 @@
 		6402A0391E16D303005FE304 /* QSEmployee2+CoreDataProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "QSEmployee2+CoreDataProperties.h"; sourceTree = "<group>"; };
 		6402A03A1E16D303005FE304 /* QSEmployee2+CoreDataProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "QSEmployee2+CoreDataProperties.m"; sourceTree = "<group>"; };
 		641F76D41ED3EBBE00107A88 /* SyncKitCoreDataExampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SyncKitCoreDataExampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		641F76D61ED3EBBE00107A88 /* SyncKitCoreDataExampleTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SyncKitCoreDataExampleTests.m; sourceTree = "<group>"; };
-		641F76D81ED3EBBE00107A88 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		641F76D81ED3EBBE00107A88 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = ../SyncKitCoreDataExampleTests/Info.plist; sourceTree = "<group>"; };
+		642B1C851F3139A800BD9764 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		642E328A1D4FF81200ED4100 /* SyncKit_Example.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = SyncKit_Example.entitlements; sourceTree = "<group>"; };
 		642E328B1D4FF92800ED4100 /* QSEmployeeTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QSEmployeeTableViewController.h; sourceTree = "<group>"; };
 		642E328C1D4FF92800ED4100 /* QSEmployeeTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QSEmployeeTableViewController.m; sourceTree = "<group>"; };
@@ -104,10 +104,10 @@
 		64310E521D4AAD8500628C4B /* QSEmployee+CoreDataProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "QSEmployee+CoreDataProperties.m"; sourceTree = "<group>"; };
 		64310E531D4AAD8500628C4B /* QSEmployee.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QSEmployee.h; sourceTree = "<group>"; };
 		64310E541D4AAD8500628C4B /* QSEmployee.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QSEmployee.m; sourceTree = "<group>"; };
+		64488A541F3BA2C000755D8E /* QSCompany.1739C6A5-C07E-48A5-B83E-AB07694F23DF */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "QSCompany.1739C6A5-C07E-48A5-B83E-AB07694F23DF"; sourceTree = "<group>"; };
 		644B202D1D480F1700C131CD /* QSCoreDataChangeManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QSCoreDataChangeManagerTests.m; sourceTree = "<group>"; };
 		644B20341D4811BE00C131CD /* QSExample.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = QSExample.xcdatamodel; sourceTree = "<group>"; };
 		649702A51ED8804000CDDDAC /* SyncKitCoreDataExample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SyncKitCoreDataExample.entitlements; sourceTree = "<group>"; };
-		649702A61ED8805300CDDDAC /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		64AEEFFE1D4E8E01003729A5 /* QSCompanyTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QSCompanyTableViewController.h; sourceTree = "<group>"; };
 		64AEEFFF1D4E8E01003729A5 /* QSCompanyTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QSCompanyTableViewController.m; sourceTree = "<group>"; };
 		6C938FE36198D6DFB38A45ED /* Pods-SyncKit_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SyncKit_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-SyncKit_Example/Pods-SyncKit_Example.release.xcconfig"; sourceTree = "<group>"; };
@@ -130,7 +130,7 @@
 				64000CA11D451E07006ACD20 /* CoreData.framework in Frameworks */,
 				6003F590195388D20070C39A /* CoreGraphics.framework in Frameworks */,
 				6003F592195388D20070C39A /* UIKit.framework in Frameworks */,
-				649702A71ED8805300CDDDAC /* CloudKit.framework in Frameworks */,
+				642B1C861F3139A800BD9764 /* CloudKit.framework in Frameworks */,
 				6003F58E195388D20070C39A /* Foundation.framework in Frameworks */,
 				20D2D7A1BFD3D7C2F06069CD /* libPods-SyncKitCoreDataExample.a in Frameworks */,
 			);
@@ -155,7 +155,6 @@
 				60FF7A9C1954A5C5007DD14C /* Podspec Metadata */,
 				6003F593195388D20070C39A /* Example for SyncKit */,
 				6003F5B5195388D20070C39A /* Tests */,
-				641F76D51ED3EBBE00107A88 /* SyncKitCoreDataExampleTests */,
 				6003F58C195388D20070C39A /* Frameworks */,
 				6003F58B195388D20070C39A /* Products */,
 				7912CB990C9878FCE0C11D49 /* Pods */,
@@ -174,7 +173,7 @@
 		6003F58C195388D20070C39A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				649702A61ED8805300CDDDAC /* CloudKit.framework */,
+				642B1C851F3139A800BD9764 /* CloudKit.framework */,
 				64000CA01D451E07006ACD20 /* CoreData.framework */,
 				6003F58D195388D20070C39A /* Foundation.framework */,
 				6003F58F195388D20070C39A /* CoreGraphics.framework */,
@@ -220,6 +219,7 @@
 		6003F5B5195388D20070C39A /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				641F76D81ED3EBBE00107A88 /* Info.plist */,
 				6003F5B6195388D20070C39A /* Supporting Files */,
 				64000CA41D451F5A006ACD20 /* QSCloudKitSynchronizerTests.m */,
 				64000CA51D451F5A006ACD20 /* QSMockChangeManager.h */,
@@ -229,6 +229,7 @@
 				64000CA91D451F5A006ACD20 /* QSObject.h */,
 				64000CAA1D451F5A006ACD20 /* QSObject.m */,
 				644B202D1D480F1700C131CD /* QSCoreDataChangeManagerTests.m */,
+				64488A541F3BA2C000755D8E /* QSCompany.1739C6A5-C07E-48A5-B83E-AB07694F23DF */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -283,15 +284,6 @@
 				6402A0101E16CBE6005FE304 /* QSExample2.xcdatamodeld */,
 			);
 			name = Model2;
-			sourceTree = "<group>";
-		};
-		641F76D51ED3EBBE00107A88 /* SyncKitCoreDataExampleTests */ = {
-			isa = PBXGroup;
-			children = (
-				641F76D61ED3EBBE00107A88 /* SyncKitCoreDataExampleTests.m */,
-				641F76D81ED3EBBE00107A88 /* Info.plist */,
-			);
-			path = SyncKitCoreDataExampleTests;
 			sourceTree = "<group>";
 		};
 		644B20321D4811B200C131CD /* Model */ = {
@@ -425,6 +417,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				64488A561F3BA38600755D8E /* QSCompany.1739C6A5-C07E-48A5-B83E-AB07694F23DF in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -553,7 +546,6 @@
 				6409659F1EDF158D005BCF0F /* QSExample2.xcdatamodeld in Sources */,
 				64377B0B1ED6D394003FB86F /* QSMockDatabase.m in Sources */,
 				64377B0C1ED6D397003FB86F /* QSObject.m in Sources */,
-				641F76D71ED3EBBE00107A88 /* SyncKitCoreDataExampleTests.m in Sources */,
 				6409659E1EDF1588005BCF0F /* QSExample.xcdatamodeld in Sources */,
 				641F76DF1ED3EBDC00107A88 /* QSCoreDataChangeManagerTests.m in Sources */,
 				64377B0A1ED6D391003FB86F /* QSMockChangeManager.m in Sources */,
