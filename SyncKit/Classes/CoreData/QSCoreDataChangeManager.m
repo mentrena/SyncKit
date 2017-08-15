@@ -461,7 +461,9 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
         NSString *primaryKey = [self identifierFieldNameForEntityOfType:entityType];
         //Add attributes
         [[entityDescription attributesByName] enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull attributeName, NSAttributeDescription * _Nonnull attributeDescription, BOOL * _Nonnull stop) {
-            if ((entityState == QSSyncedEntityStateNew || [changedKeys containsObject:attributeName]) && [primaryKey isEqualToString:attributeName] == NO) {
+            if ((entityState == QSSyncedEntityStateNew || [changedKeys containsObject:attributeName]) 
+//&& [primaryKey isEqualToString:attributeName] == NO
+               ) {
                 record[attributeName] = [originalObject valueForKey:attributeName];
             }
         }];
