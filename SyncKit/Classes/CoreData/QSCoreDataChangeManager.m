@@ -553,6 +553,10 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
 {
     NSMutableArray *relationshipsToSave = [NSMutableArray array];
     for (NSString *relationshipName in [object.entity.relationshipsByName allKeys]) {
+        if (object.entity.relationshipsByName[relationshipName].isToMany) {
+            continue;
+        }
+        
         if (record[relationshipName]) {
             [relationshipsToSave addObject:relationshipName];
         } else {

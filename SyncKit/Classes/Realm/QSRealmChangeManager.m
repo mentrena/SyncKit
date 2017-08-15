@@ -360,6 +360,9 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
                 if ([self shouldIgnoreKey:property.name]) {
                     continue;
                 }
+                if (property.type == RLMPropertyTypeArray || property.type == RLMPropertyTypeLinkingObjects) {
+                    continue;
+                }
                 
                 [self applyChangeForProperty:property.name inRecord:record toObject:object withSyncedEntity:syncedEntity realmProvider:provider];
             }
@@ -369,6 +372,10 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
             NSArray *changedKeys = syncedEntity.changedKeys ? [syncedEntity.changedKeys componentsSeparatedByString:@","] : @[];
             
             for (RLMProperty *property in object.objectSchema.properties) {
+                if (property.type == RLMPropertyTypeArray || property.type == RLMPropertyTypeLinkingObjects) {
+                    continue;
+                }
+                
                 if (![self shouldIgnoreKey:property.name] &&
                     ![changedKeys containsObject:property.name] &&
                     [syncedEntity.state integerValue] != QSSyncedEntityStateNew) {
@@ -382,6 +389,10 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
             NSMutableDictionary *recordChanges = [NSMutableDictionary dictionary];
             
             for (RLMProperty *property in object.objectSchema.properties) {
+                if (property.type == RLMPropertyTypeArray || property.type == RLMPropertyTypeLinkingObjects) {
+                    continue;
+                }
+                
                 if (![self shouldIgnoreKey:property.name] &&
                     ![record[property.name] isKindOfClass:[CKReference class]]) {
                     recordChanges[property.name] = record[property.name] ?: [NSNull null];
@@ -396,6 +407,9 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
         
         for (RLMProperty *property in object.objectSchema.properties) {
             if ([self shouldIgnoreKey:property.name]) {
+                continue;
+            }
+            if (property.type == RLMPropertyTypeArray || property.type == RLMPropertyTypeLinkingObjects) {
                 continue;
             }
             
