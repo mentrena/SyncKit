@@ -735,13 +735,14 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
 
 - (void)applyAttributeChangesInRecord:(CKRecord *)record toManagedObject:(NSManagedObject *)managedObject withSyncedState:(QSSyncedEntityState)state changedKeys:(NSArray *)entityChangedKeys
 {
+    NSString *primaryKey = [self identifierFieldNameForEntityOfType:managedObject.entity.name];
     if (state == QSSyncedEntityStateChanged || state == QSSyncedEntityStateNew) {
         switch (self.mergePolicy) {
             case QSCloudKitSynchronizerMergePolicyServer:
             {
                 //Add attributes
                 [[managedObject.entity attributesByName] enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull attributeName, NSAttributeDescription * _Nonnull attributeDescription, BOOL * _Nonnull stop) {
-                    if (![self shouldIgnoreKey:attributeName] && ![record[attributeName] isKindOfClass:[CKReference class]]) {
+                    if (![self shouldIgnoreKey:attributeName] && ![record[attributeName] isKindOfClass:[CKReference class]] && ![primaryKey isEqualToString:attributeName]) {
                         [managedObject setValue:record[attributeName] forKey:attributeName];
                     }
                 }];
@@ -754,7 +755,8 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
                     if (![self shouldIgnoreKey:attributeName] &&
                         ![record[attributeName] isKindOfClass:[CKReference class]] &&
                         ![entityChangedKeys containsObject:attributeName] &&
-                        state != QSSyncedEntityStateNew) {
+                        state != QSSyncedEntityStateNew &&
+                        ![primaryKey isEqualToString:attributeName]) {
                         
                         [managedObject setValue:record[attributeName] forKey:attributeName];
                     }
@@ -766,7 +768,8 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
             {
                 NSMutableDictionary *recordChanges = [NSMutableDictionary dictionary];
                 [[managedObject.entity attributesByName] enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull attributeName, NSAttributeDescription * _Nonnull attributeDescription, BOOL * _Nonnull stop) {
-                    if (![record[attributeName] isKindOfClass:[CKReference class]]) {
+                    if (![record[attributeName] isKindOfClass:[CKReference class]] &&
+                        ![primaryKey isEqualToString:attributeName]) {
                         recordChanges[attributeName] = record[attributeName] ?: [NSNull null];
                     }
                 }];
@@ -783,7 +786,7 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
         
         //Add attributes
         [[managedObject.entity attributesByName] enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull attributeName, NSAttributeDescription * _Nonnull attributeDescription, BOOL * _Nonnull stop) {
-            if (![self shouldIgnoreKey:attributeName] && ![record[attributeName] isKindOfClass:[CKReference class]]) {
+            if (![self shouldIgnoreKey:attributeName] && ![record[attributeName] isKindOfClass:[CKReference class]] && ![primaryKey isEqualToString:attributeName]) {
                 [managedObject setValue:record[attributeName] forKey:attributeName];
             }
         }];

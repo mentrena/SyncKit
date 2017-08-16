@@ -543,6 +543,7 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
             }
         } else if (property.type != RLMPropertyTypeArray &&
                    property.type != RLMPropertyTypeLinkingObjects &&
+                   ![property.name isEqualToString:[objectClass primaryKey]] &&
                    ([syncedEntity.state integerValue] == QSSyncedEntityStateNew || [changedKeys containsObject:property.name])) {
             record[property.name] = [object valueForKey:property.name];
         }

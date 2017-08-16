@@ -155,6 +155,40 @@
     XCTAssertTrue([record[@"name"] isEqual:@"name 2"]);
 }
 
+- (void)testRecordsToUpload_onlyIncludesToOneRelationships
+{
+    //Insert object in context
+    QSCompany *company = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass([QSCompany class]) inManagedObjectContext:self.targetCoreDataStack.managedObjectContext];
+    company.name = @"name 1";
+    NSError *error = nil;
+    QSEmployee *employee = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass([QSEmployee class]) inManagedObjectContext:self.targetCoreDataStack.managedObjectContext];
+    employee.name = @"employee 1";
+    employee.company = company;
+    [self.targetCoreDataStack.managedObjectContext save:&error];
+    
+    QSCoreDataChangeManager *changeManager = [[QSCoreDataChangeManager alloc] initWithPersistenceStack:self.coreDataStack targetContext:self.targetCoreDataStack.managedObjectContext recordZoneID:[[CKRecordZoneID alloc] initWithZoneName:@"zone" ownerName:@"owner"] delegate:self];
+    
+    XCTestExpectation *expectation = [self expectationWithDescription:@"synced"];
+    __block CKRecord *companyRecord = nil;
+    __block CKRecord *employeeRecord = nil;
+    
+    [self fullySyncChangeManager:changeManager completion:^(NSArray *uploadedRecords, NSArray *deletedRecordIDs, NSError *error) {
+        for (CKRecord *record in uploadedRecords) {
+            if ([record.recordID.recordName hasPrefix:@"QSCompany"]) {
+                companyRecord = record;
+            } else if ([record.recordID.recordName hasPrefix:@"QSEmployee"]) {
+                employeeRecord = record;
+            }
+        }
+        [expectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    
+    XCTAssertNil(companyRecord[@"employees"]);
+    XCTAssertNotNil(employeeRecord[@"company"]);
+}
+
 - (void)testRecordsMarkedForDeletion_deletedObject_returnsRecordID
 {
     //Insert object in context
@@ -343,7 +377,7 @@
     [self fullySyncChangeManager:changeManager completion:^(NSArray *uploadedRecords, NSArray *deletedRecordIDs, NSError *error) {
         for (CKRecord *record in uploadedRecords) {
             if ([record.recordID.recordName hasPrefix:@"QSEmployee"]) {
-                objectRecord = [uploadedRecords firstObject];
+                objectRecord = record;
             }
         }
         [expectation fulfill];
@@ -367,6 +401,51 @@
     
     [self.targetCoreDataStack.managedObjectContext refreshObject:employee mergeChanges:NO];
     XCTAssertNil(employee.company);
+}
+
+- (void)testSaveChangesInRecord_missingToManyRelationshipProperty_doesNothing
+{
+    //Insert object in context
+    QSCompany *company = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass([QSCompany class]) inManagedObjectContext:self.targetCoreDataStack.managedObjectContext];
+    company.name = @"name 1";
+    NSError *error = nil;
+    QSEmployee *employee = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass([QSEmployee class]) inManagedObjectContext:self.targetCoreDataStack.managedObjectContext];
+    employee.name = @"employee 1";
+    employee.company = company;
+    [self.targetCoreDataStack.managedObjectContext save:&error];
+    
+    QSCoreDataChangeManager *changeManager = [[QSCoreDataChangeManager alloc] initWithPersistenceStack:self.coreDataStack targetContext:self.targetCoreDataStack.managedObjectContext recordZoneID:[[CKRecordZoneID alloc] initWithZoneName:@"zone" ownerName:@"owner"] delegate:self];
+    
+    XCTestExpectation *expectation = [self expectationWithDescription:@"synced"];
+    __block CKRecord *objectRecord = nil;
+    
+    [self fullySyncChangeManager:changeManager completion:^(NSArray *uploadedRecords, NSArray *deletedRecordIDs, NSError *error) {
+        for (CKRecord *record in uploadedRecords) {
+            if ([record.recordID.recordName hasPrefix:@"QSCompany"]) {
+                objectRecord = [uploadedRecords firstObject];
+            }
+        }
+        [expectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    
+    objectRecord[@"employees"] = nil;
+    
+    XCTestExpectation *expectation2 = [self expectationWithDescription:@"merged changes"];
+    
+    //Start sync and delete object
+    [changeManager prepareForImport];
+    [changeManager saveChangesInRecords:@[objectRecord]];
+    [changeManager persistImportedChangesWithCompletion:^(NSError *error) {
+        [expectation2 fulfill];
+    }];
+    [changeManager didFinishImportWithError:nil];
+    
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    
+    [self.targetCoreDataStack.managedObjectContext refreshObject:company mergeChanges:NO];
+    XCTAssertNotNil(company.employees);
 }
 
 - (void)testSync_multipleObjects_preservesRelationships
@@ -773,6 +852,77 @@
     [target2.managedObjectContext refreshObject:company2 mergeChanges:NO];
     
     XCTAssertTrue([company2.name isEqualToString:@"name 1"]);
+}
+
+- (void)testRecordsToUpload_doesNotIncludePrimaryKey
+{
+    [self setUpModel2];
+    
+    //Insert object in context
+    QSCompany2 *company = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass([QSCompany2 class]) inManagedObjectContext:self.targetCoreDataStack.managedObjectContext];
+    company.name = @"name 1";
+    company.identifier = [[NSUUID UUID] UUIDString];
+    NSError *error = nil;
+    [self.targetCoreDataStack.managedObjectContext save:&error];
+    
+    QSCoreDataChangeManager *changeManager = [[QSCoreDataChangeManager alloc] initWithPersistenceStack:self.coreDataStack targetContext:self.targetCoreDataStack.managedObjectContext recordZoneID:[[CKRecordZoneID alloc] initWithZoneName:@"zone" ownerName:@"owner"] delegate:self];
+    
+    XCTestExpectation *expectation = [self expectationWithDescription:@"synced"];
+    __block CKRecord *objectRecord = nil;
+    
+    [self fullySyncChangeManager:changeManager completion:^(NSArray *uploadedRecords, NSArray *deletedRecordIDs, NSError *error) {
+        objectRecord = [uploadedRecords firstObject];
+        [expectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    
+    XCTAssertNil(objectRecord[@"identifier"]);
+    XCTAssertNotNil(objectRecord[@"name"]);
+}
+
+- (void)testSaveChangesInRecords_ignoresPrimaryKeyField
+{
+    [self setUpModel2];
+    
+    //Insert object in context
+    QSCompany2 *company = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass([QSCompany2 class]) inManagedObjectContext:self.targetCoreDataStack.managedObjectContext];
+    company.name = @"name 1";
+    NSString *identifier = [[NSUUID UUID] UUIDString];
+    company.identifier = identifier;
+    NSError *error = nil;
+    [self.targetCoreDataStack.managedObjectContext save:&error];
+    
+    QSCoreDataChangeManager *changeManager = [[QSCoreDataChangeManager alloc] initWithPersistenceStack:self.coreDataStack targetContext:self.targetCoreDataStack.managedObjectContext recordZoneID:[[CKRecordZoneID alloc] initWithZoneName:@"zone" ownerName:@"owner"] delegate:self];
+    
+    XCTestExpectation *expectation = [self expectationWithDescription:@"synced"];
+    __block CKRecord *objectRecord = nil;
+    
+    [self fullySyncChangeManager:changeManager completion:^(NSArray *uploadedRecords, NSArray *deletedRecordIDs, NSError *error) {
+        objectRecord = [uploadedRecords firstObject];
+        [expectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    
+    objectRecord[@"identifier"] = @"fake identifier";
+    objectRecord[@"name"] = @"name 2";
+    
+    XCTestExpectation *expectation2 = [self expectationWithDescription:@"merged changes"];
+    
+    //Start sync and delete object
+    [changeManager prepareForImport];
+    [changeManager saveChangesInRecords:@[objectRecord]];
+    [changeManager persistImportedChangesWithCompletion:^(NSError *error) {
+        [expectation2 fulfill];
+    }];
+    [changeManager didFinishImportWithError:nil];
+    
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    
+    [self.targetCoreDataStack.managedObjectContext refreshObject:company mergeChanges:NO];
+    XCTAssertTrue([company.name isEqualToString:@"name 2"]);
+    XCTAssertEqual(company.identifier, identifier);
 }
 
 #pragma mark - Merge policies

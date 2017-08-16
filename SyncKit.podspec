@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'SyncKit'
-  s.version          = '0.4.8'
+  s.version          = '0.4.9'
   s.summary          = 'CloudKit synchronization for your Core Data or Realm model.'
 
   s.description      = <<-DESC
@@ -22,6 +22,7 @@ SyncKit automates the process of synchronizing your Core Data/Realm models using
 
 s.ios.deployment_target = '8.0'
 s.osx.deployment_target = '10.11'
+s.watchos.deployment_target = '3.0'
 
 s.default_subspec = 'Core'
 
