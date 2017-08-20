@@ -897,8 +897,11 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
         }
         
         [self.privateContext performBlock:^{
-            [insertedIdentifiersAndEntityNames enumerateKeysAndObjectsUsingBlock:^(NSString *  _Nonnull objectID, NSString *  _Nonnull entityName, BOOL * _Nonnull stop) {
-                [self createSyncedEntityWithIdentifier:objectID entityName:entityName];
+            [insertedIdentifiersAndEntityNames enumerateKeysAndObjectsUsingBlock:^(NSString *  _Nonnull objectIdentifier, NSString *  _Nonnull entityName, BOOL * _Nonnull stop) {
+                QSSyncedEntity *entity = [self syncedEntityWithOriginObjectIdentifier:objectIdentifier];
+                if (!entity) {
+                    [self createSyncedEntityWithIdentifier:objectIdentifier entityName:entityName];
+                }
             }];
             
             [updatedIDs enumerateObjectsUsingBlock:^(NSString * _Nonnull objectIdentifier, NSUInteger idx, BOOL * _Nonnull stop) {

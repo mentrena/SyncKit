@@ -7,9 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		267846587E0B15D0C2B9F7EC /* libPods-SyncKitRealmExampleTodayExtension.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 27B3BE07B8251E4D67152633 /* libPods-SyncKitRealmExampleTodayExtension.a */; };
 		6408927E1EBEFBEA006CD4F9 /* QSRealmChangeManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6408926E1EBEF4C0006CD4F9 /* QSRealmChangeManagerTests.m */; };
 		64488A591F3BA66A00755D8E /* QSCompany.1739C6A5-C07E-48A5-B83E-AB07694F23DF in Resources */ = {isa = PBXBuildFile; fileRef = 64488A571F3BA66500755D8E /* QSCompany.1739C6A5-C07E-48A5-B83E-AB07694F23DF */; };
-		644A1BF31F40756700130AB9 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 644A1BF21F40756700130AB9 /* CloudKit.framework */; };
+		645337351F54610A00B338B5 /* NotificationCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 645337341F54610A00B338B5 /* NotificationCenter.framework */; };
+		645337391F54610A00B338B5 /* TodayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 645337381F54610A00B338B5 /* TodayViewController.m */; };
+		6453373C1F54610A00B338B5 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6453373A1F54610A00B338B5 /* MainInterface.storyboard */; };
+		645337401F54610A00B338B5 /* SyncKitRealmExampleTodayExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 645337331F54610A00B338B5 /* SyncKitRealmExampleTodayExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		645337461F54615300B338B5 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 645337451F54615300B338B5 /* CloudKit.framework */; };
+		645337481F54618C00B338B5 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 645337451F54615300B338B5 /* CloudKit.framework */; };
+		645337491F5463B700B338B5 /* QSCompany.m in Sources */ = {isa = PBXBuildFile; fileRef = 64F2927A1ECEA7C3000026F1 /* QSCompany.m */; };
+		6453374A1F5463B700B338B5 /* QSEmployee.m in Sources */ = {isa = PBXBuildFile; fileRef = 64F2927C1ECEA7C3000026F1 /* QSEmployee.m */; };
 		64F2927D1ECEA7C3000026F1 /* QSCompany.m in Sources */ = {isa = PBXBuildFile; fileRef = 64F2927A1ECEA7C3000026F1 /* QSCompany.m */; };
 		64F2927E1ECEA7C3000026F1 /* QSEmployee.m in Sources */ = {isa = PBXBuildFile; fileRef = 64F2927C1ECEA7C3000026F1 /* QSEmployee.m */; };
 		64F292941ECEA7F0000026F1 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 64F2928F1ECEA7F0000026F1 /* AppDelegate.m */; };
@@ -31,20 +39,51 @@
 			remoteGlobalIDString = 64D5D2BE1EBB58630005BFCE;
 			remoteInfo = SyncKitRealm;
 		};
+		6453373E1F54610A00B338B5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 64D5D2B71EBB58630005BFCE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 645337321F54610A00B338B5;
+			remoteInfo = SyncKitRealmExampleTodayExtension;
+		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		645337441F54610A00B338B5 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				645337401F54610A00B338B5 /* SyncKitRealmExampleTodayExtension.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		00BE73F618EA29BDCDDD170A /* Pods-SyncKitRealmExampleTodayExtension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SyncKitRealmExampleTodayExtension.release.xcconfig"; path = "Pods/Target Support Files/Pods-SyncKitRealmExampleTodayExtension/Pods-SyncKitRealmExampleTodayExtension.release.xcconfig"; sourceTree = "<group>"; };
 		05DA6005675BAC41DBE1E84A /* libPods-SyncKitRealmExampleTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SyncKitRealmExampleTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CB808DFD69B252BAA4FE88E /* Pods-SyncKitRealmExampleTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SyncKitRealmExampleTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-SyncKitRealmExampleTests/Pods-SyncKitRealmExampleTests.release.xcconfig"; sourceTree = "<group>"; };
 		1667EBAB53ADCA11ED510C4C /* Pods-SyncKitRealm.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SyncKitRealm.release.xcconfig"; path = "Pods/Target Support Files/Pods-SyncKitRealm/Pods-SyncKitRealm.release.xcconfig"; sourceTree = "<group>"; };
 		23812A2BEB33641977015410 /* Pods-SyncKitRealmExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SyncKitRealmExample.release.xcconfig"; path = "Pods/Target Support Files/Pods-SyncKitRealmExample/Pods-SyncKitRealmExample.release.xcconfig"; sourceTree = "<group>"; };
+		27B3BE07B8251E4D67152633 /* libPods-SyncKitRealmExampleTodayExtension.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SyncKitRealmExampleTodayExtension.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		27DCED2996C771B99FC3315D /* Pods-SyncKitRealmTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SyncKitRealmTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SyncKitRealmTests/Pods-SyncKitRealmTests.debug.xcconfig"; sourceTree = "<group>"; };
+		29B2FFCCAC3009C32BF47C61 /* Pods-SyncKitRealmExampleTodayExtension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SyncKitRealmExampleTodayExtension.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SyncKitRealmExampleTodayExtension/Pods-SyncKitRealmExampleTodayExtension.debug.xcconfig"; sourceTree = "<group>"; };
 		53BD7CD775F70BDAB02E3A5F /* Pods-SyncKitRealmExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SyncKitRealmExample.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SyncKitRealmExample/Pods-SyncKitRealmExample.debug.xcconfig"; sourceTree = "<group>"; };
 		6408926E1EBEF4C0006CD4F9 /* QSRealmChangeManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QSRealmChangeManagerTests.m; sourceTree = "<group>"; };
 		640892741EBEFBE5006CD4F9 /* SyncKitRealmExampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SyncKitRealmExampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		640892781EBEFBE6006CD4F9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = SyncKitRealmTests/Info.plist; sourceTree = "<group>"; };
 		64488A571F3BA66500755D8E /* QSCompany.1739C6A5-C07E-48A5-B83E-AB07694F23DF */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; name = "QSCompany.1739C6A5-C07E-48A5-B83E-AB07694F23DF"; path = "Tests/QSCompany.1739C6A5-C07E-48A5-B83E-AB07694F23DF"; sourceTree = "<group>"; };
-		644A1BF21F40756700130AB9 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
+		645337331F54610A00B338B5 /* SyncKitRealmExampleTodayExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = SyncKitRealmExampleTodayExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		645337341F54610A00B338B5 /* NotificationCenter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NotificationCenter.framework; path = System/Library/Frameworks/NotificationCenter.framework; sourceTree = SDKROOT; };
+		645337371F54610A00B338B5 /* TodayViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TodayViewController.h; sourceTree = "<group>"; };
+		645337381F54610A00B338B5 /* TodayViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TodayViewController.m; sourceTree = "<group>"; };
+		6453373B1F54610A00B338B5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
+		6453373D1F54610A00B338B5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		645337451F54615300B338B5 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
+		645337471F54618900B338B5 /* SyncKitRealmExampleTodayExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SyncKitRealmExampleTodayExtension.entitlements; sourceTree = "<group>"; };
 		64D5D2BF1EBB58630005BFCE /* SyncKitRealmExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SyncKitRealmExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		64DC95F51EE484CF002497E1 /* libSyncKit-Core-Realm.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSyncKit-Core-Realm.a"; path = "../../../../Library/Developer/Xcode/DerivedData/SyncKit-fdmpfoenjjvidjgdyuqkgxiluvfm/Build/Products/Debug-iphonesimulator/SyncKit-Core-Realm/libSyncKit-Core-Realm.a"; sourceTree = "<group>"; };
 		64F292781ECEA75E000026F1 /* SyncKitRealm.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = SyncKitRealm.entitlements; path = SyncKitRealmExample/SyncKitRealm.entitlements; sourceTree = SOURCE_ROOT; };
@@ -80,12 +119,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		645337301F54610A00B338B5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				645337351F54610A00B338B5 /* NotificationCenter.framework in Frameworks */,
+				645337481F54618C00B338B5 /* CloudKit.framework in Frameworks */,
+				267846587E0B15D0C2B9F7EC /* libPods-SyncKitRealmExampleTodayExtension.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		64D5D2BC1EBB58630005BFCE /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				6D42B3C56BDF35A8032F8B5B /* libPods-SyncKitRealmExample.a in Frameworks */,
-				644A1BF31F40756700130AB9 /* CloudKit.framework in Frameworks */,
+				645337461F54615300B338B5 /* CloudKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -95,12 +144,14 @@
 		088F106C9F89642E68B2749D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				644A1BF21F40756700130AB9 /* CloudKit.framework */,
+				645337451F54615300B338B5 /* CloudKit.framework */,
 				64DC95F51EE484CF002497E1 /* libSyncKit-Core-Realm.a */,
 				87C33DDCB8801A33C99C0236 /* libPods-SyncKitRealm.a */,
 				912D5D1C21FE8F2AB9386170 /* libPods-SyncKitRealmTests.a */,
 				BAAD33E0F60E6E3D6EBCE091 /* libPods-SyncKitRealmExample.a */,
 				05DA6005675BAC41DBE1E84A /* libPods-SyncKitRealmExampleTests.a */,
+				645337341F54610A00B338B5 /* NotificationCenter.framework */,
+				27B3BE07B8251E4D67152633 /* libPods-SyncKitRealmExampleTodayExtension.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -113,6 +164,18 @@
 				6408926E1EBEF4C0006CD4F9 /* QSRealmChangeManagerTests.m */,
 			);
 			name = Tests;
+			sourceTree = "<group>";
+		};
+		645337361F54610A00B338B5 /* SyncKitRealmExampleTodayExtension */ = {
+			isa = PBXGroup;
+			children = (
+				645337471F54618900B338B5 /* SyncKitRealmExampleTodayExtension.entitlements */,
+				645337371F54610A00B338B5 /* TodayViewController.h */,
+				645337381F54610A00B338B5 /* TodayViewController.m */,
+				6453373A1F54610A00B338B5 /* MainInterface.storyboard */,
+				6453373D1F54610A00B338B5 /* Info.plist */,
+			);
+			path = SyncKitRealmExampleTodayExtension;
 			sourceTree = "<group>";
 		};
 		64CE11251EBB5AA300162F55 /* Model */ = {
@@ -131,6 +194,7 @@
 			children = (
 				64D5D2C11EBB58630005BFCE /* SyncKitRealm */,
 				6408926D1EBEF4A6006CD4F9 /* Tests */,
+				645337361F54610A00B338B5 /* SyncKitRealmExampleTodayExtension */,
 				64D5D2C01EBB58630005BFCE /* Products */,
 				CD2414A6AE0F165D7EA78E93 /* Pods */,
 				088F106C9F89642E68B2749D /* Frameworks */,
@@ -142,6 +206,7 @@
 			children = (
 				64D5D2BF1EBB58630005BFCE /* SyncKitRealmExample.app */,
 				640892741EBEFBE5006CD4F9 /* SyncKitRealmExampleTests.xctest */,
+				645337331F54610A00B338B5 /* SyncKitRealmExampleTodayExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -185,6 +250,8 @@
 				23812A2BEB33641977015410 /* Pods-SyncKitRealmExample.release.xcconfig */,
 				DE2621F73E49988E98294331 /* Pods-SyncKitRealmExampleTests.debug.xcconfig */,
 				0CB808DFD69B252BAA4FE88E /* Pods-SyncKitRealmExampleTests.release.xcconfig */,
+				29B2FFCCAC3009C32BF47C61 /* Pods-SyncKitRealmExampleTodayExtension.debug.xcconfig */,
+				00BE73F618EA29BDCDDD170A /* Pods-SyncKitRealmExampleTodayExtension.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -213,6 +280,25 @@
 			productReference = 640892741EBEFBE5006CD4F9 /* SyncKitRealmExampleTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		645337321F54610A00B338B5 /* SyncKitRealmExampleTodayExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 645337431F54610A00B338B5 /* Build configuration list for PBXNativeTarget "SyncKitRealmExampleTodayExtension" */;
+			buildPhases = (
+				15FB0751E6B04BA487B04DFC /* [CP] Check Pods Manifest.lock */,
+				6453372F1F54610A00B338B5 /* Sources */,
+				645337301F54610A00B338B5 /* Frameworks */,
+				645337311F54610A00B338B5 /* Resources */,
+				C5C5E9A84BCB9BDFEB6E8578 /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SyncKitRealmExampleTodayExtension;
+			productName = SyncKitRealmExampleTodayExtension;
+			productReference = 645337331F54610A00B338B5 /* SyncKitRealmExampleTodayExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		64D5D2BE1EBB58630005BFCE /* SyncKitRealmExample */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 64D5D2D91EBB58630005BFCE /* Build configuration list for PBXNativeTarget "SyncKitRealmExample" */;
@@ -223,10 +309,12 @@
 				64D5D2BD1EBB58630005BFCE /* Resources */,
 				70A5496CCA6F4FDCD2C0C75D /* [CP] Embed Pods Frameworks */,
 				D555875AF2E8934A8F270B72 /* [CP] Copy Pods Resources */,
+				645337441F54610A00B338B5 /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				6453373F1F54610A00B338B5 /* PBXTargetDependency */,
 			);
 			name = SyncKitRealmExample;
 			productName = SyncKitRealm;
@@ -247,10 +335,28 @@
 						ProvisioningStyle = Automatic;
 						TestTargetID = 64D5D2BE1EBB58630005BFCE;
 					};
+					645337321F54610A00B338B5 = {
+						CreatedOnToolsVersion = 8.3.3;
+						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.ApplicationGroups.iOS = {
+								enabled = 0;
+							};
+							com.apple.Push = {
+								enabled = 1;
+							};
+							com.apple.iCloud = {
+								enabled = 1;
+							};
+						};
+					};
 					64D5D2BE1EBB58630005BFCE = {
 						CreatedOnToolsVersion = 8.2.1;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
+							com.apple.ApplicationGroups.iOS = {
+								enabled = 0;
+							};
 							com.apple.Push = {
 								enabled = 1;
 							};
@@ -276,6 +382,7 @@
 			targets = (
 				64D5D2BE1EBB58630005BFCE /* SyncKitRealmExample */,
 				640892731EBEFBE5006CD4F9 /* SyncKitRealmExampleTests */,
+				645337321F54610A00B338B5 /* SyncKitRealmExampleTodayExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -286,6 +393,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				64488A591F3BA66A00755D8E /* QSCompany.1739C6A5-C07E-48A5-B83E-AB07694F23DF in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		645337311F54610A00B338B5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6453373C1F54610A00B338B5 /* MainInterface.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -317,6 +432,24 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-SyncKitRealmExampleTests/Pods-SyncKitRealmExampleTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		15FB0751E6B04BA487B04DFC /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-SyncKitRealmExampleTodayExtension-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
 		70A5496CCA6F4FDCD2C0C75D /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -338,13 +471,16 @@
 			files = (
 			);
 			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
 			);
 			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-SyncKitRealmExampleTests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 		BBCCFA836EDEF4FFB3AF3807 /* [CP] Check Pods Manifest.lock */ = {
@@ -353,13 +489,31 @@
 			files = (
 			);
 			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
 			);
 			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-SyncKitRealmExample-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		C5C5E9A84BCB9BDFEB6E8578 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-SyncKitRealmExampleTodayExtension/Pods-SyncKitRealmExampleTodayExtension-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		D555875AF2E8934A8F270B72 /* [CP] Copy Pods Resources */ = {
@@ -403,6 +557,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		6453372F1F54610A00B338B5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				645337391F54610A00B338B5 /* TodayViewController.m in Sources */,
+				645337491F5463B700B338B5 /* QSCompany.m in Sources */,
+				6453374A1F5463B700B338B5 /* QSEmployee.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		64D5D2BB1EBB58630005BFCE /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -424,9 +588,22 @@
 			target = 64D5D2BE1EBB58630005BFCE /* SyncKitRealmExample */;
 			targetProxy = 640892791EBEFBE6006CD4F9 /* PBXContainerItemProxy */;
 		};
+		6453373F1F54610A00B338B5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 645337321F54610A00B338B5 /* SyncKitRealmExampleTodayExtension */;
+			targetProxy = 6453373E1F54610A00B338B5 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		6453373A1F54610A00B338B5 /* MainInterface.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				6453373B1F54610A00B338B5 /* Base */,
+			);
+			name = MainInterface.storyboard;
+			sourceTree = "<group>";
+		};
 		64F2929F1ECEA84D000026F1 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -471,6 +648,38 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.mentrena.SyncKitRealmTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SyncKitRealmExample.app/SyncKitRealmExample";
+			};
+			name = Release;
+		};
+		645337411F54610A00B338B5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 29B2FFCCAC3009C32BF47C61 /* Pods-SyncKitRealmExampleTodayExtension.debug.xcconfig */;
+			buildSettings = {
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = SyncKitRealmExampleTodayExtension/SyncKitRealmExampleTodayExtension.entitlements;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = SyncKitRealmExampleTodayExtension/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.mentrena.SyncKitRealmDemo.SyncKitRealmExampleTodayExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		645337421F54610A00B338B5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 00BE73F618EA29BDCDDD170A /* Pods-SyncKitRealmExampleTodayExtension.release.xcconfig */;
+			buildSettings = {
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = SyncKitRealmExampleTodayExtension/SyncKitRealmExampleTodayExtension.entitlements;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = SyncKitRealmExampleTodayExtension/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.mentrena.SyncKitRealmDemo.SyncKitRealmExampleTodayExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
 			};
 			name = Release;
 		};
@@ -610,6 +819,15 @@
 			buildConfigurations = (
 				6408927C1EBEFBE6006CD4F9 /* Debug */,
 				6408927D1EBEFBE6006CD4F9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		645337431F54610A00B338B5 /* Build configuration list for PBXNativeTarget "SyncKitRealmExampleTodayExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				645337411F54610A00B338B5 /* Debug */,
+				645337421F54610A00B338B5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

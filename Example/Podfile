@@ -30,3 +30,13 @@ target 'SyncKitRealmExample' do
 		inherit! :search_paths
 	end
 end
+
+target 'SyncKitRealmExampleTodayExtension' do
+
+	project 'SyncKitRealmExample'
+	platform :ios, '9.0'
+	
+	pod 'SyncKit/Realm', :path => '../'
+
+	pod 'Realm'
+end

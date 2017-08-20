@@ -62,6 +62,11 @@ typedef NS_ENUM(NSInteger, QSCloudKitSynchronizeMode)
  */
 @property (nonatomic, assign) QSCloudKitSynchronizeMode syncMode;
 
+/*
+ *  App Group identifier, if SyncKit is to be configured to store its tracking data in a shared container for that app group.
+ */
+@property (nonatomic, readonly) NSString *suiteName;
+
 + (NSArray<NSString *> *)synchronizerMetadataKeys;
 
 
@@ -76,6 +81,18 @@ typedef NS_ENUM(NSInteger, QSCloudKitSynchronizeMode)
  *  @return Initialized synchronizer or `nil` if no iCloud container can be found with the provided identifier.
  */
 - (instancetype)initWithContainerIdentifier:(NSString *)containerIdentifier recordZoneID:(CKRecordZoneID *)zoneID changeManager:(id<QSChangeManager>)changeManager;
+
+/**
+ *  Initializes a newly allocated synchronizer.
+ *
+ *  @param containerIdentifier Identifier of the iCloud container to be used. The application must have the right entitlements to be able to access this container.
+ *  @param zoneID              Identifier of the`CKRecordZone` that will contain all data.
+ *  @param changeManager       Object conforming to `QSChangeManager`, to interact with local model.
+ *  @param suiteName           App Group identifier, to configure SyncKit to store its data in the shared container.
+ *
+ *  @return Initialized synchronizer or `nil` if no iCloud container can be found with the provided identifier.
+ */
+- (instancetype)initWithContainerIdentifier:(NSString *)containerIdentifier recordZoneID:(CKRecordZoneID *)zoneID changeManager:(id<QSChangeManager>)changeManager suiteName:(NSString *)suiteName;
 
 /**
  *  Performs synchronization with CloudKit.

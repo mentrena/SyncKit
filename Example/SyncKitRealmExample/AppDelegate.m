@@ -22,7 +22,13 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
+    
+    // For Extension test (app groups) uncomment below
+    /*
+    RLMRealmConfiguration *configuration = [RLMRealmConfiguration defaultConfiguration];
+    configuration.fileURL = [self realmPath];
+    self.realm = [RLMRealm realmWithConfiguration:configuration error:nil];
+     */
     self.realm = [RLMRealm defaultRealm];
     UINavigationController *navController = (UINavigationController *)self.window.rootViewController;
     QSCompanyTableViewController *companyVC = (QSCompanyTableViewController *)navController.topViewController;
@@ -33,11 +39,20 @@
     return YES;
 }
 
+- (NSURL *)realmPath
+{
+     NSURL *groupURL = [[NSFileManager defaultManager] containerURLForSecurityApplicationGroupIdentifier:@"group.com.mentrena.todayextensiontest"];
+    return [groupURL URLByAppendingPathComponent:@"realmTest"];
+}
+
 #pragma mark - Core Data Synchronizer
 
 - (QSCloudKitSynchronizer *)synchronizer
 {
     if (!_synchronizer) {
+        // For Extension test (app groups):
+//        _synchronizer = [QSCloudKitSynchronizer cloudKitSynchronizerWithContainerName:@"your-container-name" realmConfiguration:self.realm.configuration suiteName:@"group.com.mentrena.todayextensiontest"];
+        
         _synchronizer = [QSCloudKitSynchronizer cloudKitSynchronizerWithContainerName:@"your-container-name" realmConfiguration:self.realm.configuration];
     }
 

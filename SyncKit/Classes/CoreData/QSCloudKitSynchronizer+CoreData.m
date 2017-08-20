@@ -22,9 +22,19 @@ static NSString * const QSCloudKitCustomZoneName = @"QSCloudKitCustomZoneName";
 #endif
 }
 
++ (NSString *)applicationDocumentsDirectoryForAppGroup:(NSString *)suiteName
+{
+    return [[[NSFileManager defaultManager] containerURLForSecurityApplicationGroupIdentifier:suiteName] path];
+}
+
 + (NSString *)applicationStoresPath
 {
     return [[self applicationDocumentsDirectory] stringByAppendingPathComponent:@"Stores"];
+}
+
++ (NSString *)applicationStoresPathWithAppGroup:(NSString *)suiteName
+{
+    return [[self applicationDocumentsDirectoryForAppGroup:suiteName] stringByAppendingPathComponent:@"Stores"];
 }
 
 + (NSString *)storePath
@@ -32,10 +42,14 @@ static NSString * const QSCloudKitCustomZoneName = @"QSCloudKitCustomZoneName";
     return [[self applicationStoresPath] stringByAppendingPathComponent:[self storeFileName]];
 }
 
++ (NSString *)storePathWithAppGroup:(NSString *)suiteName
+{
+    return [[self applicationStoresPathWithAppGroup:suiteName] stringByAppendingPathComponent:[self storeFileName]];
+}
+
 + (NSString *)storeFileName
 {
     return @"QSSyncStore";
-    //    return [self.containerIdentifier stringByAppendingString:@"QSSyncStore"];
 }
 
 + (CKRecordZoneID *)defaultCustomZoneID
@@ -48,6 +62,14 @@ static NSString * const QSCloudKitCustomZoneName = @"QSCloudKitCustomZoneName";
     QSCoreDataStack *stack = [[QSCoreDataStack alloc] initWithStoreType:NSSQLiteStoreType model:[QSCoreDataChangeManager persistenceModel] storePath:[self storePath]];
     QSCoreDataChangeManager *changeManager = [[QSCoreDataChangeManager alloc] initWithPersistenceStack:stack targetContext:context recordZoneID:[self defaultCustomZoneID] delegate:delegate];
     QSCloudKitSynchronizer *synchronizer = [[QSCloudKitSynchronizer alloc] initWithContainerIdentifier:containerName recordZoneID:[self defaultCustomZoneID] changeManager:changeManager];
+    return synchronizer;
+}
+
++ (QSCloudKitSynchronizer *)cloudKitSynchronizerWithContainerName:(NSString *)containerName managedObjectContext:(NSManagedObjectContext *)context changeManagerDelegate:(id<QSCoreDataChangeManagerDelegate>)delegate suiteName:(NSString *)suiteName
+{
+    QSCoreDataStack *stack = [[QSCoreDataStack alloc] initWithStoreType:NSSQLiteStoreType model:[QSCoreDataChangeManager persistenceModel] storePath:[self storePathWithAppGroup:suiteName]];
+    QSCoreDataChangeManager *changeManager = [[QSCoreDataChangeManager alloc] initWithPersistenceStack:stack targetContext:context recordZoneID:[self defaultCustomZoneID] delegate:delegate];
+    QSCloudKitSynchronizer *synchronizer = [[QSCloudKitSynchronizer alloc] initWithContainerIdentifier:containerName recordZoneID:[self defaultCustomZoneID] changeManager:changeManager suiteName:suiteName];
     return synchronizer;
 }
 

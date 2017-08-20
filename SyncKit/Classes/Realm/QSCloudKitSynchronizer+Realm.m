@@ -12,12 +12,18 @@
 
 + (NSString *)realmPath
 {
-    return [[self applicationBackupRealmPath] stringByAppendingPathComponent:[self realmFileName]];
+    return [self realmPathWithAppGroup:nil];
 }
 
-+ (NSString *)applicationBackupRealmPath
++ (NSString *)applicationBackupRealmPathWithSuiteName:(NSString *)suiteName
 {
-    return [[self applicationDocumentsDirectory] stringByAppendingPathComponent:@"Realm"];
+    NSString *rootDirectory;
+    if (suiteName) {
+        rootDirectory = [[[NSFileManager defaultManager] containerURLForSecurityApplicationGroupIdentifier:suiteName] path];
+    } else {
+        rootDirectory = [self applicationDocumentsDirectory];
+    }
+    return [rootDirectory stringByAppendingPathComponent:@"Realm"];
 }
 
 + (NSString *)applicationDocumentsDirectory
@@ -35,19 +41,24 @@
     return @"QSSyncStore.realm";
 }
 
-+ (RLMRealmConfiguration *)persistenceConfiguration
++ (NSString *)realmPathWithAppGroup:(NSString *)suiteName
+{
+    return [[self applicationBackupRealmPathWithSuiteName:suiteName] stringByAppendingPathComponent:[self realmFileName]];
+}
+
++ (RLMRealmConfiguration *)persistenceConfigurationWithSuiteName:(NSString *)suiteName
 {
     RLMRealmConfiguration *configuration = [QSRealmChangeManager defaultPersistenceConfiguration];
-    configuration.fileURL = [NSURL fileURLWithPath:[self realmPath]];
+    configuration.fileURL = [NSURL fileURLWithPath:[self realmPathWithAppGroup:suiteName]];
     return configuration;
 }
 
-+ (void)ensurePathAvailable
++ (void)ensurePathAvailableWithSuiteName:(NSString *)suiteName
 {
     NSFileManager *fileManager = [NSFileManager defaultManager];
     
-    if (![fileManager fileExistsAtPath:[self applicationBackupRealmPath]]) {
-        [fileManager createDirectoryAtPath:[self applicationBackupRealmPath] withIntermediateDirectories:YES attributes:nil error:nil];
+    if (![fileManager fileExistsAtPath:[self applicationBackupRealmPathWithSuiteName:suiteName]]) {
+        [fileManager createDirectoryAtPath:[self applicationBackupRealmPathWithSuiteName:suiteName] withIntermediateDirectories:YES attributes:nil error:nil];
     }
 }
 
@@ -58,9 +69,14 @@
 
 + (QSCloudKitSynchronizer *)cloudKitSynchronizerWithContainerName:(NSString *)containerName realmConfiguration:(RLMRealmConfiguration *)targetRealmConfiguration
 {
-    [self ensurePathAvailable];
-    QSRealmChangeManager *changeManager = [[QSRealmChangeManager alloc] initWithPersistenceRealmConfiguration:[self persistenceConfiguration] targetRealmConfiguration:targetRealmConfiguration recordZoneID:[self defaultCustomZoneID]];
-    QSCloudKitSynchronizer *synchronizer = [[QSCloudKitSynchronizer alloc] initWithContainerIdentifier:containerName recordZoneID:[self defaultCustomZoneID] changeManager:changeManager];
+    return [QSCloudKitSynchronizer cloudKitSynchronizerWithContainerName:containerName realmConfiguration:targetRealmConfiguration suiteName:nil];
+}
+
++ (QSCloudKitSynchronizer *)cloudKitSynchronizerWithContainerName:(NSString *)containerName realmConfiguration:(RLMRealmConfiguration *)targetRealmConfiguration suiteName:(NSString *)suiteName
+{
+    [self ensurePathAvailableWithSuiteName:suiteName];
+    QSRealmChangeManager *changeManager = [[QSRealmChangeManager alloc] initWithPersistenceRealmConfiguration:[self persistenceConfigurationWithSuiteName:suiteName] targetRealmConfiguration:targetRealmConfiguration recordZoneID:[self defaultCustomZoneID]];
+    QSCloudKitSynchronizer *synchronizer = [[QSCloudKitSynchronizer alloc] initWithContainerIdentifier:containerName recordZoneID:[self defaultCustomZoneID] changeManager:changeManager suiteName:suiteName];
     return synchronizer;
 }
 

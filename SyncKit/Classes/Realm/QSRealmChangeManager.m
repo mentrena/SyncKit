@@ -252,7 +252,23 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
     BOOL isNewChange = NO;
     NSString *identifier = [NSString stringWithFormat:@"%@.%@", entityName, objectIdentifier];
     QSSyncedEntity *syncedEntity = [self syncedEntityForObjectWithIdentifier:identifier inRealm:provider.persistenceRealm];
-    if (!syncedEntity) {
+    
+    if (deleted) {
+        
+        isNewChange = YES;
+        
+        if (syncedEntity) {
+            [provider.persistenceRealm beginWriteTransaction];
+            syncedEntity.state = @(QSSyncedEntityStateDeleted);
+            [provider.persistenceRealm commitWriteTransaction];
+        }
+        
+        RLMNotificationToken *token = [self.objectNotificationTokens objectForKey:objectIdentifier];
+        if (token) {
+            [self.objectNotificationTokens removeObjectForKey:objectIdentifier];
+            [token stop];
+        }
+    } else if (!syncedEntity) {
         syncedEntity = [self createSyncedEntityForObjectOfType:entityName identifier:objectIdentifier inRealm:provider.persistenceRealm];
         
         if (inserted) {
@@ -276,23 +292,10 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
         
         [provider.persistenceRealm beginWriteTransaction];
         syncedEntity.changedKeys = [[changedKeys allObjects] componentsJoinedByString:@","];
-        if (deleted) {
-            syncedEntity.state = @(QSSyncedEntityStateDeleted);
-        } else if ([syncedEntity.state integerValue] == QSSyncedEntityStateSynced && syncedEntity.changedKeys.length) {
+        if ([syncedEntity.state integerValue] == QSSyncedEntityStateSynced && syncedEntity.changedKeys.length) {
             syncedEntity.state = @(QSSyncedEntityStateChanged);
         } // If state was New then leave it as that
         [provider.persistenceRealm commitWriteTransaction];
-    }
-    
-    if (deleted) {
-        
-        isNewChange = YES;
-        
-        RLMNotificationToken *token = [self.objectNotificationTokens objectForKey:objectIdentifier];
-        if (token) {
-            [self.objectNotificationTokens removeObjectForKey:objectIdentifier];
-            [token stop];
-        }
     }
     
     if (!self.hasChanges && isNewChange) {

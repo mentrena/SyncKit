@@ -40,7 +40,7 @@
 - (RLMResults<QSCompany *> *)companies
 {
     if (!_companies) {
-        _companies = [[QSCompany allObjects] sortedResultsUsingKeyPath:@"sortIndex" ascending:YES];
+        _companies = [[QSCompany allObjectsInRealm:self.realm] sortedResultsUsingKeyPath:@"sortIndex" ascending:YES];
         
         __weak QSCompanyTableViewController *weakSelf = self;
         self.notificationToken = [_companies addNotificationBlock:^(RLMResults<QSCompany *> *results, RLMCollectionChange *changes, NSError *error) {

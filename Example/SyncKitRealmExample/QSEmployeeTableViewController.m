@@ -34,7 +34,7 @@
 - (RLMResults<QSEmployee *> *)employees
 {
     if (!_employees) {
-        _employees = [[QSEmployee objectsWhere:@"company == %@", self.company] sortedResultsUsingKeyPath:@"sortIndex" ascending:YES];
+        _employees = [[QSEmployee objectsInRealm:self.realm where:@"company == %@", self.company] sortedResultsUsingKeyPath:@"sortIndex" ascending:YES];
         
         __weak QSEmployeeTableViewController *weakSelf = self;
         self.notificationToken = [_employees addNotificationBlock:^(RLMResults<QSCompany *> *results, RLMCollectionChange *changes, NSError *error) {
@@ -138,7 +138,7 @@
 
 - (void)createEmployeeWithName:(NSString *)name
 {
-    QSEmployee *employee =[[QSEmployee alloc] init];
+    QSEmployee *employee = [[QSEmployee alloc] init];
     employee.name = name;
     employee.company = self.company;
     employee.identifier = [[NSUUID UUID] UUIDString];
