@@ -473,7 +473,7 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
             }
         }
         if (!targetClassName) {
-            return;
+            continue;
         }
         
         Class targetObjectClass = NSClassFromString(targetClassName);
@@ -730,7 +730,7 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
         [self.mainRealmProvider.persistenceRealm beginWriteTransaction];
         for (CKRecordID *recordID in deletedRecordIDs) {
             
-            QSSyncedEntity *syncedEntity = [[QSSyncedEntity objectsInRealm:self.mainRealmProvider.persistenceRealm where:@"identifier == %@", recordID.recordName] firstObject];
+            QSSyncedEntity *syncedEntity = [QSSyncedEntity objectInRealm:self.mainRealmProvider.persistenceRealm forPrimaryKey:recordID.recordName];
             if (syncedEntity) {
                 [self.mainRealmProvider.persistenceRealm deleteObject:syncedEntity];
             }
@@ -744,7 +744,7 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
 {
     __block BOOL hasRecord = false;
     runOnMainQueue(^{
-        QSSyncedEntity *syncedEntity = [[QSSyncedEntity objectsInRealm:self.mainRealmProvider.persistenceRealm where:@"identifier == %@", recordID.recordName] firstObject];
+        QSSyncedEntity *syncedEntity = [QSSyncedEntity objectInRealm:self.mainRealmProvider.persistenceRealm forPrimaryKey:recordID.recordName];
         hasRecord = syncedEntity != nil;
     });
     return hasRecord;

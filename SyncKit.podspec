@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'SyncKit'
-  s.version          = '0.5.1'
+  s.version          = '0.5.2'
   s.summary          = 'CloudKit synchronization for your Core Data or Realm model.'
 
   s.description      = <<-DESC
@@ -45,6 +45,12 @@ s.subspec 'Realm' do |cs|
 	cs.dependency 'Realm'
 	cs.public_header_files = 'SyncKit/Classes/Realm/*.h'
 	cs.source_files = 'SyncKit/Classes/Realm/*.{h,m}'
+end
+
+s.subspec 'RealmSwift' do |cs|
+	cs.dependency 'SyncKit/Core'
+	cs.dependency 'RealmSwift'
+	cs.source_files = 'SyncKit/Classes/RealmSwift/*.swift'
 end
 
 end

@@ -54,14 +54,14 @@ static NSString * const QSChangeManagerHasChangesNotification = @"QSChangeManage
  *
  *  @param records Array of `CKRecord` that were obtained from CloudKit.
  */
-- (void)saveChangesInRecords:(NSArray<CKRecord *> *)records;
+- (void)saveChangesInRecords:(nonnull NSArray<CKRecord *> *)records;
 
 /**
  *  Delete the local model objects corresponding to the given record IDs.
  *
  *  @param recordIDs Array of identifiers of records that were deleted on CloudKit.
  */
-- (void)deleteRecordsWithIDs:(NSArray<CKRecordID *> *)recordIDs;
+- (void)deleteRecordsWithIDs:(nonnull NSArray<CKRecordID *> *)recordIDs;
 
 /**
  *  Tells the change manager to persist all downloaded changes in the current import operation.
@@ -77,28 +77,28 @@ static NSString * const QSChangeManagerHasChangesNotification = @"QSChangeManage
  *
  *  @return Array of `CKRecord`.
  */
-- (NSArray *)recordsToUploadWithLimit:(NSInteger)limit;
+- (nonnull NSArray<CKRecord *> *)recordsToUploadWithLimit:(NSInteger)limit;
 
 /**
  *  Tells the change manager that these records were uploaded successfully.
  *
  *  @param savedRecords Records that were saved.
  */
-- (void)didUploadRecords:(NSArray *)savedRecords;
+- (void)didUploadRecords:(nonnull NSArray<CKRecord *> *)savedRecords;
 
 /**
  *  Provides an array of record IDs to be deleted on CloudKit, for model objects that were deleted locally.
  *
  *  @return Array of `CKRecordID`.
  */
-- (NSArray *)recordIDsMarkedForDeletionWithLimit:(NSInteger)limit;
+- (nonnull NSArray<CKRecordID *> *)recordIDsMarkedForDeletionWithLimit:(NSInteger)limit;
 
 /**
  *  Tells the change manager that these record identifiers were deleted successfully.
  *
  *  @param deletedRecordIDs Record IDs that were deleted on CloudKit.
  */
-- (void)didDeleteRecordIDs:(NSArray *)deletedRecordIDs;
+- (void)didDeleteRecordIDs:(nonnull NSArray<CKRecordID *> *)deletedRecordIDs;
 
 /**
  *  Asks the change manager whether it has a local object for the given record identifier.

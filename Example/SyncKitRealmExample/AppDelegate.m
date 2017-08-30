@@ -39,11 +39,11 @@
     return YES;
 }
 
-- (NSURL *)realmPath
-{
-     NSURL *groupURL = [[NSFileManager defaultManager] containerURLForSecurityApplicationGroupIdentifier:@"group.com.mentrena.todayextensiontest"];
-    return [groupURL URLByAppendingPathComponent:@"realmTest"];
-}
+//- (NSURL *)realmPath
+//{
+//     NSURL *groupURL = [[NSFileManager defaultManager] containerURLForSecurityApplicationGroupIdentifier:@"group.com.mentrena.todayextensiontest"];
+//    return [groupURL URLByAppendingPathComponent:@"realmTest"];
+//}
 
 #pragma mark - Core Data Synchronizer
 

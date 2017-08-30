@@ -377,7 +377,6 @@
 					};
 					641F76D31ED3EBBE00107A88 = {
 						CreatedOnToolsVersion = 8.3.2;
-						DevelopmentTeam = 2UHP7K87SQ;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 6003F589195388D20070C39A;
 					};
@@ -731,7 +730,7 @@
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 2UHP7K87SQ;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = SyncKitCoreDataExampleTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -752,7 +751,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 2UHP7K87SQ;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = SyncKitCoreDataExampleTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
