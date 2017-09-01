@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		644A06131F597A1700F69505 /* SyncKitRealmSwiftOSX.h in Headers */ = {isa = PBXBuildFile; fileRef = 644A06111F597A1700F69505 /* SyncKitRealmSwiftOSX.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		644A06131F597A1700F69505 /* SyncKitRealmSwift.h in Headers */ = {isa = PBXBuildFile; fileRef = 644A06111F597A1700F69505 /* SyncKitRealmSwift.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		644A06251F597A6400F69505 /* PendingRelationship.swift in Sources */ = {isa = PBXBuildFile; fileRef = 644A06191F597A6400F69505 /* PendingRelationship.swift */; };
 		644A06261F597A6400F69505 /* QSCloudKitSynchronizer+RealmSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 644A061A1F597A6400F69505 /* QSCloudKitSynchronizer+RealmSwift.swift */; };
 		644A06271F597A6400F69505 /* RealmSwiftChangeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 644A061B1F597A6400F69505 /* RealmSwiftChangeManager.swift */; };
@@ -23,8 +23,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		644A060E1F597A1700F69505 /* SyncKitRealmSwiftOSX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SyncKitRealmSwiftOSX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		644A06111F597A1700F69505 /* SyncKitRealmSwiftOSX.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SyncKitRealmSwiftOSX.h; sourceTree = "<group>"; };
+		644A060E1F597A1700F69505 /* SyncKitRealmSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SyncKitRealmSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		644A06111F597A1700F69505 /* SyncKitRealmSwift.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SyncKitRealmSwift.h; sourceTree = "<group>"; };
 		644A06121F597A1700F69505 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		644A06191F597A6400F69505 /* PendingRelationship.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PendingRelationship.swift; path = /Users/manuel/Documents/Apps/SyncKit/Example/SyncKitRealmSwift/SyncKitRealmSwiftIOS/SyncKitRealmSwiftIOS/../../../../SyncKit/Classes/RealmSwift/PendingRelationship.swift; sourceTree = "<absolute>"; };
 		644A061A1F597A6400F69505 /* QSCloudKitSynchronizer+RealmSwift.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "QSCloudKitSynchronizer+RealmSwift.swift"; path = "/Users/manuel/Documents/Apps/SyncKit/Example/SyncKitRealmSwift/SyncKitRealmSwiftIOS/SyncKitRealmSwiftIOS/../../../../SyncKit/Classes/RealmSwift/QSCloudKitSynchronizer+RealmSwift.swift"; sourceTree = "<absolute>"; };
@@ -64,7 +64,7 @@
 		644A060F1F597A1700F69505 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				644A060E1F597A1700F69505 /* SyncKitRealmSwiftOSX.framework */,
+				644A060E1F597A1700F69505 /* SyncKitRealmSwift.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -72,7 +72,7 @@
 		644A06101F597A1700F69505 /* SyncKitRealmSwiftOSX */ = {
 			isa = PBXGroup;
 			children = (
-				644A06111F597A1700F69505 /* SyncKitRealmSwiftOSX.h */,
+				644A06111F597A1700F69505 /* SyncKitRealmSwift.h */,
 				644A06191F597A6400F69505 /* PendingRelationship.swift */,
 				644A061A1F597A6400F69505 /* QSCloudKitSynchronizer+RealmSwift.swift */,
 				644A061B1F597A6400F69505 /* RealmSwiftChangeManager.swift */,
@@ -104,7 +104,7 @@
 				644A062F1F597A6400F69505 /* SyncKit.h in Headers */,
 				644A062D1F597A6400F69505 /* QSPrimaryKey.h in Headers */,
 				644A06301F597A6400F69505 /* SyncKitLog.h in Headers */,
-				644A06131F597A1700F69505 /* SyncKitRealmSwiftOSX.h in Headers */,
+				644A06131F597A1700F69505 /* SyncKitRealmSwift.h in Headers */,
 				644A062B1F597A6400F69505 /* QSCloudKitSynchronizer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -112,9 +112,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		644A060D1F597A1700F69505 /* SyncKitRealmSwiftOSX */ = {
+		644A060D1F597A1700F69505 /* SyncKitRealmSwift */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 644A06161F597A1700F69505 /* Build configuration list for PBXNativeTarget "SyncKitRealmSwiftOSX" */;
+			buildConfigurationList = 644A06161F597A1700F69505 /* Build configuration list for PBXNativeTarget "SyncKitRealmSwift" */;
 			buildPhases = (
 				644A06091F597A1700F69505 /* Sources */,
 				644A060A1F597A1700F69505 /* Frameworks */,
@@ -125,9 +125,9 @@
 			);
 			dependencies = (
 			);
-			name = SyncKitRealmSwiftOSX;
+			name = SyncKitRealmSwift;
 			productName = SyncKitRealmSwiftOSX;
-			productReference = 644A060E1F597A1700F69505 /* SyncKitRealmSwiftOSX.framework */;
+			productReference = 644A060E1F597A1700F69505 /* SyncKitRealmSwift.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
@@ -157,7 +157,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				644A060D1F597A1700F69505 /* SyncKitRealmSwiftOSX */,
+				644A060D1F597A1700F69505 /* SyncKitRealmSwift */,
 			);
 		};
 /* End PBXProject section */
@@ -352,7 +352,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		644A06161F597A1700F69505 /* Build configuration list for PBXNativeTarget "SyncKitRealmSwiftOSX" */ = {
+		644A06161F597A1700F69505 /* Build configuration list for PBXNativeTarget "SyncKitRealmSwift" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				644A06171F597A1700F69505 /* Debug */,
