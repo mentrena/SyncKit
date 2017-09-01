@@ -48,6 +48,7 @@ s.subspec 'Realm' do |cs|
 end
 
 s.subspec 'RealmSwift' do |cs|
+	cs.pod_target_xcconfig = { 'SWIFT_VERSION' => '3.0' }
 	cs.dependency 'SyncKit/Core'
 	cs.dependency 'RealmSwift'
 	cs.source_files = 'SyncKit/Classes/RealmSwift/*.swift'
