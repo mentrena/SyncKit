@@ -28,6 +28,16 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "641C327E1F55E29A00B01D62"
+               BuildableName = "SyncKitRealmSwiftExampleTests.xctest"
+               BlueprintName = "SyncKitRealmSwiftExampleTests"
+               ReferencedContainer = "container:SyncKitRealmSwiftExample.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference
