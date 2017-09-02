@@ -12,6 +12,6 @@ before_install:
 script:
   - set -o pipefail && xcodebuild test -workspace Example/SyncKit.xcworkspace -scheme SyncKitCoreDataExample -sdk iphonesimulator10.3 -destination 'platform=iOS Simulator,name=iPhone 6,OS=10.3.1' ONLY_ACTIVE_ARCH=NO | xcpretty
   - set -o pipefail && xcodebuild test -workspace Example/SyncKit.xcworkspace -scheme SyncKitRealmExample -sdk iphonesimulator10.3 -destination 'platform=iOS Simulator,name=iPhone 6,OS=10.3.1' ONLY_ACTIVE_ARCH=NO | xcpretty
-  - travis_wait pod lib lint --allow-warnings
-  - set -o pipefail && xcodebuild test -workspace Example/SyncKitRealmSwift/SyncKitRealmSwift.xcworkspace -scheme SyncKitRealmSwift -sdk iphonesimulator10.3 -destination 'platform=iOS Simulator,name=iPhone 6,OS=10.3.1' ONLY_ACTIVE_ARCH=NO | xcpretty
-  - travis_wait pod lib lint --allow-warnings
+  - pod install --project-directory=Example/SyncKitRealmSwift/
+  - set -o pipefail && xcodebuild test -workspace Example/SyncKitRealmSwift/SyncKitRealmSwift.xcworkspace -scheme SyncKitRealmSwiftExample -sdk iphonesimulator10.3 -destination 'platform=iOS Simulator,name=iPhone 6,OS=10.3.1' ONLY_ACTIVE_ARCH=NO | xcpretty
+  - travis_wait 30 pod lib lint --allow-warnings
