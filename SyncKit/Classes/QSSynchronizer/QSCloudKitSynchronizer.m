@@ -560,12 +560,15 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
 
 - (void)updateServerTokenWithCompletion:(void(^)(BOOL needToFetchFullChanges, NSError *error))completion
 {
-    CKFetchRecordChangesOperation *recordChangesOperation = [[CKFetchRecordChangesOperation alloc] initWithRecordZoneID:self.customZoneID previousServerChangeToken:self.serverChangeToken];
-    __weak CKFetchRecordChangesOperation *weakOperation = recordChangesOperation;
+    //CKFetchRecordChangesOperation *recordChangesOperation = [[CKFetchRecordChangesOperation alloc] initWithRecordZoneID:self.customZoneID previousServerChangeToken:self.serverChangeToken];
+    //__weak CKFetchRecordChangesOperation *weakOperation = recordChangesOperation;
+    CKFetchRecordZoneChangesOptions *options = [[CKFetchRecordZoneChangesOptions alloc]init];
+    options.previousServerChangeToken = self.serverChangeToken;
+    CKFetchRecordZoneChangesOperation *recordChangesOperation = [[CKFetchRecordZoneChangesOperation alloc]initWithRecordZoneIDs:@[self.customZoneID] optionsByRecordZoneID:@{self.customZoneID:options}];
     __weak QSCloudKitSynchronizer *weakSelf = self;
     __block BOOL hasChanged = NO;
     
-    recordChangesOperation.desiredKeys = @[@"recordID", QSCloudKitDeviceUUIDKey];
+    //recordChangesOperation.desiredKeys = @[@"recordID", QSCloudKitDeviceUUIDKey];
     
     recordChangesOperation.recordChangedBlock = ^(CKRecord *record) {
         if ([record[QSCloudKitDeviceUUIDKey] isEqual:self.deviceIdentifier] == NO) {
@@ -573,11 +576,14 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
         }
     };
     
-    recordChangesOperation.recordWithIDWasDeletedBlock = ^(CKRecordID *recordID) {
+    recordChangesOperation.recordWithIDWasDeletedBlock = ^(CKRecordID *recordID, NSString *recordType) {
         if ([weakSelf.changeManager hasRecordID:recordID]) {
             hasChanged = YES;
         }
     };
+    
+    //---- update the rest, here is the same approach: https://github.com/yapstudios/YapDatabase/blob/master/Examples/CloudKitTodo/CloudKitTodo/CloudKitManager.m
+//- (void)_fetchRecordChangesWithPrevServerChangeToken:(CKServerChangeToken *)prevServerChangeToken completionHandler:
     
     recordChangesOperation.fetchRecordChangesCompletionBlock = ^(CKServerChangeToken *serverChangeToken, NSData *clientChangeTokenData, NSError *operationError) {
         dispatch_async(self.dispatchQueue, ^{
