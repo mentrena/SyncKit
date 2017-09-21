@@ -54,7 +54,11 @@ static NSString * const QSCloudKitCustomZoneName = @"QSCloudKitCustomZoneName";
 
 + (CKRecordZoneID *)defaultCustomZoneID
 {
-    return [[CKRecordZoneID alloc] initWithZoneName:QSCloudKitCustomZoneName ownerName:CKOwnerDefaultName];
+    if (@available(iOS 10.0, macOS 10.12, watchOS 3.0, *)) {
+        return [[CKRecordZoneID alloc] initWithZoneName:QSCloudKitCustomZoneName ownerName:CKCurrentUserDefaultName]
+    }else{
+        return [[CKRecordZoneID alloc] initWithZoneName:QSCloudKitCustomZoneName ownerName:CKOwnerDefaultName];
+    }
 }
 
 + (QSCloudKitSynchronizer *)cloudKitSynchronizerWithContainerName:(NSString *)containerName managedObjectContext:(NSManagedObjectContext *)context changeManagerDelegate:(id<QSCoreDataChangeManagerDelegate>)delegate
