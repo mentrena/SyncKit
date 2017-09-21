@@ -74,7 +74,11 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
         
         self.batchSize = QSDefaultBatchSize;
         self.compatibilityVersion = 0;
+        #if TARGET_OS_WATCH
+        self.syncMode = QSCloudKitSynchronizeModeDownload;
+        #else
         self.syncMode = QSCloudKitSynchronizeModeSync;
+        #endif
         CKContainer *container = [CKContainer containerWithIdentifier:self.containerIdentifier];
         
         if (!container) {
@@ -217,17 +221,18 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
         callBlockIfNotNil(completion, error);
     }];
 }
-
+#if TARGET_OS_WATCH
+//---CKSubscription and CKNotificationInfo is not available on Watch OS
+#else
 - (void)subscribeForUpdateNotificationsWithCompletion:(void(^)(NSError *error))completion
 {
     [self subscribeForChangesInRecordZoneWithCompletion:completion];
 }
-
 - (void)deleteSubscriptionWithCompletion:(void(^)(NSError *error))completion
 {
     [self cancelSubscriptionForChangesInRecordZoneWithCompletion:completion];
 }
-
+#endif
 #pragma mark - Sync
 
 - (void)performSynchronization
@@ -601,7 +606,9 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
     self.currentOperation = recordChangesOperation;
     [self.database addOperation:recordChangesOperation];
 }
-
+#if TARGET_OS_WATCH
+//---CKSubscription and CKNotificationInfo is not available on Watch OS
+#else
 - (void)subscribeForChangesInRecordZoneWithCompletion:(void(^)(NSError *error))completion
 {
     if ([self subscriptionID] != nil) {
@@ -690,5 +697,5 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
 {
     return [self.userDefaults objectForKey:[self userDefaultsKeyForKey:QSSubscriptionIdentifierKey]];
 }
-
+#endif
 @end
