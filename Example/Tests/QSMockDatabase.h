@@ -10,31 +10,31 @@
 
 @interface QSMockDatabase : NSObject
 
-@property (nonatomic, readonly) NSString *serverToken;
+@property (nonatomic, readonly, nullable) NSString * serverToken;
 
-@property (nonatomic, strong) NSArray *receivedRecords;
-@property (nonatomic, strong) NSArray *deletedRecordIDs;
+@property (nonatomic, strong, nonnull) NSArray *receivedRecords;
+@property (nonatomic, strong, nonnull) NSArray *deletedRecordIDs;
 
-@property (nonatomic, strong) NSArray *readyToFetchRecords;
-@property (nonatomic, strong) NSArray *toDeleteRecordIDs;
+@property (nonatomic, strong, nullable) NSArray *readyToFetchRecords;
+@property (nonatomic, strong, nullable) NSArray *toDeleteRecordIDs;
 
-@property (nonatomic, strong) NSError *fetchError;
-@property (nonatomic, strong) NSError *uploadError;
+@property (nonatomic, strong, nullable) NSError *fetchError;
+@property (nonatomic, strong, nullable) NSError *uploadError;
 
-@property (nonatomic, strong) NSArray *subscriptions;
+@property (nonatomic, strong, nullable) NSArray *subscriptions;
 
-@property (nonatomic, copy) void(^fetchRecordChangesOperationEnqueuedBlock)(CKFetchRecordChangesOperation *operation);
-@property (nonatomic, copy) void(^modifyRecordsOperationEnqueuedBlock)(CKModifyRecordsOperation *operation);
-@property (nonatomic, copy) void(^saveSubscriptionCalledBlock)(CKSubscription *subscription);
-@property (nonatomic, copy) void(^deleteSubscriptionCalledBlock)(NSString *subscriptionID);
-@property (nonatomic, copy) void(^deleteRecordZoneCalledBlock)(CKRecordZoneID *zoneID);
-@property (nonatomic, copy) void (^fetchAllSubscriptionsCalledBlock)();
+@property (nonatomic, copy, nullable) void(^fetchRecordChangesOperationEnqueuedBlock)(CKFetchRecordZoneChangesOperation * _Nonnull operation);
+@property (nonatomic, copy, nullable) void(^modifyRecordsOperationEnqueuedBlock)(CKModifyRecordsOperation * _Nonnull operation);
+@property (nonatomic, copy, nullable) void(^saveSubscriptionCalledBlock)(CKSubscription * _Nonnull subscription);
+@property (nonatomic, copy, nullable) void(^deleteSubscriptionCalledBlock)(NSString * _Nonnull subscriptionID);
+@property (nonatomic, copy, nullable) void(^deleteRecordZoneCalledBlock)(CKRecordZoneID * _Nonnull zoneID);
+@property (nonatomic, copy, nullable) void (^fetchAllSubscriptionsCalledBlock)(void);
 
-- (void)addOperation:(CKDatabaseOperation *)operation;
-- (void)fetchRecordZoneWithID:(CKRecordZoneID *)zoneID completionHandler:(void (^)(CKRecordZone *, NSError *))completionHandler;
-- (void)saveRecordZone:(CKRecordZone *)zone completionHandler:(void (^)(CKRecordZone *, NSError *))completionHandler;
-- (void)saveSubscription:(CKSubscription *)subscription completionHandler:(void (^)(CKSubscription *, NSError *))completionHandler;
-- (void)deleteSubscriptionWithID:(NSString *)subscriptionID completionHandler:(void (^)(NSString *, NSError *))completionHandler;
-- (void)fetchAllSubscriptionsWithCompletionHandler:(void (^)(NSArray<CKSubscription *> * _Nullable subscriptions, NSError * _Nullable error))completionHandler;
+- (void)addOperation:(nonnull CKDatabaseOperation *)operation;
+- (void)fetchRecordZoneWithID:(nonnull CKRecordZoneID *)zoneID completionHandler:(nonnull void (^)(CKRecordZone * _Nonnull, NSError * _Nullable))completionHandler;
+- (void)saveRecordZone:(nonnull CKRecordZone *)zone completionHandler:(nonnull void (^)(CKRecordZone * _Nonnull, NSError * _Nullable))completionHandler;
+- (void)saveSubscription:(nonnull CKSubscription *)subscription completionHandler:(nonnull void (^)(CKSubscription * _Nonnull, NSError * _Nullable))completionHandler;
+- (void)deleteSubscriptionWithID:(nonnull NSString *)subscriptionID completionHandler:(nonnull void (^)(NSString * _Nonnull, NSError * _Nullable))completionHandler;
+- (void)fetchAllSubscriptionsWithCompletionHandler:(nonnull void (^)(NSArray<CKSubscription *> * _Nullable subscriptions, NSError * _Nullable error))completionHandler;
 
 @end

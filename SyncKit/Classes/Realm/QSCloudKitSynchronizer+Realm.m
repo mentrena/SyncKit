@@ -64,7 +64,7 @@
 
 + (CKRecordZoneID *)defaultCustomZoneID
 {
-    return [[CKRecordZoneID alloc] initWithZoneName:@"QSCloudKitCustomZoneName" ownerName:CKOwnerDefaultName];
+    return [[CKRecordZoneID alloc] initWithZoneName:@"QSCloudKitCustomZoneName" ownerName:CKCurrentUserDefaultName];
 }
 
 + (QSCloudKitSynchronizer *)cloudKitSynchronizerWithContainerName:(NSString *)containerName realmConfiguration:(RLMRealmConfiguration *)targetRealmConfiguration

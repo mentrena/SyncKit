@@ -200,10 +200,13 @@
         weakSelf.syncButton.hidden = NO;
         [weakSelf.indicatorView stopAnimating];
         if (error) {
-            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:[NSString stringWithFormat:@"Error: %@", error] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-            [alertView show];
+            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Error" message:[NSString stringWithFormat:@"Error: %@", error] preferredStyle:UIAlertControllerStyleAlert];
+            
+            [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
+            
+            [weakSelf presentViewController:alertController animated:YES completion:nil];
         } else {
-            [self.synchronizer subscribeForUpdateNotificationsWithCompletion:^(NSError *error) {
+            [weakSelf.synchronizer subscribeForUpdateNotificationsWithCompletion:^(NSError *error) {
                 if (error) {
                     NSLog(@"Failed to subscribe with error: %@", error);
                 } else {

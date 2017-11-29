@@ -32,7 +32,7 @@ typedef NS_ENUM(NSInteger, QSCloudKitSynchronizerMergePolicy) {
 /**
  *  Posted whenever a change manager detects there are new local changes to sync.
  */
-static NSString * const QSChangeManagerHasChangesNotification = @"QSChangeManagerHasChangesNotification";
+static NSString * _Nonnull const QSChangeManagerHasChangesNotification = @"QSChangeManagerHasChangesNotification";
 
 /**
  *  An object conforming to `QSChangeManager` will track the local model, provide changes to upload to CloudKit and import downloaded changes.
@@ -68,7 +68,7 @@ static NSString * const QSChangeManagerHasChangesNotification = @"QSChangeManage
  *
  *  @param completion Block to be called after changes have been persisted.
  */
-- (void)persistImportedChangesWithCompletion:(void(^)(NSError *error))completion;
+- (void)persistImportedChangesWithCompletion:(void(^_Nonnull)(NSError * _Nullable error))completion;
 
 /**
  *  Provides an array of up to `limit` records with changes that need to be uploaded to CloudKit.
@@ -107,14 +107,14 @@ static NSString * const QSChangeManagerHasChangesNotification = @"QSChangeManage
  *
  *  @return Whether there is a corresponding object for this identifier.
  */
-- (BOOL)hasRecordID:(CKRecordID *)recordID;
+- (BOOL)hasRecordID:(CKRecordID *_Nonnull)recordID;
 
 /**
  *  Tells the change manager that the current import operation finished.
  *
  *  @param error Optional error, if any error happened.
  */
-- (void)didFinishImportWithError:(NSError *)error;
+- (void)didFinishImportWithError:(NSError *_Nullable)error;
 
 /**
  *  Deletes all tracking information and detaches from local model.

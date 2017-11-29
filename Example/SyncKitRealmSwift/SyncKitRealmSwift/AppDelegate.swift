@@ -24,7 +24,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         var configuration = Realm.Configuration()
         configuration.objectTypes = [QSCompany.self, QSEmployee.self]
         realm = try! Realm(configuration: configuration)
-        synchronizer = QSCloudKitSynchronizer.cloudKitSynchronizer(containerName: "your-container-name", configuration: realm.configuration)
+        synchronizer = QSCloudKitSynchronizer.cloudKitSynchronizer(containerName: "your-iCloud-container-name", configuration: realm.configuration)
         
         if let navController = window?.rootViewController as? UINavigationController,
             let companyVC = navController.topViewController as? QSCompanyTableViewController {

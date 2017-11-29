@@ -218,6 +218,8 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
     }];
 }
 
+#if !TARGET_OS_WATCH
+
 - (void)subscribeForUpdateNotificationsWithCompletion:(void(^)(NSError *error))completion
 {
     [self subscribeForChangesInRecordZoneWithCompletion:completion];
@@ -227,6 +229,8 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
 {
     [self cancelSubscriptionForChangesInRecordZoneWithCompletion:completion];
 }
+
+#endif
 
 #pragma mark - Sync
 
@@ -490,7 +494,11 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
 {
     __weak QSCloudKitSynchronizer *weakSelf = self;
     
-    __block CKFetchRecordChangesOperation *recordChangesOperation = [[CKFetchRecordChangesOperation alloc] initWithRecordZoneID:self.customZoneID previousServerChangeToken:self.serverChangeToken];
+    CKFetchRecordZoneChangesOptions *options = [[CKFetchRecordZoneChangesOptions alloc] init];
+    options.previousServerChangeToken = self.serverChangeToken;
+    
+    CKFetchRecordZoneChangesOperation *recordChangesOperation = [[CKFetchRecordZoneChangesOperation alloc] initWithRecordZoneIDs:@[self.customZoneID] optionsByRecordZoneID:@{self.customZoneID: options}];
+    
     __block NSInteger changeCount = 0;
     __block BOOL higherModelVersionFound = NO;
     
@@ -511,17 +519,17 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
         });
     };
     
-    recordChangesOperation.recordWithIDWasDeletedBlock = ^(CKRecordID *recordID) {
+    recordChangesOperation.recordWithIDWasDeletedBlock = ^(CKRecordID *recordID, NSString *recordType) {
         dispatch_async(self.dispatchQueue, ^{
             [recordIDsToDelete addObject:recordID];
             changeCount++;
         });
     };
     
-    recordChangesOperation.fetchRecordChangesCompletionBlock = ^(CKServerChangeToken *serverChangeToken, NSData *clientChangeTokenData, NSError *operationError) {
+    recordChangesOperation.recordZoneFetchCompletionBlock = ^(CKRecordZoneID *recordZoneID, CKServerChangeToken *serverChangeToken, NSData *clientChangeTokenData, BOOL moreComing, NSError *recordZoneError) {
         
         dispatch_async(self.dispatchQueue, ^{
-            if (operationError.code == CKErrorChangeTokenExpired) {
+            if (recordZoneError.code == CKErrorChangeTokenExpired) {
                 weakSelf.serverChangeToken = nil;
                 [weakSelf saveServerChangeToken:self.serverChangeToken];
             } else if (serverChangeToken) {
@@ -539,17 +547,15 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
                 [weakSelf.changeManager saveChangesInRecords:recordsToSave];
                 [weakSelf.changeManager deleteRecordsWithIDs:recordIDsToDelete];
                 
-                if (recordChangesOperation.moreComing && !operationError) {
+                if (moreComing && !recordZoneError) {
                     if (weakSelf.cancelSync) {
                         callBlockIfNotNil(completion, [NSError errorWithDomain:QSCloudKitSynchronizerErrorDomain code:0 userInfo:@{QSCloudKitSynchronizerErrorKey: @"Synchronization was canceled"}]);
                     } else {
                         [weakSelf fetchChangesWithCompletion:completion];
                     }
                 } else {
-                    callBlockIfNotNil(completion, operationError);
+                    callBlockIfNotNil(completion, recordZoneError);
                 }
-                
-                recordChangesOperation = nil;
             }
         });
     };
@@ -560,12 +566,15 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
 
 - (void)updateServerTokenWithCompletion:(void(^)(BOOL needToFetchFullChanges, NSError *error))completion
 {
-    CKFetchRecordChangesOperation *recordChangesOperation = [[CKFetchRecordChangesOperation alloc] initWithRecordZoneID:self.customZoneID previousServerChangeToken:self.serverChangeToken];
-    __weak CKFetchRecordChangesOperation *weakOperation = recordChangesOperation;
+    CKFetchRecordZoneChangesOptions *options = [[CKFetchRecordZoneChangesOptions alloc] init];
+    options.previousServerChangeToken = self.serverChangeToken;
+    options.desiredKeys = @[@"recordID", QSCloudKitDeviceUUIDKey];
+    
+    CKFetchRecordZoneChangesOperation *recordChangesOperation = [[CKFetchRecordZoneChangesOperation alloc] initWithRecordZoneIDs:@[self.customZoneID] optionsByRecordZoneID:@{self.customZoneID: options}];
+                                                                 
+    
     __weak QSCloudKitSynchronizer *weakSelf = self;
     __block BOOL hasChanged = NO;
-    
-    recordChangesOperation.desiredKeys = @[@"recordID", QSCloudKitDeviceUUIDKey];
     
     recordChangesOperation.recordChangedBlock = ^(CKRecord *record) {
         if ([record[QSCloudKitDeviceUUIDKey] isEqual:self.deviceIdentifier] == NO) {
@@ -573,26 +582,26 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
         }
     };
     
-    recordChangesOperation.recordWithIDWasDeletedBlock = ^(CKRecordID *recordID) {
+    recordChangesOperation.recordWithIDWasDeletedBlock = ^(CKRecordID *recordID, NSString *recordType) {
         if ([weakSelf.changeManager hasRecordID:recordID]) {
             hasChanged = YES;
         }
     };
     
-    recordChangesOperation.fetchRecordChangesCompletionBlock = ^(CKServerChangeToken *serverChangeToken, NSData *clientChangeTokenData, NSError *operationError) {
+    recordChangesOperation.recordZoneFetchCompletionBlock = ^(CKRecordZoneID *recordZoneID, CKServerChangeToken *serverChangeToken, NSData *clientChangeTokenData, BOOL moreComing, NSError *recordZoneError) {
         dispatch_async(self.dispatchQueue, ^{
             if (hasChanged) {
                 DLog(@"QSCloudKitSynchronizer >> Detected changes after synchronization. Initiating sync");
-                callBlockIfNotNil(completion, YES, operationError);
+                callBlockIfNotNil(completion, YES, recordZoneError);
             } else {
                 if (serverChangeToken) {
-                    self.serverChangeToken = serverChangeToken;
+                    weakSelf.serverChangeToken = serverChangeToken;
                 }
                 
-                if (weakOperation.moreComing) {
+                if (moreComing) {
                     [weakSelf updateServerTokenWithCompletion:completion];
                 } else {
-                    callBlockIfNotNil(completion, NO, operationError);
+                    callBlockIfNotNil(completion, NO, recordZoneError);
                 }
             }
         });
@@ -601,6 +610,8 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
     self.currentOperation = recordChangesOperation;
     [self.database addOperation:recordChangesOperation];
 }
+
+#if !TARGET_OS_WATCH
 
 - (void)subscribeForChangesInRecordZoneWithCompletion:(void(^)(NSError *error))completion
 {
@@ -626,7 +637,7 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
                     callBlockIfNotNil(completion, nil);
                 } else {
                     // Create new one
-                    CKSubscription *subscription = [[CKSubscription alloc] initWithZoneID:self.customZoneID options:0];
+                    CKRecordZoneSubscription *subscription = [[CKRecordZoneSubscription alloc] initWithZoneID:self.customZoneID];
                     
                     CKNotificationInfo *notificationInfo = [[CKNotificationInfo alloc] init];
                     notificationInfo.shouldSendContentAvailable = YES;
@@ -639,7 +650,7 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
                         
                         callBlockIfNotNil(completion, error);
                     }];
-
+                    
                 }
             }
         }];
@@ -690,5 +701,7 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
 {
     return [self.userDefaults objectForKey:[self userDefaultsKeyForKey:QSSubscriptionIdentifierKey]];
 }
+
+#endif
 
 @end

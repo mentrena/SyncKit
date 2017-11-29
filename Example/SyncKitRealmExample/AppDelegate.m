@@ -53,7 +53,7 @@
         // For Extension test (app groups):
 //        _synchronizer = [QSCloudKitSynchronizer cloudKitSynchronizerWithContainerName:@"your-container-name" realmConfiguration:self.realm.configuration suiteName:@"group.com.mentrena.todayextensiontest"];
         
-        _synchronizer = [QSCloudKitSynchronizer cloudKitSynchronizerWithContainerName:@"your-container-name" realmConfiguration:self.realm.configuration];
+        _synchronizer = [QSCloudKitSynchronizer cloudKitSynchronizerWithContainerName:@"your-iCloud-container-name" realmConfiguration:self.realm.configuration];
     }
 
     return _synchronizer;

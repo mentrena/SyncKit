@@ -10,7 +10,7 @@
 
 @implementation QSManagedObjectContext
 
-- (void)performBlock:(void(^)())block
+- (void)performBlock:(void(^)(void))block
 {
     [self performBlockAndWait:block];
 }

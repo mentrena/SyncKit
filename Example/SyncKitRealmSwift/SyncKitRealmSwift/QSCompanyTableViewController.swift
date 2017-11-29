@@ -27,7 +27,7 @@ class QSCompanyTableViewController: UITableViewController {
         
         companies = realm.objects(QSCompany.self).sorted(byKeyPath: "sortIndex")
         
-        notificationToken = companies?.addNotificationBlock({ [weak self] (change) in
+        notificationToken = companies?.observe({ [weak self] (change) in
             switch change {
             case .error(_):
                 

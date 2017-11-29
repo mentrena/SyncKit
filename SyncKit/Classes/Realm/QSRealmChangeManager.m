@@ -130,10 +130,10 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
 - (void)dealloc
 {
     for (RLMNotificationToken *token in [self.objectNotificationTokens allValues]) {
-        [token stop];
+        [token invalidate];
     }
     for (RLMNotificationToken *token in self.collectionNotificationTokens) {
-        [token stop];
+        [token invalidate];
     }
 }
 
@@ -266,7 +266,7 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
         RLMNotificationToken *token = [self.objectNotificationTokens objectForKey:objectIdentifier];
         if (token) {
             [self.objectNotificationTokens removeObjectForKey:objectIdentifier];
-            [token stop];
+            [token invalidate];
         }
     } else if (!syncedEntity) {
         syncedEntity = [self createSyncedEntityForObjectOfType:entityName identifier:objectIdentifier inRealm:provider.persistenceRealm];
@@ -363,7 +363,7 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
                 if ([self shouldIgnoreKey:property.name]) {
                     continue;
                 }
-                if (property.type == RLMPropertyTypeArray || property.type == RLMPropertyTypeLinkingObjects) {
+                if (property.array || property.type == RLMPropertyTypeLinkingObjects) {
                     continue;
                 }
                 
@@ -375,7 +375,7 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
             NSArray *changedKeys = syncedEntity.changedKeys ? [syncedEntity.changedKeys componentsSeparatedByString:@","] : @[];
             
             for (RLMProperty *property in object.objectSchema.properties) {
-                if (property.type == RLMPropertyTypeArray || property.type == RLMPropertyTypeLinkingObjects) {
+                if (property.array || property.type == RLMPropertyTypeLinkingObjects) {
                     continue;
                 }
                 
@@ -392,7 +392,7 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
             NSMutableDictionary *recordChanges = [NSMutableDictionary dictionary];
             
             for (RLMProperty *property in object.objectSchema.properties) {
-                if (property.type == RLMPropertyTypeArray || property.type == RLMPropertyTypeLinkingObjects) {
+                if (property.array || property.type == RLMPropertyTypeLinkingObjects) {
                     continue;
                 }
                 
@@ -412,7 +412,7 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
             if ([self shouldIgnoreKey:property.name]) {
                 continue;
             }
-            if (property.type == RLMPropertyTypeArray || property.type == RLMPropertyTypeLinkingObjects) {
+            if (property.array || property.type == RLMPropertyTypeLinkingObjects) {
                 continue;
             }
             
@@ -544,7 +544,7 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
                 NSString *referenceIdentifier = [NSString stringWithFormat:@"%@.%@", property.objectClassName, targetIdentifier];
                 record[property.name] = [[CKReference alloc] initWithRecordID:[[CKRecordID alloc] initWithRecordName:referenceIdentifier zoneID:self.recordZoneID] action:CKReferenceActionNone];
             }
-        } else if (property.type != RLMPropertyTypeArray &&
+        } else if (!property.array &&
                    property.type != RLMPropertyTypeLinkingObjects &&
                    ![property.name isEqualToString:[objectClass primaryKey]] &&
                    ([syncedEntity.state integerValue] == QSSyncedEntityStateNew || [changedKeys containsObject:property.name])) {
@@ -642,7 +642,7 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
                     if (token) {
                         dispatch_async(dispatch_get_main_queue(), ^{
                             [self.objectNotificationTokens removeObjectForKey:objectIdentifier];
-                            [token stop];
+                            [token invalidate];
                         });
                     }
                     

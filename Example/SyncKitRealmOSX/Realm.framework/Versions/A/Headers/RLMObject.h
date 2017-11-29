@@ -28,7 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class RLMPropertyChange;
 @class RLMPropertyDescriptor;
 @class RLMRealm;
-@class RLMResults;
+@class RLMResults<RLMObjectType>;
 
 /**
  `RLMObject` is a base class for model objects representing data stored in Realms.
@@ -137,11 +137,13 @@ NS_ASSUME_NONNULL_BEGIN
  on them.
 
  The `value` argument can be a key-value coding compliant object, an array or dictionary returned from the methods in
- `NSJSONSerialization`, or an array containing one element for each managed property. An exception will be thrown if
- any required properties are not present and those properties were not defined with default values.
+ `NSJSONSerialization`, or an array containing one element for each managed property.
 
- When passing in an array as the `value` argument, all properties must be present, valid and in the same order as the
- properties defined in the model.
+ An exception will be thrown if any required properties are not present and those properties
+ were not defined with default values.
+
+ If the `value` argument is an array, all properties must be present, valid and in the same
+ order as the properties defined in the model.
 
  @param value    The value used to populate the object.
 
@@ -156,11 +158,13 @@ NS_ASSUME_NONNULL_BEGIN
  on them.
 
  The `value` argument can be a key-value coding compliant object, an array or dictionary returned from the methods in
- `NSJSONSerialization`, or an array containing one element for each managed property. An exception will be thrown if any
- required properties are not present and those properties were not defined with default values.
+ `NSJSONSerialization`, or an array containing one element for each managed property.
 
- When passing in an array as the `value` argument, all properties must be present, valid and in the same order as the
- properties defined in the model.
+ An exception will be thrown if any required properties are not present and those properties
+ were not defined with default values.
+
+ If the `value` argument is an array, all properties must be present, valid and in the same
+ order as the properties defined in the model.
 
  @param realm    The Realm which should manage the newly-created object.
  @param value    The value used to populate the object.
@@ -179,16 +183,24 @@ NS_ASSUME_NONNULL_BEGIN
  If nested objects are included in the argument, `createOrUpdateInDefaultRealmWithValue:` will be
  recursively called on them if they have primary keys, `createInDefaultRealmWithValue:` if they do not.
 
- If the argument is a Realm object already managed by the default Realm, the argument's type is the same
- as the receiver, and the objects have identical values for their managed properties, this method does nothing.
+ The `value` argument is used to populate the object. It can be a Realm object, a key-value coding
+ compliant object, an array or dictionary returned from the methods in `NSJSONSerialization`, or an
+ array containing one element for each managed property.
 
- The `value` argument is used to populate the object. It can be a key-value coding compliant object, an array or
- dictionary returned from the methods in `NSJSONSerialization`, or an array containing one element for each managed
- property. An exception will be thrown if any required properties are not present and those properties were not defined
- with default values.
+ If the object is being created, an exception will be thrown if any required properties
+ are not present and those properties were not defined with default values.
 
- When passing in an array as the `value` argument, all properties must be present, valid and in the same order as the
- properties defined in the model.
+ If the `value` argument is a Realm object already managed by the default Realm, the
+ argument's type is the same as the receiver, and the objects have identical values for
+ their managed properties, this method does nothing.
+
+ If the object is being updated, all properties defined in its schema will be set by copying from
+ `value` using key-value coding. If the `value` argument does not respond to `valueForKey:` for a
+ given property name (or getter name, if defined), that value will remain untouched.
+ Nullable properties on the object can be set to nil by using `NSNull` as the updated value.
+
+ If the `value` argument is an array, all properties must be present, valid and in the same
+ order as the properties defined in the model.
 
  @param value    The value used to populate the object.
 
@@ -206,16 +218,24 @@ NS_ASSUME_NONNULL_BEGIN
  If nested objects are included in the argument, `createOrUpdateInRealm:withValue:` will be
  recursively called on them if they have primary keys, `createInRealm:withValue:` if they do not.
 
- If the argument is a Realm object already managed by the given Realm, the argument's type is the same
- as the receiver, and the objects have identical values for their managed properties, this method does nothing.
+ The `value` argument is used to populate the object. It can be a Realm object, a key-value coding
+ compliant object, an array or dictionary returned from the methods in `NSJSONSerialization`, or an
+ array containing one element for each managed property.
 
- The `value` argument is used to populate the object. It can be a key-value coding compliant object, an array or
- dictionary returned from the methods in `NSJSONSerialization`, or an array containing one element for each managed
- property. An exception will be thrown if any required properties are not present and those properties were not defined
- with default values.
+ If the object is being created, an exception will be thrown if any required properties
+ are not present and those properties were not defined with default values.
 
- When passing in an array as the `value` argument, all properties must be present, valid and in the same order as the
- properties defined in the model.
+ If the `value` argument is a Realm object already managed by the given Realm, the
+ argument's type is the same as the receiver, and the objects have identical values for
+ their managed properties, this method does nothing.
+
+ If the object is being updated, all properties defined in its schema will be set by copying from
+ `value` using key-value coding. If the `value` argument does not respond to `valueForKey:` for a
+ given property name (or getter name, if defined), that value will remain untouched.
+ Nullable properties on the object can be set to nil by using `NSNull` as the updated value.
+
+ If the `value` argument is an array, all properties must be present, valid and in the same
+ order as the properties defined in the model.
 
  @param realm    The Realm which should own the object.
  @param value    The value used to populate the object.
@@ -330,7 +350,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (RLMResults *)objectsWhere:(NSString *)predicateFormat, ...;
 
 /// :nodoc:
-+ (RLMResults *)objectsWhere:(NSString *)predicateFormat args:(va_list)args;
++ (RLMResults<__kindof RLMObject *> *)objectsWhere:(NSString *)predicateFormat args:(va_list)args;
 
 
 /**
@@ -379,7 +399,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (RLMResults *)objectsInRealm:(RLMRealm *)realm where:(NSString *)predicateFormat, ...;
 
 /// :nodoc:
-+ (RLMResults *)objectsInRealm:(RLMRealm *)realm where:(NSString *)predicateFormat args:(va_list)args;
++ (RLMResults<__kindof RLMObject *> *)objectsInRealm:(RLMRealm *)realm where:(NSString *)predicateFormat args:(va_list)args;
 
 /**
  Returns all objects of this object type matching the given predicate from the specified Realm.
@@ -449,7 +469,7 @@ typedef void (^RLMObjectChangeBlock)(BOOL deleted,
 
  Only objects which are managed by a Realm can be observed in this way. You
  must retain the returned token for as long as you want updates to be sent to
- the block. To stop receiving updates, call `stop` on the token.
+ the block. To stop receiving updates, call `-invalidate` on the token.
 
  It is safe to capture a strong reference to the observed object within the
  callback block. There is no retain cycle due to that the callback is retained
@@ -469,8 +489,8 @@ typedef void (^RLMObjectChangeBlock)(BOOL deleted,
  Returns YES if another Realm object instance points to the same object as the receiver in the Realm managing
  the receiver.
 
- For object types with a primary, key, `isEqual:` is overridden to use this method (along with a corresponding
- implementation for `hash`).
+ For object types with a primary, key, `isEqual:` is overridden to use the same logic as this
+ method (along with a corresponding implementation for `hash`).
 
  @param object  The object to compare the receiver to.
 

@@ -106,6 +106,8 @@ typedef NS_ENUM(NSInteger, QSCloudKitSynchronizeMode)
  */
 - (void)cancelSynchronization;
 
+#if !TARGET_OS_WATCH
+
 /**
  *  Creates a new subscription with CloudKit so the application can receive notifications when new changes happen. The application is responsible for registering for remote notifications and initiating synchronization when a notification is received. @see `CKSubscription`
  *
@@ -120,11 +122,12 @@ typedef NS_ENUM(NSInteger, QSCloudKitSynchronizeMode)
  */
 - (void)deleteSubscriptionWithCompletion:(void(^)(NSError *error))completion;
 
-
 /**
  *  Returns identifier for a registered `CKSubscription` to track changes.
  */
 @property (nonatomic, readonly) NSString *subscriptionID;
+
+#endif
 
 /**
  *  Erase all local change tracking to stop synchronizing.

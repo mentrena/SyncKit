@@ -57,7 +57,7 @@
 
 - (CKSubscription *)subscription
 {
-    CKSubscription *subscription = [[CKSubscription alloc] initWithZoneID:self.recordZoneID options:0];
+    CKRecordZoneSubscription *subscription = [[CKRecordZoneSubscription alloc] initWithZoneID:self.recordZoneID];
     CKNotificationInfo *notificationInfo = [[CKNotificationInfo alloc] init];
     notificationInfo.shouldSendContentAvailable = YES;
     subscription.notificationInfo = notificationInfo;
@@ -229,12 +229,12 @@
     __block NSString *firstToken = nil;
     __block NSString *lastToken = nil;
     __block BOOL firstCall = YES;
-    self.mockDatabase.fetchRecordChangesOperationEnqueuedBlock = ^(CKFetchRecordChangesOperation *operation) {
+    self.mockDatabase.fetchRecordChangesOperationEnqueuedBlock = ^(CKFetchRecordZoneChangesOperation *operation) {
         if (firstCall) {
-            firstToken = (NSString *)operation.previousServerChangeToken;
+            firstToken = (NSString *)operation.optionsByRecordZoneID[self.recordZoneID].previousServerChangeToken;
             firstCall = NO;
         } else {
-            lastToken = (NSString *)operation.previousServerChangeToken;
+            lastToken = (NSString *)operation.optionsByRecordZoneID[self.recordZoneID].previousServerChangeToken;
         }
     };
     

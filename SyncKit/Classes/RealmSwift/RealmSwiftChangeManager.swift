@@ -98,10 +98,10 @@ public class RealmSwiftChangeManager: NSObject, QSChangeManager {
     deinit {
         
         for token in objectNotificationTokens.values {
-            token.stop()
+            token.invalidate()
         }
         for token in collectionNotificationTokens {
-            token.stop()
+            token.invalidate()
         }
     }
     
@@ -125,7 +125,7 @@ public class RealmSwiftChangeManager: NSObject, QSChangeManager {
             let results = realmProvider.targetRealm.objects(objectClass)
             
             // Register for collection notifications
-            let token = results.addNotificationBlock({ [weak self] (collectionChange) in
+            let token = results.observe({ [weak self] (collectionChange) in
                 
                 switch collectionChange {
                 case .update(_, _, let insertions, _):
@@ -154,7 +154,7 @@ public class RealmSwiftChangeManager: NSObject, QSChangeManager {
             for object in results {
                 
                 let identifier = object.value(forKey: primaryKey) as! String
-                let token = object.addNotificationBlock({ [weak self] (change) in
+                let token = object.observe({ [weak self] (change) in
                     
                     switch change {
                     case .change(let properties):
@@ -189,7 +189,7 @@ public class RealmSwiftChangeManager: NSObject, QSChangeManager {
             }
         }
         
-        let token = realmProvider.targetRealm.addNotificationBlock { [weak self] (_, _) in
+        let token = realmProvider.targetRealm.observe { [weak self] (_, _) in
             
             self?.enqueueObjectUpdates()
         }
@@ -255,7 +255,7 @@ public class RealmSwiftChangeManager: NSObject, QSChangeManager {
     
     func updateTracking(insertedObject: Object, identifier: String, entityName: String, provider: RealmProvider) {
         
-        let token = insertedObject.addNotificationBlock { [weak self] (change) in
+        let token = insertedObject.observe { [weak self] (change) in
             
             switch change {
             case .change(let properties):
@@ -292,7 +292,7 @@ public class RealmSwiftChangeManager: NSObject, QSChangeManager {
             if let token = objectNotificationTokens[objectIdentifier] {
                 
                 objectNotificationTokens.removeValue(forKey: objectIdentifier)
-                token.stop()
+                token.invalidate()
             }
             
         } else if syncedEntity == nil {
@@ -327,7 +327,7 @@ public class RealmSwiftChangeManager: NSObject, QSChangeManager {
             
             realmProvider.persistenceRealm.beginWrite()
             syncedEntity.changedKeys = (changedKeys.allObjects as! [String]).joined(separator: ",")
-            if syncedEntity.state == QSSyncedEntityState.synced.rawValue && syncedEntity.changedKeys!.characters.count > 0 {
+            if syncedEntity.state == QSSyncedEntityState.synced.rawValue && !syncedEntity.changedKeys!.isEmpty {
                 syncedEntity.state = QSSyncedEntityState.changed.rawValue
                 // If state was New then leave it as that
             }
@@ -401,7 +401,7 @@ public class RealmSwiftChangeManager: NSObject, QSChangeManager {
                     if shouldIgnore(key: property.name) {
                         continue
                     }
-                    if property.type == PropertyType.array || property.type == PropertyType.linkingObjects {
+                    if property.isArray || property.type == PropertyType.linkingObjects {
                         continue
                     }
                     
@@ -414,7 +414,7 @@ public class RealmSwiftChangeManager: NSObject, QSChangeManager {
                 
                 for property in object.objectSchema.properties {
                     
-                    if property.type == PropertyType.array || property.type == PropertyType.linkingObjects {
+                    if property.isArray || property.type == PropertyType.linkingObjects {
                         continue
                     }
                     
@@ -432,7 +432,7 @@ public class RealmSwiftChangeManager: NSObject, QSChangeManager {
                 
                 for property in object.objectSchema.properties {
                     
-                    if property.type == PropertyType.array || property.type == PropertyType.linkingObjects {
+                    if property.isArray || property.type == PropertyType.linkingObjects {
                         continue
                     }
                     
@@ -453,7 +453,7 @@ public class RealmSwiftChangeManager: NSObject, QSChangeManager {
                 if shouldIgnore(key: property.name) {
                     continue
                 }
-                if property.type == PropertyType.array || property.type == PropertyType.linkingObjects {
+                if property.isArray || property.type == PropertyType.linkingObjects {
                     continue
                 }
                 
@@ -607,7 +607,7 @@ public class RealmSwiftChangeManager: NSObject, QSChangeManager {
                     record[property.name] = CKReference(recordID: CKRecordID(recordName: referenceIdentifier, zoneID: recordZoneID), action: .none)
                 }
                 
-            } else if property.type != PropertyType.array &&
+            } else if !property.isArray &&
             property.type != PropertyType.linkingObjects &&
             !(property.name == objectClass.primaryKey()!) &&
                 (syncedEntity.state == QSSyncedEntityState.new.rawValue || changedKeys.contains(property.name)) {
@@ -693,7 +693,7 @@ public class RealmSwiftChangeManager: NSObject, QSChangeManager {
                         if let token = objectNotificationTokens[objectIdentifier] {
                             DispatchQueue.main.async {
                                 self.objectNotificationTokens.removeValue(forKey: objectIdentifier)
-                                token.stop()
+                                token.invalidate()
                             }
                         }
                         self.realmProvider.targetRealm.delete(object)
@@ -706,7 +706,7 @@ public class RealmSwiftChangeManager: NSObject, QSChangeManager {
         }
     }
     
-    public func persistImportedChanges(completion: ((Error?) -> Void)!) {
+    public func persistImportedChanges(completion: @escaping ((Error?) -> Void)) {
         
         executeOnMainQueue {
             
@@ -790,7 +790,7 @@ public class RealmSwiftChangeManager: NSObject, QSChangeManager {
         }
     }
     
-    public func hasRecordID(_ recordID: CKRecordID!) -> Bool {
+    public func hasRecordID(_ recordID: CKRecordID) -> Bool {
         
         var hasRecord = false
         executeOnMainQueue {
@@ -800,7 +800,7 @@ public class RealmSwiftChangeManager: NSObject, QSChangeManager {
         return hasRecord
     }
     
-    public func didFinishImportWithError(_ error: Error!) {
+    public func didFinishImportWithError(_ error: Error?) {
         
         executeOnMainQueue {
             updateHasChanges(realm: self.realmProvider.persistenceRealm)

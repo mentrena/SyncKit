@@ -23,7 +23,7 @@ class QSEmployeeTableViewController: UITableViewController {
         let predicate = NSPredicate(format: "company == %@", company!)
         employees = realm!.objects(QSEmployee.self).filter(predicate).sorted(byKeyPath: "sortIndex")
         
-        notificationToken = employees?.addNotificationBlock({ [weak self] (change) in
+        notificationToken = employees?.observe({ [weak self] (change) in
             switch change {
             case .error(_):
                 

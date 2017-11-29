@@ -40,14 +40,14 @@
 
 - (void)addOperation:(CKDatabaseOperation *)operation
 {
-    if ([operation isKindOfClass:[CKFetchRecordChangesOperation class]]) {
-        [self handleFetchRecordChangesOperation:(CKFetchRecordChangesOperation *)operation];
+    if ([operation isKindOfClass:[CKFetchRecordZoneChangesOperation class]]) {
+        [self handleFetchRecordChangesOperation:(CKFetchRecordZoneChangesOperation *)operation];
     } else if ([operation isKindOfClass:[CKModifyRecordsOperation class]]) {
         [self handleModifyRecordsOperation:(CKModifyRecordsOperation *)operation];
     }
 }
 
-- (void)handleFetchRecordChangesOperation:(CKFetchRecordChangesOperation *)operation
+- (void)handleFetchRecordChangesOperation:(CKFetchRecordZoneChangesOperation *)operation
 {
     if (self.fetchRecordChangesOperationEnqueuedBlock) {
         self.fetchRecordChangesOperationEnqueuedBlock(operation);
@@ -56,22 +56,18 @@
         operation.recordChangedBlock(record);
     }
     for (CKRecordID *recordID in self.toDeleteRecordIDs) {
-        operation.recordWithIDWasDeletedBlock(recordID);
+        operation.recordWithIDWasDeletedBlock(recordID, @"recordType");
     }
     
-    id partialMock = OCMPartialMock(operation);
-    OCMStub([partialMock moreComing]).andCall(self, @selector(moreComing));
-    
-    operation.fetchRecordChangesCompletionBlock((CKServerChangeToken *)[self serverToken], [NSData new], self.fetchError);
+    operation.recordZoneFetchCompletionBlock(operation.recordZoneIDs.firstObject,
+                                             (CKServerChangeToken *)[self serverToken],
+                                             [NSData new],
+                                             false,
+                                             self.fetchError);
     
     self.readyToFetchRecords = nil;
     self.toDeleteRecordIDs = nil;
     self.fetchError = nil;
-}
-
-- (BOOL)moreComing
-{
-    return NO;
 }
 
 - (void)handleModifyRecordsOperation:(CKModifyRecordsOperation *)operation
