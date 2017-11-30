@@ -22,18 +22,18 @@ And add SyncKit to your `Podfile`. Use the corresponding subspec based on what t
 
 ```ruby
 source 'https://github.com/CocoaPods/Specs.git'
-platform :ios, '8.0'
+platform :ios, '10.0'
 
 target 'CoreDataTargetName' do
-pod 'SyncKit/CoreData', '~> 0.5.2'
+pod 'SyncKit/CoreData', '~> 0.5.3'
 end
 
 target 'RealmTargetName' do
-pod 'SyncKit/Realm', '~> 0.5.2'
+pod 'SyncKit/Realm', '~> 0.5.3'
 end
 
 target 'RealmSwiftTargetName' do
-pod 'SyncKit/RealmSwift', '~> 0.5.2'
+pod 'SyncKit/RealmSwift', '~> 0.5.3'
 end
 ```
 
@@ -54,7 +54,7 @@ $ brew install carthage
 Add SyncKit to your `Cartfile`:
 
 ```
-github "mentrena/SyncKit" ~> 0.4
+github "mentrena/SyncKit" ~> 0.5.3
 ```
 
 Run `carthage update` to create the framework, then import it into your project.
