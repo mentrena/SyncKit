@@ -12,7 +12,7 @@ target 'SyncKitCoreDataExample' do
   target 'SyncKitCoreDataExampleTests' do
     inherit! :search_paths
 
-	pod 'OCMock'
+	pod 'OCMock', '~> 3.4'
     
   end
 end
@@ -24,7 +24,7 @@ target 'SyncKitRealmExample' do
 
 	pod 'SyncKit/Realm', :path => '../'
 
-	pod 'Realm'
+	pod 'Realm', '~> 3.0'
 
 	target 'SyncKitRealmExampleTests' do
 		inherit! :search_paths
@@ -38,5 +38,5 @@ target 'SyncKitRealmExampleTodayExtension' do
 	
 	pod 'SyncKit/Realm', :path => '../'
 
-	pod 'Realm'
+	pod 'Realm', '~> 3.0'
 end

@@ -10,7 +10,7 @@ target 'SyncKitRealmSwiftExample' do
 
 	pod 'SyncKit/RealmSwift', :path => '../../'
 
-	pod 'RealmSwift'
+	pod 'RealmSwift', '~> 3.0'
 
 	target 'SyncKitRealmSwiftExampleTests' do
 		inherit! :search_paths
