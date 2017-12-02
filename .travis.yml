@@ -14,4 +14,4 @@ script:
   - set -o pipefail && xcodebuild test -workspace Example/SyncKit.xcworkspace -scheme SyncKitCoreDataExample -sdk iphonesimulator11.0 -destination 'platform=iOS Simulator,name=iPhone 7,OS=11.0' ONLY_ACTIVE_ARCH=NO | xcpretty
   - set -o pipefail && xcodebuild test -workspace Example/SyncKit.xcworkspace -scheme SyncKitRealmExample -sdk iphonesimulator11.0 -destination 'platform=iOS Simulator,name=iPhone 7,OS=11.0' ONLY_ACTIVE_ARCH=NO | xcpretty
   - set -o pipefail && xcodebuild test -workspace Example/SyncKitRealmSwift/SyncKitRealmSwift.xcworkspace -scheme SyncKitRealmSwiftExample -sdk iphonesimulator11.0 -destination 'platform=iOS Simulator,name=iPhone 7,OS=11.0' ONLY_ACTIVE_ARCH=NO | xcpretty
-  - travis_wait 30 pod lib lint --allow-warnings
+#  - travis_wait 30 pod lib lint --allow-warnings
