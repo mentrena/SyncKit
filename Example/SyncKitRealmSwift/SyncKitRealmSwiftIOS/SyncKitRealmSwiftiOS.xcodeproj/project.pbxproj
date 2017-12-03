@@ -20,6 +20,8 @@
 		644A05FC1F59785A00F69505 /* QSSyncedEntityState.h in Headers */ = {isa = PBXBuildFile; fileRef = 644A05F51F59785A00F69505 /* QSSyncedEntityState.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		644A05FD1F59785A00F69505 /* SyncKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 644A05F61F59785A00F69505 /* SyncKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		644A05FE1F59785A00F69505 /* SyncKitLog.h in Headers */ = {isa = PBXBuildFile; fileRef = 644A05F71F59785A00F69505 /* SyncKitLog.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		64AE80971FD2FBB9004BFEA4 /* QSCloudKitSynchronizer+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 64AE80951FD2FBB8004BFEA4 /* QSCloudKitSynchronizer+Private.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		64AE80981FD2FBB9004BFEA4 /* QSCloudKitSynchronizer+Private.m in Sources */ = {isa = PBXBuildFile; fileRef = 64AE80961FD2FBB8004BFEA4 /* QSCloudKitSynchronizer+Private.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,6 +42,8 @@
 		644A05F71F59785A00F69505 /* SyncKitLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SyncKitLog.h; path = ../../../../SyncKit/Classes/QSSynchronizer/SyncKitLog.h; sourceTree = "<group>"; };
 		644A05FF1F5978FC00F69505 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Realm.framework; sourceTree = "<group>"; };
 		644A06001F5978FC00F69505 /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RealmSwift.framework; sourceTree = "<group>"; };
+		64AE80951FD2FBB8004BFEA4 /* QSCloudKitSynchronizer+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "QSCloudKitSynchronizer+Private.h"; path = "../../../../SyncKit/Classes/QSSynchronizer/QSCloudKitSynchronizer+Private.h"; sourceTree = "<group>"; };
+		64AE80961FD2FBB8004BFEA4 /* QSCloudKitSynchronizer+Private.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "QSCloudKitSynchronizer+Private.m"; path = "../../../../SyncKit/Classes/QSSynchronizer/QSCloudKitSynchronizer+Private.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,6 +81,8 @@
 				644A05DF1F59782600F69505 /* SyncKitRealmSwift.h */,
 				644A05E71F59784D00F69505 /* PendingRelationship.swift */,
 				644A05E81F59784D00F69505 /* QSCloudKitSynchronizer+RealmSwift.swift */,
+				64AE80951FD2FBB8004BFEA4 /* QSCloudKitSynchronizer+Private.h */,
+				64AE80961FD2FBB8004BFEA4 /* QSCloudKitSynchronizer+Private.m */,
 				644A05E91F59784D00F69505 /* RealmSwiftChangeManager.swift */,
 				644A05EA1F59784D00F69505 /* Record.swift */,
 				644A05EB1F59784D00F69505 /* SyncedEntity.swift */,
@@ -106,6 +112,7 @@
 				644A05FE1F59785A00F69505 /* SyncKitLog.h in Headers */,
 				644A05E11F59782600F69505 /* SyncKitRealmSwift.h in Headers */,
 				644A05F91F59785A00F69505 /* QSCloudKitSynchronizer.h in Headers */,
+				64AE80971FD2FBB9004BFEA4 /* QSCloudKitSynchronizer+Private.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -146,7 +153,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 644A05D61F59782600F69505 /* Build configuration list for PBXProject "SyncKitRealmSwiftiOS" */;
+			buildConfigurationList = 644A05D61F59782600F69505 /* Build configuration list for PBXProject "SyncKitRealmSwiftIOS" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -180,6 +187,7 @@
 			files = (
 				644A05FA1F59785A00F69505 /* QSCloudKitSynchronizer.m in Sources */,
 				644A05EE1F59784D00F69505 /* RealmSwiftChangeManager.swift in Sources */,
+				64AE80981FD2FBB9004BFEA4 /* QSCloudKitSynchronizer+Private.m in Sources */,
 				644A05F01F59784D00F69505 /* SyncedEntity.swift in Sources */,
 				644A05ED1F59784D00F69505 /* QSCloudKitSynchronizer+RealmSwift.swift in Sources */,
 				644A05EF1F59784D00F69505 /* Record.swift in Sources */,
@@ -307,6 +315,7 @@
 				);
 				INFOPLIST_FILE = SyncKitRealmSwiftIOS/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.mentrena.SyncKitRealmSwiftIOS;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -333,6 +342,7 @@
 				);
 				INFOPLIST_FILE = SyncKitRealmSwiftIOS/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.mentrena.SyncKitRealmSwiftIOS;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -345,7 +355,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		644A05D61F59782600F69505 /* Build configuration list for PBXProject "SyncKitRealmSwiftiOS" */ = {
+		644A05D61F59782600F69505 /* Build configuration list for PBXProject "SyncKitRealmSwiftIOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				644A05E21F59782600F69505 /* Debug */,

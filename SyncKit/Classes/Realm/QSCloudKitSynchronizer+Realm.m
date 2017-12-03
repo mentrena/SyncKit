@@ -7,6 +7,7 @@
 //
 
 #import "QSCloudKitSynchronizer+Realm.h"
+#import "QSCloudKitSynchronizer+Private.h"
 
 @implementation QSCloudKitSynchronizer (Realm)
 
@@ -60,11 +61,6 @@
     if (![fileManager fileExistsAtPath:[self applicationBackupRealmPathWithSuiteName:suiteName]]) {
         [fileManager createDirectoryAtPath:[self applicationBackupRealmPathWithSuiteName:suiteName] withIntermediateDirectories:YES attributes:nil error:nil];
     }
-}
-
-+ (CKRecordZoneID *)defaultCustomZoneID
-{
-    return [[CKRecordZoneID alloc] initWithZoneName:@"QSCloudKitCustomZoneName" ownerName:CKCurrentUserDefaultName];
 }
 
 + (QSCloudKitSynchronizer *)cloudKitSynchronizerWithContainerName:(NSString *)containerName realmConfiguration:(RLMRealmConfiguration *)targetRealmConfiguration

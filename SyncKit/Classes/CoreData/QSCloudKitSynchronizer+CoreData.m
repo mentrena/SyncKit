@@ -7,8 +7,7 @@
 //
 
 #import "QSCloudKitSynchronizer+CoreData.h"
-
-static NSString * const QSCloudKitCustomZoneName = @"QSCloudKitCustomZoneName";
+#import "QSCloudKitSynchronizer+Private.h"
 
 @implementation QSCloudKitSynchronizer (CoreData)
 
@@ -50,11 +49,6 @@ static NSString * const QSCloudKitCustomZoneName = @"QSCloudKitCustomZoneName";
 + (NSString *)storeFileName
 {
     return @"QSSyncStore";
-}
-
-+ (CKRecordZoneID *)defaultCustomZoneID
-{
-    return [[CKRecordZoneID alloc] initWithZoneName:QSCloudKitCustomZoneName ownerName:CKCurrentUserDefaultName];
 }
 
 + (QSCloudKitSynchronizer *)cloudKitSynchronizerWithContainerName:(NSString *)containerName managedObjectContext:(NSManagedObjectContext *)context changeManagerDelegate:(id<QSCoreDataChangeManagerDelegate>)delegate

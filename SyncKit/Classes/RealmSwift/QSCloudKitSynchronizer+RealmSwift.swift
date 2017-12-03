@@ -58,11 +58,6 @@ extension QSCloudKitSynchronizer {
         }
     }
     
-    public class func defaultCustomZoneID() -> CKRecordZoneID {
-        
-        return CKRecordZoneID(zoneName: "QSCloudKitCustomZoneName", ownerName: CKCurrentUserDefaultName)
-    }
-    
     public class func cloudKitSynchronizer(containerName: String, configuration: Realm.Configuration, suiteName: String? = nil) -> QSCloudKitSynchronizer {
         
         ensurePathAvailable(suiteName: suiteName)

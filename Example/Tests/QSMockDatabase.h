@@ -23,7 +23,8 @@
 
 @property (nonatomic, strong, nullable) NSArray *subscriptions;
 
-@property (nonatomic, copy, nullable) void(^fetchRecordChangesOperationEnqueuedBlock)(CKFetchRecordZoneChangesOperation * _Nonnull operation);
+@property (nonatomic, copy, nullable) void(^fetchRecordZoneChangesOperationEnqueuedBlock)(CKFetchRecordZoneChangesOperation * _Nonnull operation);
+@property (nonatomic, copy, nullable) void(^fetchRecordChangesOperationEnqueuedBlock)(CKFetchRecordChangesOperation * _Nonnull operation);
 @property (nonatomic, copy, nullable) void(^modifyRecordsOperationEnqueuedBlock)(CKModifyRecordsOperation * _Nonnull operation);
 @property (nonatomic, copy, nullable) void(^saveSubscriptionCalledBlock)(CKSubscription * _Nonnull subscription);
 @property (nonatomic, copy, nullable) void(^deleteSubscriptionCalledBlock)(NSString * _Nonnull subscriptionID);

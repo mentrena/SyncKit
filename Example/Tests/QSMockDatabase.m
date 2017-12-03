@@ -41,16 +41,42 @@
 - (void)addOperation:(CKDatabaseOperation *)operation
 {
     if ([operation isKindOfClass:[CKFetchRecordZoneChangesOperation class]]) {
-        [self handleFetchRecordChangesOperation:(CKFetchRecordZoneChangesOperation *)operation];
+        [self handleFetchRecordZoneChangesOperation:(CKFetchRecordZoneChangesOperation *)operation];
+    } else if ([operation isKindOfClass:[CKFetchRecordChangesOperation class]]) {
+        [self handleFetchRecordChangesOperation:(CKFetchRecordChangesOperation *)operation];
     } else if ([operation isKindOfClass:[CKModifyRecordsOperation class]]) {
         [self handleModifyRecordsOperation:(CKModifyRecordsOperation *)operation];
     }
 }
 
-- (void)handleFetchRecordChangesOperation:(CKFetchRecordZoneChangesOperation *)operation
+- (void)handleFetchRecordChangesOperation:(CKFetchRecordChangesOperation *)operation
 {
     if (self.fetchRecordChangesOperationEnqueuedBlock) {
         self.fetchRecordChangesOperationEnqueuedBlock(operation);
+    }
+    for (CKRecord *record in self.readyToFetchRecords) {
+        operation.recordChangedBlock(record);
+    }
+    for (CKRecordID *recordID in self.toDeleteRecordIDs) {
+        operation.recordWithIDWasDeletedBlock(recordID);
+    }
+    
+    id partialMock = OCMPartialMock(operation);
+    OCMStub([partialMock moreComing]).andCall(self, @selector(moreComing));
+
+    operation.fetchRecordChangesCompletionBlock((CKServerChangeToken *)[self serverToken],
+                                                [NSData new],
+                                                self.fetchError);
+    
+    self.readyToFetchRecords = nil;
+    self.toDeleteRecordIDs = nil;
+    self.fetchError = nil;
+}
+
+- (void)handleFetchRecordZoneChangesOperation:(CKFetchRecordZoneChangesOperation *)operation
+{
+    if (self.fetchRecordZoneChangesOperationEnqueuedBlock) {
+        self.fetchRecordZoneChangesOperationEnqueuedBlock(operation);
     }
     for (CKRecord *record in self.readyToFetchRecords) {
         operation.recordChangedBlock(record);
@@ -68,6 +94,11 @@
     self.readyToFetchRecords = nil;
     self.toDeleteRecordIDs = nil;
     self.fetchError = nil;
+}
+
+- (BOOL)moreComing
+{
+    return NO;
 }
 
 - (void)handleModifyRecordsOperation:(CKModifyRecordsOperation *)operation

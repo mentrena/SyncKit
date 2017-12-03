@@ -14,5 +14,6 @@
 #import "QSPrimaryKey.h"
 #import "QSSyncedEntityState.h"
 #import "SyncKitLog.h"
+#import "QSCloudKitSynchronizer+Private.h"
 
 #endif /* SyncKit_h */

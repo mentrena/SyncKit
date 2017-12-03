@@ -53,11 +53,18 @@
 {
     NSString *appDomain = [[NSBundle mainBundle] bundleIdentifier];
     [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:appDomain];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 - (CKSubscription *)subscription
 {
-    CKRecordZoneSubscription *subscription = [[CKRecordZoneSubscription alloc] initWithZoneID:self.recordZoneID];
+    CKSubscription *subscription;
+    if (@available(iOS 10.0, macOS 10.12, watchOS 3.0, *)) {
+        subscription = [[CKRecordZoneSubscription alloc] initWithZoneID:self.recordZoneID];
+    } else {
+        subscription = [[CKSubscription alloc] initWithZoneID:self.recordZoneID options:0];
+    }
+    
     CKNotificationInfo *notificationInfo = [[CKNotificationInfo alloc] init];
     notificationInfo.shouldSendContentAvailable = YES;
     subscription.notificationInfo = notificationInfo;
@@ -229,7 +236,17 @@
     __block NSString *firstToken = nil;
     __block NSString *lastToken = nil;
     __block BOOL firstCall = YES;
-    self.mockDatabase.fetchRecordChangesOperationEnqueuedBlock = ^(CKFetchRecordZoneChangesOperation *operation) {
+    
+    self.mockDatabase.fetchRecordChangesOperationEnqueuedBlock = ^(CKFetchRecordChangesOperation *operation) {
+        if (firstCall) {
+            firstToken = (NSString *)operation.previousServerChangeToken;
+            firstCall = NO;
+        } else {
+            lastToken = (NSString *)operation.previousServerChangeToken;
+        }
+    };
+    
+    self.mockDatabase.fetchRecordZoneChangesOperationEnqueuedBlock = ^(CKFetchRecordZoneChangesOperation *operation) {
         if (firstCall) {
             firstToken = (NSString *)operation.optionsByRecordZoneID[self.recordZoneID].previousServerChangeToken;
             firstCall = NO;

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		64AE808B1FD2FB50004BFEA4 /* QSCloudKitSynchronizer+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 64AE80891FD2FB4F004BFEA4 /* QSCloudKitSynchronizer+Private.h */; };
+		64AE808C1FD2FB50004BFEA4 /* QSCloudKitSynchronizer+Private.m in Sources */ = {isa = PBXBuildFile; fileRef = 64AE808A1FD2FB50004BFEA4 /* QSCloudKitSynchronizer+Private.m */; };
 		64B441CA1ECEDDF700E66ACB /* SyncKitRealm.h in Headers */ = {isa = PBXBuildFile; fileRef = 64B441C81ECEDDF700E66ACB /* SyncKitRealm.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		64B441D51ECEDE4700E66ACB /* QSChangeManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 64B441D01ECEDE4700E66ACB /* QSChangeManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		64B441D61ECEDE4700E66ACB /* QSCloudKitSynchronizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 64B441D11ECEDE4700E66ACB /* QSCloudKitSynchronizer.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -27,6 +29,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		64AE80891FD2FB4F004BFEA4 /* QSCloudKitSynchronizer+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "QSCloudKitSynchronizer+Private.h"; path = "../../../SyncKit/Classes/QSSynchronizer/QSCloudKitSynchronizer+Private.h"; sourceTree = "<group>"; };
+		64AE808A1FD2FB50004BFEA4 /* QSCloudKitSynchronizer+Private.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "QSCloudKitSynchronizer+Private.m"; path = "../../../SyncKit/Classes/QSSynchronizer/QSCloudKitSynchronizer+Private.m"; sourceTree = "<group>"; };
 		64B441C51ECEDDF700E66ACB /* SyncKitRealm.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SyncKitRealm.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		64B441C81ECEDDF700E66ACB /* SyncKitRealm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SyncKitRealm.h; sourceTree = "<group>"; };
 		64B441C91ECEDDF700E66ACB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -97,6 +101,8 @@
 				64B441D31ECEDE4700E66ACB /* QSSyncedEntityState.h */,
 				64B441D41ECEDE4700E66ACB /* SyncKitLog.h */,
 				64B441C81ECEDDF700E66ACB /* SyncKitRealm.h */,
+				64AE80891FD2FB4F004BFEA4 /* QSCloudKitSynchronizer+Private.h */,
+				64AE808A1FD2FB50004BFEA4 /* QSCloudKitSynchronizer+Private.m */,
 				64B441C91ECEDDF700E66ACB /* Info.plist */,
 			);
 			path = SyncKitRealm;
@@ -127,6 +133,7 @@
 				64B441E21ECEDE9300E66ACB /* QSRecord.h in Headers */,
 				64B441E31ECEDE9300E66ACB /* QSSyncedEntity.h in Headers */,
 				64B441D81ECEDE4700E66ACB /* QSSyncedEntityState.h in Headers */,
+				64AE808B1FD2FB50004BFEA4 /* QSCloudKitSynchronizer+Private.h in Headers */,
 				64B441D91ECEDE4700E66ACB /* SyncKitLog.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -202,6 +209,7 @@
 			files = (
 				64B441DB1ECEDE4A00E66ACB /* QSCloudKitSynchronizer.m in Sources */,
 				64B441EB1ECEDEA600E66ACB /* QSCloudKitSynchronizer+Realm.m in Sources */,
+				64AE808C1FD2FB50004BFEA4 /* QSCloudKitSynchronizer+Private.m in Sources */,
 				64B441EC1ECEDEA600E66ACB /* QSPendingRelationship.m in Sources */,
 				64B441ED1ECEDEA600E66ACB /* QSRealmChangeManager.m in Sources */,
 				64B441EE1ECEDEA600E66ACB /* QSRecord.m in Sources */,
@@ -337,7 +345,7 @@
 				);
 				INFOPLIST_FILE = SyncKitRealm/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.mentrena.SyncKitRealm;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -360,7 +368,7 @@
 				);
 				INFOPLIST_FILE = SyncKitRealm/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.mentrena.SyncKitRealm;
 				PRODUCT_NAME = "$(TARGET_NAME)";

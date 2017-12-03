@@ -218,20 +218,6 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
     }];
 }
 
-#if !TARGET_OS_WATCH
-
-- (void)subscribeForUpdateNotificationsWithCompletion:(void(^)(NSError *error))completion
-{
-    [self subscribeForChangesInRecordZoneWithCompletion:completion];
-}
-
-- (void)deleteSubscriptionWithCompletion:(void(^)(NSError *error))completion
-{
-    [self cancelSubscriptionForChangesInRecordZoneWithCompletion:completion];
-}
-
-#endif
-
 #pragma mark - Sync
 
 - (void)performSynchronization
@@ -494,18 +480,13 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
 {
     __weak QSCloudKitSynchronizer *weakSelf = self;
     
-    CKFetchRecordZoneChangesOptions *options = [[CKFetchRecordZoneChangesOptions alloc] init];
-    options.previousServerChangeToken = self.serverChangeToken;
-    
-    CKFetchRecordZoneChangesOperation *recordChangesOperation = [[CKFetchRecordZoneChangesOperation alloc] initWithRecordZoneIDs:@[self.customZoneID] optionsByRecordZoneID:@{self.customZoneID: options}];
-    
     __block NSInteger changeCount = 0;
     __block BOOL higherModelVersionFound = NO;
     
     NSMutableArray *recordsToSave = [NSMutableArray array];
     NSMutableArray *recordIDsToDelete = [NSMutableArray array];
     
-    recordChangesOperation.recordChangedBlock = ^(CKRecord *record) {
+    void (^recordChangedBlock)(CKRecord *) = ^(CKRecord *record) {
         dispatch_async(self.dispatchQueue, ^{
             if ([record[QSCloudKitDeviceUUIDKey] isEqual:self.deviceIdentifier] == NO) {
                 NSNumber *version = record[QSCloudKitModelCompatibilityVersionKey];
@@ -519,15 +500,14 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
         });
     };
     
-    recordChangesOperation.recordWithIDWasDeletedBlock = ^(CKRecordID *recordID, NSString *recordType) {
+    void (^recordWithIDWasDeletedBlock)(CKRecordID *recordID) = ^(CKRecordID *recordID) {
         dispatch_async(self.dispatchQueue, ^{
             [recordIDsToDelete addObject:recordID];
             changeCount++;
         });
     };
     
-    recordChangesOperation.recordZoneFetchCompletionBlock = ^(CKRecordZoneID *recordZoneID, CKServerChangeToken *serverChangeToken, NSData *clientChangeTokenData, BOOL moreComing, NSError *recordZoneError) {
-        
+    void (^fetchRecordChangesCompletionBlock)(CKServerChangeToken *serverChangeToken, BOOL moreComing, NSError *operationError) = ^(CKServerChangeToken *serverChangeToken, BOOL moreComing, NSError *recordZoneError) {
         dispatch_async(self.dispatchQueue, ^{
             if (recordZoneError.code == CKErrorChangeTokenExpired) {
                 weakSelf.serverChangeToken = nil;
@@ -559,36 +539,58 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
             }
         });
     };
+
+    CKDatabaseOperation *operation;
+    if (@available(iOS 10.0, macOS 10.12, watchOS 3.0, *)) {
+        CKFetchRecordZoneChangesOptions *options = [[CKFetchRecordZoneChangesOptions alloc] init];
+        options.previousServerChangeToken = self.serverChangeToken;
+        
+        CKFetchRecordZoneChangesOperation *recordChangesOperation = [[CKFetchRecordZoneChangesOperation alloc] initWithRecordZoneIDs:@[self.customZoneID] optionsByRecordZoneID:@{self.customZoneID: options}];
+        
+        recordChangesOperation.recordChangedBlock = recordChangedBlock;
+        recordChangesOperation.recordWithIDWasDeletedBlock = ^(CKRecordID * _Nonnull recordID, NSString * _Nonnull recordType) {
+            recordWithIDWasDeletedBlock(recordID);
+        };
+        recordChangesOperation.recordZoneFetchCompletionBlock = ^(CKRecordZoneID * _Nonnull recordZoneID, CKServerChangeToken * _Nullable serverChangeToken, NSData * _Nullable clientChangeTokenData, BOOL moreComing, NSError * _Nullable recordZoneError) {
+            fetchRecordChangesCompletionBlock(serverChangeToken, moreComing, recordZoneError);
+        };
+        
+        operation = recordChangesOperation;
+    } else {
+        __block CKFetchRecordChangesOperation *recordChangesOperation = [[CKFetchRecordChangesOperation alloc] initWithRecordZoneID:self.customZoneID previousServerChangeToken:self.serverChangeToken];
+
+        recordChangesOperation.recordChangedBlock = recordChangedBlock;
+        recordChangesOperation.recordWithIDWasDeletedBlock = recordWithIDWasDeletedBlock;
+        recordChangesOperation.fetchRecordChangesCompletionBlock = ^(CKServerChangeToken * _Nullable serverChangeToken, NSData * _Nullable clientChangeTokenData, NSError * _Nullable operationError) {
+            fetchRecordChangesCompletionBlock(serverChangeToken, recordChangesOperation.moreComing, operationError);
+            recordChangesOperation = nil;
+        };
+        
+        operation = recordChangesOperation;
+    }
     
-    self.currentOperation = recordChangesOperation;
-    [self.database addOperation:recordChangesOperation];
+    self.currentOperation = operation;
+    [self.database addOperation:operation];
 }
 
 - (void)updateServerTokenWithCompletion:(void(^)(BOOL needToFetchFullChanges, NSError *error))completion
 {
-    CKFetchRecordZoneChangesOptions *options = [[CKFetchRecordZoneChangesOptions alloc] init];
-    options.previousServerChangeToken = self.serverChangeToken;
-    options.desiredKeys = @[@"recordID", QSCloudKitDeviceUUIDKey];
-    
-    CKFetchRecordZoneChangesOperation *recordChangesOperation = [[CKFetchRecordZoneChangesOperation alloc] initWithRecordZoneIDs:@[self.customZoneID] optionsByRecordZoneID:@{self.customZoneID: options}];
-                                                                 
-    
     __weak QSCloudKitSynchronizer *weakSelf = self;
     __block BOOL hasChanged = NO;
     
-    recordChangesOperation.recordChangedBlock = ^(CKRecord *record) {
+    void (^recordChangedBlock)(CKRecord *record) = ^(CKRecord *record) {
         if ([record[QSCloudKitDeviceUUIDKey] isEqual:self.deviceIdentifier] == NO) {
             hasChanged = YES;
         }
     };
     
-    recordChangesOperation.recordWithIDWasDeletedBlock = ^(CKRecordID *recordID, NSString *recordType) {
+    void (^recordWithIDWasDeletedBlock)(CKRecordID *recordID) = ^(CKRecordID *recordID) {
         if ([weakSelf.changeManager hasRecordID:recordID]) {
             hasChanged = YES;
         }
     };
     
-    recordChangesOperation.recordZoneFetchCompletionBlock = ^(CKRecordZoneID *recordZoneID, CKServerChangeToken *serverChangeToken, NSData *clientChangeTokenData, BOOL moreComing, NSError *recordZoneError) {
+    void (^fetchRecordChangesCompletionBlock)(CKServerChangeToken *serverChangeToken, BOOL moreComing, NSError *operationError) = ^(CKServerChangeToken *serverChangeToken, BOOL moreComing, NSError *recordZoneError) {
         dispatch_async(self.dispatchQueue, ^{
             if (hasChanged) {
                 DLog(@"QSCloudKitSynchronizer >> Detected changes after synchronization. Initiating sync");
@@ -607,11 +609,60 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
         });
     };
     
-    self.currentOperation = recordChangesOperation;
-    [self.database addOperation:recordChangesOperation];
+    NSArray *desiredKeys = @[@"recordID", QSCloudKitDeviceUUIDKey];
+    
+    CKDatabaseOperation *operation;
+    if (@available(iOS 10.0, macOS 10.12, watchOS 3.0, *)) {
+        
+        CKFetchRecordZoneChangesOptions *options = [[CKFetchRecordZoneChangesOptions alloc] init];
+        options.previousServerChangeToken = self.serverChangeToken;
+        options.desiredKeys = desiredKeys;
+        
+        CKFetchRecordZoneChangesOperation *recordChangesOperation = [[CKFetchRecordZoneChangesOperation alloc] initWithRecordZoneIDs:@[self.customZoneID] optionsByRecordZoneID:@{self.customZoneID: options}];
+        
+        recordChangesOperation.recordChangedBlock = recordChangedBlock;
+        recordChangesOperation.recordWithIDWasDeletedBlock = ^(CKRecordID * _Nonnull recordID, NSString * _Nonnull recordType) {
+            recordWithIDWasDeletedBlock(recordID);
+        };
+        recordChangesOperation.recordZoneFetchCompletionBlock = ^(CKRecordZoneID * _Nonnull recordZoneID, CKServerChangeToken * _Nullable serverChangeToken, NSData * _Nullable clientChangeTokenData, BOOL moreComing, NSError * _Nullable recordZoneError) {
+            fetchRecordChangesCompletionBlock(serverChangeToken, moreComing, recordZoneError);
+        };
+        
+        operation = recordChangesOperation;
+        
+    } else {
+        
+        __block CKFetchRecordChangesOperation *recordChangesOperation = [[CKFetchRecordChangesOperation alloc] initWithRecordZoneID:self.customZoneID previousServerChangeToken:self.serverChangeToken];
+        
+        recordChangesOperation.desiredKeys = desiredKeys;
+        
+        recordChangesOperation.recordChangedBlock = recordChangedBlock;
+        recordChangesOperation.recordWithIDWasDeletedBlock = recordWithIDWasDeletedBlock;
+        recordChangesOperation.fetchRecordChangesCompletionBlock = ^(CKServerChangeToken * _Nullable serverChangeToken, NSData * _Nullable clientChangeTokenData, NSError * _Nullable operationError) {
+            fetchRecordChangesCompletionBlock(serverChangeToken, recordChangesOperation.moreComing, operationError);
+            recordChangesOperation = nil;
+        };
+        
+        operation = recordChangesOperation;
+    }
+    
+    self.currentOperation = operation;
+    [self.database addOperation:operation];
 }
 
+#pragma mark - Subscriptions
+
 #if !TARGET_OS_WATCH
+
+- (void)subscribeForUpdateNotificationsWithCompletion:(void(^)(NSError *error))completion
+{
+    [self subscribeForChangesInRecordZoneWithCompletion:completion];
+}
+
+- (void)deleteSubscriptionWithCompletion:(void(^)(NSError *error))completion
+{
+    [self cancelSubscriptionForChangesInRecordZoneWithCompletion:completion];
+}
 
 - (void)subscribeForChangesInRecordZoneWithCompletion:(void(^)(NSError *error))completion
 {
@@ -637,7 +688,12 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
                     callBlockIfNotNil(completion, nil);
                 } else {
                     // Create new one
-                    CKRecordZoneSubscription *subscription = [[CKRecordZoneSubscription alloc] initWithZoneID:self.customZoneID];
+                    CKSubscription *subscription;
+                    if (@available(iOS 10.0, macOS 10.12, watchOS 3.0, *)) {
+                        subscription = [[CKRecordZoneSubscription alloc] initWithZoneID:self.customZoneID];
+                    } else {
+                        subscription = [[CKSubscription alloc] initWithZoneID:self.customZoneID options:0];
+                    }
                     
                     CKNotificationInfo *notificationInfo = [[CKNotificationInfo alloc] init];
                     notificationInfo.shouldSendContentAvailable = YES;

@@ -39,6 +39,8 @@
 		644B0F611ED13D85003B0C51 /* QSPrimaryKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 644B0F5B1ED13D85003B0C51 /* QSPrimaryKey.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		644B0F621ED13D85003B0C51 /* QSSyncedEntityState.h in Headers */ = {isa = PBXBuildFile; fileRef = 644B0F5C1ED13D85003B0C51 /* QSSyncedEntityState.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		644B0F631ED13D85003B0C51 /* SyncKitLog.h in Headers */ = {isa = PBXBuildFile; fileRef = 644B0F5D1ED13D85003B0C51 /* SyncKitLog.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		64AE808F1FD2FB63004BFEA4 /* QSCloudKitSynchronizer+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 64AE808D1FD2FB62004BFEA4 /* QSCloudKitSynchronizer+Private.h */; };
+		64AE80901FD2FB63004BFEA4 /* QSCloudKitSynchronizer+Private.m in Sources */ = {isa = PBXBuildFile; fileRef = 64AE808E1FD2FB63004BFEA4 /* QSCloudKitSynchronizer+Private.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -76,6 +78,8 @@
 		644B0F5B1ED13D85003B0C51 /* QSPrimaryKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QSPrimaryKey.h; path = ../../../SyncKit/Classes/QSSynchronizer/QSPrimaryKey.h; sourceTree = "<group>"; };
 		644B0F5C1ED13D85003B0C51 /* QSSyncedEntityState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QSSyncedEntityState.h; path = ../../../SyncKit/Classes/QSSynchronizer/QSSyncedEntityState.h; sourceTree = "<group>"; };
 		644B0F5D1ED13D85003B0C51 /* SyncKitLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SyncKitLog.h; path = ../../../SyncKit/Classes/QSSynchronizer/SyncKitLog.h; sourceTree = "<group>"; };
+		64AE808D1FD2FB62004BFEA4 /* QSCloudKitSynchronizer+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "QSCloudKitSynchronizer+Private.h"; path = "../../../SyncKit/Classes/QSSynchronizer/QSCloudKitSynchronizer+Private.h"; sourceTree = "<group>"; };
+		64AE808E1FD2FB63004BFEA4 /* QSCloudKitSynchronizer+Private.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "QSCloudKitSynchronizer+Private.m"; path = "../../../SyncKit/Classes/QSSynchronizer/QSCloudKitSynchronizer+Private.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -139,6 +143,8 @@
 				644B0F3C1ED13D7D003B0C51 /* QSSyncedEntity+CoreDataClass.m */,
 				644B0F3D1ED13D7D003B0C51 /* QSSyncedEntity+CoreDataProperties.h */,
 				644B0F3E1ED13D7D003B0C51 /* QSSyncedEntity+CoreDataProperties.m */,
+				64AE808D1FD2FB62004BFEA4 /* QSCloudKitSynchronizer+Private.h */,
+				64AE808E1FD2FB63004BFEA4 /* QSCloudKitSynchronizer+Private.m */,
 				644B0EDF1ED13CE4003B0C51 /* SyncKitCoreData.h */,
 				644B0EE01ED13CE4003B0C51 /* Info.plist */,
 			);
@@ -166,6 +172,7 @@
 				644B0F5F1ED13D85003B0C51 /* QSCloudKitSynchronizer.h in Headers */,
 				644B0F521ED13D7E003B0C51 /* QSRecord+CoreDataProperties.h in Headers */,
 				644B0F541ED13D7E003B0C51 /* QSSyncedEntity+CoreDataClass.h in Headers */,
+				64AE808F1FD2FB63004BFEA4 /* QSCloudKitSynchronizer+Private.h in Headers */,
 				644B0F4A1ED13D7E003B0C51 /* QSManagedObjectContext.h in Headers */,
 				644B0F4E1ED13D7E003B0C51 /* QSPendingRelationship+CoreDataProperties.h in Headers */,
 				644B0F461ED13D7D003B0C51 /* QSCoreDataStack.h in Headers */,
@@ -253,6 +260,7 @@
 				644B0F551ED13D7E003B0C51 /* QSSyncedEntity+CoreDataClass.m in Sources */,
 				644B0F531ED13D7E003B0C51 /* QSRecord+CoreDataProperties.m in Sources */,
 				644B0F421ED13D7D003B0C51 /* QSCloudKitSynchronizer+CoreData.m in Sources */,
+				64AE80901FD2FB63004BFEA4 /* QSCloudKitSynchronizer+Private.m in Sources */,
 				644B0F4D1ED13D7E003B0C51 /* QSPendingRelationship+CoreDataClass.m in Sources */,
 				644B0F601ED13D85003B0C51 /* QSCloudKitSynchronizer.m in Sources */,
 				644B0F571ED13D7E003B0C51 /* QSSyncedEntity+CoreDataProperties.m in Sources */,
@@ -383,6 +391,7 @@
 				INFOPLIST_FILE = SyncKitCoreDataOSX/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				PRODUCT_BUNDLE_IDENTIFIER = com.mentrena.SyncKitCoreDataOSX;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -403,6 +412,7 @@
 				INFOPLIST_FILE = SyncKitCoreDataOSX/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				PRODUCT_BUNDLE_IDENTIFIER = com.mentrena.SyncKitCoreDataOSX;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
