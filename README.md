@@ -6,7 +6,7 @@
 [![License](https://img.shields.io/cocoapods/l/SyncKit.svg?style=flat)](http://cocoapods.org/pods/SyncKit)
 [![Platform](https://img.shields.io/cocoapods/p/SyncKit.svg?style=flat)](http://cocoapods.org/pods/SyncKit)
 
-SyncKit is a library for iOS and OS X that automates the process of synchronizing Core Data or Realm models using CloudKit.
+SyncKit automates the process of synchronizing Core Data or Realm models using CloudKit.
 
 SyncKit uses introspection to work with any model. It sits next to your Core Data or Realm stack, making it easy to opt in or out of synchronization without imposing any requirements on your model.
 
@@ -25,15 +25,15 @@ source 'https://github.com/CocoaPods/Specs.git'
 platform :ios, '10.0'
 
 target 'CoreDataTargetName' do
-pod 'SyncKit/CoreData', '~> 0.5.3'
+pod 'SyncKit/CoreData', '~> 0.5.5'
 end
 
 target 'RealmTargetName' do
-pod 'SyncKit/Realm', '~> 0.5.3'
+pod 'SyncKit/Realm', '~> 0.5.5'
 end
 
 target 'RealmSwiftTargetName' do
-pod 'SyncKit/RealmSwift', '~> 0.5.3'
+pod 'SyncKit/RealmSwift', '~> 0.5.5'
 end
 ```
 
@@ -54,7 +54,7 @@ $ brew install carthage
 Add SyncKit to your `Cartfile`:
 
 ```
-github "mentrena/SyncKit" ~> 0.5.3
+github "mentrena/SyncKit" ~> 0.5.5
 ```
 
 Run `carthage update` to create the framework, then import it into your project.
