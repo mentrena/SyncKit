@@ -10,5 +10,5 @@ import RealmSwift
 
 class Record: Object {
     
-    dynamic var encodedRecord: Data?
+    @objc dynamic var encodedRecord: Data?
 }
