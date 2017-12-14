@@ -10,12 +10,12 @@ import RealmSwift
 
 class SyncedEntity: Object {
     
-    dynamic var entityType: String = ""
-    dynamic var identifier: String = ""
-    dynamic var state: Int = 0
-    dynamic var changedKeys: String?
-    dynamic var updated: Date?
-    dynamic var record: Record?
+    @objc dynamic var entityType: String = ""
+    @objc dynamic var identifier: String = ""
+    @objc dynamic var state: Int = 0
+    @objc dynamic var changedKeys: String?
+    @objc dynamic var updated: Date?
+    @objc dynamic var record: Record?
     
     convenience init(entityType: String, identifier: String, state: Int) {
         

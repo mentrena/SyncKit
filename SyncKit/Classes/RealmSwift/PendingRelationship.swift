@@ -10,7 +10,7 @@ import RealmSwift
 
 class PendingRelationship: Object {
     
-    dynamic var relationshipName: String!
-    dynamic var targetIdentifier: String!
-    dynamic var forSyncedEntity: SyncedEntity!
+    @objc dynamic var relationshipName: String!
+    @objc dynamic var targetIdentifier: String!
+    @objc dynamic var forSyncedEntity: SyncedEntity!
 }
