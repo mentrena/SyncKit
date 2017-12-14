@@ -419,7 +419,7 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
                 
                 DLog(@"QSCloudKitSynchronizer >> Uploaded %ld records", (unsigned long)savedRecords.count);
                 
-                if (operationError.code == CKErrorLimitExceeded) {
+                if ([self isLimitExceededError:operationError]) {
                     self.batchSize = self.batchSize / 2;
                 } else if (self.batchSize < QSDefaultBatchSize) {
                     self.batchSize++;
@@ -648,6 +648,20 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
     
     self.currentOperation = operation;
     [self.database addOperation:operation];
+}
+
+- (BOOL)isLimitExceededError:(NSError *)error
+{
+    if (error.code == CKErrorPartialFailure) {
+        NSDictionary *errorsByItemID = error.userInfo[CKPartialErrorsByItemIDKey];
+        for (NSError *error in [errorsByItemID allValues]) {
+            if (error.code == CKErrorLimitExceeded) {
+                return YES;
+            }
+        }
+    }
+    
+    return error.code == CKErrorLimitExceeded;
 }
 
 #pragma mark - Subscriptions

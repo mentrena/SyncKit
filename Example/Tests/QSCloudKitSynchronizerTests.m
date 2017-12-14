@@ -196,6 +196,86 @@
     XCTAssertEqualObjects(error, receivedError);
 }
 
+- (void)testSynchronize_limitExceededError_decreasesBatchSizeAndEndsWithError
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Sync finished"];
+    
+    NSInteger batchSize = self.synchronizer.batchSize;
+    NSError *error = [NSError errorWithDomain:@"error"
+                                         code:CKErrorLimitExceeded
+                                     userInfo:nil];
+    self.mockDatabase.uploadError = error;
+    
+    QSObject *object = [[QSObject alloc] initWithIdentifier:@"1" number:@1];
+    self.mockChangeManager.objects = @[object];
+    [self.mockChangeManager markForUpload:@[object]];
+    
+    __block NSError *receivedError = nil;
+    
+    [self.synchronizer synchronizeWithCompletion:^(NSError *error) {
+        receivedError = error;
+        [expectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    
+    NSInteger halfBatchSize = self.synchronizer.batchSize;
+    
+    XCTAssertEqualObjects(error, receivedError);
+    XCTAssertEqual(halfBatchSize, batchSize / 2);
+    
+    
+    /*
+     Synchronize without error increases batch size
+     */
+    
+    self.mockDatabase.uploadError = nil;
+    self.mockChangeManager.objects = @[object];
+    [self.mockChangeManager markForUpload:@[object]];
+    XCTestExpectation *expectation2 = [self expectationWithDescription:@"Sync finished"];
+    [self.synchronizer synchronizeWithCompletion:^(NSError *error) {
+        receivedError = error;
+        [expectation2 fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    
+    XCTAssertNil(receivedError);
+    XCTAssertTrue(self.synchronizer.batchSize > halfBatchSize);
+}
+
+- (void)testSynchronize_limitExceededErrorInPartialError_decreasesBatchSizeAndEndsWithError
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Sync finished"];
+    
+    NSInteger batchSize = self.synchronizer.batchSize;
+    NSError *error = [NSError errorWithDomain:@"error"
+                                         code:CKErrorPartialFailure
+                                     userInfo:@{CKPartialErrorsByItemIDKey: @{@"itemID": [NSError errorWithDomain:@"error"
+                                                                                                       code:CKErrorLimitExceeded
+                                                                                                   userInfo:nil]}
+                                                
+                                                }
+                      ];
+    self.mockDatabase.uploadError = error;
+    
+    QSObject *object = [[QSObject alloc] initWithIdentifier:@"1" number:@1];
+    self.mockChangeManager.objects = @[object];
+    [self.mockChangeManager markForUpload:@[object]];
+    
+    __block NSError *receivedError = nil;
+    
+    [self.synchronizer synchronizeWithCompletion:^(NSError *error) {
+        receivedError = error;
+        [expectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    
+    XCTAssertEqualObjects(error, receivedError);
+    XCTAssertEqual(self.synchronizer.batchSize, batchSize / 2);
+}
+
 - (void)testSynchronize_moreThanBatchSizeItems_performsMultipleUploads
 {
     XCTestExpectation *expectation = [self expectationWithDescription:@"Sync finished"];
