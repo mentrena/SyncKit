@@ -84,10 +84,12 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
         self.zoneID = zoneID;
         
         self.privateContext = stack.managedObjectContext;
-        
+        #if TARGET_OS_WATCH
+        //SyncKit will not try to sync at every Watch MOC saving process - to avoid continuously downloading, and not keep user's changes
+        #else
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(targetContextDidSave:) name:NSManagedObjectContextDidSaveNotification object:self.targetContext];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(targetContextWillSave:) name:NSManagedObjectContextWillSaveNotification object:self.targetContext];
-        
+        #endif
         [self setupPrimaryKeysLookup];
         
         [self performInitialSetupIfNeeded];
