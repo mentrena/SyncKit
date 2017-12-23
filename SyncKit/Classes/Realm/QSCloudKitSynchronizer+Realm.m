@@ -72,7 +72,8 @@
 {
     [self ensurePathAvailableWithSuiteName:suiteName];
     QSRealmChangeManager *changeManager = [[QSRealmChangeManager alloc] initWithPersistenceRealmConfiguration:[self persistenceConfigurationWithSuiteName:suiteName] targetRealmConfiguration:targetRealmConfiguration recordZoneID:[self defaultCustomZoneID]];
-    QSCloudKitSynchronizer *synchronizer = [[QSCloudKitSynchronizer alloc] initWithContainerIdentifier:containerName recordZoneID:[self defaultCustomZoneID] changeManager:changeManager suiteName:suiteName];
+    NSUserDefaults *suiteUserDefaults = [[NSUserDefaults alloc] initWithSuiteName:suiteName];
+    QSCloudKitSynchronizer *synchronizer = [[QSCloudKitSynchronizer alloc] initWithContainerIdentifier:containerName recordZoneID:[self defaultCustomZoneID] changeManager:changeManager keyValueStore:suiteUserDefaults];
     return synchronizer;
 }
 

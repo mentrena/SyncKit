@@ -119,8 +119,12 @@
 
 - (void)fetchRecordZoneWithID:(CKRecordZoneID *)zoneID completionHandler:(void (^)(CKRecordZone * _Nullable, NSError * _Nullable))completionHandler
 {
-    CKRecordZone *zone = [[CKRecordZone alloc] initWithZoneID:zoneID];
-    completionHandler(zone, nil);
+    if (self.fetchRecordZoneError) {
+        completionHandler(nil, self.fetchRecordZoneError);
+    } else {
+        CKRecordZone *zone = [[CKRecordZone alloc] initWithZoneID:zoneID];
+        completionHandler(zone, nil);
+    }
 }
 
 - (void)saveRecordZone:(CKRecordZone *)zone completionHandler:(void (^)(CKRecordZone * _Nullable, NSError * _Nullable))completionHandler

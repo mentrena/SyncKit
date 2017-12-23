@@ -22,6 +22,7 @@
 		644A05FE1F59785A00F69505 /* SyncKitLog.h in Headers */ = {isa = PBXBuildFile; fileRef = 644A05F71F59785A00F69505 /* SyncKitLog.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		64AE80971FD2FBB9004BFEA4 /* QSCloudKitSynchronizer+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 64AE80951FD2FBB8004BFEA4 /* QSCloudKitSynchronizer+Private.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		64AE80981FD2FBB9004BFEA4 /* QSCloudKitSynchronizer+Private.m in Sources */ = {isa = PBXBuildFile; fileRef = 64AE80961FD2FBB8004BFEA4 /* QSCloudKitSynchronizer+Private.m */; };
+		64DFFABD1FEED0990072B8C3 /* QSKeyValueStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 64DFFABC1FEED0990072B8C3 /* QSKeyValueStore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -44,6 +45,7 @@
 		644A06001F5978FC00F69505 /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RealmSwift.framework; sourceTree = "<group>"; };
 		64AE80951FD2FBB8004BFEA4 /* QSCloudKitSynchronizer+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "QSCloudKitSynchronizer+Private.h"; path = "../../../../SyncKit/Classes/QSSynchronizer/QSCloudKitSynchronizer+Private.h"; sourceTree = "<group>"; };
 		64AE80961FD2FBB8004BFEA4 /* QSCloudKitSynchronizer+Private.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "QSCloudKitSynchronizer+Private.m"; path = "../../../../SyncKit/Classes/QSSynchronizer/QSCloudKitSynchronizer+Private.m"; sourceTree = "<group>"; };
+		64DFFABC1FEED0990072B8C3 /* QSKeyValueStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QSKeyValueStore.h; path = ../../../../SyncKit/Classes/QSSynchronizer/QSKeyValueStore.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,6 +92,7 @@
 				644A05F21F59785A00F69505 /* QSCloudKitSynchronizer.h */,
 				644A05F31F59785A00F69505 /* QSCloudKitSynchronizer.m */,
 				644A05F41F59785A00F69505 /* QSPrimaryKey.h */,
+				64DFFABC1FEED0990072B8C3 /* QSKeyValueStore.h */,
 				644A05F51F59785A00F69505 /* QSSyncedEntityState.h */,
 				644A05F61F59785A00F69505 /* SyncKit.h */,
 				644A05F71F59785A00F69505 /* SyncKitLog.h */,
@@ -111,6 +114,7 @@
 				644A05FB1F59785A00F69505 /* QSPrimaryKey.h in Headers */,
 				644A05FE1F59785A00F69505 /* SyncKitLog.h in Headers */,
 				644A05E11F59782600F69505 /* SyncKitRealmSwift.h in Headers */,
+				64DFFABD1FEED0990072B8C3 /* QSKeyValueStore.h in Headers */,
 				644A05F91F59785A00F69505 /* QSCloudKitSynchronizer.h in Headers */,
 				64AE80971FD2FBB9004BFEA4 /* QSCloudKitSynchronizer+Private.h in Headers */,
 			);

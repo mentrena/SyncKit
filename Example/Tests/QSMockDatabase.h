@@ -18,6 +18,7 @@
 @property (nonatomic, strong, nullable) NSArray *readyToFetchRecords;
 @property (nonatomic, strong, nullable) NSArray *toDeleteRecordIDs;
 
+@property (nonatomic, strong, nullable) NSError *fetchRecordZoneError;
 @property (nonatomic, strong, nullable) NSError *fetchError;
 @property (nonatomic, strong, nullable) NSError *uploadError;
 

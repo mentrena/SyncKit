@@ -37,6 +37,7 @@
 		64488A561F3BA38600755D8E /* QSCompany.1739C6A5-C07E-48A5-B83E-AB07694F23DF in Resources */ = {isa = PBXBuildFile; fileRef = 64488A541F3BA2C000755D8E /* QSCompany.1739C6A5-C07E-48A5-B83E-AB07694F23DF */; };
 		644B20351D4811BE00C131CD /* QSExample.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 644B20331D4811BE00C131CD /* QSExample.xcdatamodeld */; };
 		64AEF0001D4E8E01003729A5 /* QSCompanyTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 64AEEFFF1D4E8E01003729A5 /* QSCompanyTableViewController.m */; };
+		64DFFAB11FED35F90072B8C3 /* QSMockKeyValueStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 64DFFAB01FED35F90072B8C3 /* QSMockKeyValueStore.m */; };
 		6D49297B61E7030F49DDD104 /* libPods-SyncKitCoreDataExampleTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 22D5A5F41A6AFB038AD7DDA6 /* libPods-SyncKitCoreDataExampleTests.a */; };
 		873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 873B8AEA1B1F5CCA007FD442 /* Main.storyboard */; };
 /* End PBXBuildFile section */
@@ -110,6 +111,8 @@
 		649702A51ED8804000CDDDAC /* SyncKitCoreDataExample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SyncKitCoreDataExample.entitlements; sourceTree = "<group>"; };
 		64AEEFFE1D4E8E01003729A5 /* QSCompanyTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QSCompanyTableViewController.h; sourceTree = "<group>"; };
 		64AEEFFF1D4E8E01003729A5 /* QSCompanyTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QSCompanyTableViewController.m; sourceTree = "<group>"; };
+		64DFFAAF1FED35F90072B8C3 /* QSMockKeyValueStore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QSMockKeyValueStore.h; sourceTree = "<group>"; };
+		64DFFAB01FED35F90072B8C3 /* QSMockKeyValueStore.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QSMockKeyValueStore.m; sourceTree = "<group>"; };
 		6C938FE36198D6DFB38A45ED /* Pods-SyncKit_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SyncKit_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-SyncKit_Example/Pods-SyncKit_Example.release.xcconfig"; sourceTree = "<group>"; };
 		7CFCC3E7A2C4B902AC907709 /* Pods-SyncKit_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SyncKit_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-SyncKit_Tests/Pods-SyncKit_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		873B8AEA1B1F5CCA007FD442 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
@@ -230,6 +233,8 @@
 				64000CAA1D451F5A006ACD20 /* QSObject.m */,
 				644B202D1D480F1700C131CD /* QSCoreDataChangeManagerTests.m */,
 				64488A541F3BA2C000755D8E /* QSCompany.1739C6A5-C07E-48A5-B83E-AB07694F23DF */,
+				64DFFAAF1FED35F90072B8C3 /* QSMockKeyValueStore.h */,
+				64DFFAB01FED35F90072B8C3 /* QSMockKeyValueStore.m */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -551,6 +556,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				641F76DE1ED3EBDA00107A88 /* QSCloudKitSynchronizerTests.m in Sources */,
+				64DFFAB11FED35F90072B8C3 /* QSMockKeyValueStore.m in Sources */,
 				6409659F1EDF158D005BCF0F /* QSExample2.xcdatamodeld in Sources */,
 				64377B0B1ED6D394003FB86F /* QSMockDatabase.m in Sources */,
 				64377B0C1ED6D397003FB86F /* QSObject.m in Sources */,

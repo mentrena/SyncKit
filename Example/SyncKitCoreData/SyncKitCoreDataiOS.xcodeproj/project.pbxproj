@@ -10,6 +10,7 @@
 		649AF58E1EE31D07004A9220 /* QSCloudKitSyncModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 649AF58C1EE31D07004A9220 /* QSCloudKitSyncModel.xcdatamodeld */; };
 		64AE80871FD2F9CD004BFEA4 /* QSCloudKitSynchronizer+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 64AE80851FD2F9CD004BFEA4 /* QSCloudKitSynchronizer+Private.h */; };
 		64AE80881FD2F9CD004BFEA4 /* QSCloudKitSynchronizer+Private.m in Sources */ = {isa = PBXBuildFile; fileRef = 64AE80861FD2F9CD004BFEA4 /* QSCloudKitSynchronizer+Private.m */; };
+		64DFFAB51FEED0640072B8C3 /* QSKeyValueStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 64DFFAB41FEED0640072B8C3 /* QSKeyValueStore.h */; };
 		64F292311ECEA5F1000026F1 /* SyncKitCoreData.h in Headers */ = {isa = PBXBuildFile; fileRef = 64F2922F1ECEA5F1000026F1 /* SyncKitCoreData.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		64F2923B1ECEA627000026F1 /* QSChangeManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 64F292371ECEA627000026F1 /* QSChangeManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		64F2923C1ECEA627000026F1 /* QSCloudKitSynchronizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 64F292381ECEA627000026F1 /* QSCloudKitSynchronizer.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -47,6 +48,7 @@
 		649AF58D1EE31D07004A9220 /* QSCloudKitSyncModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = QSCloudKitSyncModel.xcdatamodel; sourceTree = "<group>"; };
 		64AE80851FD2F9CD004BFEA4 /* QSCloudKitSynchronizer+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "QSCloudKitSynchronizer+Private.h"; path = "../../../SyncKit/Classes/QSSynchronizer/QSCloudKitSynchronizer+Private.h"; sourceTree = "<group>"; };
 		64AE80861FD2F9CD004BFEA4 /* QSCloudKitSynchronizer+Private.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "QSCloudKitSynchronizer+Private.m"; path = "../../../SyncKit/Classes/QSSynchronizer/QSCloudKitSynchronizer+Private.m"; sourceTree = "<group>"; };
+		64DFFAB41FEED0640072B8C3 /* QSKeyValueStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QSKeyValueStore.h; path = ../../../SyncKit/Classes/QSSynchronizer/QSKeyValueStore.h; sourceTree = "<group>"; };
 		64F2922C1ECEA5F1000026F1 /* SyncKitCoreData.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SyncKitCoreData.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		64F2922F1ECEA5F1000026F1 /* SyncKitCoreData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SyncKitCoreData.h; sourceTree = "<group>"; };
 		64F292301ECEA5F1000026F1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -119,6 +121,7 @@
 				64F2925B1ECEA6DD000026F1 /* NSManagedObjectContext+QSFetch.m */,
 				64F2925C1ECEA6DD000026F1 /* QSCloudKitSynchronizer+CoreData.m */,
 				64F2925D1ECEA6DD000026F1 /* QSCoreDataChangeManager.m */,
+				64DFFAB41FEED0640072B8C3 /* QSKeyValueStore.h */,
 				64F2925E1ECEA6DD000026F1 /* QSCoreDataStack.m */,
 				64F2925F1ECEA6DD000026F1 /* QSEntityIdentifierUpdateMigrationPolicy.m */,
 				64F292601ECEA6DD000026F1 /* QSManagedObjectContext.m */,
@@ -176,6 +179,7 @@
 				64F2923D1ECEA627000026F1 /* QSPrimaryKey.h in Headers */,
 				64F2923E1ECEA627000026F1 /* SyncKitLog.h in Headers */,
 				64F292431ECEA67A000026F1 /* QSCloudKitSynchronizer+CoreData.h in Headers */,
+				64DFFAB51FEED0640072B8C3 /* QSKeyValueStore.h in Headers */,
 				64F292441ECEA67A000026F1 /* QSCoreDataChangeManager.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

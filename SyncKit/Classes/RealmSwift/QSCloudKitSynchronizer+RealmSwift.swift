@@ -62,7 +62,8 @@ extension QSCloudKitSynchronizer {
         
         ensurePathAvailable(suiteName: suiteName)
         let changeManager = RealmSwiftChangeManager(persistenceRealmConfiguration: persistenceConfiguration(suiteName: suiteName), targetRealmConfiguration: configuration, recordZoneID: defaultCustomZoneID())
-        return QSCloudKitSynchronizer(containerIdentifier: containerName, recordZoneID: defaultCustomZoneID(), changeManager: changeManager, suiteName: suiteName)
+        let suiteUserDefaults = UserDefaults(suiteName: suiteName)
+        return QSCloudKitSynchronizer(containerIdentifier: containerName, recordZoneID: defaultCustomZoneID(), changeManager: changeManager, keyValueStore: suiteUserDefaults)
     }
     
 }

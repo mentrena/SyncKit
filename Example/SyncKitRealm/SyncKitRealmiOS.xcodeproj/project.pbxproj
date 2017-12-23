@@ -26,6 +26,7 @@
 		64B441ED1ECEDEA600E66ACB /* QSRealmChangeManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 64B441E81ECEDEA600E66ACB /* QSRealmChangeManager.m */; };
 		64B441EE1ECEDEA600E66ACB /* QSRecord.m in Sources */ = {isa = PBXBuildFile; fileRef = 64B441E91ECEDEA600E66ACB /* QSRecord.m */; };
 		64B441EF1ECEDEA600E66ACB /* QSSyncedEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 64B441EA1ECEDEA600E66ACB /* QSSyncedEntity.m */; };
+		64DFFAB71FEED0740072B8C3 /* QSKeyValueStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 64DFFAB61FEED0730072B8C3 /* QSKeyValueStore.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -51,6 +52,7 @@
 		64B441E91ECEDEA600E66ACB /* QSRecord.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = QSRecord.m; path = ../../../SyncKit/Classes/Realm/QSRecord.m; sourceTree = "<group>"; };
 		64B441EA1ECEDEA600E66ACB /* QSSyncedEntity.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = QSSyncedEntity.m; path = ../../../SyncKit/Classes/Realm/QSSyncedEntity.m; sourceTree = "<group>"; };
 		64B441F51ECEE75700E66ACB /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Realm.framework; sourceTree = "<group>"; };
+		64DFFAB61FEED0730072B8C3 /* QSKeyValueStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QSKeyValueStore.h; path = ../../../SyncKit/Classes/QSSynchronizer/QSKeyValueStore.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,6 +100,7 @@
 				64B441D01ECEDE4700E66ACB /* QSChangeManager.h */,
 				64B441D11ECEDE4700E66ACB /* QSCloudKitSynchronizer.h */,
 				64B441D21ECEDE4700E66ACB /* QSPrimaryKey.h */,
+				64DFFAB61FEED0730072B8C3 /* QSKeyValueStore.h */,
 				64B441D31ECEDE4700E66ACB /* QSSyncedEntityState.h */,
 				64B441D41ECEDE4700E66ACB /* SyncKitLog.h */,
 				64B441C81ECEDDF700E66ACB /* SyncKitRealm.h */,
@@ -134,6 +137,7 @@
 				64B441E31ECEDE9300E66ACB /* QSSyncedEntity.h in Headers */,
 				64B441D81ECEDE4700E66ACB /* QSSyncedEntityState.h in Headers */,
 				64AE808B1FD2FB50004BFEA4 /* QSCloudKitSynchronizer+Private.h in Headers */,
+				64DFFAB71FEED0740072B8C3 /* QSKeyValueStore.h in Headers */,
 				64B441D91ECEDE4700E66ACB /* SyncKitLog.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

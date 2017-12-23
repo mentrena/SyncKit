@@ -41,6 +41,7 @@
 		644B0F631ED13D85003B0C51 /* SyncKitLog.h in Headers */ = {isa = PBXBuildFile; fileRef = 644B0F5D1ED13D85003B0C51 /* SyncKitLog.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		64AE808F1FD2FB63004BFEA4 /* QSCloudKitSynchronizer+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 64AE808D1FD2FB62004BFEA4 /* QSCloudKitSynchronizer+Private.h */; };
 		64AE80901FD2FB63004BFEA4 /* QSCloudKitSynchronizer+Private.m in Sources */ = {isa = PBXBuildFile; fileRef = 64AE808E1FD2FB63004BFEA4 /* QSCloudKitSynchronizer+Private.m */; };
+		64DFFAB31FEED05E0072B8C3 /* QSKeyValueStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 64DFFAB21FEED05D0072B8C3 /* QSKeyValueStore.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -80,6 +81,7 @@
 		644B0F5D1ED13D85003B0C51 /* SyncKitLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SyncKitLog.h; path = ../../../SyncKit/Classes/QSSynchronizer/SyncKitLog.h; sourceTree = "<group>"; };
 		64AE808D1FD2FB62004BFEA4 /* QSCloudKitSynchronizer+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "QSCloudKitSynchronizer+Private.h"; path = "../../../SyncKit/Classes/QSSynchronizer/QSCloudKitSynchronizer+Private.h"; sourceTree = "<group>"; };
 		64AE808E1FD2FB63004BFEA4 /* QSCloudKitSynchronizer+Private.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "QSCloudKitSynchronizer+Private.m"; path = "../../../SyncKit/Classes/QSSynchronizer/QSCloudKitSynchronizer+Private.m"; sourceTree = "<group>"; };
+		64DFFAB21FEED05D0072B8C3 /* QSKeyValueStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QSKeyValueStore.h; path = ../../../SyncKit/Classes/QSSynchronizer/QSKeyValueStore.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -115,6 +117,7 @@
 				644B0F581ED13D85003B0C51 /* QSChangeManager.h */,
 				644B0F591ED13D85003B0C51 /* QSCloudKitSynchronizer.h */,
 				644B0F5A1ED13D85003B0C51 /* QSCloudKitSynchronizer.m */,
+				64DFFAB21FEED05D0072B8C3 /* QSKeyValueStore.h */,
 				644B0F5B1ED13D85003B0C51 /* QSPrimaryKey.h */,
 				644B0F5C1ED13D85003B0C51 /* QSSyncedEntityState.h */,
 				644B0F5D1ED13D85003B0C51 /* SyncKitLog.h */,
@@ -176,6 +179,7 @@
 				644B0F4A1ED13D7E003B0C51 /* QSManagedObjectContext.h in Headers */,
 				644B0F4E1ED13D7E003B0C51 /* QSPendingRelationship+CoreDataProperties.h in Headers */,
 				644B0F461ED13D7D003B0C51 /* QSCoreDataStack.h in Headers */,
+				64DFFAB31FEED05E0072B8C3 /* QSKeyValueStore.h in Headers */,
 				644B0F441ED13D7D003B0C51 /* QSCoreDataChangeManager.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

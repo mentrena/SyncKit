@@ -13,6 +13,7 @@
 #import "QSMockChangeManager.h"
 #import "QSMockDatabase.h"
 #import "QSObject.h"
+#import "QSMockKeyValueStore.h"
 
 @interface QSCloudKitSynchronizerTests : XCTestCase
 
@@ -21,6 +22,7 @@
 @property (nonatomic, strong) QSMockChangeManager *mockChangeManager;
 @property (nonatomic, strong) CKRecordZoneID *recordZoneID;
 @property (nonatomic, strong) id mockContainer;
+@property (nonatomic, strong) QSMockKeyValueStore *mockKeyValueStore;
 
 @end
 
@@ -29,6 +31,8 @@
 - (void)setUp {
     [super setUp];
     // Put setup code here. This method is called before the invocation of each test method in the class.
+    
+    self.mockKeyValueStore = [[QSMockKeyValueStore alloc] init];
     
     //Pass our custom database
     self.mockDatabase = [QSMockDatabase new];
@@ -41,11 +45,24 @@
     
     self.recordZoneID = [[CKRecordZoneID alloc] initWithZoneName:@"zone" ownerName:@"owner"];
     
-    self.synchronizer = [[QSCloudKitSynchronizer alloc] initWithContainerIdentifier:@"any" recordZoneID:self.recordZoneID changeManager:self.mockChangeManager];
+    self.synchronizer = [self createSynchronizer];
+}
+
+- (QSCloudKitSynchronizer *)createSynchronizer
+{
+    return [[QSCloudKitSynchronizer alloc] initWithContainerIdentifier:@"any" recordZoneID:self.recordZoneID changeManager:self.mockChangeManager keyValueStore:self.mockKeyValueStore];
 }
 
 - (void)tearDown {
     // Put teardown code here. This method is called after the invocation of each test method in the class.
+    [self.mockKeyValueStore clear];
+    self.synchronizer = nil;
+    self.recordZoneID = nil;
+    self.mockChangeManager = nil;
+    self.mockContainer = nil;
+    self.mockDatabase = nil;
+    self.mockKeyValueStore = nil;
+    
     [super tearDown];
 }
 
@@ -152,6 +169,52 @@
         }
     }
     XCTAssertNotNil(fifthObject);
+}
+
+- (void)testSynchronize_errorInFetchRecordZone_customZoneNotCreated_createsZone
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Sync finished"];
+    
+    NSError *error = [NSError errorWithDomain:@"error" code:CKErrorUserDeletedZone userInfo:nil];
+    self.mockDatabase.fetchRecordZoneError = error;
+    
+    __block NSError *receivedError = nil;
+    
+    [self.synchronizer synchronizeWithCompletion:^(NSError *error) {
+        receivedError = error;
+        [expectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    
+    XCTAssertNil(receivedError);
+}
+
+- (void)testSynchronize_errorInFetchRecordZone_customZoneCreated_endsWithError
+{
+    // Make sure record zone is created
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Sync finished"];
+    [self.synchronizer synchronizeWithCompletion:^(NSError *error) {
+        [expectation fulfill];
+    }];
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    
+    // New synchronizer, will try to fetch record zone
+    self.synchronizer = [self createSynchronizer];
+    NSError *error = [NSError errorWithDomain:@"error" code:CKErrorUserDeletedZone userInfo:nil];
+    self.mockDatabase.fetchRecordZoneError = error;
+    
+    __block NSError *receivedError = nil;
+    XCTestExpectation *expectation2 = [self expectationWithDescription:@"Sync finished"];
+    
+    [self.synchronizer synchronizeWithCompletion:^(NSError *error) {
+        receivedError = error;
+        [expectation2 fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    
+    XCTAssertEqual(receivedError, error);
 }
 
 - (void)testSynchronize_errorInFetch_endsWithError
