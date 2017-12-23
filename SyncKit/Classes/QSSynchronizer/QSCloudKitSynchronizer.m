@@ -411,7 +411,7 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
         [self addMetadataToRecords:records];
         //Now perform the operation
         CKModifyRecordsOperation *modifyRecordsOperation = [[CKModifyRecordsOperation alloc] initWithRecordsToSave:records recordIDsToDelete:nil];
-        
+        modifyRecordsOperation.atomic=NO;
         NSMutableArray *recordsToSave = [NSMutableArray array];
         modifyRecordsOperation.perRecordCompletionBlock = ^(CKRecord *record, NSError *error) {
             dispatch_async(self.dispatchQueue, ^{
@@ -468,6 +468,7 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
     } else {
         //Now perform the operation
         CKModifyRecordsOperation *modifyRecordsOperation = [[CKModifyRecordsOperation alloc] initWithRecordsToSave:nil recordIDsToDelete:recordIDs];
+        modifyRecordsOperation.atomic=NO;
         modifyRecordsOperation.modifyRecordsCompletionBlock = ^(NSArray <CKRecord *> *savedRecords, NSArray <CKRecordID *> *deletedRecordIDs, NSError *operationError) {
             dispatch_async(self.dispatchQueue, ^{
                 DLog(@"QSCloudKitSynchronizer >> Deleted %ld records", (unsigned long)deletedRecordIDs.count);
