@@ -75,6 +75,8 @@ public class RealmSwiftChangeManager: NSObject, QSChangeManager {
     public var mergePolicy: QSCloudKitSynchronizerMergePolicy = QSCloudKitSynchronizerMergePolicy.server
     public var delegate: RealmSwiftChangeManagerDelegate?
     
+    private var tempFileManager = QSTempFileManager()
+    
     var realmProvider: RealmProvider!
     
     var collectionNotificationTokens = [NotificationToken]()
@@ -438,8 +440,12 @@ public class RealmSwiftChangeManager: NSObject, QSChangeManager {
                     
                     if !shouldIgnore(key: property.name) &&
                         !(record[property.name] is CKReference) {
-                        
-                        recordChanges[property.name] = record[property.name] ?? NSNull()
+
+                        if let asset = record[property.name] as? CKAsset {
+                            recordChanges[property.name] = NSData(contentsOf: asset.fileURL)
+                        } else {
+                            recordChanges[property.name] = record[property.name] ?? NSNull()
+                        }
                     }
                 }
                 
@@ -468,17 +474,21 @@ public class RealmSwiftChangeManager: NSObject, QSChangeManager {
             return
         }
         
-        if record[key] is CKReference {
+        let value = record[key]
+        if let reference = value as? CKReference {
             // Save relationship to be applied after all records have been downloaded and persisted
             // to ensure target of the relationship has already been created
-            let reference = record[key] as! CKReference
             let recordName = reference.recordID.recordName
             let separatorRange = recordName.range(of: ".")!
             let objectIdentifier = recordName.substring(from: separatorRange.upperBound)
             savePendingRelationship(name: key, syncedEntity: syncedEntity, targetIdentifier: objectIdentifier, realm: realmProvider.persistenceRealm)
+        } else if let asset = value as? CKAsset {
+            // Take data from asset url
+            let data = NSData(contentsOf: asset.fileURL)
+            object.setValue(data, forKey: key)
         } else {
             // If property is not a relationship or property is nil
-            object.setValue(record[key], forKey: key)
+            object.setValue(value, forKey: key)
         }
     }
     
@@ -613,7 +623,13 @@ public class RealmSwiftChangeManager: NSObject, QSChangeManager {
                 (syncedEntity.state == QSSyncedEntityState.new.rawValue || changedKeys.contains(property.name)) {
                 
                 let value = object!.value(forKey: property.name)
-                if value == nil {
+                if property.type == PropertyType.data,
+                    let data = value as? Data,
+                    let fileURL = self.tempFileManager.store(data) {
+                    
+                    let asset = CKAsset(fileURL: fileURL)
+                    record[property.name] = asset
+                } else if value == nil {
                     record[property.name] = nil
                 } else if let recordValue = value as? CKRecordValue {
                     record[property.name] = recordValue
@@ -801,6 +817,8 @@ public class RealmSwiftChangeManager: NSObject, QSChangeManager {
     }
     
     public func didFinishImportWithError(_ error: Error?) {
+        
+        tempFileManager.clearTempFiles()
         
         executeOnMainQueue {
             updateHasChanges(realm: self.realmProvider.persistenceRealm)

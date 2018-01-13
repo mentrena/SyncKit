@@ -26,6 +26,8 @@
 		64B441ED1ECEDEA600E66ACB /* QSRealmChangeManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 64B441E81ECEDEA600E66ACB /* QSRealmChangeManager.m */; };
 		64B441EE1ECEDEA600E66ACB /* QSRecord.m in Sources */ = {isa = PBXBuildFile; fileRef = 64B441E91ECEDEA600E66ACB /* QSRecord.m */; };
 		64B441EF1ECEDEA600E66ACB /* QSSyncedEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 64B441EA1ECEDEA600E66ACB /* QSSyncedEntity.m */; };
+		64CDE347200A27C1007F12F9 /* QSTempFileManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 64CDE345200A27C0007F12F9 /* QSTempFileManager.h */; };
+		64CDE348200A27C1007F12F9 /* QSTempFileManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 64CDE346200A27C1007F12F9 /* QSTempFileManager.m */; };
 		64DFFAB71FEED0740072B8C3 /* QSKeyValueStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 64DFFAB61FEED0730072B8C3 /* QSKeyValueStore.h */; };
 /* End PBXBuildFile section */
 
@@ -52,6 +54,8 @@
 		64B441E91ECEDEA600E66ACB /* QSRecord.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = QSRecord.m; path = ../../../SyncKit/Classes/Realm/QSRecord.m; sourceTree = "<group>"; };
 		64B441EA1ECEDEA600E66ACB /* QSSyncedEntity.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = QSSyncedEntity.m; path = ../../../SyncKit/Classes/Realm/QSSyncedEntity.m; sourceTree = "<group>"; };
 		64B441F51ECEE75700E66ACB /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Realm.framework; sourceTree = "<group>"; };
+		64CDE345200A27C0007F12F9 /* QSTempFileManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QSTempFileManager.h; path = ../../../SyncKit/Classes/QSSynchronizer/QSTempFileManager.h; sourceTree = "<group>"; };
+		64CDE346200A27C1007F12F9 /* QSTempFileManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = QSTempFileManager.m; path = ../../../SyncKit/Classes/QSSynchronizer/QSTempFileManager.m; sourceTree = "<group>"; };
 		64DFFAB61FEED0730072B8C3 /* QSKeyValueStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QSKeyValueStore.h; path = ../../../SyncKit/Classes/QSSynchronizer/QSKeyValueStore.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -91,6 +95,8 @@
 				64B441E81ECEDEA600E66ACB /* QSRealmChangeManager.m */,
 				64B441E91ECEDEA600E66ACB /* QSRecord.m */,
 				64B441EA1ECEDEA600E66ACB /* QSSyncedEntity.m */,
+				64CDE345200A27C0007F12F9 /* QSTempFileManager.h */,
+				64CDE346200A27C1007F12F9 /* QSTempFileManager.m */,
 				64B441E41ECEDE9D00E66ACB /* QSCloudKitSynchronizer+Realm.h */,
 				64B441DC1ECEDE9300E66ACB /* QSPendingRelationship.h */,
 				64B441DD1ECEDE9300E66ACB /* QSRealmChangeManager.h */,
@@ -126,6 +132,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				64CDE347200A27C1007F12F9 /* QSTempFileManager.h in Headers */,
 				64B441CA1ECEDDF700E66ACB /* SyncKitRealm.h in Headers */,
 				64B441D51ECEDE4700E66ACB /* QSChangeManager.h in Headers */,
 				64B441D61ECEDE4700E66ACB /* QSCloudKitSynchronizer.h in Headers */,
@@ -214,6 +221,7 @@
 				64B441DB1ECEDE4A00E66ACB /* QSCloudKitSynchronizer.m in Sources */,
 				64B441EB1ECEDEA600E66ACB /* QSCloudKitSynchronizer+Realm.m in Sources */,
 				64AE808C1FD2FB50004BFEA4 /* QSCloudKitSynchronizer+Private.m in Sources */,
+				64CDE348200A27C1007F12F9 /* QSTempFileManager.m in Sources */,
 				64B441EC1ECEDEA600E66ACB /* QSPendingRelationship.m in Sources */,
 				64B441ED1ECEDEA600E66ACB /* QSRealmChangeManager.m in Sources */,
 				64B441EE1ECEDEA600E66ACB /* QSRecord.m in Sources */,

@@ -810,6 +810,140 @@
     XCTAssertNil(record[@"identifier"]);
 }
 
+#pragma mark - CKAsset
+
+- (void)testRecordToUpload_dataProperty_uploadedAsAsset
+{
+    RLMRealm *realm = [self realmWithIdentifier:@"t40"];
+    //Insert object in context
+    [self insertEmployeeWithValues:@{@"identifier": @"e1", @"name": @"employee1", @"photo": [NSData data]} inRealm:realm];
+    
+    QSRealmChangeManager *changeManager = [self realmChangeManagerWithTarget:realm.configuration
+                                                                 persistence:[self persistenceConfigurationWithIdentifier:@"p40"]];
+    
+    XCTestExpectation *expectation = [self expectationWithDescription:@"synced"];
+    __block CKRecord *objectRecord = nil;
+    
+    [self fullySyncChangeManager:changeManager completion:^(NSArray *uploadedRecords, NSArray *deletedRecordIDs, NSError *error) {
+        objectRecord = [uploadedRecords firstObject];
+        [expectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    
+    CKAsset *asset = objectRecord[@"photo"];
+    XCTAssertTrue([asset isKindOfClass:[CKAsset class]]);
+    XCTAssertNotNil(asset.fileURL);
+}
+
+- (void)testRecordToUpload_dataPropertyNil_nilsProperty
+{
+    RLMRealm *realm = [self realmWithIdentifier:@"t41"];
+    //Insert object in context
+    QSEmployee *employee = [self insertEmployeeWithValues:@{@"identifier": @"e1", @"name": @"employee1", @"photo": [NSData data]} inRealm:realm];
+    
+    QSRealmChangeManager *changeManager = [self realmChangeManagerWithTarget:realm.configuration
+                                                                 persistence:[self persistenceConfigurationWithIdentifier:@"p41"]];
+    
+    XCTestExpectation *expectation = [self expectationWithDescription:@"synced"];
+    
+    [self fullySyncChangeManager:changeManager completion:^(NSArray *uploadedRecords, NSArray *deletedRecordIDs, NSError *error) {
+        [expectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+
+    [realm transactionWithBlock:^{
+        employee.photo = nil;
+    }];
+
+    XCTestExpectation *expectation2 = [self expectationWithDescription:@"synced"];
+    __block CKRecord *objectRecord = nil;
+
+    [self fullySyncChangeManager:changeManager completion:^(NSArray *uploadedRecords, NSArray *deletedRecordIDs, NSError *error) {
+        objectRecord = [uploadedRecords firstObject];
+        [expectation2 fulfill];
+    }];
+
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+
+    CKAsset *asset = objectRecord[@"photo"];
+    XCTAssertNil(asset);
+}
+
+
+- (void)testSaveChangesInRecord_assetProperty_updatesData
+{
+    RLMRealm *realm = [self realmWithIdentifier:@"t42"];
+    //Insert object in context
+    QSEmployee *employee = [self insertEmployeeWithValues:@{@"identifier": @"e1", @"name": @"employee1"} inRealm:realm];
+    
+    QSRealmChangeManager *changeManager = [self realmChangeManagerWithTarget:realm.configuration
+                                                                 persistence:[self persistenceConfigurationWithIdentifier:@"p42"]];
+
+    XCTestExpectation *expectation = [self expectationWithDescription:@"synced"];
+    __block CKRecord *objectRecord = nil;
+
+    [self fullySyncChangeManager:changeManager completion:^(NSArray *uploadedRecords, NSArray *deletedRecordIDs, NSError *error) {
+        objectRecord = [uploadedRecords firstObject];
+        [expectation fulfill];
+    }];
+
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+
+    char photoBytes[8];
+    NSData *data = [NSData dataWithBytes:photoBytes length:8];
+    NSURL *fileURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"test"]];
+    [data writeToURL:fileURL atomically:YES];
+    CKAsset *asset = [[CKAsset alloc] initWithFileURL:fileURL];
+    objectRecord[@"photo"] = asset;
+
+    XCTestExpectation *expectation2 = [self expectationWithDescription:@"synced"];
+
+    [self fullySyncChangeManager:changeManager downloadedRecords:@[objectRecord] deletedRecordIDs:nil completion:^(NSArray *uploadedRecords, NSArray *deletedRecordIDs, NSError *error) {
+        [expectation2 fulfill];
+    }];
+
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+
+    [[NSFileManager defaultManager] removeItemAtURL:fileURL error:nil];
+
+    XCTAssertNotNil(employee.photo);
+    XCTAssertEqual([employee.photo length], 8);
+}
+
+- (void)testSaveChangesInRecord_assetPropertyNil_nilsData
+{
+    RLMRealm *realm = [self realmWithIdentifier:@"t43"];
+    //Insert object in context
+    QSEmployee *employee = [self insertEmployeeWithValues:@{@"identifier": @"e1", @"name": @"employee1", @"photo": [NSData data]} inRealm:realm];
+    
+    QSRealmChangeManager *changeManager = [self realmChangeManagerWithTarget:realm.configuration
+                                                                 persistence:[self persistenceConfigurationWithIdentifier:@"p43"]];
+    
+    XCTestExpectation *expectation = [self expectationWithDescription:@"synced"];
+    __block CKRecord *objectRecord = nil;
+    
+    [self fullySyncChangeManager:changeManager completion:^(NSArray *uploadedRecords, NSArray *deletedRecordIDs, NSError *error) {
+        objectRecord = [uploadedRecords firstObject];
+        [expectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    
+    objectRecord[@"photo"] = nil;
+    
+    XCTestExpectation *expectation2 = [self expectationWithDescription:@"synced"];
+    
+    [self fullySyncChangeManager:changeManager downloadedRecords:@[objectRecord] deletedRecordIDs:nil completion:^(NSArray *uploadedRecords, NSArray *deletedRecordIDs, NSError *error) {
+        [expectation2 fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    
+    XCTAssertNil(employee.photo);
+}
+
 #pragma mark - Unique objects
 
 - (void)testSaveChangesInRecord_existingUniqueObject_updatesObject
@@ -1018,6 +1152,7 @@
 - (RLMRealm *)realmWithIdentifier:(NSString *)identifier
 {
     RLMRealmConfiguration *configuration = [[RLMRealmConfiguration alloc] init];
+    configuration.schemaVersion = 1;
     configuration.inMemoryIdentifier = identifier;
     configuration.objectClasses = @[[QSCompany class], [QSEmployee class]];
     RLMRealm *realm = [RLMRealm realmWithConfiguration:configuration error:nil];

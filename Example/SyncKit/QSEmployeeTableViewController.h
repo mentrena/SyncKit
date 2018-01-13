@@ -9,11 +9,11 @@
 #import <UIKit/UIKit.h>
 #import <CoreData/CoreData.h>
 
-@class QSCompany;
+@class QSCompany2;
 
 @interface QSEmployeeTableViewController : UITableViewController
 
 @property (nonatomic, strong) NSManagedObjectContext *managedObjectContext;
-@property (nonatomic, strong) QSCompany *company;
+@property (nonatomic, strong) QSCompany2 *company;
 
 @end

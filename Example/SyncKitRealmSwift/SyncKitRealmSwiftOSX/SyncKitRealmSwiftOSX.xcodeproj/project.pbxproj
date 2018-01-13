@@ -22,6 +22,8 @@
 		644A06301F597A6400F69505 /* SyncKitLog.h in Headers */ = {isa = PBXBuildFile; fileRef = 644A06241F597A6400F69505 /* SyncKitLog.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		64AE809B1FD2FD49004BFEA4 /* QSCloudKitSynchronizer+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 64AE80991FD2FD49004BFEA4 /* QSCloudKitSynchronizer+Private.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		64AE809C1FD2FD49004BFEA4 /* QSCloudKitSynchronizer+Private.m in Sources */ = {isa = PBXBuildFile; fileRef = 64AE809A1FD2FD49004BFEA4 /* QSCloudKitSynchronizer+Private.m */; };
+		64CDE34F200A27DA007F12F9 /* QSTempFileManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 64CDE34D200A27D9007F12F9 /* QSTempFileManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		64CDE350200A27DA007F12F9 /* QSTempFileManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 64CDE34E200A27D9007F12F9 /* QSTempFileManager.m */; };
 		64DFFABB1FEED0930072B8C3 /* QSKeyValueStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 64DFFABA1FEED0920072B8C3 /* QSKeyValueStore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
@@ -29,22 +31,24 @@
 		644A060E1F597A1700F69505 /* SyncKitRealmSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SyncKitRealmSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		644A06111F597A1700F69505 /* SyncKitRealmSwift.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SyncKitRealmSwift.h; sourceTree = "<group>"; };
 		644A06121F597A1700F69505 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		644A06191F597A6400F69505 /* PendingRelationship.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PendingRelationship.swift; path = /Users/manuel/Documents/Apps/SyncKit/Example/SyncKitRealmSwift/SyncKitRealmSwiftIOS/SyncKitRealmSwiftIOS/../../../../SyncKit/Classes/RealmSwift/PendingRelationship.swift; sourceTree = "<absolute>"; };
-		644A061A1F597A6400F69505 /* QSCloudKitSynchronizer+RealmSwift.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "QSCloudKitSynchronizer+RealmSwift.swift"; path = "/Users/manuel/Documents/Apps/SyncKit/Example/SyncKitRealmSwift/SyncKitRealmSwiftIOS/SyncKitRealmSwiftIOS/../../../../SyncKit/Classes/RealmSwift/QSCloudKitSynchronizer+RealmSwift.swift"; sourceTree = "<absolute>"; };
-		644A061B1F597A6400F69505 /* RealmSwiftChangeManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RealmSwiftChangeManager.swift; path = /Users/manuel/Documents/Apps/SyncKit/Example/SyncKitRealmSwift/SyncKitRealmSwiftIOS/SyncKitRealmSwiftIOS/../../../../SyncKit/Classes/RealmSwift/RealmSwiftChangeManager.swift; sourceTree = "<absolute>"; };
-		644A061C1F597A6400F69505 /* Record.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Record.swift; path = /Users/manuel/Documents/Apps/SyncKit/Example/SyncKitRealmSwift/SyncKitRealmSwiftIOS/SyncKitRealmSwiftIOS/../../../../SyncKit/Classes/RealmSwift/Record.swift; sourceTree = "<absolute>"; };
-		644A061D1F597A6400F69505 /* SyncedEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SyncedEntity.swift; path = /Users/manuel/Documents/Apps/SyncKit/Example/SyncKitRealmSwift/SyncKitRealmSwiftIOS/SyncKitRealmSwiftIOS/../../../../SyncKit/Classes/RealmSwift/SyncedEntity.swift; sourceTree = "<absolute>"; };
-		644A061E1F597A6400F69505 /* QSChangeManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QSChangeManager.h; path = /Users/manuel/Documents/Apps/SyncKit/Example/SyncKitRealmSwift/SyncKitRealmSwiftIOS/SyncKitRealmSwiftIOS/../../../../SyncKit/Classes/QSSynchronizer/QSChangeManager.h; sourceTree = "<absolute>"; };
-		644A061F1F597A6400F69505 /* QSCloudKitSynchronizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QSCloudKitSynchronizer.h; path = /Users/manuel/Documents/Apps/SyncKit/Example/SyncKitRealmSwift/SyncKitRealmSwiftIOS/SyncKitRealmSwiftIOS/../../../../SyncKit/Classes/QSSynchronizer/QSCloudKitSynchronizer.h; sourceTree = "<absolute>"; };
-		644A06201F597A6400F69505 /* QSCloudKitSynchronizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = QSCloudKitSynchronizer.m; path = /Users/manuel/Documents/Apps/SyncKit/Example/SyncKitRealmSwift/SyncKitRealmSwiftIOS/SyncKitRealmSwiftIOS/../../../../SyncKit/Classes/QSSynchronizer/QSCloudKitSynchronizer.m; sourceTree = "<absolute>"; };
-		644A06211F597A6400F69505 /* QSPrimaryKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QSPrimaryKey.h; path = /Users/manuel/Documents/Apps/SyncKit/Example/SyncKitRealmSwift/SyncKitRealmSwiftIOS/SyncKitRealmSwiftIOS/../../../../SyncKit/Classes/QSSynchronizer/QSPrimaryKey.h; sourceTree = "<absolute>"; };
-		644A06221F597A6400F69505 /* QSSyncedEntityState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QSSyncedEntityState.h; path = /Users/manuel/Documents/Apps/SyncKit/Example/SyncKitRealmSwift/SyncKitRealmSwiftIOS/SyncKitRealmSwiftIOS/../../../../SyncKit/Classes/QSSynchronizer/QSSyncedEntityState.h; sourceTree = "<absolute>"; };
-		644A06231F597A6400F69505 /* SyncKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SyncKit.h; path = /Users/manuel/Documents/Apps/SyncKit/Example/SyncKitRealmSwift/SyncKitRealmSwiftIOS/SyncKitRealmSwiftIOS/../../../../SyncKit/Classes/QSSynchronizer/SyncKit.h; sourceTree = "<absolute>"; };
-		644A06241F597A6400F69505 /* SyncKitLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SyncKitLog.h; path = /Users/manuel/Documents/Apps/SyncKit/Example/SyncKitRealmSwift/SyncKitRealmSwiftIOS/SyncKitRealmSwiftIOS/../../../../SyncKit/Classes/QSSynchronizer/SyncKitLog.h; sourceTree = "<absolute>"; };
+		644A06191F597A6400F69505 /* PendingRelationship.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PendingRelationship.swift; path = ../../../../SyncKit/Classes/RealmSwift/PendingRelationship.swift; sourceTree = "<group>"; };
+		644A061A1F597A6400F69505 /* QSCloudKitSynchronizer+RealmSwift.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "QSCloudKitSynchronizer+RealmSwift.swift"; path = "../../../../SyncKit/Classes/RealmSwift/QSCloudKitSynchronizer+RealmSwift.swift"; sourceTree = "<group>"; };
+		644A061B1F597A6400F69505 /* RealmSwiftChangeManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RealmSwiftChangeManager.swift; path = ../../../../SyncKit/Classes/RealmSwift/RealmSwiftChangeManager.swift; sourceTree = "<group>"; };
+		644A061C1F597A6400F69505 /* Record.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Record.swift; path = ../../../../SyncKit/Classes/RealmSwift/Record.swift; sourceTree = "<group>"; };
+		644A061D1F597A6400F69505 /* SyncedEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SyncedEntity.swift; path = ../../../../SyncKit/Classes/RealmSwift/SyncedEntity.swift; sourceTree = "<group>"; };
+		644A061E1F597A6400F69505 /* QSChangeManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QSChangeManager.h; path = ../../../../SyncKit/Classes/QSSynchronizer/QSChangeManager.h; sourceTree = "<group>"; };
+		644A061F1F597A6400F69505 /* QSCloudKitSynchronizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QSCloudKitSynchronizer.h; path = ../../../../SyncKit/Classes/QSSynchronizer/QSCloudKitSynchronizer.h; sourceTree = "<group>"; };
+		644A06201F597A6400F69505 /* QSCloudKitSynchronizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = QSCloudKitSynchronizer.m; path = ../../../../SyncKit/Classes/QSSynchronizer/QSCloudKitSynchronizer.m; sourceTree = "<group>"; };
+		644A06211F597A6400F69505 /* QSPrimaryKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QSPrimaryKey.h; path = ../../../../SyncKit/Classes/QSSynchronizer/QSPrimaryKey.h; sourceTree = "<group>"; };
+		644A06221F597A6400F69505 /* QSSyncedEntityState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QSSyncedEntityState.h; path = ../../../../SyncKit/Classes/QSSynchronizer/QSSyncedEntityState.h; sourceTree = "<group>"; };
+		644A06231F597A6400F69505 /* SyncKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SyncKit.h; path = ../../../../SyncKit/Classes/QSSynchronizer/SyncKit.h; sourceTree = "<group>"; };
+		644A06241F597A6400F69505 /* SyncKitLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SyncKitLog.h; path = ../../../../SyncKit/Classes/QSSynchronizer/SyncKitLog.h; sourceTree = "<group>"; };
 		644A06311F597A7600F69505 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Realm.framework; sourceTree = "<group>"; };
 		644A06321F597A7600F69505 /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RealmSwift.framework; sourceTree = "<group>"; };
 		64AE80991FD2FD49004BFEA4 /* QSCloudKitSynchronizer+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "QSCloudKitSynchronizer+Private.h"; path = "../../../../SyncKit/Classes/QSSynchronizer/QSCloudKitSynchronizer+Private.h"; sourceTree = "<group>"; };
 		64AE809A1FD2FD49004BFEA4 /* QSCloudKitSynchronizer+Private.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "QSCloudKitSynchronizer+Private.m"; path = "../../../../SyncKit/Classes/QSSynchronizer/QSCloudKitSynchronizer+Private.m"; sourceTree = "<group>"; };
+		64CDE34D200A27D9007F12F9 /* QSTempFileManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QSTempFileManager.h; path = ../../../../SyncKit/Classes/QSSynchronizer/QSTempFileManager.h; sourceTree = "<group>"; };
+		64CDE34E200A27D9007F12F9 /* QSTempFileManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = QSTempFileManager.m; path = ../../../../SyncKit/Classes/QSSynchronizer/QSTempFileManager.m; sourceTree = "<group>"; };
 		64DFFABA1FEED0920072B8C3 /* QSKeyValueStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QSKeyValueStore.h; path = ../../../../SyncKit/Classes/QSSynchronizer/QSKeyValueStore.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -84,6 +88,8 @@
 				644A061B1F597A6400F69505 /* RealmSwiftChangeManager.swift */,
 				644A061C1F597A6400F69505 /* Record.swift */,
 				644A061D1F597A6400F69505 /* SyncedEntity.swift */,
+				64CDE34D200A27D9007F12F9 /* QSTempFileManager.h */,
+				64CDE34E200A27D9007F12F9 /* QSTempFileManager.m */,
 				644A061E1F597A6400F69505 /* QSChangeManager.h */,
 				644A061F1F597A6400F69505 /* QSCloudKitSynchronizer.h */,
 				644A06201F597A6400F69505 /* QSCloudKitSynchronizer.m */,
@@ -116,6 +122,7 @@
 				644A06131F597A1700F69505 /* SyncKitRealmSwift.h in Headers */,
 				64DFFABB1FEED0930072B8C3 /* QSKeyValueStore.h in Headers */,
 				64AE809B1FD2FD49004BFEA4 /* QSCloudKitSynchronizer+Private.h in Headers */,
+				64CDE34F200A27DA007F12F9 /* QSTempFileManager.h in Headers */,
 				644A062B1F597A6400F69505 /* QSCloudKitSynchronizer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -191,6 +198,7 @@
 				644A062C1F597A6400F69505 /* QSCloudKitSynchronizer.m in Sources */,
 				644A06271F597A6400F69505 /* RealmSwiftChangeManager.swift in Sources */,
 				64AE809C1FD2FD49004BFEA4 /* QSCloudKitSynchronizer+Private.m in Sources */,
+				64CDE350200A27DA007F12F9 /* QSTempFileManager.m in Sources */,
 				644A06291F597A6400F69505 /* SyncedEntity.swift in Sources */,
 				644A06261F597A6400F69505 /* QSCloudKitSynchronizer+RealmSwift.swift in Sources */,
 				644A06281F597A6400F69505 /* Record.swift in Sources */,

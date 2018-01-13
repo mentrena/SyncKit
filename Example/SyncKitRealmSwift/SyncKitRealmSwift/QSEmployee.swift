@@ -13,6 +13,7 @@ class QSEmployee: Object {
     dynamic var name: String? = ""
     let sortIndex = RealmOptional<Int>()
     dynamic var identifier = ""
+    dynamic var photo: Data? = nil
     
     dynamic var company: QSCompany?
     

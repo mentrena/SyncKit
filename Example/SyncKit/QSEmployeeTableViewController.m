@@ -7,11 +7,13 @@
 //
 
 #import "QSEmployeeTableViewController.h"
-#import "QSEmployee.h"
+#import "QSEmployee2.h"
 
-@interface QSEmployeeTableViewController () <NSFetchedResultsControllerDelegate>
+@interface QSEmployeeTableViewController () <NSFetchedResultsControllerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 
 @property (nonatomic, strong) NSFetchedResultsController *fetchedResultsController;
+
+@property (nonatomic, strong) QSEmployee2 *editingEmployee;
 
 @end
 
@@ -32,7 +34,7 @@
 - (void)setupFetchedResultsController
 {
     if (!_fetchedResultsController) {
-        NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"QSEmployee"];
+        NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"QSEmployee2"];
         fetchRequest.predicate = [NSPredicate predicateWithFormat:@"company == %@", self.company];
         fetchRequest.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES]];
         
@@ -44,9 +46,10 @@
 
 - (void)createEmployeeWithName:(NSString *)name
 {
-    QSEmployee *employee = [NSEntityDescription insertNewObjectForEntityForName:@"QSEmployee" inManagedObjectContext:self.managedObjectContext];
+    QSEmployee2 *employee = [NSEntityDescription insertNewObjectForEntityForName:@"QSEmployee2" inManagedObjectContext:self.managedObjectContext];
     employee.name = name;
     employee.company = self.company;
+    employee.identifier = [[NSUUID UUID] UUIDString];
     [self.managedObjectContext save:nil];
 }
 
@@ -142,7 +145,12 @@
 
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
-    QSEmployee *employee = [self.fetchedResultsController objectAtIndexPath:indexPath];
+    QSEmployee2 *employee = [self.fetchedResultsController objectAtIndexPath:indexPath];
+    if (employee.photo) {
+        cell.imageView.image = [[UIImage alloc] initWithData:employee.photo];
+    } else {
+        cell.imageView.image = nil;
+    }
     cell.textLabel.text = employee.name ?: @"Object name is nil";
 }
 
@@ -154,7 +162,7 @@
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        QSEmployee *employee = [self.fetchedResultsController objectAtIndexPath:indexPath];
+        QSEmployee2 *employee = [self.fetchedResultsController objectAtIndexPath:indexPath];
         [self.managedObjectContext deleteObject:employee];
         [self.managedObjectContext save:nil];
     }
@@ -162,16 +170,31 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    QSEmployee *employee = [self.fetchedResultsController objectAtIndexPath:indexPath];
+    QSEmployee2 *employee = [self.fetchedResultsController objectAtIndexPath:indexPath];
     
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Change name" message:nil preferredStyle:UIAlertControllerStyleAlert];
-    [alertController addTextFieldWithConfigurationHandler:nil];
-    [alertController addAction:[UIAlertAction actionWithTitle:@"Nil" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Update employee" message:nil preferredStyle:UIAlertControllerStyleAlert];
+    
+    [alertController addAction:[UIAlertAction actionWithTitle:@"Add photo" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        
+        [self presentImagePickerForEmployee:employee];
+    }]];
+    
+    [alertController addAction:[UIAlertAction actionWithTitle:@"Clear photo" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        employee.photo = nil;
+        [self.managedObjectContext performBlock:^{
+            [self.managedObjectContext save:nil];
+        }];
+    }]];
+    
+    [alertController addAction:[UIAlertAction actionWithTitle:@"Clear name" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         employee.name = nil;
         [self.managedObjectContext performBlock:^{
             [self.managedObjectContext save:nil];
         }];
     }]];
+    [alertController addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+        textField.placeholder = @"Enter new name";
+    }];
     
     [alertController addAction:[UIAlertAction actionWithTitle:@"Ok" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         employee.name = alertController.textFields.firstObject.text;
@@ -183,6 +206,46 @@
     [alertController addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
     
     [self presentViewController:alertController animated:YES completion:nil];
+}
+
+#pragma mark - Image
+
+- (void)presentImagePickerForEmployee:(QSEmployee2 *)employee
+{
+    self.editingEmployee = employee;
+    UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
+    imagePickerController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+    imagePickerController.delegate = self;
+    [self presentViewController:imagePickerController animated:YES completion:nil];
+}
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info
+{
+    UIImage *image = info[@"UIImagePickerControllerOriginalImage"];
+    
+    UIImage *resizedImage = [self imageWithImage:image scaledToSize:CGSizeMake(150, 150)];
+    
+    self.editingEmployee.photo = UIImagePNGRepresentation(resizedImage);
+    
+    [self.managedObjectContext performBlock:^{
+        [self.managedObjectContext save:nil];
+    }];
+    
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
+{
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (UIImage *)imageWithImage:(UIImage *)image scaledToSize:(CGSize)newSize
+{
+    UIGraphicsBeginImageContextWithOptions(newSize, NO, 0.0);
+    [image drawInRect:CGRectMake(0, 0, newSize.width, newSize.height)];
+    UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return newImage;
 }
 
 #pragma mark - Actions

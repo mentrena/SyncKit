@@ -733,6 +733,160 @@
     XCTAssertEqual(uploadedRecord.recordChangeTag, recordChangeTag);
 }
 
+#pragma mark - CKAsset
+
+- (void)testRecordToUpload_dataProperty_uploadedAsAsset
+{
+    [self setUpModel2];
+    
+    //Insert object in context
+    QSEmployee2 *employee = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass([QSEmployee2 class]) inManagedObjectContext:self.targetCoreDataStack.managedObjectContext];
+    employee.name = @"employee 1";
+    employee.identifier = [[NSUUID UUID] UUIDString];
+    employee.photo = [NSData data];
+    NSError *error = nil;
+    [self.targetCoreDataStack.managedObjectContext save:&error];
+
+    QSCoreDataChangeManager *changeManager = [[QSCoreDataChangeManager alloc] initWithPersistenceStack:self.coreDataStack targetContext:self.targetCoreDataStack.managedObjectContext recordZoneID:[[CKRecordZoneID alloc] initWithZoneName:@"zone" ownerName:@"owner"] delegate:self];
+    
+    XCTestExpectation *expectation = [self expectationWithDescription:@"synced"];
+    __block CKRecord *objectRecord = nil;
+    
+    [self fullySyncChangeManager:changeManager completion:^(NSArray *uploadedRecords, NSArray *deletedRecordIDs, NSError *error) {
+        objectRecord = [uploadedRecords firstObject];
+        [expectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    
+    CKAsset *asset = objectRecord[@"photo"];
+    XCTAssertTrue([asset isKindOfClass:[CKAsset class]]);
+    XCTAssertNotNil(asset.fileURL);
+}
+
+- (void)testRecordToUpload_dataPropertyNil_nilsProperty
+{
+    [self setUpModel2];
+    
+    //Insert object in context
+    QSEmployee2 *employee = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass([QSEmployee2 class]) inManagedObjectContext:self.targetCoreDataStack.managedObjectContext];
+    employee.name = @"employee 1";
+    employee.identifier = [[NSUUID UUID] UUIDString];
+    employee.photo = [NSData data];
+    NSError *error = nil;
+    [self.targetCoreDataStack.managedObjectContext save:&error];
+    
+    QSCoreDataChangeManager *changeManager = [[QSCoreDataChangeManager alloc] initWithPersistenceStack:self.coreDataStack targetContext:self.targetCoreDataStack.managedObjectContext recordZoneID:[[CKRecordZoneID alloc] initWithZoneName:@"zone" ownerName:@"owner"] delegate:self];
+    
+    XCTestExpectation *expectation = [self expectationWithDescription:@"synced"];
+    
+    [self fullySyncChangeManager:changeManager completion:^(NSArray *uploadedRecords, NSArray *deletedRecordIDs, NSError *error) {
+        [expectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    
+    employee.photo = nil;
+    
+    [self.targetCoreDataStack.managedObjectContext save:nil];
+    
+    XCTestExpectation *expectation2 = [self expectationWithDescription:@"synced"];
+    __block CKRecord *objectRecord = nil;
+    
+    [self fullySyncChangeManager:changeManager completion:^(NSArray *uploadedRecords, NSArray *deletedRecordIDs, NSError *error) {
+        objectRecord = [uploadedRecords firstObject];
+        [expectation2 fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    
+    CKAsset *asset = objectRecord[@"photo"];
+    XCTAssertNil(asset);
+}
+
+- (void)testSaveChangesInRecord_assetProperty_updatesData
+{
+    [self setUpModel2];
+    
+    //Insert object in context
+    QSEmployee2 *employee = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass([QSEmployee2 class]) inManagedObjectContext:self.targetCoreDataStack.managedObjectContext];
+    employee.name = @"employee 1";
+    employee.identifier = [[NSUUID UUID] UUIDString];
+    NSError *error = nil;
+    [self.targetCoreDataStack.managedObjectContext save:&error];
+    
+    QSCoreDataChangeManager *changeManager = [[QSCoreDataChangeManager alloc] initWithPersistenceStack:self.coreDataStack targetContext:self.targetCoreDataStack.managedObjectContext recordZoneID:[[CKRecordZoneID alloc] initWithZoneName:@"zone" ownerName:@"owner"] delegate:self];
+    
+    XCTestExpectation *expectation = [self expectationWithDescription:@"synced"];
+    __block CKRecord *objectRecord = nil;
+    
+    [self fullySyncChangeManager:changeManager completion:^(NSArray *uploadedRecords, NSArray *deletedRecordIDs, NSError *error) {
+        objectRecord = [uploadedRecords firstObject];
+        [expectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    
+    char photoBytes[8];
+    NSData *data = [NSData dataWithBytes:photoBytes length:8];
+    NSURL *fileURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"test"]];
+    [data writeToURL:fileURL atomically:YES];
+    CKAsset *asset = [[CKAsset alloc] initWithFileURL:fileURL];
+    objectRecord[@"photo"] = asset;
+
+    XCTestExpectation *expectation2 = [self expectationWithDescription:@"synced"];
+    
+    [self fullySyncChangeManager:changeManager downloadedRecords:@[objectRecord] deletedRecordIDs:nil completion:^(NSArray *uploadedRecords, NSArray *deletedRecordIDs, NSError *error) {
+        [expectation2 fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    
+    [[NSFileManager defaultManager] removeItemAtURL:fileURL error:nil];
+    
+    [self.targetCoreDataStack.managedObjectContext refreshObject:employee mergeChanges:NO];
+    XCTAssertNotNil(employee.photo);
+    XCTAssertEqual([employee.photo length], 8);
+}
+
+- (void)testSaveChangesInRecord_assetPropertyNil_nilsData
+{
+    [self setUpModel2];
+    
+    //Insert object in context
+    QSEmployee2 *employee = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass([QSEmployee2 class]) inManagedObjectContext:self.targetCoreDataStack.managedObjectContext];
+    employee.name = @"employee 1";
+    employee.identifier = [[NSUUID UUID] UUIDString];
+    employee.photo = [NSData data];
+    NSError *error = nil;
+    [self.targetCoreDataStack.managedObjectContext save:&error];
+    
+        QSCoreDataChangeManager *changeManager = [[QSCoreDataChangeManager alloc] initWithPersistenceStack:self.coreDataStack targetContext:self.targetCoreDataStack.managedObjectContext recordZoneID:[[CKRecordZoneID alloc] initWithZoneName:@"zone" ownerName:@"owner"] delegate:self];
+    
+    XCTestExpectation *expectation = [self expectationWithDescription:@"synced"];
+    __block CKRecord *objectRecord = nil;
+    
+    [self fullySyncChangeManager:changeManager completion:^(NSArray *uploadedRecords, NSArray *deletedRecordIDs, NSError *error) {
+        objectRecord = [uploadedRecords firstObject];
+        [expectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    
+    objectRecord[@"photo"] = nil;
+    
+    XCTestExpectation *expectation2 = [self expectationWithDescription:@"synced"];
+    
+    [self fullySyncChangeManager:changeManager downloadedRecords:@[objectRecord] deletedRecordIDs:nil completion:^(NSArray *uploadedRecords, NSArray *deletedRecordIDs, NSError *error) {
+        [expectation2 fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    
+    [self.targetCoreDataStack.managedObjectContext refreshObject:employee mergeChanges:NO];
+    XCTAssertNil(employee.photo);
+}
+
 #pragma mark - Unique objects
 
 - (void)testSaveChangesInRecord_existingUniqueObject_updatesObject

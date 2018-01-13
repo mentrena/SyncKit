@@ -15,6 +15,7 @@
 #import "NSManagedObjectContext+QSFetch.h"
 #import "QSCloudKitSynchronizer.h"
 #import "SyncKitLog.h"
+#import "QSTempFileManager.h"
 #import <CloudKit/CloudKit.h>
 
 #define callBlockIfNotNil(block, ...) if (block){block(__VA_ARGS__);}
@@ -63,6 +64,7 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
 @property (nonatomic, readwrite) id<QSCoreDataChangeManagerDelegate> delegate;
 @property (nonatomic, readwrite, strong) CKRecordZoneID *zoneID;
 @property (nonatomic, strong) NSDictionary *entityPrimaryKeys;
+@property (nonatomic, strong) QSTempFileManager *tempFileManager;
 
 @end
 
@@ -82,6 +84,7 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
         self.targetContext = targetContext;
         self.delegate = delegate;
         self.zoneID = zoneID;
+        self.tempFileManager = [[QSTempFileManager alloc] init];
         
         self.privateContext = stack.managedObjectContext;
         
@@ -462,7 +465,15 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
         //Add attributes
         [[entityDescription attributesByName] enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull attributeName, NSAttributeDescription * _Nonnull attributeDescription, BOOL * _Nonnull stop) {
             if ((entityState == QSSyncedEntityStateNew || [changedKeys containsObject:attributeName]) && [primaryKey isEqualToString:attributeName] == NO) {
-                record[attributeName] = [originalObject valueForKey:attributeName];
+                
+                id value = [originalObject valueForKey:attributeName];
+                if (attributeDescription.attributeType == NSBinaryDataAttributeType && value) {
+                    NSURL *fileURL = [self.tempFileManager storeData:(NSData *)value];
+                    CKAsset *asset = [[CKAsset alloc] initWithFileURL:fileURL];
+                    record[attributeName] = asset;
+                } else {
+                    record[attributeName] = value;
+                }
             }
         }];
     }];
@@ -743,7 +754,8 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
                 //Add attributes
                 [[managedObject.entity attributesByName] enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull attributeName, NSAttributeDescription * _Nonnull attributeDescription, BOOL * _Nonnull stop) {
                     if (![self shouldIgnoreKey:attributeName] && ![record[attributeName] isKindOfClass:[CKReference class]] && ![primaryKey isEqualToString:attributeName]) {
-                        [managedObject setValue:record[attributeName] forKey:attributeName];
+                        
+                        [self assignAttributeValue:record[attributeName] toManagedObject:managedObject attributeName:attributeName];
                     }
                 }];
                 break;
@@ -758,7 +770,7 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
                         state != QSSyncedEntityStateNew &&
                         ![primaryKey isEqualToString:attributeName]) {
                         
-                        [managedObject setValue:record[attributeName] forKey:attributeName];
+                        [self assignAttributeValue:record[attributeName] toManagedObject:managedObject attributeName:attributeName];
                     }
                 }];
                 
@@ -770,7 +782,12 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
                 [[managedObject.entity attributesByName] enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull attributeName, NSAttributeDescription * _Nonnull attributeDescription, BOOL * _Nonnull stop) {
                     if (![record[attributeName] isKindOfClass:[CKReference class]] &&
                         ![primaryKey isEqualToString:attributeName]) {
-                        recordChanges[attributeName] = record[attributeName] ?: [NSNull null];
+                        if ([record[attributeName] isKindOfClass:[CKAsset class]]) {
+                            CKAsset *asset = record[attributeName];
+                            recordChanges[attributeName] = [NSData dataWithContentsOfURL:asset.fileURL];
+                        } else {
+                            recordChanges[attributeName] = record[attributeName] ?: [NSNull null];
+                        }
                     }
                 }];
                 
@@ -787,9 +804,19 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
         //Add attributes
         [[managedObject.entity attributesByName] enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull attributeName, NSAttributeDescription * _Nonnull attributeDescription, BOOL * _Nonnull stop) {
             if (![self shouldIgnoreKey:attributeName] && ![record[attributeName] isKindOfClass:[CKReference class]] && ![primaryKey isEqualToString:attributeName]) {
-                [managedObject setValue:record[attributeName] forKey:attributeName];
+                [self assignAttributeValue:record[attributeName] toManagedObject:managedObject attributeName:attributeName];
             }
         }];
+    }
+}
+
+- (void)assignAttributeValue:(id)value toManagedObject:(NSManagedObject *)object attributeName:(NSString *)attributeName
+{
+    if ([value isKindOfClass:[CKAsset class]]) {
+        NSData *data = [NSData dataWithContentsOfURL:[(CKAsset *)value fileURL]];
+        [object setValue:data forKey:attributeName];
+    } else {
+        [object setValue:value forKey:attributeName];
     }
 }
 
@@ -1199,6 +1226,7 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
     }];
     
     [self clearImportContext];
+    [self.tempFileManager clearTempFiles];
 }
 
 - (void)deleteChangeTracking

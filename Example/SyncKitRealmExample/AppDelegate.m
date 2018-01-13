@@ -23,13 +23,18 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
+    RLMRealmConfiguration *configuration = [RLMRealmConfiguration defaultConfiguration];
+    configuration.schemaVersion = 1;
+    configuration.migrationBlock = ^(RLMMigration * _Nonnull migration, uint64_t oldSchemaVersion) {
+        if (oldSchemaVersion < 1) {
+            // Nothing to do
+        }
+    };
     // For Extension test (app groups) uncomment below
     /*
-    RLMRealmConfiguration *configuration = [RLMRealmConfiguration defaultConfiguration];
     configuration.fileURL = [self realmPath];
-    self.realm = [RLMRealm realmWithConfiguration:configuration error:nil];
      */
-    self.realm = [RLMRealm defaultRealm];
+    self.realm = [RLMRealm realmWithConfiguration:configuration error:nil];
     UINavigationController *navController = (UINavigationController *)self.window.rootViewController;
     QSCompanyTableViewController *companyVC = (QSCompanyTableViewController *)navController.topViewController;
     if ([companyVC isKindOfClass:[QSCompanyTableViewController class]]) {

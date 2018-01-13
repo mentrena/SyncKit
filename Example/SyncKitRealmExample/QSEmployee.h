@@ -16,6 +16,7 @@
 @property (nonatomic, strong) NSNumber<RLMInt> *sortIndex;
 @property (nonatomic, strong) NSString *identifier;
 @property (nonatomic, strong) QSCompany *company;
+@property (nonatomic, strong) NSData *photo;
 
 @end
 

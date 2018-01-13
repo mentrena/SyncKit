@@ -7,7 +7,7 @@
 //
 
 #import "QSCompanyTableViewController.h"
-#import "QSCompany.h"
+#import "QSCompany2.h"
 #import "QSEmployeeTableViewController.h"
 
 @interface QSCompanyTableViewController () <NSFetchedResultsControllerDelegate>
@@ -36,7 +36,7 @@
 - (void)setupFetchedResultsController
 {
     if (!_fetchedResultsController) {
-        NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"QSCompany"];
+        NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"QSCompany2"];
         fetchRequest.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES]];
         
         _fetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest managedObjectContext:self.managedObjectContext sectionNameKeyPath:nil cacheName:nil];
@@ -47,7 +47,8 @@
 
 - (void)createCompanyWithName:(NSString *)name
 {
-    QSCompany *company = [NSEntityDescription insertNewObjectForEntityForName:@"QSCompany" inManagedObjectContext:self.managedObjectContext];
+    QSCompany2 *company = [NSEntityDescription insertNewObjectForEntityForName:@"QSCompany2" inManagedObjectContext:self.managedObjectContext];
+    company.identifier = [[NSUUID UUID] UUIDString];
     company.name = name;
     [self.managedObjectContext save:nil];
 }
@@ -57,7 +58,7 @@
     if ([segue.identifier isEqualToString:@"showEmployees"]) {
         QSEmployeeTableViewController *employeeTableViewController = (QSEmployeeTableViewController *)segue.destinationViewController;
         employeeTableViewController.managedObjectContext = self.managedObjectContext;
-        employeeTableViewController.company = (QSCompany *)sender;
+        employeeTableViewController.company = (QSCompany2 *)sender;
     }
 }
 
@@ -131,7 +132,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    QSCompany *company = [self.fetchedResultsController objectAtIndexPath:indexPath];
+    QSCompany2 *company = [self.fetchedResultsController objectAtIndexPath:indexPath];
     [self performSegueWithIdentifier:@"showEmployees" sender:company];
 }
 
@@ -159,7 +160,7 @@
 
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
-    QSCompany *company = [self.fetchedResultsController objectAtIndexPath:indexPath];
+    QSCompany2 *company = [self.fetchedResultsController objectAtIndexPath:indexPath];
     cell.textLabel.text = company.name;
 }
 
@@ -171,7 +172,7 @@
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        QSCompany *company = [self.fetchedResultsController objectAtIndexPath:indexPath];
+        QSCompany2 *company = [self.fetchedResultsController objectAtIndexPath:indexPath];
         [self.managedObjectContext deleteObject:company];
         [self.managedObjectContext save:nil];
     }

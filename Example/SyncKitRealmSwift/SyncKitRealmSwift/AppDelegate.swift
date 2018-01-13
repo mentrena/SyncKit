@@ -22,7 +22,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         
         var configuration = Realm.Configuration()
+        configuration.schemaVersion = 1
+        configuration.migrationBlock = { migration, oldSchemaVersion in
+
+            if (oldSchemaVersion < 1) {
+            }
+        }
+        
         configuration.objectTypes = [QSCompany.self, QSEmployee.self]
+        
         realm = try! Realm(configuration: configuration)
         synchronizer = QSCloudKitSynchronizer.cloudKitSynchronizer(containerName: "your-iCloud-container-name", configuration: realm.configuration)
         

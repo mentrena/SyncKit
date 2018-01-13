@@ -11,10 +11,12 @@
 #import "QSEmployee.h"
 #import "QSCompany.h"
 
-@interface QSEmployeeTableViewController ()
+@interface QSEmployeeTableViewController () <UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 
 @property (nonatomic, strong) RLMResults<QSEmployee *> *employees;
 @property (nonatomic, strong) RLMNotificationToken *notificationToken;
+
+@property (nonatomic, strong) QSEmployee *editingEmployee;
 
 @end
 
@@ -80,6 +82,7 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
     QSEmployee *employee = [self.employees objectAtIndex:indexPath.row];
     cell.textLabel.text = employee.name ?: @"Object name is nil";
+    cell.imageView.image = employee.photo ? [UIImage imageWithData:employee.photo] : nil;
     
     return cell;
 }
@@ -103,13 +106,27 @@
 {
     QSEmployee *employee = [self.employees objectAtIndex:indexPath.row];
     
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Change name" message:nil preferredStyle:UIAlertControllerStyleAlert];
-    [alertController addTextFieldWithConfigurationHandler:nil];
-    [alertController addAction:[UIAlertAction actionWithTitle:@"Nil" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Update employee" message:nil preferredStyle:UIAlertControllerStyleAlert];
+    
+    [alertController addAction:[UIAlertAction actionWithTitle:@"Add photo" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        
+        [self presentImagePickerForEmployee:employee];
+    }]];
+    
+    [alertController addAction:[UIAlertAction actionWithTitle:@"Clear photo" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [self.realm transactionWithBlock:^{
+            employee.photo = nil;
+        }];
+    }]];
+    
+    [alertController addAction:[UIAlertAction actionWithTitle:@"Clear name" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         [self.realm beginWriteTransaction];
         employee.name = nil;
         [self.realm commitWriteTransaction];
     }]];
+    [alertController addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+        textField.placeholder = @"Enter new name";
+    }];
     
     [alertController addAction:[UIAlertAction actionWithTitle:@"Ok" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         [self.realm beginWriteTransaction];
@@ -120,6 +137,44 @@
     [alertController addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
     
     [self presentViewController:alertController animated:YES completion:nil];
+}
+
+#pragma mark - Image
+
+- (void)presentImagePickerForEmployee:(QSEmployee *)employee
+{
+    self.editingEmployee = employee;
+    UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
+    imagePickerController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+    imagePickerController.delegate = self;
+    [self presentViewController:imagePickerController animated:YES completion:nil];
+}
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info
+{
+    UIImage *image = info[@"UIImagePickerControllerOriginalImage"];
+    
+    UIImage *resizedImage = [self imageWithImage:image scaledToSize:CGSizeMake(150, 150)];
+    
+    [self.realm transactionWithBlock:^{
+        self.editingEmployee.photo = UIImagePNGRepresentation(resizedImage);
+    }];
+    
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
+{
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (UIImage *)imageWithImage:(UIImage *)image scaledToSize:(CGSize)newSize
+{
+    UIGraphicsBeginImageContextWithOptions(newSize, NO, 0.0);
+    [image drawInRect:CGRectMake(0, 0, newSize.width, newSize.height)];
+    UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return newImage;
 }
 
 #pragma mark - Actions

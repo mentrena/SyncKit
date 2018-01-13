@@ -59,43 +59,43 @@
                             <outlet property="delegate" destination="s2l-AQ-pmR" id="vrF-E1-eIh"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Companies" id="tbU-va-1V9">
-                        <barButtonItem key="leftBarButtonItem" id="afF-SQ-ul2">
-                            <view key="customView" contentMode="scaleToFill" id="JDs-Lb-6g7">
+                    <navigationItem key="navigationItem" title="Companies" id="VxZ-i6-Xez">
+                        <barButtonItem key="leftBarButtonItem" width="85" id="Sv8-N0-yN5">
+                            <view key="customView" contentMode="scaleToFill" id="J1N-Qc-1AM">
                                 <rect key="frame" x="16" y="5.5" width="133" height="33"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DUb-vt-bvZ">
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gMR-5R-FwL">
                                         <rect key="frame" x="0.0" y="1" width="85" height="30"/>
                                         <state key="normal" title="Synchronize"/>
                                         <connections>
-                                            <action selector="synchronize:" destination="s2l-AQ-pmR" eventType="touchUpInside" id="QMz-3G-GS6"/>
+                                            <action selector="synchronize:" destination="s2l-AQ-pmR" eventType="touchUpInside" id="hUn-2x-d7v"/>
                                         </connections>
                                     </button>
-                                    <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="iz1-DC-Md0">
-                                        <rect key="frame" x="0.0" y="7" width="20" height="20"/>
+                                    <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="hrx-4O-9nt">
+                                        <rect key="frame" x="0.0" y="6.5" width="20" height="20"/>
                                     </activityIndicatorView>
                                 </subviews>
                                 <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
-                                    <constraint firstAttribute="bottom" secondItem="DUb-vt-bvZ" secondAttribute="bottom" constant="2" id="0ED-Fd-c4Z"/>
-                                    <constraint firstItem="DUb-vt-bvZ" firstAttribute="top" secondItem="JDs-Lb-6g7" secondAttribute="top" constant="1" id="8pm-Jf-v04"/>
-                                    <constraint firstItem="iz1-DC-Md0" firstAttribute="centerY" secondItem="JDs-Lb-6g7" secondAttribute="centerY" id="EHP-vb-ChY"/>
-                                    <constraint firstItem="DUb-vt-bvZ" firstAttribute="centerY" secondItem="JDs-Lb-6g7" secondAttribute="centerY" id="NbK-po-e0z"/>
-                                    <constraint firstItem="DUb-vt-bvZ" firstAttribute="leading" secondItem="JDs-Lb-6g7" secondAttribute="leading" id="UIn-NC-HrN"/>
-                                    <constraint firstItem="iz1-DC-Md0" firstAttribute="leading" secondItem="JDs-Lb-6g7" secondAttribute="leading" id="wFZ-nT-6qd"/>
+                                    <constraint firstItem="hrx-4O-9nt" firstAttribute="leading" secondItem="J1N-Qc-1AM" secondAttribute="leading" id="Ega-gL-mWP"/>
+                                    <constraint firstItem="hrx-4O-9nt" firstAttribute="centerY" secondItem="J1N-Qc-1AM" secondAttribute="centerY" id="GMm-xC-Ykm"/>
+                                    <constraint firstItem="gMR-5R-FwL" firstAttribute="centerY" secondItem="J1N-Qc-1AM" secondAttribute="centerY" id="QTF-Zu-Ib8"/>
+                                    <constraint firstAttribute="bottom" secondItem="gMR-5R-FwL" secondAttribute="bottom" constant="2" id="RQX-4q-8Ys"/>
+                                    <constraint firstItem="gMR-5R-FwL" firstAttribute="top" secondItem="J1N-Qc-1AM" secondAttribute="top" constant="1" id="SGH-PR-x2B"/>
+                                    <constraint firstItem="gMR-5R-FwL" firstAttribute="leading" secondItem="J1N-Qc-1AM" secondAttribute="leading" id="TW4-s3-dxr"/>
                                 </constraints>
                             </view>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="0BI-3O-ZYl">
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="d9J-mq-FFi">
                             <connections>
-                                <action selector="insertNewCompany:" destination="s2l-AQ-pmR" id="TX2-GW-hIq"/>
+                                <action selector="insertNewCompany:" destination="s2l-AQ-pmR" id="MB6-yl-h8T"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="indicatorView" destination="iz1-DC-Md0" id="ykF-LM-jWs"/>
-                        <outlet property="syncButton" destination="DUb-vt-bvZ" id="cRd-GE-XrK"/>
+                        <outlet property="indicatorView" destination="hrx-4O-9nt" id="Fr7-6K-MnI"/>
+                        <outlet property="syncButton" destination="gMR-5R-FwL" id="lLU-Vh-nCk"/>
                         <segue destination="knC-tl-koK" kind="show" identifier="showEmployees" id="rLy-AB-JqQ">
                             <nil key="action"/>
                         </segue>

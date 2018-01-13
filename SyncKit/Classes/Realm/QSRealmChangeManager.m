@@ -13,6 +13,7 @@
 #import "QSSyncedEntityState.h"
 #import "QSPendingRelationship.h"
 #import "QSCloudKitSynchronizer.h"
+#import "QSTempFileManager.h"
 
 void runOnMainQueue(void (^block)(void))
 {
@@ -102,6 +103,8 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
 
 @property (nonatomic, strong) QSRealmProvider *mainRealmProvider;
 
+@property (nonatomic, strong) QSTempFileManager *tempFileManager;
+
 @property (nonatomic, assign) BOOL hasChanges;
 
 @end
@@ -119,6 +122,8 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
         self.objectNotificationTokens = [NSMutableDictionary dictionary];
         self.collectionNotificationTokens = [NSMutableArray array];
         self.pendingTrackingUpdates = [NSMutableArray array];
+        
+        self.tempFileManager = [[QSTempFileManager alloc] init];
         
         runOnMainQueue(^{
             [self setup];
@@ -398,7 +403,13 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
                 
                 if (![self shouldIgnoreKey:property.name] &&
                     ![record[property.name] isKindOfClass:[CKReference class]]) {
-                    recordChanges[property.name] = record[property.name] ?: [NSNull null];
+                    
+                    if ([record[property.name] isKindOfClass:[CKAsset class]]) {
+                        CKAsset *asset = record[property.name];
+                        recordChanges[property.name] = [NSData dataWithContentsOfURL:asset.fileURL];
+                    } else {
+                        recordChanges[property.name] = record[property.name] ?: [NSNull null];
+                    }
                 }
             }
             
@@ -427,16 +438,22 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
         return; // This shouldn't happen
     }
     
-    if ([record[key] isKindOfClass:[CKReference class]]) {
+    id value = record[key];
+                
+    if ([value isKindOfClass:[CKReference class]]) {
         // Save relationship to be applied after all records have been downloaded and persisted
         // to ensure target of the relationship has already been created
-        CKReference *reference = record[key];
+        CKReference *reference = value;
         NSRange separatorRange = [reference.recordID.recordName rangeOfString:@"."];
         NSString *objectIdentifier = [reference.recordID.recordName substringFromIndex:separatorRange.location + 1];
         [self savePendingRelationshipWithName:key syncedEntity:syncedEntity targetIdentifier:objectIdentifier realm:provider.persistenceRealm];
+    } else if ([value isKindOfClass:[CKAsset class]]) {
+        CKAsset *asset = value;
+        NSData *data = [NSData dataWithContentsOfURL:asset.fileURL];
+        [object setValue:data forKey:key];
     } else {
-        // If property is not a relationship or property is nil
-        [object setValue:record[key] forKey:key];
+        // If property is not a relationship, asset, or property is nil
+        [object setValue:value forKey:key];
     }
 }
 
@@ -548,7 +565,15 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
                    property.type != RLMPropertyTypeLinkingObjects &&
                    ![property.name isEqualToString:[objectClass primaryKey]] &&
                    ([syncedEntity.state integerValue] == QSSyncedEntityStateNew || [changedKeys containsObject:property.name])) {
-            record[property.name] = [object valueForKey:property.name];
+            
+            id value = [object valueForKey:property.name];
+            if (property.type == RLMPropertyTypeData && value) {
+                NSURL *fileURL = [self.tempFileManager storeData:(NSData *)value];
+                CKAsset *asset = [[CKAsset alloc] initWithFileURL:fileURL];
+                record[property.name] = asset;
+            } else {
+                record[property.name] = value;
+            }
         }
     }
     
@@ -753,6 +778,7 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
 
 - (void)didFinishImportWithError:(NSError *)error
 {
+    [self.tempFileManager clearTempFiles];
     runOnMainQueue(^{
         [self updateHasChangesWithRealm:self.mainRealmProvider.persistenceRealm];
     });

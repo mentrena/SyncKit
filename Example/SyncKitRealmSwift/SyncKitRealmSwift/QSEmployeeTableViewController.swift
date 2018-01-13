@@ -9,13 +9,15 @@
 import UIKit
 import RealmSwift
 
-class QSEmployeeTableViewController: UITableViewController {
+class QSEmployeeTableViewController: UITableViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     var realm: Realm?
     var company: QSCompany?
     
     var employees: Results<QSEmployee>!
     var notificationToken: NotificationToken?
+    
+    var editingEmployee: QSEmployee?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -54,6 +56,12 @@ class QSEmployeeTableViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell")!
         let employee = employees[indexPath.row]
         cell.textLabel?.text = employee.name
+        if let photoData = employee.photo {
+            cell.imageView?.image = UIImage(data: photoData)
+        } else {
+            cell.imageView?.image = nil
+        }
+        
         return cell
     }
     
@@ -76,13 +84,29 @@ class QSEmployeeTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         let employee = employees[indexPath.row]
-        let alertController = UIAlertController(title: "Change name", message: nil, preferredStyle: .alert)
-        alertController.addTextField(configurationHandler: nil)
-        alertController.addAction(UIAlertAction(title: "Remove name", style: .destructive, handler: { (_) in
+        
+        let alertController = UIAlertController(title: "Update employee", message: nil, preferredStyle: .alert)
+        
+        alertController.addAction(UIAlertAction(title: "Add photo", style: .default, handler: { (action) in
+            self.presentImagePickerFor(employee: employee)
+        }))
+        
+        alertController.addAction(UIAlertAction(title: "Clear photo", style: .default, handler: { (action) in
+            try? self.realm?.write {
+                employee.photo = nil
+            }
+        }))
+        
+        alertController.addAction(UIAlertAction(title: "Clear name", style: .default, handler: { (_) in
             self.realm?.beginWrite()
             employee.name = nil
             try! self.realm?.commitWrite()
         }))
+        
+        alertController.addTextField { (textField) in
+            textField.placeholder = "Enter new name"
+        }
+        
         alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_) in
             self.realm?.beginWrite()
             employee.name = alertController.textFields!.first!.text
@@ -115,6 +139,50 @@ class QSEmployeeTableViewController: UITableViewController {
         realm?.beginWrite()
         realm?.add(employee)
         try? realm?.commitWrite()
+    }
+    
+    //MARK: - Image
+    
+    func presentImagePickerFor(employee: QSEmployee) {
+        
+        editingEmployee = employee
+        let imagePickerController = UIImagePickerController()
+        imagePickerController.sourceType = .photoLibrary
+        imagePickerController.delegate = self
+        
+        present(imagePickerController, animated: true, completion: nil)
+    }
+
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        
+        dismiss(animated: true, completion: nil)
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        
+        defer {
+            dismiss(animated: true, completion: nil)
+        }
+        
+        guard let image = info["UIImagePickerControllerOriginalImage"] as? UIImage,
+        let employee = editingEmployee else {
+            return
+        }
+        
+        let resizedImage = self.image(with: image, scaledToSize: CGSize(width: 150, height: 150))
+        
+        try? realm?.write {
+            employee.photo = UIImagePNGRepresentation(resizedImage);
+        }
+    }
+    
+    func image(with image: UIImage, scaledToSize newSize: CGSize) -> UIImage {
+        
+        UIGraphicsBeginImageContextWithOptions(newSize, false, 0.0)
+        image.draw(in: CGRect(x: 0, y: 0, width: newSize.width, height: newSize.height))
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return newImage!
     }
     
 }

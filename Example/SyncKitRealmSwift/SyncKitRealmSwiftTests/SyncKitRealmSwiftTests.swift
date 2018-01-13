@@ -461,6 +461,128 @@ class SyncKitRealmSwiftTests: XCTestCase, RealmSwiftChangeManagerDelegate {
         XCTAssertTrue(company.identifier == "1")
     }
     
+    // MARK:- Asset
+    
+    
+    func testRecordToUpload_dataProperty_uploadedAsAsset() {
+        
+        let realm = realmWith(identifier: "t40")
+        _ = insertEmployee(values: ["identifier": "e1", "name": "employee1", "photo": NSData()], realm: realm)
+        let changeManager = realmChangeManager(targetConfiguration: realm.configuration, persistenceConfiguration: persistenceConfigurationWith(identifier: "p40"))
+        
+        let exp = expectation(description: "synced")
+        var objectRecord: CKRecord?
+        
+        fullySync(changeManager: changeManager) { (uploaded, _, _) in
+            objectRecord = uploaded.first
+            exp.fulfill()
+        }
+        waitForExpectations(timeout: 1, handler: nil)
+    
+        let asset = objectRecord?["photo"] as? CKAsset
+    
+        XCTAssertNotNil(asset)
+        XCTAssertNotNil(asset?.fileURL)
+    }
+    
+    func testRecordToUpload_dataPropertyNil_nilsProperty() {
+        
+        let realm = realmWith(identifier: "t41")
+        let employee = insertEmployee(values: ["identifier": "e1", "name": "employee1", "photo": NSData()], realm: realm)
+        let changeManager = realmChangeManager(targetConfiguration: realm.configuration, persistenceConfiguration: persistenceConfigurationWith(identifier: "p41"))
+        
+        let exp = expectation(description: "synced")
+        
+        fullySync(changeManager: changeManager) { (uploaded, _, _) in
+            
+            exp.fulfill()
+        }
+        waitForExpectations(timeout: 1, handler: nil)
+        
+        try! realm.write {
+            employee.photo = nil
+        }
+        
+        var objectRecord: CKRecord?
+        
+        let exp2 = expectation(description: "synced")
+        fullySync(changeManager: changeManager) { (uploaded, _, _) in
+            objectRecord = uploaded.first
+            exp2.fulfill()
+        }
+        
+        waitForExpectations(timeout: 1, handler: nil)
+        
+        let asset = objectRecord?["photo"] as? CKAsset
+        
+        XCTAssertNil(asset)
+    }
+    
+    func testSaveChangesInRecord_assetProperty_updatesData() {
+        
+        let realm = realmWith(identifier: "t42")
+        let employee = insertEmployee(values: ["identifier": "e1", "name": "employee1"], realm: realm)
+        let changeManager = realmChangeManager(targetConfiguration: realm.configuration, persistenceConfiguration: persistenceConfigurationWith(identifier: "p42"))
+        
+        let exp = expectation(description: "synced")
+        var objectRecord: CKRecord?
+        
+        fullySync(changeManager: changeManager) { (uploaded, _, _) in
+            objectRecord = uploaded.first
+            exp.fulfill()
+        }
+        waitForExpectations(timeout: 1, handler: nil)
+        
+        let data = Data(count: 8)
+        let fileURL = URL(fileURLWithPath: NSTemporaryDirectory() + "test")
+        try! data.write(to: fileURL)
+        let asset = CKAsset(fileURL: fileURL)
+        objectRecord?["photo"] = asset
+        
+        let exp2 = expectation(description: "synced")
+        
+        fullySync(changeManager: changeManager, downloaded: [objectRecord!], deleted: []) { (_, _, _) in
+            exp2.fulfill()
+        }
+        
+        waitForExpectations(timeout: 1, handler: nil)
+        
+        try! FileManager.default.removeItem(at: fileURL)
+        
+        XCTAssertNotNil(employee.photo);
+        XCTAssertEqual(employee.photo?.count, 8);
+    }
+    
+    func testSaveChangesInRecord_assetPropertyNil_nilsData() {
+        
+        let realm = realmWith(identifier: "t43")
+        let employee = insertEmployee(values: ["identifier": "e1", "name": "employee1", "photo": NSData()], realm: realm)
+        let changeManager = realmChangeManager(targetConfiguration: realm.configuration, persistenceConfiguration: persistenceConfigurationWith(identifier: "p43"))
+        
+        let exp = expectation(description: "synced")
+        var objectRecord: CKRecord?
+        
+        fullySync(changeManager: changeManager) { (uploaded, _, _) in
+            objectRecord = uploaded.first
+            exp.fulfill()
+        }
+        waitForExpectations(timeout: 1, handler: nil)
+        
+        objectRecord?["photo"] = nil
+        
+        let exp2 = expectation(description: "synced")
+        
+        fullySync(changeManager: changeManager, downloaded: [objectRecord!], deleted: []) { (_, _, _) in
+            exp2.fulfill()
+        }
+        
+        waitForExpectations(timeout: 1, handler: nil)
+        
+        XCTAssertNil(employee.photo)
+    }
+    
+    // MARK: -
+    
     func testSync_multipleObjects_preservesRelationships() {
         
         let realm = realmWith(identifier: "t12")
