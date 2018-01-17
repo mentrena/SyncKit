@@ -8,22 +8,22 @@
 
 #import "QSCloudKitSynchronizer.h"
 #import <Realm/Realm.h>
-#import "QSRealmChangeManager.h"
+#import "QSRealmAdapter.h"
 
 @interface QSCloudKitSynchronizer (Realm)
 
 /**
- *  Creates a new `QSCloudKitSynchronizer` prepared to work with a Realm model.
+ *  Creates a new `QSCloudKitSynchronizer` prepared to work with a Realm model and the SyncKit default record zone in the private database.
  *
  *  @param containerName Identifier of the iCloud container to be used. The application must have the right entitlements to be able to access this container.
  *  @param targetRealmConfiguration Configuration of the Realm that is to be tracked and synchronized.
  *
  *  @return Initialized synchronizer.
  */
-+ (QSCloudKitSynchronizer *)cloudKitSynchronizerWithContainerName:(NSString *)containerName realmConfiguration:(RLMRealmConfiguration *)targetRealmConfiguration;
++ (QSCloudKitSynchronizer *)cloudKitPrivateSynchronizerWithContainerName:(NSString *)containerName realmConfiguration:(RLMRealmConfiguration *)targetRealmConfiguration;
 
 /**
- *  Creates a new `QSCloudKitSynchronizer` prepared to work with a Realm model.
+ *  Creates a new `QSCloudKitSynchronizer` prepared to work with a Realm model and the SyncKit default record zone in the private database.
  *
  *  @param containerName Identifier of the iCloud container to be used. The application must have the right entitlements to be able to access this container.
  *  @param targetRealmConfiguration Configuration of the Realm that is to be tracked and synchronized.
@@ -31,7 +31,28 @@
  *
  *  @return Initialized synchronizer.
  */
-+ (QSCloudKitSynchronizer *)cloudKitSynchronizerWithContainerName:(NSString *)containerName realmConfiguration:(RLMRealmConfiguration *)targetRealmConfiguration suiteName:(NSString *)suiteName;
++ (QSCloudKitSynchronizer *)cloudKitPrivateSynchronizerWithContainerName:(NSString *)containerName realmConfiguration:(RLMRealmConfiguration *)targetRealmConfiguration suiteName:(NSString *)suiteName;
+
+/**
+ *  Creates a new `QSCloudKitSynchronizer` prepared to work with a Realm model and the shared database.
+ *
+ *  @param containerName Identifier of the iCloud container to be used. The application must have the right entitlements to be able to access this container.
+ *  @param targetRealmConfiguration Configuration of the Realm that is to be tracked and synchronized.
+ *
+ *  @return Initialized synchronizer.
+ */
++ (QSCloudKitSynchronizer *)cloudKitSharedSynchronizerWithContainerName:(NSString *)containerName realmConfiguration:(RLMRealmConfiguration *)targetRealmConfiguration;
+
+/**
+ *  Creates a new `QSCloudKitSynchronizer` prepared to work with a Realm model and the shared database.
+ *
+ *  @param containerName Identifier of the iCloud container to be used. The application must have the right entitlements to be able to access this container.
+ *  @param targetRealmConfiguration Configuration of the Realm that is to be tracked and synchronized.
+ *  @param suiteName    Identifier of shared App Group for the app. This will store the tracking database in the shared container.
+ *
+ *  @return Initialized synchronizer.
+ */
++ (QSCloudKitSynchronizer *)cloudKitSharedSynchronizerWithContainerName:(NSString *)containerName realmConfiguration:(RLMRealmConfiguration *)targetRealmConfiguration suiteName:(NSString *)suiteName;
 
 /**
  *  @return File path of database used by SyncKit to keep track of model changes.

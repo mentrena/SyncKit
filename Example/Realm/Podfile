@@ -1,0 +1,27 @@
+use_frameworks!
+
+workspace 'SyncKitRealm.xcworkspace'
+
+target 'SyncKitRealmExample' do
+
+	project 'SyncKitRealmExample'
+ 	platform :ios, '10.0'
+
+	pod 'SyncKit/Realm', :path => '../../'
+
+	pod 'Realm', '~> 3.0'
+
+	target 'SyncKitRealmExampleTests' do
+		inherit! :search_paths
+	end
+end
+
+target 'SyncKitRealmExampleTodayExtension' do
+
+	project 'SyncKitRealmExample'
+	platform :ios, '10.0'
+	
+	pod 'SyncKit/Realm', :path => '../../'
+
+	pod 'Realm', '~> 3.0'
+end

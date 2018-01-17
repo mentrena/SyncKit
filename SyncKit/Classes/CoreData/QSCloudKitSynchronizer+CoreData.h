@@ -7,33 +7,52 @@
 //
 
 #import "QSCloudKitSynchronizer.h"
-#import "QSCoreDataChangeManager.h"
+#import "QSCoreDataAdapter.h"
 #import "QSEntityIdentifierUpdateMigrationPolicy.h"
 
 @interface QSCloudKitSynchronizer (CoreData)
 
 /**
- *  Creates a new `QSCloudKitSynchronizer` prepared to work with a Core Data model.
+ *  Creates a new `QSCloudKitSynchronizer` prepared to work with the given Core Data model and the default SyncKit record zone in the private database.
  *
  *  @param containerName Identifier of the iCloud container to be used. The application must have the right entitlements to be able to access this container.
  *  @param context       `NSManagedObjectContext` that will be tracked to detect changes and merge new ones.
- *  @param delegate      Delegate implementing `QSCoreDataChangeManager` that will take care of saving the target context when needed.
  *
  *  @return Initialized synchronizer.
  */
-+ (QSCloudKitSynchronizer *)cloudKitSynchronizerWithContainerName:(NSString *)containerName managedObjectContext:(NSManagedObjectContext *)context changeManagerDelegate:(id<QSCoreDataChangeManagerDelegate>)delegate;
++ (QSCloudKitSynchronizer *)cloudKitPrivateSynchronizerWithContainerName:(NSString *)containerName managedObjectContext:(NSManagedObjectContext *)context;
 
 /**
- *  Creates a new `QSCloudKitSynchronizer` prepared to work with a Core Data model.
+ *  Creates a new `QSCloudKitSynchronizer` prepared to work with the given Core Data model and the default SyncKit record zone in the private database.
  *
  *  @param containerName Identifier of the iCloud container to be used. The application must have the right entitlements to be able to access this container.
  *  @param context       `NSManagedObjectContext` that will be tracked to detect changes and merge new ones.
- *  @param delegate      Delegate implementing `QSCoreDataChangeManager` that will take care of saving the target context when needed.
  *  @param suiteName    Identifier of shared App Group for the app. This will store the tracking database in the shared container.
  *
  *  @return Initialized synchronizer.
  */
-+ (QSCloudKitSynchronizer *)cloudKitSynchronizerWithContainerName:(NSString *)containerName managedObjectContext:(NSManagedObjectContext *)context changeManagerDelegate:(id<QSCoreDataChangeManagerDelegate>)delegate suiteName:(NSString *)suiteName;
++ (QSCloudKitSynchronizer *)cloudKitPrivateSynchronizerWithContainerName:(NSString *)containerName managedObjectContext:(NSManagedObjectContext *)context suiteName:(NSString *)suiteName;
+
+/**
+ *  Creates a new `QSCloudKitSynchronizer` prepared to work with the given Core Data model and the CloudKit shared database.
+ *
+ *  @param containerName Identifier of the iCloud container to be used. The application must have the right entitlements to be able to access this container.
+ *  @param model  `NSManagedObjectModel`
+ *
+ *  @return Initialized synchronizer.
+ */
++ (QSCloudKitSynchronizer *)cloudKitSharedSynchronizerWithContainerName:(NSString *)containerName objectModel:(NSManagedObjectModel *)model;
+
+/**
+ *  Creates a new `QSCloudKitSynchronizer` prepared to work with the given Core Data model and the CloudKit shared database.
+ *
+ *  @param containerName Identifier of the iCloud container to be used. The application must have the right entitlements to be able to access this container.
+ *  @param model  `NSManagedObjectModel`
+ *  @param suiteName    Identifier of shared App Group for the app. This will store the tracking database in the shared container.
+ *
+ *  @return Initialized synchronizer.
+ */
++ (QSCloudKitSynchronizer *)cloudKitSharedSynchronizerWithContainerName:(NSString *)containerName objectModel:(NSManagedObjectModel *)model suiteName:(NSString *)suiteName;
 
 /**
  *  Creates a migration policy that can be used to perform a migration to a new model that supports the QSPrimaryKey protocol, 

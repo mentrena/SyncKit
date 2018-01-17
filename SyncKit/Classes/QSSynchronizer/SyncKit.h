@@ -10,7 +10,7 @@
 #define SyncKit_h
 
 #import "QSCloudKitSynchronizer.h"
-#import "QSChangeManager.h"
+#import "QSModelAdapter.h"
 #import "QSPrimaryKey.h"
 #import "QSSyncedEntityState.h"
 #import "SyncKitLog.h"

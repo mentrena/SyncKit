@@ -1,8 +1,8 @@
 //
 //  QSRecord+CoreDataProperties.h
-//  Pods
+//  
 //
-//  Created by Manuel Entrena on 22/10/2016.
+//  Created by Manuel Entrena on 22/01/2018.
 //
 //
 
@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface QSRecord (CoreDataProperties)
 
-+ (NSFetchRequest *)fetchRequest;
++ (NSFetchRequest<QSRecord *> *)fetchRequest;
 
 @property (nullable, nonatomic, retain) NSData *encodedRecord;
 @property (nullable, nonatomic, retain) QSSyncedEntity *forEntity;

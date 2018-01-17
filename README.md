@@ -25,15 +25,15 @@ source 'https://github.com/CocoaPods/Specs.git'
 platform :ios, '10.0'
 
 target 'CoreDataTargetName' do
-pod 'SyncKit/CoreData', '~> 0.5.5'
+pod 'SyncKit/CoreData', '~> 0.6.0'
 end
 
 target 'RealmTargetName' do
-pod 'SyncKit/Realm', '~> 0.5.5'
+pod 'SyncKit/Realm', '~> 0.6.0'
 end
 
 target 'RealmSwiftTargetName' do
-pod 'SyncKit/RealmSwift', '~> 0.5.5'
+pod 'SyncKit/RealmSwift', '~> 0.6.0'
 end
 ```
 
@@ -54,7 +54,7 @@ $ brew install carthage
 Add SyncKit to your `Cartfile`:
 
 ```
-github "mentrena/SyncKit" ~> 0.5.5
+github "mentrena/SyncKit" ~> 0.6.0
 ```
 
 Run `carthage update` to create the framework, then import it into your project.

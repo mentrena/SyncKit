@@ -1,8 +1,8 @@
 //
 //  QSSyncedEntity+CoreDataProperties.m
-//  Pods
+//  
 //
-//  Created by Manuel Entrena on 22/10/2016.
+//  Created by Manuel Entrena on 24/03/2018.
 //
 //
 
@@ -10,17 +10,19 @@
 
 @implementation QSSyncedEntity (CoreDataProperties)
 
-+ (NSFetchRequest *)fetchRequest {
++ (NSFetchRequest<QSSyncedEntity *> *)fetchRequest {
 	return [[NSFetchRequest alloc] initWithEntityName:@"QSSyncedEntity"];
 }
 
 @dynamic changedKeys;
 @dynamic entityType;
 @dynamic identifier;
+@dynamic originObjectID;
 @dynamic state;
 @dynamic updated;
-@dynamic originObjectID;
 @dynamic pendingRelationships;
 @dynamic record;
+@dynamic share;
+@dynamic shareForEntity;
 
 @end

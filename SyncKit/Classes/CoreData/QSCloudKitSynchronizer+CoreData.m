@@ -8,6 +8,8 @@
 
 #import "QSCloudKitSynchronizer+CoreData.h"
 #import "QSCloudKitSynchronizer+Private.h"
+#import "QSDefaultCoreDataStackProvider.h"
+#import "QSDefaultCoreDataAdapterDelegate.h"
 
 @implementation QSCloudKitSynchronizer (CoreData)
 
@@ -23,12 +25,10 @@
 
 + (NSString *)applicationDocumentsDirectoryForAppGroup:(NSString *)suiteName
 {
+    if (!suiteName) {
+        return [self applicationDocumentsDirectory];
+    }
     return [[[NSFileManager defaultManager] containerURLForSecurityApplicationGroupIdentifier:suiteName] path];
-}
-
-+ (NSString *)applicationStoresPath
-{
-    return [[self applicationDocumentsDirectory] stringByAppendingPathComponent:@"Stores"];
 }
 
 + (NSString *)applicationStoresPathWithAppGroup:(NSString *)suiteName
@@ -38,7 +38,7 @@
 
 + (NSString *)storePath
 {
-    return [[self applicationStoresPath] stringByAppendingPathComponent:[self storeFileName]];
+    return [self storePathWithAppGroup:nil];
 }
 
 + (NSString *)storePathWithAppGroup:(NSString *)suiteName
@@ -46,32 +46,65 @@
     return [[self applicationStoresPathWithAppGroup:suiteName] stringByAppendingPathComponent:[self storeFileName]];
 }
 
-+ (NSString *)storeFileName
++ (NSString *)storeFileName;
 {
     return @"QSSyncStore";
 }
 
-+ (QSCloudKitSynchronizer *)cloudKitSynchronizerWithContainerName:(NSString *)containerName managedObjectContext:(NSManagedObjectContext *)context changeManagerDelegate:(id<QSCoreDataChangeManagerDelegate>)delegate
++ (QSCloudKitSynchronizer *)cloudKitPrivateSynchronizerWithContainerName:(NSString *)containerName managedObjectContext:(NSManagedObjectContext *)context
 {
-    QSCoreDataStack *stack = [[QSCoreDataStack alloc] initWithStoreType:NSSQLiteStoreType model:[QSCoreDataChangeManager persistenceModel] storePath:[self storePath]];
-    QSCoreDataChangeManager *changeManager = [[QSCoreDataChangeManager alloc] initWithPersistenceStack:stack targetContext:context recordZoneID:[self defaultCustomZoneID] delegate:delegate];
-    QSCloudKitSynchronizer *synchronizer = [[QSCloudKitSynchronizer alloc] initWithContainerIdentifier:containerName recordZoneID:[self defaultCustomZoneID] changeManager:changeManager];
+    return [self cloudKitPrivateSynchronizerWithContainerName:containerName managedObjectContext:context suiteName:nil];
+}
+
++ (QSCloudKitSynchronizer *)cloudKitPrivateSynchronizerWithContainerName:(NSString *)containerName managedObjectContext:(NSManagedObjectContext *)context suiteName:(NSString *)suiteName
+{
+    QSDefaultCoreDataAdapterDelegate *delegate = [QSDefaultCoreDataAdapterDelegate sharedInstance];
+    QSCoreDataStack *stack = [[QSCoreDataStack alloc] initWithStoreType:NSSQLiteStoreType model:[QSCoreDataAdapter persistenceModel] storePath:[self storePathWithAppGroup:suiteName]];
+    QSCoreDataAdapter *adapter = [[QSCoreDataAdapter alloc] initWithPersistenceStack:stack targetContext:context recordZoneID:[self defaultCustomZoneID] delegate:delegate];
+    NSUserDefaults *suiteUserDefaults = suiteName ? [[NSUserDefaults alloc] initWithSuiteName:suiteName] : [NSUserDefaults standardUserDefaults];
+    CKContainer *container = [CKContainer containerWithIdentifier:containerName];
+    QSCloudKitSynchronizer *synchronizer = [[QSCloudKitSynchronizer alloc] initWithIdentifier:@"DefaultCoreDataPrivateSynchronizer" containerIdentifier:containerName database:container.privateCloudDatabase adapterProvider:nil keyValueStore:suiteUserDefaults];
+    [synchronizer addModelAdapter:adapter];
+    
+    [self transferOldServerChangeTokenTo:adapter userDefaults:suiteUserDefaults container:containerName];
+
     return synchronizer;
 }
 
-+ (QSCloudKitSynchronizer *)cloudKitSynchronizerWithContainerName:(NSString *)containerName managedObjectContext:(NSManagedObjectContext *)context changeManagerDelegate:(id<QSCoreDataChangeManagerDelegate>)delegate suiteName:(NSString *)suiteName
++ (QSCloudKitSynchronizer *)cloudKitSharedSynchronizerWithContainerName:(NSString *)containerName objectModel:(NSManagedObjectModel *)model
 {
-    QSCoreDataStack *stack = [[QSCoreDataStack alloc] initWithStoreType:NSSQLiteStoreType model:[QSCoreDataChangeManager persistenceModel] storePath:[self storePathWithAppGroup:suiteName]];
-    QSCoreDataChangeManager *changeManager = [[QSCoreDataChangeManager alloc] initWithPersistenceStack:stack targetContext:context recordZoneID:[self defaultCustomZoneID] delegate:delegate];
-    NSUserDefaults *suiteUserDefaults = [[NSUserDefaults alloc] initWithSuiteName:suiteName];
-    QSCloudKitSynchronizer *synchronizer = [[QSCloudKitSynchronizer alloc] initWithContainerIdentifier:containerName recordZoneID:[self defaultCustomZoneID] changeManager:changeManager keyValueStore:suiteUserDefaults];
+    return [self cloudKitSharedSynchronizerWithContainerName:containerName objectModel:model suiteName:nil];
+}
+
++ (QSCloudKitSynchronizer *)cloudKitSharedSynchronizerWithContainerName:(NSString *)containerName objectModel:(NSManagedObjectModel *)model suiteName:(NSString *)suiteName
+{
+    QSDefaultCoreDataStackProvider *provider = [[QSDefaultCoreDataStackProvider alloc] initWithIdentifier:@"DefaultCoreDataSharedStackProvider" storeType:NSSQLiteStoreType model:model appGroup:suiteName];
+    NSUserDefaults *suiteUserDefaults = suiteName ? [[NSUserDefaults alloc] initWithSuiteName:suiteName] : [NSUserDefaults standardUserDefaults];
+    CKContainer *container = [CKContainer containerWithIdentifier:containerName];
+    QSCloudKitSynchronizer *synchronizer = [[QSCloudKitSynchronizer alloc] initWithIdentifier:@"DefaultCoreDataSharedSynchronizer" containerIdentifier:containerName database:container.sharedCloudDatabase adapterProvider:provider keyValueStore:suiteUserDefaults];
+    for (id<QSModelAdapter> adapter in provider.adapterDictionary.allValues) {
+        [synchronizer addModelAdapter:adapter];
+    }
     return synchronizer;
+}
+
++ (void)transferOldServerChangeTokenTo:(id<QSModelAdapter>)adapter userDefaults:(NSUserDefaults *)userDefaults container:(NSString *)container
+{
+    NSString *key = [container stringByAppendingString:@"QSCloudKitFetchChangesServerTokenKey"];
+    NSData *encodedToken = [userDefaults objectForKey:key];
+    if (encodedToken) {
+        CKServerChangeToken *token = [NSKeyedUnarchiver unarchiveObjectWithData:encodedToken];
+        if ([token isKindOfClass:[CKServerChangeToken class]]) {
+            [adapter saveToken:token];
+        }
+        [userDefaults removeObjectForKey:key];
+    }
 }
 
 + (NSEntityMigrationPolicy *)updateIdentifierMigrationPolicy
 {
     if ([QSEntityIdentifierUpdateMigrationPolicy stack] == nil && [[NSFileManager defaultManager] fileExistsAtPath:[self storePath]]) {
-        QSCoreDataStack *stack = [[QSCoreDataStack alloc] initWithStoreType:NSSQLiteStoreType model:[QSCoreDataChangeManager persistenceModel] storePath:[self storePath]];
+        QSCoreDataStack *stack = [[QSCoreDataStack alloc] initWithStoreType:NSSQLiteStoreType model:[QSCoreDataAdapter persistenceModel] storePath:[self storePath]];
         [QSEntityIdentifierUpdateMigrationPolicy setCoreDataStack:stack];
     }
     return [[QSEntityIdentifierUpdateMigrationPolicy alloc] init];

@@ -1,0 +1,18 @@
+use_frameworks!
+
+workspace 'SyncKitCoreData.xcworkspace'
+
+target 'SyncKitCoreDataExample' do
+	
+  project 'SyncKitCoreDataExample'
+  platform :ios, '10.0'
+
+  pod 'SyncKit/CoreData', :path => '../../'
+
+  target 'SyncKitCoreDataExampleTests' do
+    inherit! :search_paths
+
+	pod 'OCMock', '~> 3.4'
+    
+  end
+end
