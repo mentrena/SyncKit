@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'SyncKit'
-  s.version          = '0.5.8'
+  s.version          = '0.5.9'
   s.summary          = 'CloudKit synchronization for your Core Data or Realm model.'
 
   s.description      = <<-DESC

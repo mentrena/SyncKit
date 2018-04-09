@@ -96,6 +96,11 @@
  */
 @property (nonatomic, assign) QSCloudKitSynchronizerMergePolicy mergePolicy;
 
+/**
+ *  If this is true data fields will be uploaded as data, instead of using CKAsset properties on the records.
+ */
+@property (nonatomic, assign) BOOL forceDataTypeInsteadOfAsset;
+
 - (void)updateTrackingForObjectsWithPrimaryKey;
 
 

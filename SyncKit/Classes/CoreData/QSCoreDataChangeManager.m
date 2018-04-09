@@ -467,7 +467,7 @@ static NSString * const QSCloudKitTimestampKey = @"QSCloudKitTimestampKey";
             if ((entityState == QSSyncedEntityStateNew || [changedKeys containsObject:attributeName]) && [primaryKey isEqualToString:attributeName] == NO) {
                 
                 id value = [originalObject valueForKey:attributeName];
-                if (attributeDescription.attributeType == NSBinaryDataAttributeType && value) {
+                if (attributeDescription.attributeType == NSBinaryDataAttributeType && value && !self.forceDataTypeInsteadOfAsset) {
                     NSURL *fileURL = [self.tempFileManager storeData:(NSData *)value];
                     CKAsset *asset = [[CKAsset alloc] initWithFileURL:fileURL];
                     record[attributeName] = asset;

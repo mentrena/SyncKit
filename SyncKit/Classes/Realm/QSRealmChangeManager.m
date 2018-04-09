@@ -567,7 +567,7 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
                    ([syncedEntity.state integerValue] == QSSyncedEntityStateNew || [changedKeys containsObject:property.name])) {
             
             id value = [object valueForKey:property.name];
-            if (property.type == RLMPropertyTypeData && value) {
+            if (property.type == RLMPropertyTypeData && value && !self.forceDataTypeInsteadOfAsset) {
                 NSURL *fileURL = [self.tempFileManager storeData:(NSData *)value];
                 CKAsset *asset = [[CKAsset alloc] initWithFileURL:fileURL];
                 record[property.name] = asset;

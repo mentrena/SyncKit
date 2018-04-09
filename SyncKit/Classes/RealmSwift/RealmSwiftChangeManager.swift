@@ -74,6 +74,7 @@ public class RealmSwiftChangeManager: NSObject, QSChangeManager {
     public let recordZoneID: CKRecordZoneID
     public var mergePolicy: QSCloudKitSynchronizerMergePolicy = QSCloudKitSynchronizerMergePolicy.server
     public var delegate: RealmSwiftChangeManagerDelegate?
+    public var forceDataTypeInsteadOfAsset: Bool = false
     
     private var tempFileManager = QSTempFileManager()
     
@@ -625,6 +626,7 @@ public class RealmSwiftChangeManager: NSObject, QSChangeManager {
                 let value = object!.value(forKey: property.name)
                 if property.type == PropertyType.data,
                     let data = value as? Data,
+                    forceDataTypeInsteadOfAsset == false,
                     let fileURL = self.tempFileManager.store(data) {
                     
                     let asset = CKAsset(fileURL: fileURL)

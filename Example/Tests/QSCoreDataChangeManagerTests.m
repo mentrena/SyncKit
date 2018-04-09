@@ -764,6 +764,35 @@
     XCTAssertNotNil(asset.fileURL);
 }
 
+- (void)testRecordToUpload_dataProperty_forceDataType_uploadedAsData
+{
+    [self setUpModel2];
+    
+    //Insert object in context
+    QSEmployee2 *employee = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass([QSEmployee2 class]) inManagedObjectContext:self.targetCoreDataStack.managedObjectContext];
+    employee.name = @"employee 1";
+    employee.identifier = [[NSUUID UUID] UUIDString];
+    employee.photo = [NSData data];
+    NSError *error = nil;
+    [self.targetCoreDataStack.managedObjectContext save:&error];
+    
+    QSCoreDataChangeManager *changeManager = [[QSCoreDataChangeManager alloc] initWithPersistenceStack:self.coreDataStack targetContext:self.targetCoreDataStack.managedObjectContext recordZoneID:[[CKRecordZoneID alloc] initWithZoneName:@"zone" ownerName:@"owner"] delegate:self];
+    changeManager.forceDataTypeInsteadOfAsset = YES;
+    
+    XCTestExpectation *expectation = [self expectationWithDescription:@"synced"];
+    __block CKRecord *objectRecord = nil;
+    
+    [self fullySyncChangeManager:changeManager completion:^(NSArray *uploadedRecords, NSArray *deletedRecordIDs, NSError *error) {
+        objectRecord = [uploadedRecords firstObject];
+        [expectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    
+    NSData *photo = objectRecord[@"photo"];
+    XCTAssertTrue([photo isKindOfClass:[NSData class]]);
+}
+
 - (void)testRecordToUpload_dataPropertyNil_nilsProperty
 {
     [self setUpModel2];

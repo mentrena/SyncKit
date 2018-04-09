@@ -485,6 +485,27 @@ class SyncKitRealmSwiftTests: XCTestCase, RealmSwiftChangeManagerDelegate {
         XCTAssertNotNil(asset?.fileURL)
     }
     
+    func testRecordToUpload_dataProperty_forceDataType_uploadedAsData() {
+        
+        let realm = realmWith(identifier: "t44")
+        _ = insertEmployee(values: ["identifier": "e1", "name": "employee1", "photo": NSData()], realm: realm)
+        let changeManager = realmChangeManager(targetConfiguration: realm.configuration, persistenceConfiguration: persistenceConfigurationWith(identifier: "p44"))
+        changeManager.forceDataTypeInsteadOfAsset = true
+        
+        let exp = expectation(description: "synced")
+        var objectRecord: CKRecord?
+        
+        fullySync(changeManager: changeManager) { (uploaded, _, _) in
+            objectRecord = uploaded.first
+            exp.fulfill()
+        }
+        waitForExpectations(timeout: 1, handler: nil)
+        
+        let photo = objectRecord?["photo"] as? NSData
+        
+        XCTAssertNotNil(photo)
+    }
+    
     func testRecordToUpload_dataPropertyNil_nilsProperty() {
         
         let realm = realmWith(identifier: "t41")

@@ -836,6 +836,30 @@
     XCTAssertNotNil(asset.fileURL);
 }
 
+- (void)testRecordToUpload_dataProperty_forceDataType_uploadedAsData
+{
+    RLMRealm *realm = [self realmWithIdentifier:@"t44"];
+    //Insert object in context
+    [self insertEmployeeWithValues:@{@"identifier": @"e1", @"name": @"employee1", @"photo": [NSData data]} inRealm:realm];
+    
+    QSRealmChangeManager *changeManager = [self realmChangeManagerWithTarget:realm.configuration
+                                                                 persistence:[self persistenceConfigurationWithIdentifier:@"p44"]];
+    changeManager.forceDataTypeInsteadOfAsset = YES;
+    
+    XCTestExpectation *expectation = [self expectationWithDescription:@"synced"];
+    __block CKRecord *objectRecord = nil;
+    
+    [self fullySyncChangeManager:changeManager completion:^(NSArray *uploadedRecords, NSArray *deletedRecordIDs, NSError *error) {
+        objectRecord = [uploadedRecords firstObject];
+        [expectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    
+    NSData *photo = objectRecord[@"photo"];
+    XCTAssertTrue([photo isKindOfClass:[NSData class]]);
+}
+
 - (void)testRecordToUpload_dataPropertyNil_nilsProperty
 {
     RLMRealm *realm = [self realmWithIdentifier:@"t41"];
