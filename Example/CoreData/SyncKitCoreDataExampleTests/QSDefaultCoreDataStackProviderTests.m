@@ -70,8 +70,9 @@
 - (void)testChangeManagerForRecordZoneID_createsNewChangeManagerAndStack
 {
     XCTAssertTrue([self filesInProviderDirectory:self.provider] == 0);
+    QSCloudKitSynchronizer *synchronizer = [[QSCloudKitSynchronizer alloc] init];
     CKRecordZoneID *recordZoneID = [[CKRecordZoneID alloc] initWithZoneName:@"zone" ownerName:@"owner"];
-    QSCoreDataAdapter *changeManager = (QSCoreDataAdapter *)[self.provider cloudKitSynchronizer:nil modelAdapterForRecordZoneID:recordZoneID];
+    QSCoreDataAdapter *changeManager = (QSCoreDataAdapter *)[self.provider cloudKitSynchronizer:synchronizer modelAdapterForRecordZoneID:recordZoneID];
     XCTAssertNotNil(changeManager);
     XCTAssertTrue([changeManager isKindOfClass:[QSCoreDataAdapter class]]);
     XCTAssertNotNil(changeManager.targetContext);
@@ -103,12 +104,13 @@
 - (void)testZoneWasDeletedWithZoneID_changeManagerHadBeenUsed_deletesChangeManagerAndRemovesFiles
 {
     CKRecordZoneID *recordZoneID = [[CKRecordZoneID alloc] initWithZoneName:@"zone" ownerName:@"owner"];
-    QSCoreDataAdapter *changeManager = (QSCoreDataAdapter *)[self.provider cloudKitSynchronizer:nil modelAdapterForRecordZoneID:recordZoneID];
+    QSCloudKitSynchronizer *synchronizer = [[QSCloudKitSynchronizer alloc] init];
+    QSCoreDataAdapter *changeManager = (QSCoreDataAdapter *)[self.provider cloudKitSynchronizer:synchronizer modelAdapterForRecordZoneID:recordZoneID];
     [changeManager saveToken:(CKServerChangeToken *)@"token"];
     XCTAssertNotNil(changeManager);
     XCTAssertEqual(self.provider.adapterDictionary.count, 1);
     
-    [self.provider cloudKitSynchronizer:nil zoneWasDeletedWithZoneID:recordZoneID];
+    [self.provider cloudKitSynchronizer:synchronizer zoneWasDeletedWithZoneID:recordZoneID];
     
     XCTAssertEqual(self.provider.adapterDictionary.count, 0);
     XCTAssertEqual(self.provider.coreDataStacks.count, 0);
@@ -117,11 +119,12 @@
 - (void)testZoneWasDeletedWithZoneID_changeManagerHadNotBeenUsedYet_preservesChangeManagerSoZoneCanBeRecreated
 {
     CKRecordZoneID *recordZoneID = [[CKRecordZoneID alloc] initWithZoneName:@"zone" ownerName:@"owner"];
-    QSCoreDataAdapter *changeManager = (QSCoreDataAdapter *)[self.provider cloudKitSynchronizer:nil modelAdapterForRecordZoneID:recordZoneID];
+    QSCloudKitSynchronizer *synchronizer = [[QSCloudKitSynchronizer alloc] init];
+    QSCoreDataAdapter *changeManager = (QSCoreDataAdapter *)[self.provider cloudKitSynchronizer:synchronizer modelAdapterForRecordZoneID:recordZoneID];
     XCTAssertNotNil(changeManager);
     XCTAssertEqual(self.provider.adapterDictionary.count, 1);
     
-    [self.provider cloudKitSynchronizer:nil zoneWasDeletedWithZoneID:recordZoneID];
+    [self.provider cloudKitSynchronizer:synchronizer zoneWasDeletedWithZoneID:recordZoneID];
     
     XCTAssertEqual(self.provider.adapterDictionary.count, 1);
     XCTAssertEqual(self.provider.coreDataStacks.count, 1);

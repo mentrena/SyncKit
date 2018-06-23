@@ -1207,11 +1207,13 @@
 {
     QSCoreDataAdapter *coreDataAdapter = [[QSCoreDataAdapter alloc] initWithPersistenceStack:self.coreDataStack targetContext:self.targetCoreDataStack.managedObjectContext recordZoneID:[[CKRecordZoneID alloc] initWithZoneName:@"zone" ownerName:@"owner"] delegate:self];
     
-    [coreDataAdapter saveToken:(CKServerChangeToken *)@"some token"];
+    NSData *data = [NSData dataWithContentsOfURL:[[NSBundle bundleForClass:[self class]] URLForResource:@"serverChangeToken.AQAAAWPa1DUC" withExtension:@""]];
+    CKServerChangeToken *token = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+    [coreDataAdapter saveToken:token];
     
-    CKServerChangeToken *token = coreDataAdapter.serverChangeToken;
+    CKServerChangeToken *token2 = coreDataAdapter.serverChangeToken;
     
-    XCTAssertTrue([@"some token" isEqualToString:(NSString *)token]);
+    XCTAssertTrue([token isEqual:token2]);
 }
 
 #pragma mark - Sharing
