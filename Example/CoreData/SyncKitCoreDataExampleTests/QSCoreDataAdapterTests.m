@@ -1392,10 +1392,9 @@
     [[NSUserDefaults standardUserDefaults] setObject:data forKey:@"containerQSCloudKitFetchChangesServerTokenKey"];
     
     QSCloudKitSynchronizer *synchronizer2 = [QSCloudKitSynchronizer cloudKitPrivateSynchronizerWithContainerName:@"container" managedObjectContext:self.coreDataStack.managedObjectContext];
-    CKServerChangeToken *adapterToken = synchronizer2.modelAdapters.firstObject.serverChangeToken;
     
     XCTAssertNotNil(token);
-    XCTAssertTrue([adapterToken isEqual:token]);
+    XCTAssertTrue([token isEqual:synchronizer2.modelAdapters.firstObject.serverChangeToken]);
     XCTAssertNil([[NSUserDefaults standardUserDefaults] objectForKey:@"containerQSCloudKitFetchChangesServerTokenKey"]);
 }
 
