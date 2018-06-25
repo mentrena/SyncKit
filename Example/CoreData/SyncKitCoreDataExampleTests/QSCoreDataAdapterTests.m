@@ -1379,26 +1379,6 @@
     }
 }
 
-#pragma mark - 0.6.0
-
-- (void)testOldToken_preserved
-{    
-    //Clean up any leftover data
-    QSCoreDataStack *stack = [[QSCoreDataStack alloc] initWithStoreType:NSSQLiteStoreType model:[QSCoreDataAdapter persistenceModel] storePath:[QSCloudKitSynchronizer storePathWithAppGroup:nil]];
-    [stack deleteStore];
-    
-    NSData *data = [NSData dataWithContentsOfURL:[[NSBundle bundleForClass:[self class]] URLForResource:@"serverChangeToken.AQAAAWPa1DUC" withExtension:@""]];
-    CKServerChangeToken *token = [NSKeyedUnarchiver unarchiveObjectWithData:data];
-    [[NSUserDefaults standardUserDefaults] setObject:data forKey:@"containerQSCloudKitFetchChangesServerTokenKey"];
-    
-    QSCloudKitSynchronizer *synchronizer2 = [QSCloudKitSynchronizer cloudKitPrivateSynchronizerWithContainerName:@"container" managedObjectContext:self.coreDataStack.managedObjectContext];
-    CKServerChangeToken *adapterToken = synchronizer2.modelAdapters.firstObject.serverChangeToken;
-    
-    XCTAssertNotNil(token);
-    XCTAssertTrue([adapterToken isEqual:token]);
-    XCTAssertNil([[NSUserDefaults standardUserDefaults] objectForKey:@"containerQSCloudKitFetchChangesServerTokenKey"]);
-}
-
 #pragma mark - Utilities
 
 - (id)insertAndSaveObjectOfType:(NSString *)entityType properties:(NSDictionary *)properties intoContext:(NSManagedObjectContext *)context
