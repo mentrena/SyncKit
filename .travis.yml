@@ -2,16 +2,17 @@
 # * http://www.objc.io/issue-6/travis-ci.html
 # * https://github.com/supermarin/xcpretty#usage
 
-osx_image: xcode9
-language: objective-c
+osx_image: xcode9.4
+language: swift
 
 before_install:
   - sudo gem install cocoapods
 
 script:
-  - pod install --repo-update --project-directory=Example/
-  - pod install --repo-update --project-directory=Example/SyncKitRealmSwift/
-  - set -o pipefail && xcodebuild test -workspace Example/SyncKit.xcworkspace -scheme SyncKitCoreDataExample -sdk iphonesimulator11.0 -destination 'platform=iOS Simulator,name=iPhone 7,OS=11.0' ONLY_ACTIVE_ARCH=NO | xcpretty
-  - set -o pipefail && xcodebuild test -workspace Example/SyncKit.xcworkspace -scheme SyncKitRealmExample -sdk iphonesimulator11.0 -destination 'platform=iOS Simulator,name=iPhone 7,OS=11.0' ONLY_ACTIVE_ARCH=NO | xcpretty
-  - set -o pipefail && xcodebuild test -workspace Example/SyncKitRealmSwift/SyncKitRealmSwift.xcworkspace -scheme SyncKitRealmSwiftExample -sdk iphonesimulator11.0 -destination 'platform=iOS Simulator,name=iPhone 7,OS=11.0' ONLY_ACTIVE_ARCH=NO | xcpretty
+  - pod install --repo-update --project-directory=Example/CoreData/
+  - pod install --repo-update --project-directory=Example/Realm/
+  - pod install --repo-update --project-directory=Example/RealmSwift/
+  - set -o pipefail && xcodebuild test -workspace Example/CoreData/SyncKitCoreData.xcworkspace -scheme SyncKitCoreDataExample -sdk iphonesimulator11.4 -destination 'platform=iOS Simulator,name=iPhone 7,OS=11.4' ONLY_ACTIVE_ARCH=NO | xcpretty
+  - set -o pipefail && xcodebuild test -workspace Example/Realm/SyncKitRealm.xcworkspace -scheme SyncKitRealmExample -sdk iphonesimulator11.4 -destination 'platform=iOS Simulator,name=iPhone 7,OS=11.4' ONLY_ACTIVE_ARCH=NO | xcpretty
+  - set -o pipefail && xcodebuild test -workspace Example/RealmSwift/SyncKitRealmSwift.xcworkspace -scheme SyncKitRealmSwiftExample -sdk iphonesimulator11.4 -destination 'platform=iOS Simulator,name=iPhone 7,OS=11.4' ONLY_ACTIVE_ARCH=NO | xcpretty
 #  - travis_wait 30 pod lib lint --allow-warnings

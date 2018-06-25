@@ -14,7 +14,8 @@
 @property (nonatomic, readonly) NSManagedObjectContext *managedObjectContext;
 
 - (instancetype)initWithStoreType:(NSString *)storeType model:(NSManagedObjectModel *)model storePath:(NSString *)storePath;
-- (instancetype)initWithStoreType:(NSString *)storeType model:(NSManagedObjectModel *)model storePath:(NSString *)storePath dispatchImmediately:(BOOL)dispatchImmediately;
+- (instancetype)initWithStoreType:(NSString *)storeType model:(NSManagedObjectModel *)model storePath:(NSString *)storePath concurrencyType:(NSManagedObjectContextConcurrencyType)concurrencyType;
+- (instancetype)initWithStoreType:(NSString *)storeType model:(NSManagedObjectModel *)model storePath:(NSString *)storePath concurrencyType:(NSManagedObjectContextConcurrencyType)concurrencyType dispatchImmediately:(BOOL)dispatchImmediately;
 - (void)deleteStore;
 
 @end

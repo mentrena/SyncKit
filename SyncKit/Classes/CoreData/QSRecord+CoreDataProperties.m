@@ -1,8 +1,8 @@
 //
 //  QSRecord+CoreDataProperties.m
-//  Pods
+//  
 //
-//  Created by Manuel Entrena on 22/10/2016.
+//  Created by Manuel Entrena on 22/01/2018.
 //
 //
 
@@ -10,7 +10,7 @@
 
 @implementation QSRecord (CoreDataProperties)
 
-+ (NSFetchRequest *)fetchRequest {
++ (NSFetchRequest<QSRecord *> *)fetchRequest {
 	return [[NSFetchRequest alloc] initWithEntityName:@"QSRecord"];
 }
 

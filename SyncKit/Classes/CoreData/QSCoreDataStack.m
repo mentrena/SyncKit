@@ -15,6 +15,7 @@
 @property (nonatomic, strong) NSPersistentStoreCoordinator *persistentStoreCoordinator;
 @property (nonatomic, strong) NSManagedObjectModel *model;
 @property (nonatomic, strong) NSPersistentStore *store;
+@property (nonatomic, assign) NSManagedObjectContextConcurrencyType concurrencyType;
 
 @property (nonatomic, copy) NSURL *storeURL;
 @property (nonatomic, copy) NSString *storeType;
@@ -44,9 +45,9 @@
     self.persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:self.model];
     
     if (self.useDispatchImmediatelyContext) {
-        self.managedObjectContext = [[QSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
+        self.managedObjectContext = [[QSManagedObjectContext alloc] initWithConcurrencyType:self.concurrencyType];
     } else {
-        self.managedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
+        self.managedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:self.concurrencyType];
     }
     [self.managedObjectContext performBlockAndWait:^{
         [self.managedObjectContext setPersistentStoreCoordinator:self.persistentStoreCoordinator];
@@ -82,16 +83,22 @@
 
 - (instancetype)initWithStoreType:(NSString *)storeType model:(NSManagedObjectModel *)model storePath:(NSString *)storePath
 {
-    return [self initWithStoreType:storeType model:model storePath:storePath dispatchImmediately:NO];
+    return [self initWithStoreType:storeType model:model storePath:storePath concurrencyType:NSPrivateQueueConcurrencyType dispatchImmediately:NO];
 }
 
-- (instancetype)initWithStoreType:(NSString *)storeType model:(NSManagedObjectModel *)model storePath:(NSString *)storePath dispatchImmediately:(BOOL)dispatchImmediately
+- (instancetype)initWithStoreType:(NSString *)storeType model:(NSManagedObjectModel *)model storePath:(NSString *)storePath concurrencyType:(NSManagedObjectContextConcurrencyType)concurrencyType
+{
+    return [self initWithStoreType:storeType model:model storePath:storePath concurrencyType:concurrencyType dispatchImmediately:NO];
+}
+
+- (instancetype)initWithStoreType:(NSString *)storeType model:(NSManagedObjectModel *)model storePath:(NSString *)storePath concurrencyType:(NSManagedObjectContextConcurrencyType)concurrencyType dispatchImmediately:(BOOL)dispatchImmediately
 {
     self = [super init];
     if (self) {
         self.useDispatchImmediatelyContext = dispatchImmediately;
         self.storeType = storeType;
         self.model = model;
+        self.concurrencyType = concurrencyType;
         self.storeURL = storePath? [NSURL fileURLWithPath:storePath] : nil;
         [self initializeStack];
         [self loadStore];

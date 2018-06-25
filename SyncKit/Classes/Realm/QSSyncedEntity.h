@@ -18,5 +18,6 @@
 @property (nullable, nonatomic, copy) NSNumber<RLMInt> *state;
 @property (nullable, nonatomic, copy) NSDate *updated;
 @property (nullable, nonatomic, strong) QSRecord *record;
+@property (nullable, nonatomic, strong) QSSyncedEntity *share;
 
 @end

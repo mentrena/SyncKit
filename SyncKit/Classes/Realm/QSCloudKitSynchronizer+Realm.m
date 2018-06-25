@@ -8,6 +8,7 @@
 
 #import "QSCloudKitSynchronizer+Realm.h"
 #import "QSCloudKitSynchronizer+Private.h"
+#import <SyncKit/SyncKit-Swift.h>
 
 @implementation QSCloudKitSynchronizer (Realm)
 
@@ -49,7 +50,7 @@
 
 + (RLMRealmConfiguration *)persistenceConfigurationWithSuiteName:(NSString *)suiteName
 {
-    RLMRealmConfiguration *configuration = [QSRealmChangeManager defaultPersistenceConfiguration];
+    RLMRealmConfiguration *configuration = [QSRealmAdapter defaultPersistenceConfiguration];
     configuration.fileURL = [NSURL fileURLWithPath:[self realmPathWithAppGroup:suiteName]];
     return configuration;
 }
@@ -63,18 +64,55 @@
     }
 }
 
-+ (QSCloudKitSynchronizer *)cloudKitSynchronizerWithContainerName:(NSString *)containerName realmConfiguration:(RLMRealmConfiguration *)targetRealmConfiguration
++ (QSCloudKitSynchronizer *)cloudKitPrivateSynchronizerWithContainerName:(NSString *)containerName realmConfiguration:(RLMRealmConfiguration *)targetRealmConfiguration
 {
-    return [QSCloudKitSynchronizer cloudKitSynchronizerWithContainerName:containerName realmConfiguration:targetRealmConfiguration suiteName:nil];
+    return [QSCloudKitSynchronizer cloudKitPrivateSynchronizerWithContainerName:containerName realmConfiguration:targetRealmConfiguration suiteName:nil];
 }
 
-+ (QSCloudKitSynchronizer *)cloudKitSynchronizerWithContainerName:(NSString *)containerName realmConfiguration:(RLMRealmConfiguration *)targetRealmConfiguration suiteName:(NSString *)suiteName
++ (QSCloudKitSynchronizer *)cloudKitPrivateSynchronizerWithContainerName:(NSString *)containerName realmConfiguration:(RLMRealmConfiguration *)targetRealmConfiguration suiteName:(NSString *)suiteName
 {
     [self ensurePathAvailableWithSuiteName:suiteName];
-    QSRealmChangeManager *changeManager = [[QSRealmChangeManager alloc] initWithPersistenceRealmConfiguration:[self persistenceConfigurationWithSuiteName:suiteName] targetRealmConfiguration:targetRealmConfiguration recordZoneID:[self defaultCustomZoneID]];
+    
+    QSRealmAdapter *modelAdapter = [[QSRealmAdapter alloc] initWithPersistenceRealmConfiguration:[self persistenceConfigurationWithSuiteName:suiteName] targetRealmConfiguration:targetRealmConfiguration recordZoneID:[self defaultCustomZoneID]];
     NSUserDefaults *suiteUserDefaults = [[NSUserDefaults alloc] initWithSuiteName:suiteName];
-    QSCloudKitSynchronizer *synchronizer = [[QSCloudKitSynchronizer alloc] initWithContainerIdentifier:containerName recordZoneID:[self defaultCustomZoneID] changeManager:changeManager keyValueStore:suiteUserDefaults];
+    CKContainer *container = [CKContainer containerWithIdentifier:containerName];
+    QSCloudKitSynchronizer *synchronizer = [[QSCloudKitSynchronizer alloc] initWithIdentifier:@"DefaultRealmPrivateSynchronizer" containerIdentifier:containerName database:container.privateCloudDatabase adapterProvider:nil keyValueStore:suiteUserDefaults];
+    [synchronizer addModelAdapter:modelAdapter];
+    
+    [self transferOldServerChangeTokenTo:modelAdapter userDefaults:suiteUserDefaults container:containerName];
+    
     return synchronizer;
+}
+
++ (QSCloudKitSynchronizer *)cloudKitSharedSynchronizerWithContainerName:(NSString *)containerName realmConfiguration:(RLMRealmConfiguration *)targetRealmConfiguration
+{
+    return [QSCloudKitSynchronizer cloudKitSharedSynchronizerWithContainerName:containerName realmConfiguration:targetRealmConfiguration suiteName:nil];
+}
+
++ (QSCloudKitSynchronizer *)cloudKitSharedSynchronizerWithContainerName:(NSString *)containerName realmConfiguration:(RLMRealmConfiguration *)targetRealmConfiguration suiteName:(NSString *)suiteName
+{
+    NSUserDefaults *suiteUserDefaults = [[NSUserDefaults alloc] initWithSuiteName:suiteName];
+    CKContainer *container = [CKContainer containerWithIdentifier:containerName];
+    QSDefaultRealmProvider *provider = [[QSDefaultRealmProvider alloc] initWithIdentifier:@"DefaultRealmSharedStackProvider" realmConfiguration:targetRealmConfiguration appGroup:suiteName];
+    QSCloudKitSynchronizer *synchronizer = [[QSCloudKitSynchronizer alloc] initWithIdentifier:@"DefaultRealmSharedSynchronizer" containerIdentifier:containerName database:container.sharedCloudDatabase adapterProvider:provider keyValueStore:suiteUserDefaults];
+    for (id<QSModelAdapter> modelAdapter in provider.adapterDictionary.allValues) {
+        [synchronizer addModelAdapter:modelAdapter];
+    }
+    
+    return synchronizer;
+}
+
++ (void)transferOldServerChangeTokenTo:(id<QSModelAdapter>)adapter userDefaults:(NSUserDefaults *)userDefaults container:(NSString *)container
+{
+    NSString *key = [container stringByAppendingString:@"QSCloudKitFetchChangesServerTokenKey"];
+    NSData *encodedToken = [userDefaults objectForKey:key];
+    if (encodedToken) {
+        CKServerChangeToken *token = [NSKeyedUnarchiver unarchiveObjectWithData:encodedToken];
+        if ([token isKindOfClass:[CKServerChangeToken class]]) {
+            [adapter saveToken:token];
+        }
+        [userDefaults removeObjectForKey:key];
+    }
 }
 
 @end
