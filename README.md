@@ -59,7 +59,7 @@ github "mentrena/SyncKit" ~> 0.6.0
 
 Run `carthage update` to create the framework, then import it into your project.
 
-***
+## Documentation
 
 Find more information in the [Wiki](https://github.com/mentrena/SyncKit/wiki)
     
