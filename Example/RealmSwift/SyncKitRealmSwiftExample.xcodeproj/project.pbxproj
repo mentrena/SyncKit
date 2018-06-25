@@ -12,7 +12,6 @@
 		641C32711F55E29A00B01D62 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 641C32701F55E29A00B01D62 /* ViewController.swift */; };
 		641C32741F55E29A00B01D62 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 641C32721F55E29A00B01D62 /* Main.storyboard */; };
 		641C32761F55E29A00B01D62 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 641C32751F55E29A00B01D62 /* Assets.xcassets */; };
-		641C32791F55E29A00B01D62 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 641C32771F55E29A00B01D62 /* LaunchScreen.storyboard */; };
 		641C32841F55E29A00B01D62 /* SyncKitRealmSwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 641C32831F55E29A00B01D62 /* SyncKitRealmSwiftTests.swift */; };
 		64499AAD1F58233E00EF27BA /* QSCompany.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64499AAC1F58233E00EF27BA /* QSCompany.swift */; };
 		64499AB01F58238200EF27BA /* QSEmployee.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64499AAF1F58238200EF27BA /* QSEmployee.swift */; };
@@ -23,6 +22,7 @@
 		64B13A9820CAD64E00FCB834 /* CompanyCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64B13A9720CAD64E00FCB834 /* CompanyCell.swift */; };
 		64B13A9C20CAD75A00FCB834 /* QSSettingsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 64B13A9B20CAD75A00FCB834 /* QSSettingsTableViewController.m */; };
 		64B13A9E20CAD7B700FCB834 /* QSSharedCompanyTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64B13A9D20CAD7B700FCB834 /* QSSharedCompanyTableViewController.swift */; };
+		64F9C4B720E11EDB004C524B /* Launch.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 64F9C4B620E11EDB004C524B /* Launch.storyboard */; };
 		7452B4D9CE9A77744A6939D9 /* Pods_SyncKitRealmSwiftExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A35FE357ECD4623C8A32BC7C /* Pods_SyncKitRealmSwiftExample.framework */; };
 		7464B53C88D014F1D2C71D5D /* Pods_SyncKitRealmSwiftExampleTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE81DD162C05F428D97FCB35 /* Pods_SyncKitRealmSwiftExampleTests.framework */; };
 /* End PBXBuildFile section */
@@ -44,7 +44,6 @@
 		641C32701F55E29A00B01D62 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		641C32731F55E29A00B01D62 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		641C32751F55E29A00B01D62 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		641C32781F55E29A00B01D62 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		641C327A1F55E29A00B01D62 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		641C327F1F55E29A00B01D62 /* SyncKitRealmSwiftExampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SyncKitRealmSwiftExampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		641C32831F55E29A00B01D62 /* SyncKitRealmSwiftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncKitRealmSwiftTests.swift; sourceTree = "<group>"; };
@@ -62,6 +61,7 @@
 		64B13A9A20CAD75900FCB834 /* QSSettingsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QSSettingsTableViewController.h; sourceTree = "<group>"; };
 		64B13A9B20CAD75A00FCB834 /* QSSettingsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QSSettingsTableViewController.m; sourceTree = "<group>"; };
 		64B13A9D20CAD7B700FCB834 /* QSSharedCompanyTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QSSharedCompanyTableViewController.swift; sourceTree = "<group>"; };
+		64F9C4B620E11EDB004C524B /* Launch.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Launch.storyboard; sourceTree = "<group>"; };
 		820A349D34B99572E6CECAA2 /* Pods-SyncKitRealmSwiftExampleTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SyncKitRealmSwiftExampleTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-SyncKitRealmSwiftExampleTests/Pods-SyncKitRealmSwiftExampleTests.release.xcconfig"; sourceTree = "<group>"; };
 		A35FE357ECD4623C8A32BC7C /* Pods_SyncKitRealmSwiftExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SyncKitRealmSwiftExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B27A14C5E565CB35F241BBEF /* Pods-SyncKitRealmSwiftExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SyncKitRealmSwiftExample.release.xcconfig"; path = "Pods/Target Support Files/Pods-SyncKitRealmSwiftExample/Pods-SyncKitRealmSwiftExample.release.xcconfig"; sourceTree = "<group>"; };
@@ -141,7 +141,7 @@
 				641C32701F55E29A00B01D62 /* ViewController.swift */,
 				641C32721F55E29A00B01D62 /* Main.storyboard */,
 				641C32751F55E29A00B01D62 /* Assets.xcassets */,
-				641C32771F55E29A00B01D62 /* LaunchScreen.storyboard */,
+				64F9C4B620E11EDB004C524B /* Launch.storyboard */,
 				641C327A1F55E29A00B01D62 /* Info.plist */,
 				644A05CA1F59570A00F69505 /* QSCompanyTableViewController.swift */,
 				64B13A9D20CAD7B700FCB834 /* QSSharedCompanyTableViewController.swift */,
@@ -271,9 +271,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				641C32791F55E29A00B01D62 /* LaunchScreen.storyboard in Resources */,
 				641C32761F55E29A00B01D62 /* Assets.xcassets in Resources */,
 				641C32741F55E29A00B01D62 /* Main.storyboard in Resources */,
+				64F9C4B720E11EDB004C524B /* Launch.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -391,14 +391,6 @@
 				641C32731F55E29A00B01D62 /* Base */,
 			);
 			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		641C32771F55E29A00B01D62 /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				641C32781F55E29A00B01D62 /* Base */,
-			);
-			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

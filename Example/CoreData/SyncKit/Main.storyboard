@@ -110,7 +110,7 @@
                                 </constraints>
                             </view>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" style="plain" id="w9t-SM-HI5">
+                        <barButtonItem key="rightBarButtonItem" id="w9t-SM-HI5">
                             <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="contactAdd" lineBreakMode="middleTruncation" id="gTD-cC-SDr">
                                 <rect key="frame" x="337" y="11" width="22" height="22"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -168,7 +168,7 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Employees" id="S7a-eg-oSN">
-                        <barButtonItem key="rightBarButtonItem" style="plain" id="1v2-zq-eXA">
+                        <barButtonItem key="rightBarButtonItem" id="1v2-zq-eXA">
                             <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="contactAdd" lineBreakMode="middleTruncation" id="TE4-Tx-GUw">
                                 <rect key="frame" x="337" y="11" width="22" height="22"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -393,7 +393,7 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Employees" id="0lB-HF-PLc">
-                        <barButtonItem key="rightBarButtonItem" style="plain" id="Wru-GW-rY2">
+                        <barButtonItem key="rightBarButtonItem" id="Wru-GW-rY2">
                             <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="contactAdd" lineBreakMode="middleTruncation" id="An7-Wb-Kc8">
                                 <rect key="frame" x="337" y="11" width="22" height="22"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>

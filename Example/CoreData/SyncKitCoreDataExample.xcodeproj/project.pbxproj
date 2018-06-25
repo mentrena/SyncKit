@@ -44,6 +44,7 @@
 		64D1D170208A0D5B00CF87AA /* QSSharedCompanyTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 64D1D16F208A0D5B00CF87AA /* QSSharedCompanyTableViewController.m */; };
 		64DFFAB11FED35F90072B8C3 /* QSMockKeyValueStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 64DFFAB01FED35F90072B8C3 /* QSMockKeyValueStore.m */; };
 		64E92B2920A7622F00AABA19 /* QSExample.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 64E92B2720A7622F00AABA19 /* QSExample.xcdatamodeld */; };
+		64F9C4B320E1135F004C524B /* Launch.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 64F9C4B220E1135F004C524B /* Launch.storyboard */; };
 		6D9FA33A532397E8B587238A /* Pods_SyncKitCoreDataExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4EDB74EC733B7C608C0E05C8 /* Pods_SyncKitCoreDataExample.framework */; };
 		873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 873B8AEA1B1F5CCA007FD442 /* Main.storyboard */; };
 /* End PBXBuildFile section */
@@ -126,6 +127,7 @@
 		64DFFAAF1FED35F90072B8C3 /* QSMockKeyValueStore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QSMockKeyValueStore.h; sourceTree = "<group>"; };
 		64DFFAB01FED35F90072B8C3 /* QSMockKeyValueStore.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QSMockKeyValueStore.m; sourceTree = "<group>"; };
 		64E92B2820A7622F00AABA19 /* QSExample.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = QSExample.xcdatamodel; sourceTree = "<group>"; };
+		64F9C4B220E1135F004C524B /* Launch.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Launch.storyboard; sourceTree = "<group>"; };
 		6C938FE36198D6DFB38A45ED /* Pods-SyncKit_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SyncKit_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-SyncKit_Example/Pods-SyncKit_Example.release.xcconfig"; sourceTree = "<group>"; };
 		7CFCC3E7A2C4B902AC907709 /* Pods-SyncKit_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SyncKit_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-SyncKit_Tests/Pods-SyncKit_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		873B8AEA1B1F5CCA007FD442 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
@@ -210,6 +212,7 @@
 				6003F59C195388D20070C39A /* QSAppDelegate.h */,
 				6003F59D195388D20070C39A /* QSAppDelegate.m */,
 				873B8AEA1B1F5CCA007FD442 /* Main.storyboard */,
+				64F9C4B220E1135F004C524B /* Launch.storyboard */,
 				6003F5A8195388D20070C39A /* Images.xcassets */,
 				6003F594195388D20070C39A /* Supporting Files */,
 				64AEEFFE1D4E8E01003729A5 /* QSCompanyTableViewController.h */,
@@ -427,6 +430,7 @@
 				873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */,
 				6003F5A9195388D20070C39A /* Images.xcassets in Resources */,
 				6003F598195388D20070C39A /* InfoPlist.strings in Resources */,
+				64F9C4B320E1135F004C524B /* Launch.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

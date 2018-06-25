@@ -29,8 +29,8 @@
 		64F292961ECEA7F0000026F1 /* QSEmployeeTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 64F292931ECEA7F0000026F1 /* QSEmployeeTableViewController.m */; };
 		64F292981ECEA7F8000026F1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 64F292971ECEA7F8000026F1 /* Assets.xcassets */; };
 		64F2929C1ECEA81F000026F1 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 64F2929B1ECEA81F000026F1 /* main.m */; };
-		64F292A31ECEA84D000026F1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 64F2929F1ECEA84D000026F1 /* LaunchScreen.storyboard */; };
 		64F292A41ECEA84D000026F1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 64F292A11ECEA84D000026F1 /* Main.storyboard */; };
+		64F9C4B520E11EB1004C524B /* Launch.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 64F9C4B420E11EB0004C524B /* Launch.storyboard */; };
 		B0ED799072F5D53D2F65A4D2 /* Pods_SyncKitRealmExampleTodayExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C31B39B6CDFE570FA781FDB4 /* Pods_SyncKitRealmExampleTodayExtension.framework */; };
 		E967C2B274D72DA9C482150E /* Pods_SyncKitRealmExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC6426B0AAB9F55C9EE92C93 /* Pods_SyncKitRealmExample.framework */; };
 /* End PBXBuildFile section */
@@ -110,8 +110,8 @@
 		64F292971ECEA7F8000026F1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = SyncKitRealmExample/Assets.xcassets; sourceTree = SOURCE_ROOT; };
 		64F292991ECEA818000026F1 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = SyncKitRealmExample/Info.plist; sourceTree = SOURCE_ROOT; };
 		64F2929B1ECEA81F000026F1 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = SyncKitRealmExample/main.m; sourceTree = SOURCE_ROOT; };
-		64F292A01ECEA84D000026F1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = SyncKitRealmExample/Base.lproj/LaunchScreen.storyboard; sourceTree = SOURCE_ROOT; };
 		64F292A21ECEA84D000026F1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = SyncKitRealmExample/Base.lproj/Main.storyboard; sourceTree = SOURCE_ROOT; };
+		64F9C4B420E11EB0004C524B /* Launch.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Launch.storyboard; sourceTree = "<group>"; };
 		87C33DDCB8801A33C99C0236 /* libPods-SyncKitRealm.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SyncKitRealm.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		912D5D1C21FE8F2AB9386170 /* libPods-SyncKitRealmTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SyncKitRealmTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		95D81CAC8BF7B7017C791AD8 /* Pods-SyncKitRealm.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SyncKitRealm.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SyncKitRealm/Pods-SyncKitRealm.debug.xcconfig"; sourceTree = "<group>"; };
@@ -242,7 +242,7 @@
 				641859BE20BC73E500BE4583 /* QSCompanyTableViewCell.m */,
 				64F292971ECEA7F8000026F1 /* Assets.xcassets */,
 				64F292991ECEA818000026F1 /* Info.plist */,
-				64F2929F1ECEA84D000026F1 /* LaunchScreen.storyboard */,
+				64F9C4B420E11EB0004C524B /* Launch.storyboard */,
 				64F292A11ECEA84D000026F1 /* Main.storyboard */,
 				64D5D2C21EBB58630005BFCE /* Supporting Files */,
 			);
@@ -423,9 +423,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				64F292A31ECEA84D000026F1 /* LaunchScreen.storyboard in Resources */,
 				64F292981ECEA7F8000026F1 /* Assets.xcassets in Resources */,
 				64F292A41ECEA84D000026F1 /* Main.storyboard in Resources */,
+				64F9C4B520E11EB1004C524B /* Launch.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -565,14 +565,6 @@
 				6453373B1F54610A00B338B5 /* Base */,
 			);
 			name = MainInterface.storyboard;
-			sourceTree = "<group>";
-		};
-		64F2929F1ECEA84D000026F1 /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				64F292A01ECEA84D000026F1 /* Base */,
-			);
-			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
 		};
 		64F292A11ECEA84D000026F1 /* Main.storyboard */ = {
