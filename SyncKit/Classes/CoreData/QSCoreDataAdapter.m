@@ -170,19 +170,10 @@ static const NSString * QSCoreDataAdapterShareRelationshipKey = @"com.syncKit.sh
             NSError *error = nil;
             NSString *primaryKey = [self identifierFieldNameForEntityOfType:entityDescription.name];
             NSArray *objectIDs;
-            if (primaryKey) {
-                //Get object identifiers using primary key
-                objectIDs = [self.targetContext executeFetchRequestWithEntityName:entityDescription.name predicate:nil fetchLimit:0 resultType:NSDictionaryResultType propertiesToFetch:@[primaryKey] error:&error];
-                objectIDs = [objectIDs valueForKey:primaryKey];
-            } else {
-                //Get objectIDs
-                objectIDs = [self.targetContext executeFetchRequestWithEntityName:entityDescription.name predicate:nil fetchLimit:0 resultType:NSManagedObjectIDResultType error:&error];
-                NSMutableArray *objectIDStrings = [NSMutableArray array];
-                [objectIDs enumerateObjectsUsingBlock:^(NSManagedObjectID *  _Nonnull objectID, NSUInteger idx, BOOL * _Nonnull stop) {
-                    [objectIDStrings addObject:[objectID.URIRepresentation absoluteString]];
-                }];
-                objectIDs = [objectIDStrings copy];
-            }
+            
+            //Get object identifiers using primary key
+            objectIDs = [self.targetContext executeFetchRequestWithEntityName:entityDescription.name predicate:nil fetchLimit:0 resultType:NSDictionaryResultType propertiesToFetch:@[primaryKey] error:&error];
+            objectIDs = [objectIDs valueForKey:primaryKey];
             
             //Create records
             [self.privateContext performBlockAndWait:^{
@@ -214,6 +205,8 @@ static const NSString * QSCoreDataAdapterShareRelationshipKey = @"com.syncKit.sh
             Class entityClass = NSClassFromString(entityDescription.managedObjectClassName);
             if ([entityClass conformsToProtocol:@protocol(QSPrimaryKey)]) {
                 primaryKeys[entityDescription.name] = [entityClass primaryKey];
+            } else {
+                NSAssert(false, @"QSPrimaryKey protocol not implemented for class: %@", entityDescription.managedObjectClassName);
             }
         }
         self.entityPrimaryKeys = [primaryKeys copy];
@@ -259,11 +252,6 @@ static const NSString * QSCoreDataAdapterShareRelationshipKey = @"com.syncKit.sh
 
 #pragma mark - Object identification
 
-- (BOOL)useUniqueIdentifierForEntityWithType:(NSString *)entityType
-{
-    return self.entityPrimaryKeys[entityType] != nil;
-}
-
 - (NSString *)identifierFieldNameForEntityOfType:(NSString *)entityType
 {
     return self.entityPrimaryKeys[entityType];
@@ -282,10 +270,8 @@ static const NSString * QSCoreDataAdapterShareRelationshipKey = @"com.syncKit.sh
 - (NSString *)uniqueIdentifierForObjectFromRecord:(CKRecord *)record
 {
     NSString *entityType = record.recordType;
-    if ([self useUniqueIdentifierForEntityWithType:entityType]) {
-        return [record.recordID.recordName substringFromIndex:entityType.length + 1];
-    }
-    return nil;
+    
+    return [record.recordID.recordName substringFromIndex:entityType.length + 1];
 }
 
 #pragma mark - Persistence management
@@ -301,12 +287,8 @@ static const NSString * QSCoreDataAdapterShareRelationshipKey = @"com.syncKit.sh
     syncedEntity.state = @(QSSyncedEntityStateNew);
     syncedEntity.updated = [NSDate date];
     syncedEntity.originObjectID = identifier;
-    if ([self useUniqueIdentifierForEntityWithType:entityName]) {
-        syncedEntity.identifier = [NSString stringWithFormat:@"%@.%@", entityName, identifier];
-    } else {
-        NSUUID *uuid = [NSUUID UUID];
-        syncedEntity.identifier = [NSString stringWithFormat:@"%@.%@", entityName, [uuid UUIDString]];
-    }
+    
+    syncedEntity.identifier = [NSString stringWithFormat:@"%@.%@", entityName, identifier];
 }
 
 - (NSArray *)entitiesWithState:(QSSyncedEntityState)state
@@ -532,12 +514,8 @@ static const NSString * QSCoreDataAdapterShareRelationshipKey = @"com.syncKit.sh
     __block NSString *objectID = nil;
     [self.targetImportContext performBlockAndWait:^{
         NSManagedObject *object = [self insertManagedObjectWithEntityName:entityName];
-        if ([self useUniqueIdentifierForEntityWithType:entityName]) {
-            objectID = [self uniqueIdentifierForObjectFromRecord:record];
-            [object setValue:objectID forKey:[self identifierFieldNameForEntityOfType:entityName]];
-        } else {
-            objectID = [object.objectID.URIRepresentation absoluteString];
-        }
+        objectID = [self uniqueIdentifierForObjectFromRecord:record];
+        [object setValue:objectID forKey:[self identifierFieldNameForEntityOfType:entityName]];
     }];
     
     syncedEntity.originObjectID = objectID;
@@ -825,48 +803,20 @@ static const NSString * QSCoreDataAdapterShareRelationshipKey = @"com.syncKit.sh
 
 - (NSManagedObject *)managedObjectWithEntityName:(NSString *)entityName identifier:(NSString *)identifier context:(NSManagedObjectContext *)objectContext
 {
-    if ([self useUniqueIdentifierForEntityWithType:entityName]) {
-        return [self managedObjectWithEntityName:entityName
-                                             key:[self identifierFieldNameForEntityOfType:entityName]
-                                      identifier:identifier
-                                         context:objectContext];
-    } else {
-        return [self managedObjectForIDURIRepresentationString:identifier context:objectContext];
-    }
+    
+    return [self managedObjectWithEntityName:entityName
+                                         key:[self identifierFieldNameForEntityOfType:entityName]
+                                  identifier:identifier
+                                     context:objectContext];
 }
 
 - (NSArray<NSManagedObject *> *)managedObjectsWithEntityName:(NSString *)entityName identifiers:(NSArray<NSString *> *)identifiers context:(NSManagedObjectContext *)objectContext
 {
-    if ([self useUniqueIdentifierForEntityWithType:entityName]) {
-        NSString *identifierKey = [self identifierFieldNameForEntityOfType:entityName];
-        NSError *error = nil;
-        NSArray *results = [objectContext executeFetchRequestWithEntityName:entityName predicate:[NSPredicate predicateWithFormat:@"%K IN %@", identifierKey, identifiers] error:&error];
-        return results;
-    } else {
-        NSMutableArray *objects = [NSMutableArray array];
-        for (NSString *identifier in identifiers) {
-            NSManagedObject *object = [self managedObjectForIDURIRepresentationString:identifier context:objectContext];
-            if (object) {
-                [objects addObject:object];
-            }
-        }
-        return objects;
-    }
-}
-
-- (NSManagedObject *)managedObjectForIDURIRepresentationString:(NSString *)objectIDURIString context:(NSManagedObjectContext *)objectContext
-{
-    if (!objectIDURIString) {
-        return nil;
-    }
     
-    NSManagedObjectID *originalObjectID = [objectContext.persistentStoreCoordinator managedObjectIDForURIRepresentation:[NSURL URLWithString:objectIDURIString]];
-    if (originalObjectID.temporaryID) {
-        return nil;
-    }
-    
-    NSManagedObject *originalObject = [objectContext objectWithID:originalObjectID];
-    return originalObject;
+    NSString *identifierKey = [self identifierFieldNameForEntityOfType:entityName];
+    NSError *error = nil;
+    NSArray *results = [objectContext executeFetchRequestWithEntityName:entityName predicate:[NSPredicate predicateWithFormat:@"%K IN %@", identifierKey, identifiers] error:&error];
+    return results;
 }
 
 - (NSManagedObject *)managedObjectWithEntityName:(NSString *)entityName key:(NSString *)identifierKey identifier:(NSString *)identifier context:(NSManagedObjectContext *)objectContext
