@@ -77,9 +77,12 @@ public class QSFetchZoneChangesOperation: QSCloudKitSynchronizerOperation {
         operation.recordChangedBlock = { record in
             
             self.dispatchQueue.async {
-                if self.deviceIdentifier != record[QSCloudKitDeviceUUIDKey] as? String {
+                
+                let isShare = record is CKShare
+                if self.deviceIdentifier != record[QSCloudKitDeviceUUIDKey] as? String || isShare {
                     
-                    if let version = record[QSCloudKitModelCompatibilityVersionKey] as? Int,
+                    if !isShare,
+                        let version = record[QSCloudKitModelCompatibilityVersionKey] as? Int,
                         self.modelVersion > 0 && version > self.modelVersion {
                         
                         higherModelVersionFound = true
