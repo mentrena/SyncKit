@@ -13,7 +13,7 @@ SyncKit uses introspection to work with any model. It sits next to your Core Dat
 ## More info
 
 1. [Basic Info](https://github.com/mentrena/SyncKit/wiki)
-2. [Installation](https://github.com/mentrena/SyncKit/Installation)
+2. [Installation](https://github.com/mentrena/SyncKit/wiki/Installation)
 3. [Core Data](https://github.com/mentrena/SyncKit/wiki/Core-Data)
     1. [Migrations](https://github.com/mentrena/SyncKit/wiki/Core-Data-migrations)
 4. [Realm](https://github.com/mentrena/SyncKit/wiki/Realm)
