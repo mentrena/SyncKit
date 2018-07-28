@@ -225,13 +225,13 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pGJ-Gr-ls0">
-                                            <rect key="frame" x="16" y="11" width="295" height="21"/>
+                                            <rect key="frame" x="20" y="11" width="516" height="21"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="252" horizontalCompressionResistancePriority="752" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gNk-TL-8Sf">
-                                            <rect key="frame" x="319" y="6" width="40" height="30"/>
+                                            <rect key="frame" x="544" y="6" width="40" height="30"/>
                                             <state key="normal" title="Share"/>
                                             <connections>
                                                 <action selector="didTapShare:" destination="wr3-GO-oip" eventType="touchUpInside" id="Tph-a2-f11"/>
