@@ -10,7 +10,7 @@ import UIKit
 import CoreData
 import UIKit
 
-class QSEmployeeSwiftTableViewController: UITableViewController, NSFetchedResultsControllerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class QSEmployeeTableViewController: UITableViewController, NSFetchedResultsControllerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     var managedObjectContext: NSManagedObjectContext?
     var company: QSCompany?
     var canWrite = false

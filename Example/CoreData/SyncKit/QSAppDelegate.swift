@@ -1,4 +1,3 @@
-//  Converted to Swift 4 by Swiftify v4.1.6781 - https://objectivec2swift.com/
 //
 //  QSAppDelegate.swift
 //  SyncKit
@@ -23,18 +22,18 @@ class QSAppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         let tabBarController = window?.rootViewController as? UITabBarController
         let navController = tabBarController?.viewControllers![0] as? UINavigationController
-        let companyVC = navController?.topViewController as? QSCompanySwiftTableViewController
+        let companyVC = navController?.topViewController as? QSCompanyTableViewController
         if (companyVC != nil) {
             (companyVC)?.managedObjectContext = managedObjectContext
             (companyVC)?.synchronizer = synchronizer
         }
         let navController2 = tabBarController?.viewControllers![1] as? UINavigationController
-        let sharedCompanyVC = navController2?.topViewController as? QSSharedCompanySwiftTableViewController
+        let sharedCompanyVC = navController2?.topViewController as? QSSharedCompanyTableViewController
         if (sharedCompanyVC != nil) {
             (sharedCompanyVC)?.synchronizer = sharedSynchronizer
         }
         let navController3 = tabBarController?.viewControllers![2] as? UINavigationController
-        let settingsVC = navController3?.topViewController as? QSSettingsSwiftTableViewController
+        let settingsVC = navController3?.topViewController as? QSSettingsTableViewController
         if (settingsVC != nil) {
             settingsVC?.privateSynchronizer = synchronizer
             settingsVC?.sharedSynchronizer = sharedSynchronizer

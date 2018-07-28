@@ -9,7 +9,7 @@
 import UIKit
 import SyncKit
 
-class QSSharedCompanySwiftTableViewController: UITableViewController, QSCoreDataMultiFetchedResultsControllerDelegate, UICloudSharingControllerDelegate {
+class QSSharedCompanyTableViewController: UITableViewController, QSCoreDataMultiFetchedResultsControllerDelegate, UICloudSharingControllerDelegate {
     
     var synchronizer: QSCloudKitSynchronizer?
     
@@ -52,7 +52,7 @@ class QSSharedCompanySwiftTableViewController: UITableViewController, QSCoreData
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if (segue.identifier == "showEmployees") {
-            guard let employeeTableViewController = segue.destination as? QSEmployeeSwiftTableViewController else {
+            guard let employeeTableViewController = segue.destination as? QSEmployeeTableViewController else {
                 fatalError("Application storyboard mis-configuration")
             }
             

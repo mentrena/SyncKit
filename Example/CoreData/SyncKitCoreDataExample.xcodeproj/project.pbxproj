@@ -38,7 +38,7 @@
 		6CA1AC67210D046A0058F7F2 /* QSCompany+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CA1AC66210D046A0058F7F2 /* QSCompany+CoreDataProperties.swift */; };
 		6CA1AC69210D04B80058F7F2 /* QSEmployee.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CA1AC68210D04B80058F7F2 /* QSEmployee.swift */; };
 		6CA1AC6B210D04DA0058F7F2 /* QSEmployee+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CA1AC6A210D04DA0058F7F2 /* QSEmployee+CoreDataProperties.swift */; };
-		6CA1AC71210D05D80058F7F2 /* QSSharedCompanySwiftTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CA1AC6C210D05D80058F7F2 /* QSSharedCompanySwiftTableViewController.swift */; };
+		6CA1AC71210D05D80058F7F2 /* QSSharedCompanyTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CA1AC6C210D05D80058F7F2 /* QSSharedCompanyTableViewController.swift */; };
 		6CA1AC72210D05D80058F7F2 /* QSCompanyTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CA1AC6D210D05D80058F7F2 /* QSCompanyTableViewController.swift */; };
 		6CA1AC73210D05D80058F7F2 /* QSCompanyTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CA1AC6E210D05D80058F7F2 /* QSCompanyTableViewCell.swift */; };
 		6CA1AC74210D05D80058F7F2 /* QSSettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CA1AC6F210D05D80058F7F2 /* QSSettingsTableViewController.swift */; };
@@ -105,12 +105,13 @@
 		64DFFAB01FED35F90072B8C3 /* QSMockKeyValueStore.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QSMockKeyValueStore.m; sourceTree = "<group>"; };
 		64E92B2820A7622F00AABA19 /* QSExample.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = QSExample.xcdatamodel; sourceTree = "<group>"; };
 		64F9C4B220E1135F004C524B /* Launch.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Launch.storyboard; sourceTree = "<group>"; };
+		6C17B751210D25DE00C4EE9E /* SyncKitCoreDataExample-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SyncKitCoreDataExample-Bridging-Header.h"; sourceTree = "<group>"; };
 		6C901FC5210D02C2004154FE /* QSCompany.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QSCompany.swift; sourceTree = "<group>"; };
 		6C938FE36198D6DFB38A45ED /* Pods-SyncKit_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SyncKit_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-SyncKit_Example/Pods-SyncKit_Example.release.xcconfig"; sourceTree = "<group>"; };
 		6CA1AC66210D046A0058F7F2 /* QSCompany+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "QSCompany+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		6CA1AC68210D04B80058F7F2 /* QSEmployee.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QSEmployee.swift; sourceTree = "<group>"; };
 		6CA1AC6A210D04DA0058F7F2 /* QSEmployee+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "QSEmployee+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		6CA1AC6C210D05D80058F7F2 /* QSSharedCompanySwiftTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QSSharedCompanySwiftTableViewController.swift; sourceTree = "<group>"; };
+		6CA1AC6C210D05D80058F7F2 /* QSSharedCompanyTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QSSharedCompanyTableViewController.swift; sourceTree = "<group>"; };
 		6CA1AC6D210D05D80058F7F2 /* QSCompanyTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QSCompanyTableViewController.swift; sourceTree = "<group>"; };
 		6CA1AC6E210D05D80058F7F2 /* QSCompanyTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QSCompanyTableViewCell.swift; sourceTree = "<group>"; };
 		6CA1AC6F210D05D80058F7F2 /* QSSettingsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QSSettingsTableViewController.swift; sourceTree = "<group>"; };
@@ -204,7 +205,7 @@
 				6CA1AC6D210D05D80058F7F2 /* QSCompanyTableViewController.swift */,
 				6CA1AC70210D05D80058F7F2 /* QSEmployeeTableViewController.swift */,
 				6CA1AC6E210D05D80058F7F2 /* QSCompanyTableViewCell.swift */,
-				6CA1AC6C210D05D80058F7F2 /* QSSharedCompanySwiftTableViewController.swift */,
+				6CA1AC6C210D05D80058F7F2 /* QSSharedCompanyTableViewController.swift */,
 				6CA1AC6F210D05D80058F7F2 /* QSSettingsTableViewController.swift */,
 			);
 			name = "Example for SyncKit";
@@ -214,6 +215,7 @@
 		6003F594195388D20070C39A /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				6C17B751210D25DE00C4EE9E /* SyncKitCoreDataExample-Bridging-Header.h */,
 				6003F595195388D20070C39A /* SyncKitCoreDataExample-Info.plist */,
 				6003F596195388D20070C39A /* InfoPlist.strings */,
 			);
@@ -511,7 +513,7 @@
 				6CA1AC67210D046A0058F7F2 /* QSCompany+CoreDataProperties.swift in Sources */,
 				64E92B2920A7622F00AABA19 /* QSExample.xcdatamodeld in Sources */,
 				6CA1AC79210D10890058F7F2 /* QSAppDelegate.swift in Sources */,
-				6CA1AC71210D05D80058F7F2 /* QSSharedCompanySwiftTableViewController.swift in Sources */,
+				6CA1AC71210D05D80058F7F2 /* QSSharedCompanyTableViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,4 +1,3 @@
-//  Converted to Swift 4 by Swiftify v4.1.6781 - https://objectivec2swift.com/
 //
 //  QSCompanyTableViewCell.swift
 //  SyncKitCoreDataExample

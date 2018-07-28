@@ -1,4 +1,3 @@
-//  Converted to Swift 4 by Swiftify v4.1.6781 - https://objectivec2swift.com/
 //
 //  QSSettingsTableViewController.swift
 //  SyncKitCoreDataExample
@@ -10,7 +9,7 @@
 import SyncKit
 import UIKit
 
-class QSSettingsSwiftTableViewController: UITableViewController {
+class QSSettingsTableViewController: UITableViewController {
     var privateSynchronizer: QSCloudKitSynchronizer?
     var sharedSynchronizer: QSCloudKitSynchronizer?
 
