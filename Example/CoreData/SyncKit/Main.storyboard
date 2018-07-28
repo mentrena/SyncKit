@@ -32,7 +32,7 @@
         <!--Companies-->
         <scene sceneID="pVU-Tz-5Sa">
             <objects>
-                <tableViewController id="Txq-cJ-S0W" customClass="QSCompanyTableViewController" sceneMemberID="viewController">
+                <tableViewController id="Txq-cJ-S0W" customClass="QSCompanySwiftTableViewController" customModule="SyncKitCoreDataExample" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="1Gx-m8-bRe">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -43,7 +43,7 @@
                             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         </view>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="cell" id="Sod-3D-ReU" customClass="QSCompanyTableViewCell">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="cell" id="Sod-3D-ReU" customClass="QSCompanySwiftTableViewCell" customModule="SyncKitCoreDataExample" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="28" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Sod-3D-ReU" id="Lsa-bd-lgd">
@@ -133,7 +133,7 @@
         <!--Employees-->
         <scene sceneID="XB6-Uh-1qm">
             <objects>
-                <tableViewController id="6qg-F4-NEj" customClass="QSEmployeeTableViewController" sceneMemberID="viewController">
+                <tableViewController id="6qg-F4-NEj" customClass="QSEmployeeSwiftTableViewController" customModule="SyncKitCoreDataExample" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="91P-td-re9">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -206,7 +206,7 @@
         <!--Companies-->
         <scene sceneID="jsm-kV-6Od">
             <objects>
-                <tableViewController id="Yra-Wm-X8I" customClass="QSSharedCompanyTableViewController" sceneMemberID="viewController">
+                <tableViewController id="Yra-Wm-X8I" customClass="QSSharedCompanySwiftTableViewController" customModule="SyncKitCoreDataExample" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="yAp-B3-ZWX">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -217,7 +217,7 @@
                             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         </view>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="cell" id="wr3-GO-oip" customClass="QSCompanyTableViewCell">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="cell" id="wr3-GO-oip" customClass="QSCompanySwiftTableViewCell" customModule="SyncKitCoreDataExample" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="28" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="wr3-GO-oip" id="JB6-6H-G6B">
@@ -298,7 +298,7 @@
         <!--Root View Controller-->
         <scene sceneID="oaP-dI-cM2">
             <objects>
-                <tableViewController id="gg0-8S-CbY" customClass="QSSettingsTableViewController" sceneMemberID="viewController">
+                <tableViewController id="gg0-8S-CbY" customClass="QSSettingsSwiftTableViewController" customModule="SyncKitCoreDataExample" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="ODL-jl-bHI">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -358,7 +358,7 @@
         <!--Employees-->
         <scene sceneID="rGT-n3-xz9">
             <objects>
-                <tableViewController id="Ktc-iD-4dz" customClass="QSEmployeeTableViewController" sceneMemberID="viewController">
+                <tableViewController id="Ktc-iD-4dz" customClass="QSEmployeeSwiftTableViewController" customModule="SyncKitCoreDataExample" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="AE5-jl-K0f">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
