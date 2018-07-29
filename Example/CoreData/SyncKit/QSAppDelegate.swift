@@ -10,9 +10,8 @@ import SyncKit
 import UIKit
 
 @UIApplicationMain
-class QSAppDelegate: UIResponder, UIApplicationDelegate {
+class QSAppDelegate1: UIResponder, UIApplicationDelegate {
     
-
     var window: UIWindow?
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions:
@@ -46,9 +45,6 @@ class QSAppDelegate: UIResponder, UIApplicationDelegate {
             print(payload!)
         }
         
-//        let appDefaults = NSDictionary(object: Int(1), forKey: "icloudEnabled" as NSCopying) as! [String : Any]
-//        UserDefaults.standard.register(defaults: appDefaults)
-//        self.iCloudAccountIsSignedIn()
         return true
     }
     
@@ -89,30 +85,27 @@ class QSAppDelegate: UIResponder, UIApplicationDelegate {
 
     
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any]) {
- 
-//        let cloudKitNotification = CKNotification(fromRemoteNotificationDictionary: userInfo)
-//        let alertBody = cloudKitNotification.alertBody
-//        print("alertBody = \(alertBody)")
-//        if cloudKitNotification.notificationType == .query {
-//            let recordID: CKRecordID? = (cloudKitNotification as? CKQueryNotification)?.recordID
-//        }
-//        // Detect if APN is received on Background or Foreground state
-//        if application.applicationState == .inactive {
-//            print("Application is inactive")
-//        } else if application.applicationState == .active {
-//            print("Application is active")
-//        }
-
-//        let pushCode = userInfo["pushCode"] as? Int
-//        print(String(format: "Silent Push Code Notification: %li", pushCode!))
+        let cloudKitNotification = CKNotification(fromRemoteNotificationDictionary: userInfo)
+        let alertBody = cloudKitNotification.alertBody
+        if cloudKitNotification.notificationType == .query {
+            let recordID: CKRecordID? = (cloudKitNotification as? CKQueryNotification)?.recordID
+        }
+        // Detect if APN is received on Background or Foreground state
+        if application.applicationState == .inactive {
+            print("Application is inactive")
+        } else if application.applicationState == .active {
+            print("Application is active")
+        }
+        let pushCode = userInfo["pushCode"] as! Int
+        print(String(format: "Silent Push Code Notification: %li", pushCode))
         let aps = userInfo["aps"] as? [AnyHashable : Any]
         let alertMessage = aps?["alert"] as? String
-        print("alertMessage = \(alertMessage)")
-        //self.synchronizer.synchronize(completion: nil)
-        //self.sharedSynchronizer.synchronize(completion: nil)
+        print("alertMessage: \(alertMessage, alertBody)")
+        synchronizer?.synchronize(completion: nil)
+        sharedSynchronizer?.synchronize(completion: nil)
         print("Remote Notification received")
-
     }
+    
 // MARK: - Core Data stack
     
     private lazy var applicationDocumentsDirectory: URL = {
@@ -158,17 +151,17 @@ class QSAppDelegate: UIResponder, UIApplicationDelegate {
     lazy var managedObjectContext: NSManagedObjectContext = {
 
         var managedObjectContext: NSManagedObjectContext?
-//        if #available(iOS 10.0, *){
-//
-//            managedObjectContext = self.persistentContainer.viewContext
-//        }
-//        else{
+        if #available(iOS 10.0, *){
+
+            managedObjectContext = self.persistentContainer.viewContext
+        }
+        else{
             // Returns the managed object context for the application (which is already bound to the persistent store coordinator for the application.) This property is optional since there are legitimate error conditions that could cause the creation of the context to fail.
             let coordinator = self.persistentStoreCoordinator
             managedObjectContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
             managedObjectContext?.persistentStoreCoordinator = coordinator
             
-//        }
+        }
         return managedObjectContext!
     }()
     
@@ -202,52 +195,7 @@ class QSAppDelegate: UIResponder, UIApplicationDelegate {
         return container
     }()
     
-//    private(set) lazy var managedObjectContext: NSManagedObjectContext = {
-//        let managedObjectContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
-//
-//        managedObjectContext.persistentStoreCoordinator = self.persistentStoreCoordinator
-//
-//        return managedObjectContext
-//    }()
-
-
     private(set) var sharedManagedObjectContext: NSManagedObjectContext?
-        
-//    private(set) var managedObjectModel: NSManagedObjectModel = {
-//        guard let modelURL = Bundle.main.url(forResource: "QSExample", withExtension: "momd") else {
-//            fatalError("Unable to Find Data Model")
-//        }
-//
-//        guard let managedObjectModel = NSManagedObjectModel(contentsOf: modelURL) else {
-//            fatalError("Unable to Load Data Model")
-//        }
-//
-//        return managedObjectModel
-//    }()
-    
-    
-    
-//    private(set) lazy var persistentStoreCoordinator: NSPersistentStoreCoordinator = {
-//        let persistentStoreCoordinator = NSPersistentStoreCoordinator(managedObjectModel: self.managedObjectModel)
-//
-//        let fileManager = FileManager.default
-//        let storeName = "QSExample.sqlite"
-//
-//        let documentsDirectoryURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
-//
-//        let persistentStoreURL = documentsDirectoryURL.appendingPathComponent(storeName)
-//
-//        do {
-//            try persistentStoreCoordinator.addPersistentStore(ofType: NSSQLiteStoreType,
-//                                                              configurationName: nil,
-//                                                              at: persistentStoreURL,
-//                                                              options: nil)
-//        } catch {
-//            fatalError("Unable to Load Persistent Store")
-//        }
-//
-//        return persistentStoreCoordinator
-//    }()
     
     private(set) var sharedPersistentStoreCoordinator: NSPersistentStoreCoordinator?
 
@@ -267,38 +215,6 @@ class QSAppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
     
-//    func saveContext() {
-//        let managedObjectContext: NSManagedObjectContext? = self.managedObjectContext
-//        if managedObjectContext != nil {
-//            let error: Error? = nil
-//            if managedObjectContext?.hasChanges ?? false && (try? managedObjectContext?.save()) == nil {
-//                // Replace this implementation with code to handle the error appropriately.
-//                // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-//                if let anError = error, let anInfo = (error as NSError?)?.userInfo {
-//                    print("Unresolved error \(anError), \(anInfo)")
-//                }
-//                abort()
-//            }
-//        }
-//    }
-    
-// MARK: - Core Data Synchronizer
-    
-    
-//    lazy var synchronizer: QSCloudKitSynchronizer = {
-//
-//        if self.iCloudEnabledByUser() && self.iCloudAccountIsSignedIn() {
-//            print("** iCloud available SYNCHRONIZER! **")
-//        } else {
-//            print("** iCloud not available **")
-//        }
-//
-//        guard let sync = QSCloudKitSynchronizer.cloudKitPrivateSynchronizer(withContainerName: "iCloud.ch.jeko.SyncKitCoreDataExample", managedObjectContext: self.managedObjectContext) else {
-//            fatalError("Unable to create synchronizer")
-//        }
-//
-//        return sync
-//    }()
     
     var synchronizer: QSCloudKitSynchronizer? {
 

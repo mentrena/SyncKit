@@ -200,7 +200,7 @@ class QSEmployeeTableViewController: UITableViewController, NSFetchedResultsCont
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         let image = info["UIImagePickerControllerOriginalImage"] as? UIImage
         let resizedImage: UIImage? = self.image(with: image, scaledTo: CGSize(width: 150, height: 150))
-        editingEmployee?.photo = UIImagePNGRepresentation(resizedImage!) as! NSData
+        editingEmployee?.photo = UIImagePNGRepresentation(resizedImage!) as NSData?
         managedObjectContext?.perform({
             try? self.managedObjectContext?.save()
         })

@@ -11,7 +11,7 @@ import SyncKit
 
 class QSCompanyTableViewController: UITableViewController, NSFetchedResultsControllerDelegate, UICloudSharingControllerDelegate {
 
-    let appDelegate = UIApplication.shared.delegate as? QSAppDelegate
+//    let appDelegate = UIApplication.shared.delegate as? QSAppDelegate
     
     var managedObjectContext: NSManagedObjectContext?
     var synchronizer: QSCloudKitSynchronizer?
@@ -28,7 +28,8 @@ class QSCompanyTableViewController: UITableViewController, NSFetchedResultsContr
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        managedObjectContext = appDelegate?.managedObjectContext
+//        managedObjectContext = appDelegate?.managedObjectContext
+//        synchronizer = appDelegate?.synchronizer
         setupFetchedResultsController()
     }
 
@@ -56,7 +57,7 @@ class QSCompanyTableViewController: UITableViewController, NSFetchedResultsContr
 
     func createCompanyWithName(name: String) {
         
-        var company = NSEntityDescription.insertNewObject(forEntityName: "QSCompany", into: self.managedObjectContext!) as? QSCompany
+        let company = NSEntityDescription.insertNewObject(forEntityName: "QSCompany", into: self.managedObjectContext!) as? QSCompany
             company?.identifier = UUID().uuidString
             company?.name = name
             do {
@@ -219,6 +220,7 @@ class QSCompanyTableViewController: UITableViewController, NSFetchedResultsContr
             if error != nil {
                 var alertController: UIAlertController? = nil
                 if let anError = error {
+                    print("Sync Error : \(anError)")
                     alertController = UIAlertController(title: "Sync Error", message: "Error: \(anError)", preferredStyle: .alert)
                 }
                 alertController?.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
