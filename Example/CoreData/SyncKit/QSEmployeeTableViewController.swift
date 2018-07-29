@@ -1,5 +1,5 @@
 //
-//  QSEmployeeSwiftTableViewController.swift
+//  QSEmployeeTableViewController.swift
 //  SyncKitCoreDataExample
 //
 //  Created by Jérôme Haegeli on 25.07.18.

@@ -1,5 +1,5 @@
 //
-//  QSCompanySwiftTableViewController.swift
+//  QSCompanyTableViewController.swift
 //  SyncKitCoreDataExample
 //
 //  Created by Jérôme Haegeli on 24.07.18.
@@ -10,8 +10,6 @@ import UIKit
 import SyncKit
 
 class QSCompanyTableViewController: UITableViewController, NSFetchedResultsControllerDelegate, UICloudSharingControllerDelegate {
-
-//    let appDelegate = UIApplication.shared.delegate as? QSAppDelegate
     
     var managedObjectContext: NSManagedObjectContext?
     var synchronizer: QSCloudKitSynchronizer?
@@ -24,12 +22,10 @@ class QSCompanyTableViewController: UITableViewController, NSFetchedResultsContr
     
     @IBOutlet weak var loadingView: UIView?
     
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-//        managedObjectContext = appDelegate?.managedObjectContext
-//        synchronizer = appDelegate?.synchronizer
+        managedObjectContext = CoreDataStack.shared.persistentContainer.viewContext
+        synchronizer = CoreDataStack.shared.synchronizer
         setupFetchedResultsController()
     }
 
@@ -57,9 +53,9 @@ class QSCompanyTableViewController: UITableViewController, NSFetchedResultsContr
 
     func createCompanyWithName(name: String) {
         
-        let company = NSEntityDescription.insertNewObject(forEntityName: "QSCompany", into: self.managedObjectContext!) as? QSCompany
-            company?.identifier = UUID().uuidString
-            company?.name = name
+        let company = QSCompany(context: self.managedObjectContext!)
+            company.identifier = UUID().uuidString
+            company.name = name
             do {
                 try self.managedObjectContext?.save()
             } catch {

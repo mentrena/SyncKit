@@ -2,7 +2,7 @@
 //  QSSettingsTableViewController.swift
 //  SyncKitCoreDataExample
 //
-//  Created by Manuel Entrena on 04/05/2018.
+//  Created by Jérôme Haegeli on 25.07.18.
 //  Copyright © 2018 Manuel. All rights reserved.
 //
 

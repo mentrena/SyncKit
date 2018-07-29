@@ -2,7 +2,7 @@
 //  QSCompanyTableViewCell.swift
 //  SyncKitCoreDataExample
 //
-//  Created by Manuel Entrena on 15/02/2018.
+//  Created by Jérôme Haegeli on 25.07.18.
 //  Copyright © 2018 Manuel. All rights reserved.
 //
 
