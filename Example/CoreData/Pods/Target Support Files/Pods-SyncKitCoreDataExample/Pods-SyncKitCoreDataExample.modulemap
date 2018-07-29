@@ -1,0 +1,6 @@
+framework module Pods_SyncKitCoreDataExample {
+  umbrella header "Pods-SyncKitCoreDataExample-umbrella.h"
+
+  export *
+  module * { export * }
+}

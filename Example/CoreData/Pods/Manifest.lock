@@ -1,0 +1,25 @@
+PODS:
+  - OCMock (3.4.1)
+  - SyncKit/Core (0.6.3)
+  - SyncKit/CoreData (0.6.3):
+    - SyncKit/Core
+
+DEPENDENCIES:
+  - OCMock (~> 3.4)
+  - SyncKit/CoreData (from `../../`)
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - OCMock
+
+EXTERNAL SOURCES:
+  SyncKit:
+    :path: "../../"
+
+SPEC CHECKSUMS:
+  OCMock: 2cd0716969bab32a2283ff3a46fd26a8c8b4c5e3
+  SyncKit: 767d860a5cc0f946d22a8f3ccd41e3e57ab9b1cf
+
+PODFILE CHECKSUM: a8fa4fe7ff3788b9abf5b2c671ffd02a41e5ff51
+
+COCOAPODS: 1.5.2

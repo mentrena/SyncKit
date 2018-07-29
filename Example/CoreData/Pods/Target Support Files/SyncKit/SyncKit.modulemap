@@ -1,0 +1,6 @@
+framework module SyncKit {
+  umbrella header "SyncKit-umbrella.h"
+
+  export *
+  module * { export * }
+}
