@@ -10,8 +10,10 @@ import SyncKit
 import NotificationCenter
 import CloudKit
 
-/// the id for the CloudKit container
-let cloudKitContainerID = "iCloud.ch.jeko.SyncKit"
+
+let bundleID = Bundle.main.bundleIdentifier!
+let cloudKitContainerID = "iCloud." + bundleID
+let notificationID = "notification." + bundleID + ".cloudKitSync"
 
 /// extensions to make accessing notification names global to the application
 /// easier with the shorthand . notation
@@ -21,7 +23,7 @@ extension NSNotification.Name {
     /// data is synchronized from CloudKit so that view controllers can draw
     /// the new data
     static var cloudKitSync: NSNotification.Name {
-        return NSNotification.Name(rawValue: "notification.ch.jeko.SyncKit.cloudKitSync")
+        return NSNotification.Name(rawValue: notificationID)
     }
     
 }
@@ -58,6 +60,7 @@ class CoreDataStack: NSObject {
     /// application to it. This property is optional since there are legitimate
     /// error conditions that could cause the creation of the store to fail.
     lazy var persistentContainer: NSPersistentContainer = {
+        
         let container = NSPersistentContainer(name: "QSExample")
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error {

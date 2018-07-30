@@ -98,11 +98,6 @@ class QSAppDelegate: UIResponder, UIApplicationDelegate {
         } else if application.applicationState == .active {
             print("Application is active")
         }
-        let pushCode = userInfo["pushCode"] as! Int
-        print(String(format: "Silent Push Code Notification: %li", pushCode))
-        let aps = userInfo["aps"] as? [AnyHashable : Any]
-        let alertMessage = aps?["alert"] as? String
-        print("alertMessage: \(alertMessage, alertBody)")
         CoreDataStack.shared.synchronizer?.synchronize(completion: nil)
         CoreDataStack.shared.sharedSynchronizer?.synchronize(completion: nil)
         print("Remote Notification received")
