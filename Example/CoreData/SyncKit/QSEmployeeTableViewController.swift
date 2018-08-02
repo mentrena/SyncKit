@@ -8,7 +8,6 @@
 
 import UIKit
 import CoreData
-import UIKit
 
 class QSEmployeeTableViewController: UITableViewController, NSFetchedResultsControllerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     var managedObjectContext: NSManagedObjectContext?
@@ -237,7 +236,6 @@ class QSEmployeeTableViewController: UITableViewController, NSFetchedResultsCont
         present(alertController, animated: true)
     }
 
-    
 }
 
 

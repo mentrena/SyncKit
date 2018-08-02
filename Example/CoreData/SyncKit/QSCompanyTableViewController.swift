@@ -54,14 +54,14 @@ class QSCompanyTableViewController: UITableViewController, NSFetchedResultsContr
     func createCompanyWithName(name: String) {
         
         let company = QSCompany(context: self.managedObjectContext!)
-            company.identifier = UUID().uuidString
-            company.name = name
-            do {
-                try self.managedObjectContext?.save()
-            } catch {
-                print(error)
-            }
-        
+        company.identifier = UUID().uuidString
+        company.name = name
+        do {
+            try self.managedObjectContext?.save()
+        } catch {
+            print(error)
+        }
+
      }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -311,7 +311,5 @@ class QSCompanyTableViewController: UITableViewController, NSFetchedResultsContr
             indicatorView.stopAnimating()
         }
     }
-    
-
     
 }

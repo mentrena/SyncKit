@@ -44,6 +44,8 @@
 		6CA1AC73210D05D80058F7F2 /* QSCompanyTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CA1AC6E210D05D80058F7F2 /* QSCompanyTableViewCell.swift */; };
 		6CA1AC74210D05D80058F7F2 /* QSSettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CA1AC6F210D05D80058F7F2 /* QSSettingsTableViewController.swift */; };
 		6CA1AC75210D05D80058F7F2 /* QSEmployeeTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CA1AC70210D05D80058F7F2 /* QSEmployeeTableViewController.swift */; };
+		6CC01E0E211320D50033D306 /* QSEmployee.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CA1AC68210D04B80058F7F2 /* QSEmployee.swift */; };
+		6CC01E0F211320D80033D306 /* QSCompany.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C901FC5210D02C2004154FE /* QSCompany.swift */; };
 		6CCE3A62210DFEC800DA6950 /* QSAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CCE3A61210DFEC800DA6950 /* QSAppDelegate.swift */; };
 		6D9FA33A532397E8B587238A /* Pods_SyncKitCoreDataExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4EDB74EC733B7C608C0E05C8 /* Pods_SyncKitCoreDataExample.framework */; };
 		873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 873B8AEA1B1F5CCA007FD442 /* Main.storyboard */; };
@@ -529,6 +531,7 @@
 				644F4D1520A5E33C008D065E /* QSMockManagedObjectContext.m in Sources */,
 				644F4D1220A5E248008D065E /* QSQSDefaultCoreDataAdapterDelegateTests.m in Sources */,
 				641F76DE1ED3EBDA00107A88 /* QSCloudKitSynchronizerTests.m in Sources */,
+				6CC01E0F211320D80033D306 /* QSCompany.swift in Sources */,
 				64DFFAB11FED35F90072B8C3 /* QSMockKeyValueStore.m in Sources */,
 				64B13A8D20C9763000FCB834 /* QSCloudKitSynchronizerOperationTests.swift in Sources */,
 				644F4D1820A5E46A008D065E /* QSMockCoreDataAdapter.m in Sources */,
@@ -540,6 +543,7 @@
 				64611C2320A45E3E00F671B4 /* QSMockAdapterProvider.m in Sources */,
 				641F76DF1ED3EBDC00107A88 /* QSCoreDataAdapterTests.m in Sources */,
 				64377B0A1ED6D391003FB86F /* QSMockModelAdapter.m in Sources */,
+				6CC01E0E211320D50033D306 /* QSEmployee.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
