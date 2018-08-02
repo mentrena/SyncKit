@@ -8,15 +8,16 @@
 
 import SyncKit
 import UIKit
+import UserNotifications
 
 @UIApplicationMain
 class QSAppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow?
     
-    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions:  [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
         
+        checkPushNotification()
         CoreDataStack.shared.setupSynchronizer()
         CoreDataStack.shared.setupSharedSynchronizer()
         
@@ -39,12 +40,27 @@ class QSAppDelegate: UIResponder, UIApplicationDelegate {
             settingsVC?.privateSynchronizer = CoreDataStack.shared.synchronizer
             settingsVC?.sharedSynchronizer = CoreDataStack.shared.sharedSynchronizer
         }
-        UIApplication.shared.registerUserNotificationSettings(UIUserNotificationSettings(types: [.sound, .alert, .badge], categories: nil))
-        UIApplication.shared.registerForRemoteNotifications()
-        // Handle APN on Terminated state, app launched because of APN
-        let payload = launchOptions?[.remoteNotification] as? [AnyHashable : Any]
-        if payload != nil {
-            print(payload!)
+        
+        if #available(iOS 10.0, *) {
+            //iOS 10.0 and greater
+            UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterDelegate
+            UNUserNotificationCenter.current().requestAuthorization(options: [.badge, .sound, .alert], completionHandler: { granted, error in
+                DispatchQueue.main.async {
+                    if granted {
+                        UIApplication.shared.registerForRemoteNotifications()
+                    }
+                    else {
+                        //Do stuff if unsuccessful...
+                    }
+                }
+            })
+        }
+        else {
+            //iOS 9
+            let type: UIUserNotificationType = [UIUserNotificationType.badge, UIUserNotificationType.alert, UIUserNotificationType.sound]
+            let setting = UIUserNotificationSettings(types: type, categories: nil)
+            UIApplication.shared.registerUserNotificationSettings(setting)
+            UIApplication.shared.registerForRemoteNotifications()
         }
         
         return true
@@ -87,11 +103,7 @@ class QSAppDelegate: UIResponder, UIApplicationDelegate {
 
     
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any]) {
-        let cloudKitNotification = CKNotification(fromRemoteNotificationDictionary: userInfo)
-        let alertBody = cloudKitNotification.alertBody
-        if cloudKitNotification.notificationType == .query {
-            let recordID: CKRecordID? = (cloudKitNotification as? CKQueryNotification)?.recordID
-        }
+        print("Remote Notification received")
         // Detect if APN is received on Background or Foreground state
         if application.applicationState == .inactive {
             print("Application is inactive")
@@ -100,7 +112,6 @@ class QSAppDelegate: UIResponder, UIApplicationDelegate {
         }
         CoreDataStack.shared.synchronizer?.synchronize(completion: nil)
         CoreDataStack.shared.sharedSynchronizer?.synchronize(completion: nil)
-        print("Remote Notification received")
     }
 
     
@@ -121,4 +132,72 @@ class QSAppDelegate: UIResponder, UIApplicationDelegate {
         container.add(acceptShareOperation)
     }
     
+    //MARK: - Check Notifications
+    
+    func checkPushNotification(checkNotificationStatus isEnable : ((Bool)->())? = nil){
+        if #available(iOS 10.0, *) {
+            UNUserNotificationCenter.current().getNotificationSettings(){ (setttings) in
+                
+                switch setttings.authorizationStatus{
+                case .authorized:
+                    // User has given authorization.
+                    print("enabled notification setting")
+                    isEnable?(true)
+                case .denied:
+                    // User has denied authorization.
+                    // You could tell them to change this in Settings
+                    print("setting has been disabled")
+                    isEnable?(false)
+                case .notDetermined:
+                    // Authorization request has not been made yet
+                    print("something vital went wrong here")
+                    isEnable?(false)
+                }
+            }
+        } else {
+            // iOS 9 support
+            let isNotificationEnabled = UIApplication.shared.currentUserNotificationSettings?.types.contains(UIUserNotificationType.alert)
+            if isNotificationEnabled == true{
+                
+                print("enabled notification setting")
+                isEnable?(true)
+                
+            }else{
+                
+                print("setting has been disabled")
+                isEnable?(false)
+            }
+        }
+    }
+
+    func requestNotificationAuthorization() -> Bool {
+        if #available(iOS 10, *)
+        { // iOS 10 support
+            //create the notificationCenter
+            let center = UNUserNotificationCenter.current()
+            center.delegate = UIApplication.shared.delegate as? UNUserNotificationCenterDelegate
+            // set the type as sound or badge
+            var result = false
+            center.requestAuthorization(options: [.sound,.alert,.badge]) { (granted, error) in
+                if granted {
+                    print("Notification Enable Successfully")
+                    result = true
+                }else{
+                    print("Some Error Occure")
+                    result = false
+                }
+            }
+            UIApplication.shared.registerForRemoteNotifications()
+            return result
+        }
+        else
+        {
+            // iOS 9 support
+            UIApplication.shared.registerUserNotificationSettings(UIUserNotificationSettings(types: [.badge, .sound, .alert], categories: nil))
+            UIApplication.shared.registerForRemoteNotifications()
+            return true
+        }
+        
+    }
+
 }
