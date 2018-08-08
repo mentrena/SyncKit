@@ -8,7 +8,7 @@
 
 #import <XCTest/XCTest.h>
 @import SyncKit;
-#import "SyncKitCoreDataExample-Swift.h"
+#import "SyncKitCoreDataExampleTests-Swift.h"
 //#import "QSEmployee.h"
 //#import "QSCompany.h"
 

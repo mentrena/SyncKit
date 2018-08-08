@@ -35,6 +35,8 @@
 		64E92B2920A7622F00AABA19 /* QSExample.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 64E92B2720A7622F00AABA19 /* QSExample.xcdatamodeld */; };
 		64F9C4B320E1135F004C524B /* Launch.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 64F9C4B220E1135F004C524B /* Launch.storyboard */; };
 		6C0EC123210E738E0079FA02 /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CCE3A63210E5BC900DA6950 /* CoreDataStack.swift */; };
+		6C1A12FA211B000D00D820E3 /* QSCompany+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CA1AC66210D046A0058F7F2 /* QSCompany+CoreDataProperties.swift */; };
+		6C1A12FB211B000D00D820E3 /* QSEmployee+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CA1AC6A210D04DA0058F7F2 /* QSEmployee+CoreDataProperties.swift */; };
 		6C901FC6210D02C2004154FE /* QSCompany.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C901FC5210D02C2004154FE /* QSCompany.swift */; };
 		6CA1AC67210D046A0058F7F2 /* QSCompany+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CA1AC66210D046A0058F7F2 /* QSCompany+CoreDataProperties.swift */; };
 		6CA1AC69210D04B80058F7F2 /* QSEmployee.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CA1AC68210D04B80058F7F2 /* QSEmployee.swift */; };
@@ -538,10 +540,12 @@
 				648869C120B45F9500194BA7 /* QSExample.xcdatamodeld in Sources */,
 				645889B120D3C71200DF2018 /* QSFetchZoneChangesOperationTests.m in Sources */,
 				64377B0B1ED6D394003FB86F /* QSMockDatabase.m in Sources */,
+				6C1A12FB211B000D00D820E3 /* QSEmployee+CoreDataProperties.swift in Sources */,
 				645889AF20D3B38F00DF2018 /* QSFetchDatabaseChangesOperationTests.m in Sources */,
 				64377B0C1ED6D397003FB86F /* QSObject.m in Sources */,
 				64611C2320A45E3E00F671B4 /* QSMockAdapterProvider.m in Sources */,
 				641F76DF1ED3EBDC00107A88 /* QSCoreDataAdapterTests.m in Sources */,
+				6C1A12FA211B000D00D820E3 /* QSCompany+CoreDataProperties.swift in Sources */,
 				64377B0A1ED6D391003FB86F /* QSMockModelAdapter.m in Sources */,
 				6CC01E0E211320D50033D306 /* QSEmployee.swift in Sources */,
 			);
