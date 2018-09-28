@@ -76,20 +76,9 @@ import Foundation
             share.addParticipant(participant)
         }
         
-        var recordsToSave = [CKRecord]()
         addMetadata(toRecords: [record, share])
         
         let operation = CKModifyRecordsOperation(recordsToSave: [record, share], recordIDsToDelete: nil)
-        
-        operation.perRecordCompletionBlock = { record, error in
-            self.dispatchQueue.async {
-                if let error = error as? CKError,
-                    error.code == CKError.serverRecordChanged,
-                    let record = error.userInfo[CKRecordChangedErrorServerRecordKey] as? CKRecord {
-                    recordsToSave.append(record)
-                }
-            }
-        }
         
         operation.modifyRecordsCompletionBlock = { savedRecords, deletedRecordIDs, operationError in
             
@@ -102,7 +91,6 @@ import Foundation
                     let share = uploadedShare {
                     
                     modelAdapter.prepareForImport()
-                    modelAdapter.saveChanges(in: recordsToSave)
                     let records = savedRecords.filter { $0 != share }
                     modelAdapter.didUploadRecords(records)
                     modelAdapter.persistImportedChanges(completion: { (error) in

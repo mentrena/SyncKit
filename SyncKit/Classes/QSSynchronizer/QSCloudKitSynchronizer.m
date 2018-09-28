@@ -340,7 +340,7 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
                                                                                            zoneIDs:zoneIDs
                                                                                   zoneChangeTokens:[self.activeZoneTokens copy]
                                                                                       modelVersion:self.compatibilityVersion
-                                                                                  deviceIdentifier:self.deviceIdentifier
+                                                                                  deviceIdentifier:nil
                                                                                        desiredKeys:nil
                                                                                         completion:completionBlock];
     [self runOperation:operation];
@@ -399,8 +399,13 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
             [[NSNotificationCenter defaultCenter] postNotificationName:QSCloudKitSynchronizerWillUploadChangesNotification object:self];
         });
         [self uploadChangesWithCompletion:^(NSError *error) {
+
             if (error) {
-                [self finishSynchronizationWithError:error];
+                if ([self isServerRecordChangedError:error]) {
+                    [self synchronizationFetchChanges];
+                } else {
+                    [self finishSynchronizationWithError:error];
+                }
             } else {
                 [self synchronizationUpdateServerTokens];
             }
@@ -476,35 +481,26 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
         //Now perform the operation
         CKModifyRecordsOperation *modifyRecordsOperation = [[CKModifyRecordsOperation alloc] initWithRecordsToSave:records recordIDsToDelete:nil];
         
-        NSMutableArray *recordsToSave = [NSMutableArray array];
-        modifyRecordsOperation.perRecordCompletionBlock = ^(CKRecord *record, NSError *error) {
-            dispatch_async(self.dispatchQueue, ^{
-                if (error.code == CKErrorServerRecordChanged) {
-                    //Update local data with server
-                    CKRecord *record = error.userInfo[CKRecordChangedErrorServerRecordKey];
-                    if (record) {
-                        [recordsToSave addObject:record];
-                    }
-                }
-            });
-        };
-        
         modifyRecordsOperation.modifyRecordsCompletionBlock = ^(NSArray <CKRecord *> *savedRecords, NSArray <CKRecordID *> *deletedRecordIDs, NSError *operationError) {
             dispatch_async(self.dispatchQueue, ^{
-                [modelAdapter saveChangesInRecords:recordsToSave];
-                [modelAdapter didUploadRecords:savedRecords];
                 
-                DLog(@"QSCloudKitSynchronizer >> Uploaded %ld records", (unsigned long)savedRecords.count);
-                
-                if ([self isLimitExceededError:operationError]) {
-                    self.batchSize = self.batchSize / 2;
-                } else if (self.batchSize < QSDefaultBatchSize) {
-                    self.batchSize++;
-                }
-                
-                if (recordCount >= requestedBatchSize) {
-                    [weakSelf uploadEntitiesForModelAdapter:modelAdapter withCompletion:completion];
+                if (!operationError) {
+                    [modelAdapter didUploadRecords:savedRecords];
+                    
+                    DLog(@"QSCloudKitSynchronizer >> Uploaded %ld records", (unsigned long)savedRecords.count);
+                    
+                    if (recordCount >= requestedBatchSize) {
+                        [weakSelf uploadEntitiesForModelAdapter:modelAdapter withCompletion:completion];
+                    } else {
+                        callBlockIfNotNil(completion, operationError);
+                    }
                 } else {
+                    if ([self isLimitExceededError:operationError]) {
+                        self.batchSize = self.batchSize / 2;
+                    } else if (self.batchSize < QSDefaultBatchSize) {
+                        self.batchSize++;
+                    }
+                    
                     callBlockIfNotNil(completion, operationError);
                 }
             });
@@ -705,6 +701,20 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
         NSDictionary *errorsByItemID = error.userInfo[CKPartialErrorsByItemIDKey];
         for (NSError *error in [errorsByItemID allValues]) {
             if (error.code == CKErrorLimitExceeded) {
+                return YES;
+            }
+        }
+    }
+    
+    return error.code == CKErrorLimitExceeded;
+}
+
+- (BOOL)isServerRecordChangedError:(NSError *)error
+{
+    if (error.code == CKErrorPartialFailure) {
+        NSDictionary *errorsByItemID = error.userInfo[CKPartialErrorsByItemIDKey];
+        for (NSError *error in [errorsByItemID allValues]) {
+            if (error.code == CKErrorServerRecordChanged) {
                 return YES;
             }
         }
