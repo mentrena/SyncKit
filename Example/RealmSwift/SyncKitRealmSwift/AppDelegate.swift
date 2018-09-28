@@ -33,7 +33,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                                                                                         configuration: self.realmConfiguration)
     lazy var sharedSynchronizer: QSCloudKitSynchronizer! = QSCloudKitSynchronizer.cloudKitSharedSynchronizer(containerName: "your-container-name", configuration: self.realmConfiguration)
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         
         realm = try! Realm(configuration: realmConfiguration)
@@ -89,7 +89,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     //MARK: - Accepting shares
     
-    func application(_ application: UIApplication, userDidAcceptCloudKitShareWith cloudKitShareMetadata: CKShareMetadata) {
+    func application(_ application: UIApplication, userDidAcceptCloudKitShareWith cloudKitShareMetadata: CKShare.Metadata) {
         
         let container = CKContainer(identifier: cloudKitShareMetadata.containerIdentifier)
         let acceptSharesOperation = CKAcceptSharesOperation(shareMetadatas: [cloudKitShareMetadata])

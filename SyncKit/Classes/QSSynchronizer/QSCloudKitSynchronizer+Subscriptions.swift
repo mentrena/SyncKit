@@ -15,7 +15,7 @@ import Foundation
      *  Returns identifier for a registered `CKSubscription` to track changes.
      */
     
-    @objc public func subscriptionID(forRecordZoneID zoneID: CKRecordZoneID) -> String? {
+    @objc public func subscriptionID(forRecordZoneID zoneID: CKRecordZone.ID) -> String? {
         return storedSubscriptionID(for:zoneID)
     }
     
@@ -26,7 +26,7 @@ import Foundation
      *  -Parameter completion Block that will be called after subscription is created, with an optional error.
      */
     
-    @objc public func subscribeForChanges(in zoneID: CKRecordZoneID, completion: ((Error?)->())?) {
+    @objc public func subscribeForChanges(in zoneID: CKRecordZone.ID, completion: ((Error?)->())?) {
         
         guard subscriptionID(forRecordZoneID: zoneID) == nil else {
             completion?(nil)
@@ -50,7 +50,7 @@ import Foundation
             } else {
                 // Create new one
                 let subscription = CKRecordZoneSubscription(zoneID: zoneID)
-                let notificationInfo = CKNotificationInfo()
+                let notificationInfo = CKSubscription.NotificationInfo()
                 notificationInfo.shouldSendContentAvailable = true
                 subscription.notificationInfo = notificationInfo
                 
@@ -74,7 +74,7 @@ import Foundation
      *  -Parameter completion Block that will be called after subscription is deleted, with an optional error.
      */
     
-    @objc public func cancelSubscriptionForChanges(in zoneID: CKRecordZoneID, completion: ((Error?)->())?) {
+    @objc public func cancelSubscriptionForChanges(in zoneID: CKRecordZone.ID, completion: ((Error?)->())?) {
         
         if let subscriptionID = subscriptionID(forRecordZoneID: zoneID) {
             
@@ -106,7 +106,9 @@ import Foundation
     fileprivate func cancelSubscription(identifier: String, completion: ((Error?)->())?) {
         
         database.delete(withSubscriptionID: identifier) { (subscriptionID, error) in
-            self.clearSubscriptionID(subscriptionID)
+            if let subscriptionID = subscriptionID {
+                self.clearSubscriptionID(subscriptionID)
+            }
             completion?(error)
         }
     }

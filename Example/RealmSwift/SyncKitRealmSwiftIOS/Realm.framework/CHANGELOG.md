@@ -1,3 +1,123 @@
+3.10.0 Release notes (2018-09-19)
+=============================================================
+
+Prebuilt binaries are now built for Xcode 9.2, 9.3, 9.4 and 10.0.
+
+Older versions of Xcode are still supported when building from source, but you
+should be migrating to at least Xcode 9.2 as soon as possible.
+
+### Enhancements
+
+* Add support for Watch Series 4 by adding an arm64_32 slice to the library.
+
+3.9.0 Release notes (2018-09-10)
+=============================================================
+
+### Enhancements
+
+* Expose RLMSyncUser.refreshToken publicly so that it can be used for custom
+  HTTP requests to Realm Object Server.
+* Add RLMSyncSession.connectionState, which reports whether the session is
+  currently connected to the Realm Object Server or if it is offline.
+* Add `-suspend` and `-resume` methods to `RLMSyncSession` to enable manually
+  pausing data synchronization.
+* Add support for limiting the number of objects matched by a query-based sync
+  subscription. This requires a server running ROS 3.10.1 or newer.
+
+### Bugfixes
+
+* Fix crash when getting the description of a `MigrationObject` which has
+  `List` properties.
+* Fix crash when calling `dynamicList()` on a `MigrationObject`.
+
+3.8.0 Release notes (2018-09-05)
+=============================================================
+
+### Enhancements
+
+* Remove some old and no longer applicable migration logic which created an
+  unencrypted file in the sync metadata directory containing a list of ROS URLs
+  connected to.
+* Add support for pinning SSL certificates used for https and realms
+  connections by setting `RLMSyncManager.sharedManager.pinnedCertificatePaths`
+  in obj-c and `SyncManager.shared.pinnedCertificatePaths` in Swift.
+
+### Bugfixes
+
+* Fix warnings when building Realm as a static framework with CocoaPods.
+
+3.7.6 Release notes (2018-08-08)
+=============================================================
+
+### Enhancements
+
+* Speed up the actual compaction when using compact-on-launch.
+* Reduce memory usage when locally merging changes from sync.
+* When first connecting to a server, wait to begin uploading changes until
+  after all changes have been downloaded to reduce the server-side load for
+  query-based sync.
+
+3.7.5 Release notes (2018-07-23)
+=============================================================
+
+### Enhancements
+
+* Improve performance of applying remote changesets from sync.
+* Improve performance of creating objects with string primary keys.
+* Improve performance of large write transactions.
+* Adjust file space allocation strategy to reduce fragmentation, producing
+  smaller Realm files and typically better performance.
+* Close network connections immediately when a sync session is destroyed.
+* Report more information in `InvalidDatabase` exceptions.
+
+### Bugfixes
+
+* Fix permission denied errors for RLMPlatform.h when building with CocoaPods
+  and Xcode 10 beta 3.
+* Fix a use-after-free when canceling a write transaction which could result in
+  incorrect "before" values in KVO observations (typically `nil` when a non-nil
+  value is expected).
+* Fix several bugs in the merge algorithm that could lead to memory corruption
+  and crashes with errors like "bad changeset" and "unreachable code".
+
+3.7.4 Release notes (2018-06-19)
+=============================================================
+
+### Bugfixes
+
+* Fix a bug which could potentially flood Realm Object Server with PING
+  messages after a client device comes back online.
+
+3.7.3 Release notes (2018-06-18)
+=============================================================
+
+### Enhancements
+
+* Avoid performing potentially large amounts of pointless background work for
+  LinkingObjects instances which are accessed and then not immediate deallocated.
+
+### Bugfixes
+
+* Fix crashes which could result from extremely fragmented Realm files.
+* Fix a bug that could result in a crash with the message "bad changeset error"
+  when merging changesets from the server.
+
+3.7.2 Release notes (2018-06-13)
+=============================================================
+
+### Enhancements
+
+* Add some additional consistency checks that will hopefully produce better
+  errors when the "prev_ref + prev_size <= ref" assertion failure occurs.
+
+### Bugfixes
+
+* Fix a problem in the changeset indexing algorithm that would sometimes
+  cause "bad permission object" and "bad changeset" errors.
+* Fix a large number of linking warnings about symbol visibility by aligning
+  compiler flags used.
+* Fix large increase in size of files produced by `Realm.writeCopy()` introduced in 3.6.0.
+
 3.7.1 Release notes (2018-06-07)
 =============================================================
 

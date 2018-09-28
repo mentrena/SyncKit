@@ -13,13 +13,13 @@ public class QSFetchDatabaseChangesOperation: QSCloudKitSynchronizerOperation {
     
     let database: CKDatabase
     let databaseToken: CKServerChangeToken?
-    let completion: (CKServerChangeToken?, [CKRecordZoneID], [CKRecordZoneID]) -> ()
+    let completion: (CKServerChangeToken?, [CKRecordZone.ID], [CKRecordZone.ID]) -> ()
     
-    var changedZoneIDs = [CKRecordZoneID]()
-    var deletedZoneIDs = [CKRecordZoneID]()
+    var changedZoneIDs = [CKRecordZone.ID]()
+    var deletedZoneIDs = [CKRecordZone.ID]()
     var operation: CKFetchDatabaseChangesOperation?
     
-    @objc public init(database: CKDatabase, databaseToken: CKServerChangeToken?, completion: @escaping (CKServerChangeToken?, [CKRecordZoneID], [CKRecordZoneID]) -> ()) {
+    @objc public init(database: CKDatabase, databaseToken: CKServerChangeToken?, completion: @escaping (CKServerChangeToken?, [CKRecordZone.ID], [CKRecordZone.ID]) -> ()) {
         self.databaseToken = databaseToken
         self.database = database
         self.completion = completion

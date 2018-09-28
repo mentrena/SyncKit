@@ -2,7 +2,7 @@
 # * http://www.objc.io/issue-6/travis-ci.html
 # * https://github.com/supermarin/xcpretty#usage
 
-osx_image: xcode9.4
+osx_image: xcode10
 language: swift
 
 before_install:
@@ -12,7 +12,7 @@ script:
   - pod install --repo-update --project-directory=Example/CoreData/
   - pod install --repo-update --project-directory=Example/Realm/
   - pod install --repo-update --project-directory=Example/RealmSwift/
-  - set -o pipefail && xcodebuild test -workspace Example/CoreData/SyncKitCoreData.xcworkspace -scheme SyncKitCoreDataExample -sdk iphonesimulator11.4 -destination 'platform=iOS Simulator,name=iPhone 7,OS=11.4' ONLY_ACTIVE_ARCH=NO | xcpretty
-  - set -o pipefail && xcodebuild test -workspace Example/Realm/SyncKitRealm.xcworkspace -scheme SyncKitRealmExample -sdk iphonesimulator11.4 -destination 'platform=iOS Simulator,name=iPhone 7,OS=11.4' ONLY_ACTIVE_ARCH=NO | xcpretty
-  - set -o pipefail && xcodebuild test -workspace Example/RealmSwift/SyncKitRealmSwift.xcworkspace -scheme SyncKitRealmSwiftExample -sdk iphonesimulator11.4 -destination 'platform=iOS Simulator,name=iPhone 7,OS=11.4' ONLY_ACTIVE_ARCH=NO | xcpretty
+  - set -o pipefail && xcodebuild test -workspace Example/CoreData/SyncKitCoreData.xcworkspace -scheme SyncKitCoreDataExample -sdk iphonesimulator12.0 -destination 'platform=iOS Simulator,name=iPhone 7,OS=12.0' ONLY_ACTIVE_ARCH=NO | xcpretty
+  - set -o pipefail && xcodebuild test -workspace Example/Realm/SyncKitRealm.xcworkspace -scheme SyncKitRealmExample -sdk iphonesimulator12.0 -destination 'platform=iOS Simulator,name=iPhone 7,OS=12.0' ONLY_ACTIVE_ARCH=NO | xcpretty
+  - set -o pipefail && xcodebuild test -workspace Example/RealmSwift/SyncKitRealmSwift.xcworkspace -scheme SyncKitRealmSwiftExample -sdk iphonesimulator12.0 -destination 'platform=iOS Simulator,name=iPhone 7,OS=12.0' ONLY_ACTIVE_ARCH=NO | xcpretty
 #  - travis_wait 30 pod lib lint --allow-warnings

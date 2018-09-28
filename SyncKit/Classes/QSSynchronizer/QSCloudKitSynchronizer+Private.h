@@ -14,20 +14,20 @@ FOUNDATION_EXPORT NSString * _Nonnull const QSCloudKitModelCompatibilityVersionK
 
 @interface QSCloudKitSynchronizer (Private)
 
-+ (CKRecordZoneID *)defaultCustomZoneID;
++ (CKRecordZoneID *_Nonnull)defaultCustomZoneID;
 
-- (NSString *)getStoredDeviceUUID;
-- (void)storeDeviceUUID:(NSString *)value;
-- (CKServerChangeToken *)getStoredDatabaseToken;
-- (void)storeDatabaseToken:(CKServerChangeToken *)token;
-- (NSString *)storedSubscriptionIDForRecordZoneID:(CKRecordZoneID *)zoneID;
-- (void)storeSubscriptionID:(NSString *)subscriptionID forRecordZoneID:(CKRecordZoneID *)zoneID;
-- (void)clearSubscriptionID:(NSString *)subscriptionID;
+- (NSString *_Nullable)getStoredDeviceUUID;
+- (void)storeDeviceUUID:(NSString *_Nullable)value;
+- (CKServerChangeToken *_Nullable)getStoredDatabaseToken;
+- (void)storeDatabaseToken:(CKServerChangeToken *_Nullable)token;
+- (NSString *_Nullable)storedSubscriptionIDForRecordZoneID:(CKRecordZoneID *_Nonnull)zoneID;
+- (void)storeSubscriptionID:(NSString *_Nonnull)subscriptionID forRecordZoneID:(CKRecordZoneID *_Nonnull)zoneID;
+- (void)clearSubscriptionID:(NSString *_Nonnull)subscriptionID;
 - (void)clearAllStoredSubscriptionIDs;
 
-@property (nonatomic, readonly) NSString *deviceIdentifier;
-- (void)addMetadataToRecords:(NSArray *)records;
+@property (nonatomic, readonly, nullable) NSString *deviceIdentifier;
+- (void)addMetadataToRecords:(NSArray *_Nonnull)records;
 
-@property (nonatomic, readonly) dispatch_queue_t dispatchQueue;
+@property (nonatomic, readonly, nonnull) dispatch_queue_t dispatchQueue;
 
 @end

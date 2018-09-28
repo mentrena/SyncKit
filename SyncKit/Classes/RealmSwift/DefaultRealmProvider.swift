@@ -23,8 +23,8 @@ public extension NSNotification {
 public class DefaultRealmProvider: NSObject, QSCloudKitSynchronizerAdapterProvider {
     
     let identifier: String
-    private(set) var adapterDictionary: [CKRecordZoneID: RealmSwiftAdapter]
-    private(set) var realms: [CKRecordZoneID: Realm.Configuration]
+    private(set) var adapterDictionary: [CKRecordZone.ID: RealmSwiftAdapter]
+    private(set) var realms: [CKRecordZone.ID: Realm.Configuration]
     let appGroup: String?
     let realmConfiguration: Realm.Configuration
     
@@ -34,8 +34,8 @@ public class DefaultRealmProvider: NSObject, QSCloudKitSynchronizerAdapterProvid
     public init(identifier: String, realmConfiguration: Realm.Configuration, appGroup: String?) {
         self.identifier = identifier
         self.appGroup = appGroup
-        adapterDictionary = [CKRecordZoneID: RealmSwiftAdapter]()
-        realms = [CKRecordZoneID: Realm.Configuration]()
+        adapterDictionary = [CKRecordZone.ID: RealmSwiftAdapter]()
+        realms = [CKRecordZone.ID: Realm.Configuration]()
         self.realmConfiguration = realmConfiguration
         super.init()
         bringUpDataStacks()
@@ -78,7 +78,7 @@ public class DefaultRealmProvider: NSObject, QSCloudKitSynchronizerAdapterProvid
             for case let url as URL in enumerator {
                 let folderName = url.lastPathComponent
                 let zoneIDComponents = folderName.components(separatedBy: ".zoneID.")
-                let zoneID = CKRecordZoneID(zoneName: zoneIDComponents[0], ownerName: zoneIDComponents[1])
+                let zoneID = CKRecordZone.ID(zoneName: zoneIDComponents[0], ownerName: zoneIDComponents[1])
                 let stackURL = url.appendingPathComponent(DefaultRealmProviderTargetFileName)
                 let persistenceURL = url.appendingPathComponent(DefaultRealmProviderPersistenceFileName)
                 let adapter = realmSwiftAdapterFor(targetRealmURL:stackURL, persistenceRealmURL: persistenceURL, zoneID: zoneID)
@@ -88,7 +88,7 @@ public class DefaultRealmProvider: NSObject, QSCloudKitSynchronizerAdapterProvid
         
     }
     
-    private func realmSwiftAdapterFor(targetRealmURL: URL, persistenceRealmURL: URL, zoneID: CKRecordZoneID) -> RealmSwiftAdapter {
+    private func realmSwiftAdapterFor(targetRealmURL: URL, persistenceRealmURL: URL, zoneID: CKRecordZone.ID) -> RealmSwiftAdapter {
         
         let targetConfiguration = Realm.Configuration(fileURL: targetRealmURL,
                                                       inMemoryIdentifier: self.realmConfiguration.inMemoryIdentifier,
@@ -111,11 +111,11 @@ public class DefaultRealmProvider: NSObject, QSCloudKitSynchronizerAdapterProvid
                                        recordZoneID: zoneID)
     }
     
-    private func folderNameFor(recordZoneID: CKRecordZoneID) -> String {
+    private func folderNameFor(recordZoneID: CKRecordZone.ID) -> String {
         return recordZoneID.zoneName + ".zoneID." + recordZoneID.ownerName
     }
     
-    public func cloudKitSynchronizer(_ synchronizer: QSCloudKitSynchronizer, modelAdapterFor recordZoneID: CKRecordZoneID) -> QSModelAdapter? {
+    public func cloudKitSynchronizer(_ synchronizer: QSCloudKitSynchronizer, modelAdapterFor recordZoneID: CKRecordZone.ID) -> QSModelAdapter? {
         
         if let adapter = adapterDictionary[recordZoneID] {
             return adapter
@@ -136,7 +136,7 @@ public class DefaultRealmProvider: NSObject, QSCloudKitSynchronizerAdapterProvid
         return adapter
     }
     
-    public func cloudKitSynchronizer(_ synchronizer: QSCloudKitSynchronizer, zoneWasDeletedWith recordZoneID: CKRecordZoneID) {
+    public func cloudKitSynchronizer(_ synchronizer: QSCloudKitSynchronizer, zoneWasDeletedWith recordZoneID: CKRecordZone.ID) {
         
         guard let adapter = adapterDictionary[recordZoneID],
             adapter.serverChangeToken() != nil else {

@@ -149,7 +149,7 @@ class QSCompanyTableViewController: UITableViewController, UICloudSharingControl
         return true
     }
     
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         
         if editingStyle == .delete {
             
@@ -226,7 +226,7 @@ class QSCompanyTableViewController: UITableViewController, UICloudSharingControl
                                                       participants: [],
                                                       completion: { (share, error) in
                                                         
-                                                        share?[CKShareTitleKey] = company.name as NSString?
+                                                        share?[CKShare.SystemFieldKey.title] = company.name as NSString?
                                                         handler(share, container, error)
                         })
                     })

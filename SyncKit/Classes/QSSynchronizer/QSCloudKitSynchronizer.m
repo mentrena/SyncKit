@@ -340,7 +340,7 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
                                                                                            zoneIDs:zoneIDs
                                                                                   zoneChangeTokens:[self.activeZoneTokens copy]
                                                                                       modelVersion:self.compatibilityVersion
-                                                                                  deviceIdentifier:nil
+                                                                            ignoreDeviceIdentifier:nil
                                                                                        desiredKeys:nil
                                                                                         completion:completionBlock];
     [self runOperation:operation];
@@ -485,6 +485,11 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
             dispatch_async(self.dispatchQueue, ^{
                 
                 if (!operationError) {
+                    
+                    if (self.batchSize < QSDefaultBatchSize) {
+                        self.batchSize = self.batchSize + 1;
+                    }
+                    
                     [modelAdapter didUploadRecords:savedRecords];
                     
                     DLog(@"QSCloudKitSynchronizer >> Uploaded %ld records", (unsigned long)savedRecords.count);
@@ -497,8 +502,6 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
                 } else {
                     if ([self isLimitExceededError:operationError]) {
                         self.batchSize = self.batchSize / 2;
-                    } else if (self.batchSize < QSDefaultBatchSize) {
-                        self.batchSize++;
                     }
                     
                     callBlockIfNotNil(completion, operationError);
@@ -622,7 +625,7 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
                                                                                            zoneIDs:zoneIDs
                                                                                   zoneChangeTokens:[self.activeZoneTokens copy]
                                                                                       modelVersion:self.compatibilityVersion
-                                                                                  deviceIdentifier:self.deviceIdentifier
+                                                                            ignoreDeviceIdentifier:self.deviceIdentifier
                                                                                        desiredKeys:@[@"recordID", QSCloudKitDeviceUUIDKey]
                                                                                         completion:completionBlock];
     
@@ -720,7 +723,7 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
         }
     }
     
-    return error.code == CKErrorLimitExceeded;
+    return error.code == CKErrorServerRecordChanged;
 }
 
 #pragma mark - RecordZone setup

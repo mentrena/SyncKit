@@ -1,3 +1,372 @@
+3.10.0 Release notes (2018-09-19)
+=============================================================
+
+Prebuilt binaries are now built for Xcode 9.2, 9.3, 9.4 and 10.0.
+
+Older versions of Xcode are still supported when building from source, but you
+should be migrating to at least Xcode 9.2 as soon as possible.
+
+### Enhancements
+
+* Add support for Watch Series 4 by adding an arm64_32 slice to the library.
+
+3.9.0 Release notes (2018-09-10)
+=============================================================
+
+### Enhancements
+
+* Expose RLMSyncUser.refreshToken publicly so that it can be used for custom
+  HTTP requests to Realm Object Server.
+* Add RLMSyncSession.connectionState, which reports whether the session is
+  currently connected to the Realm Object Server or if it is offline.
+* Add `-suspend` and `-resume` methods to `RLMSyncSession` to enable manually
+  pausing data synchronization.
+* Add support for limiting the number of objects matched by a query-based sync
+  subscription. This requires a server running ROS 3.10.1 or newer.
+
+### Bugfixes
+
+* Fix crash when getting the description of a `MigrationObject` which has
+  `List` properties.
+* Fix crash when calling `dynamicList()` on a `MigrationObject`.
+
+3.8.0 Release notes (2018-09-05)
+=============================================================
+
+### Enhancements
+
+* Remove some old and no longer applicable migration logic which created an
+  unencrypted file in the sync metadata directory containing a list of ROS URLs
+  connected to.
+* Add support for pinning SSL certificates used for https and realms
+  connections by setting `RLMSyncManager.sharedManager.pinnedCertificatePaths`
+  in obj-c and `SyncManager.shared.pinnedCertificatePaths` in Swift.
+
+### Bugfixes
+
+* Fix warnings when building Realm as a static framework with CocoaPods.
+
+3.7.6 Release notes (2018-08-08)
+=============================================================
+
+### Enhancements
+
+* Speed up the actual compaction when using compact-on-launch.
+* Reduce memory usage when locally merging changes from sync.
+* When first connecting to a server, wait to begin uploading changes until
+  after all changes have been downloaded to reduce the server-side load for
+  query-based sync.
+
+3.7.5 Release notes (2018-07-23)
+=============================================================
+
+### Enhancements
+
+* Improve performance of applying remote changesets from sync.
+* Improve performance of creating objects with string primary keys.
+* Improve performance of large write transactions.
+* Adjust file space allocation strategy to reduce fragmentation, producing
+  smaller Realm files and typically better performance.
+* Close network connections immediately when a sync session is destroyed.
+* Report more information in `InvalidDatabase` exceptions.
+
+### Bugfixes
+
+* Fix permission denied errors for RLMPlatform.h when building with CocoaPods
+  and Xcode 10 beta 3.
+* Fix a use-after-free when canceling a write transaction which could result in
+  incorrect "before" values in KVO observations (typically `nil` when a non-nil
+  value is expected).
+* Fix several bugs in the merge algorithm that could lead to memory corruption
+  and crashes with errors like "bad changeset" and "unreachable code".
+
+3.7.4 Release notes (2018-06-19)
+=============================================================
+
+### Bugfixes
+
+* Fix a bug which could potentially flood Realm Object Server with PING
+  messages after a client device comes back online.
+
+3.7.3 Release notes (2018-06-18)
+=============================================================
+
+### Enhancements
+
+* Avoid performing potentially large amounts of pointless background work for
+  LinkingObjects instances which are accessed and then not immediate deallocated.
+
+### Bugfixes
+
+* Fix crashes which could result from extremely fragmented Realm files.
+* Fix a bug that could result in a crash with the message "bad changeset error"
+  when merging changesets from the server.
+
+3.7.2 Release notes (2018-06-13)
+=============================================================
+
+### Enhancements
+
+* Add some additional consistency checks that will hopefully produce better
+  errors when the "prev_ref + prev_size <= ref" assertion failure occurs.
+
+### Bugfixes
+
+* Fix a problem in the changeset indexing algorithm that would sometimes
+  cause "bad permission object" and "bad changeset" errors.
+* Fix a large number of linking warnings about symbol visibility by aligning
+  compiler flags used.
+* Fix large increase in size of files produced by `Realm.writeCopy()` introduced in 3.6.0.
+
+3.7.1 Release notes (2018-06-07)
+=============================================================
+
+* Add support for compiling Realm Swift with Xcode 10 beta 1.
+
+3.7.0 Release notes (2018-06-06)
+=============================================================
+
+The feature known as Partial Sync has been renamed to Query-based
+Synchronization. This has impacted a number of API's. See below for the
+details.
+
+### Deprecations
+
+* `+[RLMSyncConfiguration initWithUser] has been deprecated in favor of `-[RLMSyncUser configurationWithURL:url].
+* `+[RLMSyncConfiguration automaticConfiguration] has been deprecated in favor of `-[RLMSyncUser configuration]. 
+* `+[RLMSyncConfiguration automaticConfigurationForUser] has been deprecated in favor of `-[RLMSyncUser configuration].
+* `-[RLMSyncConfiguration isPartial] has been deprecated in favor of `-[RLMSyncConfiguration fullSynchronization]`.
+
+### Enhancements
+
+* Add `-[RLMRealm syncSession]` and  `Realm.syncSession` to obtain the session used for a synchronized Realm.
+* Add `-[RLMSyncUser configuration]`. Query-based sync is the default sync mode for this configuration.
+* Add `-[RLMSyncUser configurationWithURL:url]`. Query-based sync is the default sync mode for this configuration.
+
+3.6.0 Release notes (2018-05-29)
+=============================================================
+
+### Enhancements
+
+* Improve performance of sync metadata operations and resolving thread-safe
+  references.
+* `shouldCompactOnLaunch` is now supported for compacting the local data of
+  synchronized Realms.
+
+### Bugfixes
+
+* Fix a potential deadlock when a sync session progress callback held the last
+  strong reference to the sync session.
+* Fix some cases where comparisons to `nil` in queries were not properly
+  serialized when subscribing to a query.
+* Don't delete objects added during a migration after a call to `-[RLMMigration
+  deleteDataForClassName:]`.
+* Fix incorrect results and/or crashes when multiple `-[RLMMigration
+  enumerateObjects:block:]` blocks deleted objects of the same type.
+* Fix some edge-cases where `-[RLMMigration enumerateObjects:block:]`
+  enumerated the incorrect objects following deletions.
+* Restore the pre-3.5.0 behavior for Swift optional properties missing an ivar
+  rather than crashing.
+
+3.5.0 Release notes (2018-04-25)
+=============================================================
+
+### Enhancements
+
+* Add wrapper functions for email confirmation and password reset to `SyncUser`.
+
+### Bugfixes
+
+* Fix incorrect results when using optional chaining to access a RealmOptional
+  property in Release builds, or otherwise interacting with a RealmOptional
+  object after the owning Object has been deallocated.
+
+3.4.0 Release notes (2018-04-19)
+=============================================================
+
+The prebuilt binary for Carthage is now built for Swift 4.1.
+
+### Enhancements
+
+* Expose `RLMSyncManager.authorizationHeaderName`/`SyncManager.authorizationHeaderName`
+  as a way to override the transport header for Realm Object Server authorization.
+* Expose `RLMSyncManager.customRequestHeaders`/`SyncManager.customRequestHeaders`
+  which allows custom HTTP headers to be appended on requests to the Realm Object Server.
+* Expose `RLMSSyncConfiguration.urlPrefix`/`SyncConfiguration.urlPrefix` as a mechanism
+  to replace the default path prefix in Realm Sync WebSocket requests.
+
+3.3.2 Release notes (2018-04-03)
+=============================================================
+
+Add a prebuilt binary for Xcode 9.3.
+
+3.3.1 Release notes (2018-03-28)
+=============================================================
+
+Realm Object Server v3.0.0 or newer is required when using synchronized Realms.
+
+### Enhancements
+
+* Expose `RLMObject.object(forPrimaryKey:)` as a factory method for Swift so
+  that it is callable with recent versions of Swift.
+
+### Bugfixes
+
+* Exclude the RLMObject-derived Permissions classes from the types repored by
+  `Realm.Configuration.defaultConfiguration.objectTypes` to avoid a failed
+  cast.
+* Cancel pending `Realm.asyncOpen()` calls when authentication fails with a
+  non-transient error such as missing the Realm path in the URL.
+* Fix "fcntl() inside prealloc()" errors on APFS.
+
+3.3.0 Release notes (2018-03-19)
+=============================================================
+
+Realm Object Server v3.0.0 or newer is required when using synchronized Realms.
+
+### Enhancements
+
+* Add `Realm.permissions`, `Realm.permissions(forType:)`, and `Realm.permissions(forClassNamed:)` as convenience
+  methods for accessing the permissions of the Realm or a type.
+
+### Bugfixes
+
+* Fix `+[RLMClassPermission objectInRealm:forClass:]` to work for classes that are part of the permissions API,
+  such as `RLMPermissionRole`.
+* Fix runtime errors when applications define an `Object` subclass with the
+  same name as one of the Permissions object types.
+
+3.2.0 Release notes (2018-03-15)
+=============================================================
+
+Realm Object Server v3.0.0 or newer is required when using synchronized Realms.
+
+### Enhancements
+
+* Added an improved API for adding subscriptions in partially-synchronized Realms. `Results.subscribe()` can be
+  used to subscribe to any result set, and the returned `SyncSubscription` object can be used to observe the state
+  of the subscription and ultimately to remove the subscription. See the documentation for more information
+  (<https://docs.realm.io/platform/v/3.x/using-synced-realms/syncing-data>).
+* Added a fine-grained permissions system for use with partially-synchronized Realms. This allows permissions to be
+  defined at the level of individual objects or classes. See the documentation for more information
+  (<https://docs.realm.io/platform/v/3.x/using-synced-realms/access-control>).
+* Added `SyncConfiguration.automatic()` and `SyncConfiguration.automatic(user:)`.
+  These methods return a `Realm.Configuration` appropriate for syncing with the default
+  synced Realm for the current (or specified) user. These should be considered the preferred methods
+  for accessing synced Realms going forwards.
+* Added `+[RLMSyncSession sessionForRealm:]` to retrieve the sync session corresponding to a `RLMRealm`.
+
+### Bugfixes
+
+* Fix incorrect initalization of `RLMSyncManager` that made it impossible to
+  set `errorHandler`.
+* Fix compiler warnings when building with Xcode 9.3.
+* Fix some warnings when running with UBsan.
+
+3.2.0-rc.1 Release notes (2018-03-14)
+=============================================================
+
+Realm Object Server v3.0.0-rc.1 or newer is required when using synchronized Realms.
+
+### Enhancements
+
+* Added `SyncConfiguration.automatic()` and `SyncConfiguration.automatic(user:)`.
+  These methods return a `Realm.Configuration` appropriate for syncing with the default
+  synced Realm for the current (or specified). These should be considered the preferred methods
+  for accessing synced Realms going forwards.
+* A role is now automatically created for each user with that user as its only member.
+  This simplifies the common use case of restricting access to specific objects to a single user.
+  This role can be accessed at `PermissionUser.role`.
+* Improved error reporting when the server rejects a schema change due to a lack of permissions.
+
+### Bugfixes
+
+* Fix incorrect initalization of `RLMSyncManager` that made it impossible to
+  set `errorHandler`.
+* Fix compiler warnings when building with Xcode 9.3.
+
+3.2.0-beta.3 Release notes (2018-03-01)
+=============================================================
+
+Realm Object Server v3.0.0-alpha.9 or newer is required when using synchronized Realms.
+
+### Bugfixes
+
+* Fix a crash that would occur when using partial sync with Realm Object Server v3.0.0-alpha.9.
+
+3.2.0-beta.2 Release notes (2018-02-28)
+=============================================================
+
+Realm Object Server v3.0.0-alpha.8 or newer is required when using synchronized Realms.
+
+### Enhancements
+
+* Added `findOrCreate(forRoleNamed:)` and `findOrCreate(forRole:)` to `List<Permission>`
+  to simplify the process of adding permissions for a role.
+* Added `+permissionForRoleNamed:inArray:`, `+permissionForRoleNamed:onRealm:`,
+  `+permissionForRoleNamed:onClass:realm:`, `+permissionForRoleNamed:onClassNamed:realm:`,
+  and `+permissionForRoleNamed:onObject:` to `RLMSyncPermission` to simplify the process
+  of adding permissions for a role.
+* Added `+[RLMSyncSession sessionForRealm:]` to retrieve the sync session corresponding to a `RLMRealm`.
+
+### Bugfixes
+
+* `PermissionRole.users` and `PermissionUser.roles` are now public as intended.
+* Fixed the handling of `setPermissions` in `-[RLMRealm privilegesForRealm]` and related methods.
+
+3.2.0-beta.1 Release notes (2018-02-19)
+=============================================================
+
+### Enhancements
+
+* Added an improved API for adding subscriptions in partially-synchronized Realms. `Results.subscribe()` can be
+  used to subscribe to any result set, and the returned `SyncSubscription` object can be used to observe the state
+  of the subscription and ultimately to remove the subscription.
+* Added a fine-grained permissions system for use with partially-synchronized Realms. This allows permissions to be
+  defined at the level of individual objects or classes. See `Permission` and related types for more information.
+
+### Bugfixes
+
+* Fix some warnings when running with UBsan.
+
+3.1.1 Release notes (2018-02-03)
+=============================================================
+
+Prebuilt Swift frameworks for Carthage are now built with Xcode 9.2.
+
+### Bugfixes
+
+* Fix a memory leak when opening Realms with an explicit `objectTypes` array
+  from Swift.
+
+3.1.0 Release notes (2018-01-16)
+=============================================================
+
+* Prebuilt frameworks are now included for Swift 3.2.3 and 4.0.3.
+* Prebuilt frameworks are no longer included for Swift 3.0.x.
+* Building from source with Xcode versions prior to Xcode 8.3 is no longer supported.
+
+### Enhancements
+
+* Add `Results.distinct(by:)` / `-[RLMResults distinctResultsUsingKeyPaths:]`, which return a `Results`
+  containing only objects with unique values at the given key paths.
+* Improve performance of change checking for notifications in certain cases.
+* Realm Object Server errors not explicitly recognized by the client are now reported to the application
+  regardless.
+* Add support for JSON Web Token as a sync credential source.
+* Add support for Nickname and Anonymous Auth as a sync credential source.
+* Improve allocator performance when writing to a highly fragmented file. This
+  should significantly improve performance when inserting large numbers of
+  objects which have indexed properties.
+* Improve write performance for complex object graphs involving many classes
+  linking to each other.
+
+### Bugfixes
+
+* Add a missing check for a run loop in the permission API methods which
+  require one.
+* Fix some cases where non-fatal sync errors were being treated as fatal errors.
+
 3.0.2 Release notes (2017-11-08)
 =============================================================
 

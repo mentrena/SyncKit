@@ -18,7 +18,6 @@
 		6451D13920D25F0700BCFEA7 /* QSBackupDetection.m in Sources */ = {isa = PBXBuildFile; fileRef = 6451D12920D25F0600BCFEA7 /* QSBackupDetection.m */; };
 		6451D13A20D25F0700BCFEA7 /* QSCloudKitSynchronizer+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 6451D12A20D25F0600BCFEA7 /* QSCloudKitSynchronizer+Private.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6451D13B20D25F0700BCFEA7 /* QSCloudKitSynchronizer+Sharing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6451D12B20D25F0600BCFEA7 /* QSCloudKitSynchronizer+Sharing.swift */; };
-		6451D13C20D25F0700BCFEA7 /* SyncKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 6451D12C20D25F0600BCFEA7 /* SyncKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6451D13D20D25F0700BCFEA7 /* SyncKitLog.h in Headers */ = {isa = PBXBuildFile; fileRef = 6451D12D20D25F0600BCFEA7 /* SyncKitLog.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6451D13E20D25F0700BCFEA7 /* QSCloudKitSynchronizer+Subscriptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6451D12E20D25F0600BCFEA7 /* QSCloudKitSynchronizer+Subscriptions.swift */; };
 		6451D13F20D25F0700BCFEA7 /* QSPrimaryKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 6451D12F20D25F0600BCFEA7 /* QSPrimaryKey.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -149,7 +148,6 @@
 			files = (
 				6451D13520D25F0700BCFEA7 /* QSModelAdapter.h in Headers */,
 				6451D13A20D25F0700BCFEA7 /* QSCloudKitSynchronizer+Private.h in Headers */,
-				6451D13C20D25F0700BCFEA7 /* SyncKit.h in Headers */,
 				644A06131F597A1700F69505 /* SyncKit.h in Headers */,
 				6451D13D20D25F0700BCFEA7 /* SyncKitLog.h in Headers */,
 				6451D14320D25F0700BCFEA7 /* QSTempFileManager.h in Headers */,
@@ -310,6 +308,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -364,6 +363,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -395,7 +395,7 @@
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = macosx;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
 		};
@@ -422,7 +422,7 @@
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = macosx;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
 		};
