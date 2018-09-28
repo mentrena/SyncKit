@@ -11,7 +11,7 @@ import CloudKit
 public class QSFetchZoneChangesOperationZoneResult: NSObject {
     
     @objc public var downloadedRecords = [CKRecord]()
-    @objc public var deletedRecordIDs = [CKRecordID]()
+    @objc public var deletedRecordIDs = [CKRecord.ID]()
     @objc public var serverChangeToken: CKServerChangeToken?
     @objc public var error: Error?
     @objc public var moreComing: Bool = false
@@ -20,31 +20,31 @@ public class QSFetchZoneChangesOperationZoneResult: NSObject {
 public class QSFetchZoneChangesOperation: QSCloudKitSynchronizerOperation {
     
     let database: CKDatabase
-    let zoneIDs: [CKRecordZoneID]
-    var zoneChangeTokens: [CKRecordZoneID: CKServerChangeToken]
+    let zoneIDs: [CKRecordZone.ID]
+    var zoneChangeTokens: [CKRecordZone.ID: CKServerChangeToken]
     let modelVersion: Int
-    let deviceIdentifier: String?
-    let completion: ([CKRecordZoneID: QSFetchZoneChangesOperationZoneResult]) -> ()
+    let ignoreDeviceIdentifier: String?
+    let completion: ([CKRecordZone.ID: QSFetchZoneChangesOperationZoneResult]) -> ()
     let desiredKeys: [String]?
     
-    var zoneResults = [CKRecordZoneID: QSFetchZoneChangesOperationZoneResult]()
+    var zoneResults = [CKRecordZone.ID: QSFetchZoneChangesOperationZoneResult]()
     
     let dispatchQueue = DispatchQueue(label: "fetchZoneChangesDispatchQueue")
     var operation: CKFetchRecordZoneChangesOperation?
     
     @objc public init(database: CKDatabase,
-                      zoneIDs: [CKRecordZoneID],
-                      zoneChangeTokens: [CKRecordZoneID: CKServerChangeToken],
+                      zoneIDs: [CKRecordZone.ID],
+                      zoneChangeTokens: [CKRecordZone.ID: CKServerChangeToken],
                       modelVersion: Int,
-                      deviceIdentifier: String?,
+                      ignoreDeviceIdentifier: String?,
                       desiredKeys: [String]?,
-                      completion: @escaping ([CKRecordZoneID: QSFetchZoneChangesOperationZoneResult]) -> ()) {
+                      completion: @escaping ([CKRecordZone.ID: QSFetchZoneChangesOperationZoneResult]) -> ()) {
         
         self.database = database
         self.zoneIDs = zoneIDs
         self.zoneChangeTokens = zoneChangeTokens
         self.modelVersion = modelVersion
-        self.deviceIdentifier = deviceIdentifier
+        self.ignoreDeviceIdentifier = ignoreDeviceIdentifier
         self.desiredKeys = desiredKeys
         self.completion = completion
         
@@ -59,13 +59,13 @@ public class QSFetchZoneChangesOperation: QSCloudKitSynchronizerOperation {
         performFetchOperation(with: zoneIDs)
     }
     
-    func performFetchOperation(with zones: [CKRecordZoneID]) {
+    func performFetchOperation(with zones: [CKRecordZone.ID]) {
         
         var higherModelVersionFound = false
-        var zoneOptions = [CKRecordZoneID: CKFetchRecordZoneChangesOptions]()
+        var zoneOptions = [CKRecordZone.ID: CKFetchRecordZoneChangesOperation.ZoneOptions]()
         
         for zoneID in zones {
-            let options = CKFetchRecordZoneChangesOptions()
+            let options = CKFetchRecordZoneChangesOperation.ZoneOptions()
             options.previousServerChangeToken = zoneChangeTokens[zoneID]
             options.desiredKeys = desiredKeys
             zoneOptions[zoneID] = options
@@ -76,11 +76,11 @@ public class QSFetchZoneChangesOperation: QSCloudKitSynchronizerOperation {
         
         operation.recordChangedBlock = { record in
             
-            let deviceIdentifier: String = self.deviceIdentifier ?? " "
+            let ignoreDeviceIdentifier: String = self.ignoreDeviceIdentifier ?? " "
             self.dispatchQueue.async {
                 
                 let isShare = record is CKShare
-                if deviceIdentifier != record[QSCloudKitDeviceUUIDKey] as? String || isShare {
+                if ignoreDeviceIdentifier != record[QSCloudKitDeviceUUIDKey] as? String || isShare {
                     
                     if !isShare,
                         let version = record[QSCloudKitModelCompatibilityVersionKey] as? Int,

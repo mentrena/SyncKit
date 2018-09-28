@@ -228,7 +228,7 @@
 				TargetAttributes = {
 					641C326A1F55E29A00B01D62 = {
 						CreatedOnToolsVersion = 8.3.3;
-						LastSwiftMigration = 0940;
+						LastSwiftMigration = 1000;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.Push = {
@@ -241,7 +241,7 @@
 					};
 					641C327E1F55E29A00B01D62 = {
 						CreatedOnToolsVersion = 8.3.3;
-						LastSwiftMigration = 0940;
+						LastSwiftMigration = 1000;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 641C326A1F55E29A00B01D62;
 					};
@@ -523,8 +523,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "SyncKitRealmSwift/SyncKitRealmSwiftExample-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
-				SWIFT_VERSION = 4.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
 		};
@@ -543,8 +543,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.mentrena.SyncKitRealmSwift;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "SyncKitRealmSwift/SyncKitRealmSwiftExample-Bridging-Header.h";
-				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
-				SWIFT_VERSION = 4.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
 		};
@@ -563,7 +563,7 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "SyncKitRealmSwiftTests/SyncKitRealmSwiftExampleTests-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_SWIFT3_OBJC_INFERENCE = On;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SyncKitRealmSwiftExample.app/SyncKitRealmSwiftExample";
 			};
 			name = Debug;
@@ -582,7 +582,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "SyncKitRealmSwiftTests/SyncKitRealmSwiftExampleTests-Bridging-Header.h";
 				SWIFT_SWIFT3_OBJC_INFERENCE = On;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SyncKitRealmSwiftExample.app/SyncKitRealmSwiftExample";
 			};
 			name = Release;

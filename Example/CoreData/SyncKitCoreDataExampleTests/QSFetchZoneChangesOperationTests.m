@@ -51,7 +51,7 @@
     NSMutableArray *downloadedRecords = [NSMutableArray array];
     
     XCTestExpectation *expectation = [self expectationWithDescription:@"finished"];
-    QSFetchZoneChangesOperation *operation = [[QSFetchZoneChangesOperation alloc] initWithDatabase:(CKDatabase *)self.mockDatabase zoneIDs:@[zoneID, zoneID2] zoneChangeTokens:@{} modelVersion:0 deviceIdentifier:@"" desiredKeys:nil completion:^(NSDictionary<CKRecordZoneID *,QSFetchZoneChangesOperationZoneResult *> * _Nonnull zoneResults) {
+    QSFetchZoneChangesOperation *operation = [[QSFetchZoneChangesOperation alloc] initWithDatabase:(CKDatabase *)self.mockDatabase zoneIDs:@[zoneID, zoneID2] zoneChangeTokens:@{} modelVersion:0 ignoreDeviceIdentifier:@"" desiredKeys:nil completion:^(NSDictionary<CKRecordZoneID *,QSFetchZoneChangesOperationZoneResult *> * _Nonnull zoneResults) {
         
         QSFetchZoneChangesOperationZoneResult *zoneResult = zoneResults[zoneID];
         [downloadedRecords addObjectsFromArray:zoneResult.downloadedRecords];
@@ -84,7 +84,7 @@
     NSMutableArray *downloadedRecords = [NSMutableArray array];
     
     XCTestExpectation *expectation = [self expectationWithDescription:@"finished"];
-    QSFetchZoneChangesOperation *operation = [[QSFetchZoneChangesOperation alloc] initWithDatabase:(CKDatabase *)self.mockDatabase zoneIDs:@[zoneID, zoneID2] zoneChangeTokens:@{} modelVersion:0 deviceIdentifier:@"" desiredKeys:nil completion:^(NSDictionary<CKRecordZoneID *,QSFetchZoneChangesOperationZoneResult *> * _Nonnull zoneResults) {
+    QSFetchZoneChangesOperation *operation = [[QSFetchZoneChangesOperation alloc] initWithDatabase:(CKDatabase *)self.mockDatabase zoneIDs:@[zoneID, zoneID2] zoneChangeTokens:@{} modelVersion:0 ignoreDeviceIdentifier:@"" desiredKeys:nil completion:^(NSDictionary<CKRecordZoneID *,QSFetchZoneChangesOperationZoneResult *> * _Nonnull zoneResults) {
         
         QSFetchZoneChangesOperationZoneResult *zoneResult = zoneResults[zoneID];
         [downloadedRecords addObjectsFromArray:zoneResult.deletedRecordIDs];
@@ -117,7 +117,7 @@
     NSMutableArray *downloadedRecords = [NSMutableArray array];
     
     XCTestExpectation *expectation = [self expectationWithDescription:@"finished"];
-    QSFetchZoneChangesOperation *operation = [[QSFetchZoneChangesOperation alloc] initWithDatabase:(CKDatabase *)self.mockDatabase zoneIDs:@[zoneID] zoneChangeTokens:@{} modelVersion:0 deviceIdentifier:@"" desiredKeys:nil completion:^(NSDictionary<CKRecordZoneID *,QSFetchZoneChangesOperationZoneResult *> * _Nonnull zoneResults) {
+    QSFetchZoneChangesOperation *operation = [[QSFetchZoneChangesOperation alloc] initWithDatabase:(CKDatabase *)self.mockDatabase zoneIDs:@[zoneID] zoneChangeTokens:@{} modelVersion:0 ignoreDeviceIdentifier:@"" desiredKeys:nil completion:^(NSDictionary<CKRecordZoneID *,QSFetchZoneChangesOperationZoneResult *> * _Nonnull zoneResults) {
         
         QSFetchZoneChangesOperationZoneResult *zoneResult = zoneResults[zoneID];
         [downloadedRecords addObjectsFromArray:zoneResult.downloadedRecords];

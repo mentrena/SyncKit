@@ -103,10 +103,10 @@ class SyncKitRealmSwiftTests: XCTestCase, RealmSwiftAdapterDelegate {
     
     func realmAdapter(targetConfiguration: Realm.Configuration, persistenceConfiguration: Realm.Configuration) -> RealmSwiftAdapter {
         
-        return RealmSwiftAdapter(persistenceRealmConfiguration: persistenceConfiguration, targetRealmConfiguration: targetConfiguration, recordZoneID: CKRecordZoneID(zoneName: "zone", ownerName: "owner"))
+        return RealmSwiftAdapter(persistenceRealmConfiguration: persistenceConfiguration, targetRealmConfiguration: targetConfiguration, recordZoneID: CKRecordZone.ID(zoneName: "zone", ownerName: "owner"))
     }
     
-    func fullySync(adapter: QSModelAdapter, completion: @escaping ([CKRecord], [CKRecordID], Error?) -> ()) {
+    func fullySync(adapter: QSModelAdapter, completion: @escaping ([CKRecord], [CKRecord.ID], Error?) -> ()) {
         
         adapter.prepareForImport()
         let recordsToUpload = adapter.recordsToUpload(withLimit: 1000)
@@ -119,7 +119,7 @@ class SyncKitRealmSwiftTests: XCTestCase, RealmSwiftAdapterDelegate {
         }
     }
     
-    func fullySync(adapter: QSModelAdapter, downloaded: [CKRecord], deleted: [CKRecordID], completion: @escaping ([CKRecord], [CKRecordID], Error?) -> ()) {
+    func fullySync(adapter: QSModelAdapter, downloaded: [CKRecord], deleted: [CKRecord.ID], completion: @escaping ([CKRecord], [CKRecord.ID], Error?) -> ()) {
         
         adapter.prepareForImport()
         adapter.saveChanges(in: downloaded)
@@ -127,7 +127,7 @@ class SyncKitRealmSwiftTests: XCTestCase, RealmSwiftAdapterDelegate {
         
         adapter.persistImportedChanges { (error) in
             var recordsToUpload = [CKRecord]()
-            var recordIdsToDelete = [CKRecordID]()
+            var recordIdsToDelete = [CKRecord.ID]()
             if error == nil {
                 recordsToUpload = adapter.recordsToUpload(withLimit: 1000)
                 recordIdsToDelete = adapter.recordIDsMarkedForDeletion(withLimit: 1000)
@@ -301,7 +301,7 @@ class SyncKitRealmSwiftTests: XCTestCase, RealmSwiftAdapterDelegate {
         let realm = realmWith(identifier: "t7")
         let adapter = realmAdapter(targetConfiguration: realm.configuration, persistenceConfiguration: persistenceConfigurationWith(identifier: "p7"))
         
-        let objectRecord = CKRecord(recordType: "QSCompany", recordID: CKRecordID(recordName: "QSCompany.1"))
+        let objectRecord = CKRecord(recordType: "QSCompany", recordID: CKRecord.ID(recordName: "QSCompany.1"))
         objectRecord["name"] = "new company" as NSString
         objectRecord["identifier"] = "1" as NSString
         objectRecord["sortIndex"] = NSNumber(value: 1)
@@ -609,16 +609,16 @@ class SyncKitRealmSwiftTests: XCTestCase, RealmSwiftAdapterDelegate {
         let realm = realmWith(identifier: "t12")
         let adapter = realmAdapter(targetConfiguration: realm.configuration, persistenceConfiguration: persistenceConfigurationWith(identifier: "p12"))
         
-        let companyRecord = CKRecord(recordType: "QSCompany", recordID: CKRecordID(recordName: "QSCompany.1"))
+        let companyRecord = CKRecord(recordType: "QSCompany", recordID: CKRecord.ID(recordName: "QSCompany.1"))
         companyRecord["name"] = "new company" as NSString
         companyRecord["identifier"] = "1" as NSString
         companyRecord["sortIndex"] = NSNumber(value: 1)
         
-        let employeeRecord = CKRecord(recordType: "QSEmployee", recordID: CKRecordID(recordName: "QSEmployee.1"))
+        let employeeRecord = CKRecord(recordType: "QSEmployee", recordID: CKRecord.ID(recordName: "QSEmployee.1"))
         employeeRecord["name"] = "new employee" as NSString
         employeeRecord["identifier"] = "2" as NSString
         employeeRecord["sortIndex"] = NSNumber(value: 1)
-        employeeRecord["company"] = CKReference(recordID: companyRecord.recordID, action: .none)
+        employeeRecord["company"] = CKRecord.Reference(recordID: companyRecord.recordID, action: .none)
         
         let exp = expectation(description: "merged changes")
         
@@ -680,7 +680,7 @@ class SyncKitRealmSwiftTests: XCTestCase, RealmSwiftAdapterDelegate {
         }
         waitForExpectations(timeout: 1, handler: nil)
         
-        XCTAssertFalse(adapter.hasRecordID(CKRecordID(recordName: "missing")))
+        XCTAssertFalse(adapter.hasRecordID(CKRecord.ID(recordName: "missing")))
     }
     
     func testHasRecordID_existingObject_returnsYES() {
@@ -1163,10 +1163,10 @@ class SyncKitRealmSwiftTests: XCTestCase, RealmSwiftAdapterDelegate {
         let adapter = realmAdapter(targetConfiguration: realm.configuration,
                                                persistenceConfiguration: persistenceConfigurationWith(identifier: "p55"))
         
-        let companyRecord = CKRecord(recordType: "QSCompany", recordID: CKRecordID(recordName: "QSCompany.com1"))
+        let companyRecord = CKRecord(recordType: "QSCompany", recordID: CKRecord.ID(recordName: "QSCompany.com1"))
         companyRecord["name"] = "new company" as NSString
         
-        let shareRecord = CKShare(rootRecord: companyRecord, shareID: CKRecordID(recordName: "QSShare.forCompany"))
+        let shareRecord = CKShare(rootRecord: companyRecord, shareID: CKRecord.ID(recordName: "QSShare.forCompany"))
         
         let expectation = self.expectation(description: "synced")
         fullySync(adapter: adapter, downloaded: [companyRecord, shareRecord], deleted: []) { (_, _, _) in
@@ -1192,7 +1192,7 @@ class SyncKitRealmSwiftTests: XCTestCase, RealmSwiftAdapterDelegate {
                                                persistenceConfiguration: persistenceConfigurationWith(identifier: "p56"))
         
         let record = adapter.record(for: company)
-        let shareID = CKRecordID(recordName: "CKShare.identifier", zoneID: record!.recordID.zoneID)
+        let shareID = CKRecord.ID(recordName: "CKShare.identifier", zoneID: record!.recordID.zoneID)
         let share = CKShare(rootRecord: record!, shareID: shareID)
         
         adapter.save(share, for: company)

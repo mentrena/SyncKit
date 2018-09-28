@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'SyncKit'
-  s.version          = '0.6.3'
+  s.version          = '0.6.4'
   s.summary          = 'CloudKit synchronization for your Core Data or Realm model.'
 
   s.description      = <<-DESC
@@ -19,7 +19,7 @@ SyncKit automates the process of synchronizing your Core Data/Realm models using
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'Manuel Entrena' => 'manuel@mentrena.com' }
   s.source           = { :git => 'https://github.com/mentrena/SyncKit.git', :tag => s.version.to_s }
-  s.swift_version    = '4.1'
+  s.swift_version    = '4.2'
   s.module_name		 = 'SyncKit'
 
 s.ios.deployment_target = '10.0'

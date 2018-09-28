@@ -64,7 +64,7 @@ import Foundation
      - completion: Closure that gets called with an optional error when the operation is completed.
      
      */
-    @objc public func share(object: Any, publicPermission: CKShareParticipantPermission, participants: [CKShareParticipant], completion: ((CKShare?, Error?) -> ())?) {
+    @objc public func share(object: Any, publicPermission: CKShare.Participant.Permission, participants: [CKShare.Participant], completion: ((CKShare?, Error?) -> ())?) {
         
         guard let modelAdapter = modelAdapter(for: object),
         let record = modelAdapter.record(for: object) else {

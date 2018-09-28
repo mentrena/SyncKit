@@ -341,7 +341,7 @@
 		64D5D2B71EBB58630005BFCE /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0940;
+				LastUpgradeCheck = 1000;
 				ORGANIZATIONNAME = Colourbox;
 				TargetAttributes = {
 					640892731EBEFBE5006CD4F9 = {

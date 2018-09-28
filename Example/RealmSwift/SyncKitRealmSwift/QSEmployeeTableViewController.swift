@@ -79,7 +79,7 @@ class QSEmployeeTableViewController: UITableViewController, UIImagePickerControl
         return canWrite
     }
     
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         
         if editingStyle == .delete {
             
@@ -172,7 +172,10 @@ class QSEmployeeTableViewController: UITableViewController, UIImagePickerControl
         dismiss(animated: true, completion: nil)
     }
     
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+// Local variable inserted by Swift 4.2 migrator.
+let info = convertFromUIImagePickerControllerInfoKeyDictionary(info)
+
         
         defer {
             dismiss(animated: true, completion: nil)
@@ -186,7 +189,7 @@ class QSEmployeeTableViewController: UITableViewController, UIImagePickerControl
         let resizedImage = self.image(with: image, scaledToSize: CGSize(width: 150, height: 150))
         
         try? realm?.write {
-            employee.photo = UIImagePNGRepresentation(resizedImage);
+            employee.photo = resizedImage.pngData();
         }
     }
     
@@ -206,4 +209,9 @@ class QSEmployeeTableViewController: UITableViewController, UIImagePickerControl
         present(alertController, animated: true, completion: nil)
     }
     
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromUIImagePickerControllerInfoKeyDictionary(_ input: [UIImagePickerController.InfoKey: Any]) -> [String: Any] {
+	return Dictionary(uniqueKeysWithValues: input.map {key, value in (key.rawValue, value)})
 }
