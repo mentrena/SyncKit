@@ -23,7 +23,7 @@ public class QSFetchZoneChangesOperation: QSCloudKitSynchronizerOperation {
     let zoneIDs: [CKRecordZoneID]
     var zoneChangeTokens: [CKRecordZoneID: CKServerChangeToken]
     let modelVersion: Int
-    let deviceIdentifier: String
+    let deviceIdentifier: String?
     let completion: ([CKRecordZoneID: QSFetchZoneChangesOperationZoneResult]) -> ()
     let desiredKeys: [String]?
     
@@ -36,7 +36,7 @@ public class QSFetchZoneChangesOperation: QSCloudKitSynchronizerOperation {
                       zoneIDs: [CKRecordZoneID],
                       zoneChangeTokens: [CKRecordZoneID: CKServerChangeToken],
                       modelVersion: Int,
-                      deviceIdentifier: String,
+                      deviceIdentifier: String?,
                       desiredKeys: [String]?,
                       completion: @escaping ([CKRecordZoneID: QSFetchZoneChangesOperationZoneResult]) -> ()) {
         
@@ -76,10 +76,11 @@ public class QSFetchZoneChangesOperation: QSCloudKitSynchronizerOperation {
         
         operation.recordChangedBlock = { record in
             
+            let deviceIdentifier: String = self.deviceIdentifier ?? " "
             self.dispatchQueue.async {
                 
                 let isShare = record is CKShare
-                if self.deviceIdentifier != record[QSCloudKitDeviceUUIDKey] as? String || isShare {
+                if deviceIdentifier != record[QSCloudKitDeviceUUIDKey] as? String || isShare {
                     
                     if !isShare,
                         let version = record[QSCloudKitModelCompatibilityVersionKey] as? Int,

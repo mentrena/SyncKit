@@ -1201,7 +1201,8 @@ static const NSString * QSCoreDataAdapterShareRelationshipKey = @"com.syncKit.sh
             QSQueryData *query = [[QSQueryData alloc] initWithIdentifier:syncedEntity.originObjectID
                                                                   record:record
                                                               entityType:syncedEntity.entityType
-                                                             changedKeys:[syncedEntity.changedKeys componentsSeparatedByString:@","] entityState:syncedEntity.state
+                                                             changedKeys:[syncedEntity.changedKeys componentsSeparatedByString:@","]
+                                                             entityState:syncedEntity.state
                                                            relationships:nil];
             
             NSMutableDictionary *queries = queryByEntityType[syncedEntity.entityType];
