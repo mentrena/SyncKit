@@ -127,7 +127,10 @@ public class DefaultRealmProvider: NSObject, QSCloudKitSynchronizerAdapterProvid
         let stackURL = folderURL.appendingPathComponent(DefaultRealmProviderTargetFileName)
         let persistenceURL = folderURL.appendingPathComponent(DefaultRealmProviderPersistenceFileName)
         
-        let adapter = realmSwiftAdapterFor(targetRealmURL: stackURL, persistenceRealmURL: persistenceURL, zoneID: recordZoneID)
+        var adapter: RealmSwiftAdapter!
+        DispatchQueue.main.sync {
+            adapter = realmSwiftAdapterFor(targetRealmURL: stackURL, persistenceRealmURL: persistenceURL, zoneID: recordZoneID)
+        }
         
         adapterDictionary[recordZoneID] = adapter
         
