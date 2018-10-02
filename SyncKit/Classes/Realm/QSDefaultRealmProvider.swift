@@ -115,7 +115,10 @@ public extension Notification.Name {
         let stackURL = folderURL.appendingPathComponent(QSDefaultRealmProviderTargetFileName)
         let persistenceURL = folderURL.appendingPathComponent(QSDefaultRealmProviderPersistenceFileName)
         
-        let adapter = realmAdapterFor(targetRealmURL: stackURL, persistenceRealmURL: persistenceURL, zoneID: recordZoneID)
+        var adapter: QSRealmAdapter!
+        DispatchQueue.main.sync {
+            adapter = realmAdapterFor(targetRealmURL: stackURL, persistenceRealmURL: persistenceURL, zoneID: recordZoneID)
+        }
         
         adapterDictionary[recordZoneID] = adapter
         

@@ -111,12 +111,19 @@ public class RealmSwiftAdapter: NSObject, QSModelAdapter {
     }
     
     deinit {
-        
-        for token in objectNotificationTokens.values {
-            token.invalidate()
-        }
-        for token in collectionNotificationTokens {
-            token.invalidate()
+        invalidateTokens()
+    }
+    
+    func invalidateTokens() {
+        executeOnMainQueue {
+            for token in objectNotificationTokens.values {
+                token.invalidate()
+            }
+            objectNotificationTokens.removeAll()
+            for token in collectionNotificationTokens {
+                token.invalidate()
+            }
+            collectionNotificationTokens.removeAll()
         }
     }
     
@@ -1077,6 +1084,8 @@ public class RealmSwiftAdapter: NSObject, QSModelAdapter {
     }
     
     public func deleteChangeTracking() {
+        
+        invalidateTokens()
         
         let config = self.realmProvider.persistenceRealm.configuration
         let realmFileURLs: [URL] = [config.fileURL,
