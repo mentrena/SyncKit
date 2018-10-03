@@ -8,8 +8,9 @@
 
 #import <XCTest/XCTest.h>
 @import SyncKit;
-#import "QSEmployee.h"
-#import "QSCompany.h"
+#import "SyncKitCoreDataExampleTests-Swift.h"
+//#import "QSEmployee.h"
+//#import "QSCompany.h"
 
 @interface QSCoreDataAdapterTests : XCTestCase <QSCoreDataAdapterDelegate, QSCoreDataAdapterConflictResolutionDelegate>
 
