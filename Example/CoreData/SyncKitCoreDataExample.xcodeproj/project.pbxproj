@@ -452,7 +452,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-SyncKitCoreDataExample/Pods-SyncKitCoreDataExample-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-SyncKitCoreDataExample/Pods-SyncKitCoreDataExample-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/SyncKit/SyncKit.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
@@ -461,7 +461,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-SyncKitCoreDataExample/Pods-SyncKitCoreDataExample-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SyncKitCoreDataExample/Pods-SyncKitCoreDataExample-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		4403ED7D9555A91B762043CF /* [CP] Embed Pods Frameworks */ = {
@@ -470,7 +470,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-SyncKitCoreDataExampleTests/Pods-SyncKitCoreDataExampleTests-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-SyncKitCoreDataExampleTests/Pods-SyncKitCoreDataExampleTests-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/OCMock/OCMock.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
@@ -479,7 +479,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-SyncKitCoreDataExampleTests/Pods-SyncKitCoreDataExampleTests-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SyncKitCoreDataExampleTests/Pods-SyncKitCoreDataExampleTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		D95C6C6549BDF6E545FD0AC9 /* [CP] Check Pods Manifest.lock */ = {

@@ -21,7 +21,9 @@ FOUNDATION_EXPORT NSString * _Nonnull const QSCloudKitModelCompatibilityVersionK
 - (CKServerChangeToken *_Nullable)getStoredDatabaseToken;
 - (void)storeDatabaseToken:(CKServerChangeToken *_Nullable)token;
 - (NSString *_Nullable)storedSubscriptionIDForRecordZoneID:(CKRecordZoneID *_Nonnull)zoneID;
+- (NSString *_Nullable)storedDatabaseSubscriptionID;
 - (void)storeSubscriptionID:(NSString *_Nonnull)subscriptionID forRecordZoneID:(CKRecordZoneID *_Nonnull)zoneID;
+- (void)storeDatabaseSubscriptionID:(NSString *_Nonnull)subscriptionID;
 - (void)clearSubscriptionID:(NSString *_Nonnull)subscriptionID;
 - (void)clearAllStoredSubscriptionIDs;
 
