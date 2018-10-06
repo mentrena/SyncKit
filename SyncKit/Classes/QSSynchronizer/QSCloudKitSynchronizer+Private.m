@@ -34,6 +34,11 @@ static NSString * const QSDatabaseServerChangeTokenKey = @"QSDatabaseServerChang
     return [self userDefaultsKeyForKey:[NSString stringWithFormat:@"%@.%@", zoneID.ownerName, zoneID.zoneName]];
 }
 
+- (NSString *)storeKeyForDatabase:(CKDatabase *)database
+{
+    return [self userDefaultsKeyForKey:database.databaseScope == CKDatabaseScopePrivate ? @"privateDatabase" : @"sharedDatabase"];
+}
+
 - (NSString *)getStoredDeviceUUID
 {
     return (NSString *)[self.keyValueStore objectForKey:[self userDefaultsKeyForKey:QSCloudKitStoredDeviceUUIDKey]];
@@ -74,6 +79,12 @@ static NSString * const QSDatabaseServerChangeTokenKey = @"QSDatabaseServerChang
     return subscriptionIDsDictionary[[self storeKeyForZoneID:zoneID]];
 }
 
+- (NSString *_Nullable)storedDatabaseSubscriptionID
+{
+    NSDictionary *subscriptionIDsDictionary = [self getStoredSubscriptionIDsDictionary];
+    return subscriptionIDsDictionary[[self storeKeyForDatabase:self.database]];
+}
+
 - (void)storeSubscriptionID:(NSString *)subscriptionID forRecordZoneID:(CKRecordZoneID *)zoneID
 {
     NSMutableDictionary *subscriptionIDsDictionary = [[self getStoredSubscriptionIDsDictionary] mutableCopy];
@@ -81,6 +92,16 @@ static NSString * const QSDatabaseServerChangeTokenKey = @"QSDatabaseServerChang
         subscriptionIDsDictionary = [NSMutableDictionary dictionary];
     }
     subscriptionIDsDictionary[[self storeKeyForZoneID:zoneID]] = subscriptionID;
+    [self setStoredSubscriptionIDsDictionary:subscriptionIDsDictionary];
+}
+
+- (void)storeDatabaseSubscriptionID:(NSString *_Nonnull)subscriptionID
+{
+    NSMutableDictionary *subscriptionIDsDictionary = [[self getStoredSubscriptionIDsDictionary] mutableCopy];
+    if (!subscriptionIDsDictionary) {
+        subscriptionIDsDictionary = [NSMutableDictionary dictionary];
+    }
+    subscriptionIDsDictionary[[self storeKeyForDatabase:self.database]] = subscriptionID;
     [self setStoredSubscriptionIDsDictionary:subscriptionIDsDictionary];
 }
 

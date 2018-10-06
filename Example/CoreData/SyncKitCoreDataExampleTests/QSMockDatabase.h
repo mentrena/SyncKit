@@ -10,6 +10,7 @@
 
 @interface QSMockDatabase : NSObject
 
+@property (nonatomic, assign) CKDatabaseScope scope;
 @property (nonatomic, readonly, nullable) NSString * serverToken;
 
 @property (nonatomic, strong, nonnull) NSArray *receivedRecords;
@@ -28,6 +29,8 @@
 @property (nonatomic, strong, nullable) CKRecordZone *savedRecordZone;
 
 @property (nonatomic, strong, nullable) NSArray *subscriptions;
+
+@property (nonatomic, strong, nullable) NSString *subscriptionIDReturnValue;
 
 @property (nonatomic, copy, nullable) void(^fetchDatabaseChangesOperationEnqueuedBlock)(CKFetchDatabaseChangesOperation * _Nonnull operation);
 @property (nonatomic, copy, nullable) void(^fetchRecordZoneChangesOperationEnqueuedBlock)(CKFetchRecordZoneChangesOperation * _Nonnull operation);

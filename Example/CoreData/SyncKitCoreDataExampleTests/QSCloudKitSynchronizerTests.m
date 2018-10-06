@@ -415,7 +415,7 @@
     XCTAssert(called == YES);
 }
 
-- (void)testSubscribeForUpdateNotifications_savesToDatabase
+- (void)testSubscribeForRecordZoneNotifications_savesToDatabase
 {
     [self clearAllUserDefaults];
     
@@ -423,16 +423,46 @@
     
     __block BOOL called = NO;
     
+    self.mockDatabase.subscriptionIDReturnValue = @"123";
     self.mockDatabase.saveSubscriptionCalledBlock = ^(CKSubscription *subscription) {
         called = YES;
-        [expectation fulfill];
     };
     
-    [self.synchronizer subscribeForChangesIn:self.recordZoneID completion:nil];
+    [self.synchronizer subscribeForChangesIn:self.recordZoneID completion:^(NSError * _Nullable error) {
+        [expectation fulfill];
+    }];
     
     [self waitForExpectationsWithTimeout:1 handler:nil];
+    
+    NSString *subscriptionID = [self.synchronizer subscriptionIDForRecordZoneID:self.recordZoneID];
 
     XCTAssertTrue(called);
+    XCTAssertEqual(subscriptionID, @"123");
+}
+
+- (void)testSubscribeForDatabaseNotifications_savesToDatabase
+{
+    [self clearAllUserDefaults];
+    
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Save subscription called"];
+    
+    __block BOOL called = NO;
+    
+    self.mockDatabase.scope = CKDatabaseScopeShared;
+    self.mockDatabase.subscriptionIDReturnValue = @"456";
+    self.mockDatabase.saveSubscriptionCalledBlock = ^(CKSubscription *subscription) {
+        called = YES;
+    };
+    
+    [self.synchronizer subscribeForChangesInDatabaseWithCompletion:^(NSError * _Nullable error) {
+        [expectation fulfill];
+    }];
+    
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    NSString *subscriptionID = [self.synchronizer subscriptionIDForDatabaseSubscription];
+    
+    XCTAssertTrue(called);
+    XCTAssertEqual(subscriptionID, @"456");
 }
 
 - (void)testSubscribeForUpdateNotifications_existingSubscription_updatesSubscriptionID
@@ -477,14 +507,18 @@
     
     self.mockDatabase.deleteSubscriptionCalledBlock = ^(NSString *subscriptionID) {
         called = YES;
-        [deleted fulfill];
     };
     
-    [self.synchronizer cancelSubscriptionForChangesIn:self.recordZoneID completion:nil];
+    [self.synchronizer cancelSubscriptionForChangesIn:self.recordZoneID completion:^(NSError * _Nullable error) {
+        [deleted fulfill];
+    }];
     
     [self waitForExpectationsWithTimeout:1 handler:nil];
     
+    NSString *subscriptionID = [self.synchronizer subscriptionIDForRecordZoneID:self.recordZoneID];
+    
     XCTAssertTrue(called);
+    XCTAssertNil(subscriptionID);
 }
 
 - (void)testDeleteSubscription_noLocalSubscriptionButRemoteOne_deletesOnDatabase

@@ -17,6 +17,16 @@
 
 @implementation QSMockDatabase
 
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        self.scope = CKDatabaseScopePrivate;
+        self.subscriptionIDReturnValue = @"subscriptionIdentifier";
+    }
+    return self;
+}
+
 - (NSString *)serverToken
 {
     return [NSString stringWithFormat:@"token%ld", (long)self.tokenIndex];
@@ -36,6 +46,11 @@
         _deletedRecordIDs = [NSArray array];
     }
     return _deletedRecordIDs;
+}
+
+- (CKDatabaseScope)databaseScope
+{
+    return self.scope;
 }
 
 - (void)addOperation:(CKDatabaseOperation *)operation
@@ -156,7 +171,7 @@
         self.saveSubscriptionCalledBlock(subscription);
     }
     id mockSubscription = OCMClassMock([CKSubscription class]);
-    OCMStub([mockSubscription subscriptionID]).andReturn(@"subscriptionIdentifier");
+    OCMStub([mockSubscription subscriptionID]).andReturn(self.subscriptionIDReturnValue);
     completionHandler(mockSubscription, nil);
 }
 
