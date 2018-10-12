@@ -1461,24 +1461,28 @@ static const NSString * QSCoreDataAdapterShareRelationshipKey = @"com.syncKit.sh
 
 - (nullable CKServerChangeToken *)serverChangeToken
 {
-    NSArray *tokens = [self.privateContext executeFetchRequestWithEntityName:@"QSServerToken" predicate:nil fetchLimit:1 error:nil];
-    if (tokens.count > 0) {
-        QSServerToken *qsToken = [tokens firstObject];
-        CKServerChangeToken *token = [NSKeyedUnarchiver unarchiveObjectWithData:qsToken.token];
-        return token;
-    }
-    return nil;
+    __block CKServerChangeToken *token = nil;
+    [self.privateContext performBlockAndWait:^{
+        NSArray *tokens = [self.privateContext executeFetchRequestWithEntityName:@"QSServerToken" predicate:nil fetchLimit:1 error:nil];
+        if (tokens.count > 0) {
+            QSServerToken *qsToken = [tokens firstObject];
+            token = [NSKeyedUnarchiver unarchiveObjectWithData:qsToken.token];
+        }
+    }];
+    return token;
 }
 
 - (void)saveToken:(nullable CKServerChangeToken *)token
 {
-    QSServerToken *qsToken = [[self.privateContext executeFetchRequestWithEntityName:@"QSServerToken" predicate:nil fetchLimit:1 error:nil] firstObject];
-    if (!qsToken) {
-        qsToken = [NSEntityDescription insertNewObjectForEntityForName:@"QSServerToken"
-                                                inManagedObjectContext:self.privateContext];
-    }
-    qsToken.token = [NSKeyedArchiver archivedDataWithRootObject:token];
-    [self.privateContext save:nil];
+    [self.privateContext performBlockAndWait:^{
+        QSServerToken *qsToken = [[self.privateContext executeFetchRequestWithEntityName:@"QSServerToken" predicate:nil fetchLimit:1 error:nil] firstObject];
+        if (!qsToken) {
+            qsToken = [NSEntityDescription insertNewObjectForEntityForName:@"QSServerToken"
+                                                    inManagedObjectContext:self.privateContext];
+        }
+        qsToken.token = [NSKeyedArchiver archivedDataWithRootObject:token];
+        [self.privateContext save:nil];
+    }];
 }
 
 - (void)deleteChangeTracking

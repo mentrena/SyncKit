@@ -108,8 +108,11 @@
 
 - (void)deleteStore
 {
+    [self.managedObjectContext performBlockAndWait:^{
+        [self.managedObjectContext reset];
+    }];
+ 
     NSError *error = nil;
-    [self.managedObjectContext reset];
     [self.persistentStoreCoordinator removePersistentStore:self.store error:&error];
     self.managedObjectContext = nil;
     [[NSFileManager defaultManager] removeItemAtURL:self.storeURL error:&error];
