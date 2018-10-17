@@ -92,7 +92,7 @@ public class RealmSwiftAdapter: NSObject, QSModelAdapter {
     var objectNotificationTokens = [String: NotificationToken]()
     var pendingTrackingUpdates = [ObjectUpdate]()
     var childRelationships = [String: Array<ChildRelationship>]()
-    
+    var modelTypes = [String: Object.Type]()
     var hasChangesValue = false
     
     /* Should be initialized on main queue */
@@ -105,6 +105,7 @@ public class RealmSwiftAdapter: NSObject, QSModelAdapter {
         super.init()
         
         executeOnMainQueue {
+            setupTypeNamesLookup()
             setup()
             setupChildrenRelationshipsLookup()
         }
@@ -136,6 +137,14 @@ public class RealmSwiftAdapter: NSObject, QSModelAdapter {
         }
         configuration.objectTypes = [SyncedEntity.self, Record.self, PendingRelationship.self, ServerToken.self]
         return configuration
+    }
+    
+    func setupTypeNamesLookup() {
+        
+        targetRealmConfiguration.objectTypes?.forEach { objectType in
+
+            modelTypes[objectType.className()] = objectType
+        }
     }
     
     func setup() {
@@ -231,12 +240,7 @@ public class RealmSwiftAdapter: NSObject, QSModelAdapter {
     
     func realmObjectClass(name: String) -> Object.Type {
         
-        if let objClass = NSClassFromString(name) {
-            return objClass as! Object.Type
-        } else {
-            let namespace = Bundle.main.infoDictionary!["CFBundleExecutable"] as! String
-            return NSClassFromString("\(namespace).\(name)") as! Object.Type
-        }
+        return modelTypes[name]!
     }
     
     func updateHasChanges(realm: Realm) {
