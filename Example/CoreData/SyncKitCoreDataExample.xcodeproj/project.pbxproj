@@ -16,6 +16,10 @@
 		6003F59E195388D20070C39A /* QSAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F59D195388D20070C39A /* QSAppDelegate.m */; };
 		6003F5A9195388D20070C39A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6003F5A8195388D20070C39A /* Images.xcassets */; };
 		64000CA11D451E07006ACD20 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64000CA01D451E07006ACD20 /* CoreData.framework */; };
+		640088B221790508006C10CB /* QSTransformableTestModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 640088B021790508006C10CB /* QSTransformableTestModel.xcdatamodeld */; };
+		640088B621790569006C10CB /* QSNamesTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 640088B521790569006C10CB /* QSNamesTransformer.m */; };
+		640088D421790D6A006C10CB /* QSTestEntity+CoreDataClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 640088D221790D6A006C10CB /* QSTestEntity+CoreDataClass.m */; };
+		640088D521790D6A006C10CB /* QSTestEntity+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 640088D321790D6A006C10CB /* QSTestEntity+CoreDataProperties.m */; };
 		6402A03B1E16D303005FE304 /* QSCompany.m in Sources */ = {isa = PBXBuildFile; fileRef = 6402A0341E16D303005FE304 /* QSCompany.m */; };
 		6402A03C1E16D303005FE304 /* QSCompany+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 6402A0361E16D303005FE304 /* QSCompany+CoreDataProperties.m */; };
 		6402A03D1E16D303005FE304 /* QSEmployee.m in Sources */ = {isa = PBXBuildFile; fileRef = 6402A0381E16D303005FE304 /* QSEmployee.m */; };
@@ -88,6 +92,13 @@
 		64000CA81D451F5A006ACD20 /* QSMockDatabase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QSMockDatabase.m; sourceTree = "<group>"; };
 		64000CA91D451F5A006ACD20 /* QSObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QSObject.h; sourceTree = "<group>"; };
 		64000CAA1D451F5A006ACD20 /* QSObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QSObject.m; sourceTree = "<group>"; };
+		640088B121790508006C10CB /* QSTransformableTestModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = QSTransformableTestModel.xcdatamodel; sourceTree = "<group>"; };
+		640088B421790569006C10CB /* QSNamesTransformer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QSNamesTransformer.h; sourceTree = "<group>"; };
+		640088B521790569006C10CB /* QSNamesTransformer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QSNamesTransformer.m; sourceTree = "<group>"; };
+		640088D021790D6A006C10CB /* QSTestEntity+CoreDataProperties.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "QSTestEntity+CoreDataProperties.h"; sourceTree = "<group>"; };
+		640088D121790D6A006C10CB /* QSTestEntity+CoreDataClass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "QSTestEntity+CoreDataClass.h"; sourceTree = "<group>"; };
+		640088D221790D6A006C10CB /* QSTestEntity+CoreDataClass.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "QSTestEntity+CoreDataClass.m"; sourceTree = "<group>"; };
+		640088D321790D6A006C10CB /* QSTestEntity+CoreDataProperties.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "QSTestEntity+CoreDataProperties.m"; sourceTree = "<group>"; };
 		6402A0331E16D303005FE304 /* QSCompany.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QSCompany.h; sourceTree = "<group>"; };
 		6402A0341E16D303005FE304 /* QSCompany.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QSCompany.m; sourceTree = "<group>"; };
 		6402A0351E16D303005FE304 /* QSCompany+CoreDataProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "QSCompany+CoreDataProperties.h"; sourceTree = "<group>"; };
@@ -258,6 +269,7 @@
 				64B13A8C20C9763000FCB834 /* QSCloudKitSynchronizerOperationTests.swift */,
 				645889AE20D3B38F00DF2018 /* QSFetchDatabaseChangesOperationTests.m */,
 				645889B020D3C71200DF2018 /* QSFetchZoneChangesOperationTests.m */,
+				640088C12179090B006C10CB /* Transformable */,
 			);
 			path = SyncKitCoreDataExampleTests;
 			sourceTree = "<group>";
@@ -280,6 +292,20 @@
 				AAB4A651EE466CC5A9BFA796 /* LICENSE */,
 			);
 			name = "Podspec Metadata";
+			sourceTree = "<group>";
+		};
+		640088C12179090B006C10CB /* Transformable */ = {
+			isa = PBXGroup;
+			children = (
+				640088D021790D6A006C10CB /* QSTestEntity+CoreDataProperties.h */,
+				640088D121790D6A006C10CB /* QSTestEntity+CoreDataClass.h */,
+				640088D221790D6A006C10CB /* QSTestEntity+CoreDataClass.m */,
+				640088D321790D6A006C10CB /* QSTestEntity+CoreDataProperties.m */,
+				640088B021790508006C10CB /* QSTransformableTestModel.xcdatamodeld */,
+				640088B421790569006C10CB /* QSNamesTransformer.h */,
+				640088B521790569006C10CB /* QSNamesTransformer.m */,
+			);
+			name = Transformable;
 			sourceTree = "<group>";
 		};
 		644B20321D4811B200C131CD /* Model */ = {
@@ -546,14 +572,18 @@
 			files = (
 				644F4D1A20A5ED4F008D065E /* QSDefaultCoreDataStackProviderTests.m in Sources */,
 				644F4D1520A5E33C008D065E /* QSMockManagedObjectContext.m in Sources */,
+				640088B221790508006C10CB /* QSTransformableTestModel.xcdatamodeld in Sources */,
 				644F4D1220A5E248008D065E /* QSQSDefaultCoreDataAdapterDelegateTests.m in Sources */,
 				641F76DE1ED3EBDA00107A88 /* QSCloudKitSynchronizerTests.m in Sources */,
 				64DFFAB11FED35F90072B8C3 /* QSMockKeyValueStore.m in Sources */,
 				64B13A8D20C9763000FCB834 /* QSCloudKitSynchronizerOperationTests.swift in Sources */,
 				644F4D1820A5E46A008D065E /* QSMockCoreDataAdapter.m in Sources */,
+				640088D421790D6A006C10CB /* QSTestEntity+CoreDataClass.m in Sources */,
 				648869C120B45F9500194BA7 /* QSExample.xcdatamodeld in Sources */,
+				640088D521790D6A006C10CB /* QSTestEntity+CoreDataProperties.m in Sources */,
 				645889B120D3C71200DF2018 /* QSFetchZoneChangesOperationTests.m in Sources */,
 				64377B0B1ED6D394003FB86F /* QSMockDatabase.m in Sources */,
+				640088B621790569006C10CB /* QSNamesTransformer.m in Sources */,
 				645889AF20D3B38F00DF2018 /* QSFetchDatabaseChangesOperationTests.m in Sources */,
 				64377B0C1ED6D397003FB86F /* QSObject.m in Sources */,
 				64611C2320A45E3E00F671B4 /* QSMockAdapterProvider.m in Sources */,
@@ -821,6 +851,16 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
+		640088B021790508006C10CB /* QSTransformableTestModel.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				640088B121790508006C10CB /* QSTransformableTestModel.xcdatamodel */,
+			);
+			currentVersion = 640088B121790508006C10CB /* QSTransformableTestModel.xcdatamodel */;
+			path = QSTransformableTestModel.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
 		64E92B2720A7622F00AABA19 /* QSExample.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
