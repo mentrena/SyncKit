@@ -10,6 +10,8 @@
 @import SyncKit;
 #import "QSEmployee.h"
 #import "QSCompany.h"
+#import "QSTestEntity+CoreDataClass.h"
+#import "QSNamesTransformer.h"
 
 @interface QSCoreDataAdapterTests : XCTestCase <QSCoreDataAdapterDelegate, QSCoreDataAdapterConflictResolutionDelegate>
 
@@ -1377,6 +1379,65 @@
                       [record.recordID.recordName containsString:@"emp1"] ||
                       [record.recordID.recordName containsString:@"emp2"]);
     }
+}
+
+#pragma mark - Transformable
+
+- (void)testRecordsToUploadWithLimit_transformableProperty_usesValueTransformer
+{
+    [QSNamesTransformer resetValues];
+    self.targetCoreDataStack = [self coreDataStackWithModelName:@"QSTransformableTestModel"];
+    
+    //Insert object in context
+    QSTestEntity *entity = [NSEntityDescription insertNewObjectForEntityForName:@"QSTestEntity" inManagedObjectContext:self.targetCoreDataStack.managedObjectContext];
+    entity.identifier = @"identifier";
+    entity.names = @[@"1", @"2"];
+    NSError *error = nil;
+    [self.targetCoreDataStack.managedObjectContext save:&error];
+    
+    QSCoreDataAdapter *coreDataAdapter = [[QSCoreDataAdapter alloc] initWithPersistenceStack:self.coreDataStack targetContext:self.targetCoreDataStack.managedObjectContext recordZoneID:[[CKRecordZoneID alloc] initWithZoneName:@"zone" ownerName:@"owner"] delegate:self];
+    
+    [coreDataAdapter prepareForImport];
+    NSArray *records = [coreDataAdapter recordsToUploadWithLimit:10];
+    [coreDataAdapter didFinishImportWithError:nil];
+    
+    XCTAssertTrue(records.count > 0);
+    XCTAssertTrue([QSNamesTransformer transformedValueCalled]);
+    XCTAssertFalse([QSNamesTransformer reverseTransformedValueCalled]);
+}
+
+- (void)testSaveChangesInRecords_transformableProperty_usesValueTransformer
+{
+    [QSNamesTransformer resetValues];
+    self.targetCoreDataStack = [self coreDataStackWithModelName:@"QSTransformableTestModel"];
+    
+    QSCoreDataAdapter *coreDataAdapter = [[QSCoreDataAdapter alloc] initWithPersistenceStack:self.coreDataStack targetContext:self.targetCoreDataStack.managedObjectContext recordZoneID:[[CKRecordZoneID alloc] initWithZoneName:@"zone" ownerName:@"owner"] delegate:self];
+    
+    NSArray *array = @[@"1", @"2", @"3"];
+    
+    CKRecord *objectRecord = [[CKRecord alloc] initWithRecordType:@"QSTestEntity" recordID:[[CKRecordID alloc] initWithRecordName:@"QSTestEntity.ent1"]];
+    objectRecord[@"identifier"] = @"ent1";
+    objectRecord[@"names"] = [NSKeyedArchiver archivedDataWithRootObject:array];
+    
+    XCTestExpectation *expectation = [self expectationWithDescription:@"merged changes"];
+    
+    //Start sync and delete object
+    [coreDataAdapter prepareForImport];
+    [coreDataAdapter saveChangesInRecords:@[objectRecord]];
+    [coreDataAdapter persistImportedChangesWithCompletion:^(NSError *error) {
+        [expectation fulfill];
+    }];
+    [coreDataAdapter didFinishImportWithError:nil];
+    
+    [self waitForExpectationsWithTimeout:1 handler:nil];
+    
+    NSArray *objects = [self.targetCoreDataStack.managedObjectContext executeFetchRequestWithEntityName:@"QSTestEntity" error:nil];
+    XCTAssertTrue(objects.count == 1);
+    QSTestEntity *testEntity = [objects firstObject];
+    XCTAssertTrue([[testEntity valueForKey:@"identifier"] isEqualToString:@"ent1"]);
+    XCTAssertTrue([[testEntity valueForKey:@"names"] isEqualToArray:array]);
+    XCTAssertTrue([QSNamesTransformer reverseTransformedValueCalled]);
+    XCTAssertFalse([QSNamesTransformer transformedValueCalled]);
 }
 
 #pragma mark - Utilities

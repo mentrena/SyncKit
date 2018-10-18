@@ -555,6 +555,8 @@ static const NSString * QSCoreDataAdapterShareRelationshipKey = @"com.syncKit.sh
                     NSURL *fileURL = [self.tempFileManager storeData:(NSData *)value];
                     CKAsset *asset = [[CKAsset alloc] initWithFileURL:fileURL];
                     record[attributeName] = asset;
+                } else if (attributeDescription.attributeType == NSTransformableAttributeType && value) {
+                    record[attributeName] = [self transformedValueFor:value valueTransformerName:attributeDescription.valueTransformerName];
                 } else {
                     record[attributeName] = value;
                 }
@@ -919,11 +921,44 @@ static const NSString * QSCoreDataAdapterShareRelationshipKey = @"com.syncKit.sh
 - (void)assignAttributeValue:(id)value toManagedObject:(NSManagedObject *)object attributeName:(NSString *)attributeName
 {
     if ([value isKindOfClass:[CKAsset class]]) {
+        
         NSData *data = [NSData dataWithContentsOfURL:[(CKAsset *)value fileURL]];
         [object setValue:data forKey:attributeName];
+        
     } else {
-        [object setValue:value forKey:attributeName];
+        
+        NSAttributeDescription *attributeDescription = object.entity.attributesByName[attributeName];
+        if (attributeDescription.attributeType == NSTransformableAttributeType && value) {
+            [object setValue:[self reverseTransformedValueFor:value valueTransformerName:attributeDescription.valueTransformerName] forKey:attributeName];
+        } else {
+            [object setValue:value forKey:attributeName];
+        }
+        
     }
+}
+
+- (id)reverseTransformedValueFor:(id)value valueTransformerName:(NSString *)valueTransformerName
+{
+    id transformedValue = nil;
+    if (valueTransformerName) {
+        NSValueTransformer *transformer = [NSValueTransformer valueTransformerForName:valueTransformerName];
+        transformedValue = [transformer reverseTransformedValue:value];
+    } else {
+        transformedValue = [NSKeyedUnarchiver unarchiveObjectWithData:value];
+    }
+    return transformedValue;
+}
+
+- (id)transformedValueFor:(id)value valueTransformerName:(NSString *)valueTransformerName
+{
+    NSData *data = nil;
+    if (valueTransformerName) {
+        NSValueTransformer *transformer = [NSValueTransformer valueTransformerForName:valueTransformerName];
+        data = (NSData *)[transformer transformedValue:value];
+    } else {
+        data = [NSKeyedArchiver archivedDataWithRootObject:value];
+    }
+    return data;
 }
 
 - (BOOL)shouldIgnoreKey:(NSString *)key
