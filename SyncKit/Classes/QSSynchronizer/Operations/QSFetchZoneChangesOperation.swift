@@ -30,7 +30,7 @@ public class QSFetchZoneChangesOperation: QSCloudKitSynchronizerOperation {
     var zoneResults = [CKRecordZone.ID: QSFetchZoneChangesOperationZoneResult]()
     
     let dispatchQueue = DispatchQueue(label: "fetchZoneChangesDispatchQueue")
-    var operation: CKFetchRecordZoneChangesOperation?
+    weak var internalOperation: CKFetchRecordZoneChangesOperation?
     
     @objc public init(database: CKDatabase,
                       zoneIDs: [CKRecordZone.ID],
@@ -135,12 +135,12 @@ public class QSFetchZoneChangesOperation: QSCloudKitSynchronizerOperation {
             }
         }
         
-        self.operation = operation
+        internalOperation = operation
         self.database.add(operation)
     }
     
     override public func cancel() {
-        operation?.cancel()
+        internalOperation?.cancel()
         super.cancel()
     }
 }

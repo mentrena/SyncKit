@@ -17,7 +17,7 @@ public class QSFetchDatabaseChangesOperation: QSCloudKitSynchronizerOperation {
     
     var changedZoneIDs = [CKRecordZone.ID]()
     var deletedZoneIDs = [CKRecordZone.ID]()
-    var operation: CKFetchDatabaseChangesOperation?
+    weak var internalOperation: CKFetchDatabaseChangesOperation?
     
     @objc public init(database: CKDatabase, databaseToken: CKServerChangeToken?, completion: @escaping (CKServerChangeToken?, [CKRecordZone.ID], [CKRecordZone.ID]) -> ()) {
         self.databaseToken = databaseToken
@@ -51,12 +51,12 @@ public class QSFetchDatabaseChangesOperation: QSCloudKitSynchronizerOperation {
             }
         }
 
-        operation = databaseChangesOperation
+        internalOperation = databaseChangesOperation
         database.add(databaseChangesOperation)
     }
     
     override public func cancel() {
-        operation?.cancel()
+        internalOperation?.cancel()
         super.cancel()
     }
 }
