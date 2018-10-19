@@ -34,6 +34,18 @@
 + (QSCloudKitSynchronizer *)cloudKitPrivateSynchronizerWithContainerName:(NSString *)containerName managedObjectContext:(NSManagedObjectContext *)context suiteName:(NSString *)suiteName;
 
 /**
+ *  Creates a new `QSCloudKitSynchronizer` prepared to work with the given Core Data model and the default SyncKit record zone in the private database.
+ *
+ *  @param containerName Identifier of the iCloud container to be used. The application must have the right entitlements to be able to access this container.
+ *  @param context       `NSManagedObjectContext` that will be tracked to detect changes and merge new ones.
+ *  @param suiteName    Identifier of shared App Group for the app. This will store the tracking database in the shared container.
+ *  @param zoneID       CKRecordZoneID in the private database that will be used by the synchronizer.
+ *
+ *  @return Initialized synchronizer.
+ */
++ (QSCloudKitSynchronizer *)cloudKitPrivateSynchronizerWithContainerName:(NSString *)containerName managedObjectContext:(NSManagedObjectContext *)context suiteName:(NSString *)suiteName recordZoneID:(CKRecordZoneID *)zoneID;
+
+/**
  *  Creates a new `QSCloudKitSynchronizer` prepared to work with the given Core Data model and the CloudKit shared database.
  *
  *  @param containerName Identifier of the iCloud container to be used. The application must have the right entitlements to be able to access this container.

@@ -66,14 +66,19 @@
 
 + (QSCloudKitSynchronizer *)cloudKitPrivateSynchronizerWithContainerName:(NSString *)containerName realmConfiguration:(RLMRealmConfiguration *)targetRealmConfiguration
 {
-    return [QSCloudKitSynchronizer cloudKitPrivateSynchronizerWithContainerName:containerName realmConfiguration:targetRealmConfiguration suiteName:nil];
+    return [QSCloudKitSynchronizer cloudKitPrivateSynchronizerWithContainerName:containerName realmConfiguration:targetRealmConfiguration suiteName:nil recordZoneID:[self defaultCustomZoneID]];
 }
 
 + (QSCloudKitSynchronizer *)cloudKitPrivateSynchronizerWithContainerName:(NSString *)containerName realmConfiguration:(RLMRealmConfiguration *)targetRealmConfiguration suiteName:(NSString *)suiteName
 {
+    return [QSCloudKitSynchronizer cloudKitPrivateSynchronizerWithContainerName:containerName realmConfiguration:targetRealmConfiguration suiteName:suiteName recordZoneID:[self defaultCustomZoneID]];
+}
+
++ (QSCloudKitSynchronizer *)cloudKitPrivateSynchronizerWithContainerName:(NSString *)containerName realmConfiguration:(RLMRealmConfiguration *)targetRealmConfiguration suiteName:(NSString *)suiteName recordZoneID:(CKRecordZoneID *)zoneID
+{
     [self ensurePathAvailableWithSuiteName:suiteName];
     
-    QSRealmAdapter *modelAdapter = [[QSRealmAdapter alloc] initWithPersistenceRealmConfiguration:[self persistenceConfigurationWithSuiteName:suiteName] targetRealmConfiguration:targetRealmConfiguration recordZoneID:[self defaultCustomZoneID]];
+    QSRealmAdapter *modelAdapter = [[QSRealmAdapter alloc] initWithPersistenceRealmConfiguration:[self persistenceConfigurationWithSuiteName:suiteName] targetRealmConfiguration:targetRealmConfiguration recordZoneID:zoneID];
     NSUserDefaults *suiteUserDefaults = [[NSUserDefaults alloc] initWithSuiteName:suiteName];
     CKContainer *container = [CKContainer containerWithIdentifier:containerName];
     QSCloudKitSynchronizer *synchronizer = [[QSCloudKitSynchronizer alloc] initWithIdentifier:@"DefaultRealmPrivateSynchronizer" containerIdentifier:containerName database:container.privateCloudDatabase adapterProvider:nil keyValueStore:suiteUserDefaults];

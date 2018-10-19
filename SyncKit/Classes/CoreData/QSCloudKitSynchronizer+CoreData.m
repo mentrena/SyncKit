@@ -53,21 +53,26 @@
 
 + (QSCloudKitSynchronizer *)cloudKitPrivateSynchronizerWithContainerName:(NSString *)containerName managedObjectContext:(NSManagedObjectContext *)context
 {
-    return [self cloudKitPrivateSynchronizerWithContainerName:containerName managedObjectContext:context suiteName:nil];
+    return [self cloudKitPrivateSynchronizerWithContainerName:containerName managedObjectContext:context suiteName:nil recordZoneID:[self defaultCustomZoneID]];
 }
 
 + (QSCloudKitSynchronizer *)cloudKitPrivateSynchronizerWithContainerName:(NSString *)containerName managedObjectContext:(NSManagedObjectContext *)context suiteName:(NSString *)suiteName
 {
+    return [self cloudKitPrivateSynchronizerWithContainerName:containerName managedObjectContext:context suiteName:suiteName recordZoneID:[self defaultCustomZoneID]];
+}
+
++ (QSCloudKitSynchronizer *)cloudKitPrivateSynchronizerWithContainerName:(NSString *)containerName managedObjectContext:(NSManagedObjectContext *)context suiteName:(NSString *)suiteName recordZoneID:(CKRecordZoneID *)zoneID
+{
     QSDefaultCoreDataAdapterDelegate *delegate = [QSDefaultCoreDataAdapterDelegate sharedInstance];
     QSCoreDataStack *stack = [[QSCoreDataStack alloc] initWithStoreType:NSSQLiteStoreType model:[QSCoreDataAdapter persistenceModel] storePath:[self storePathWithAppGroup:suiteName]];
-    QSCoreDataAdapter *adapter = [[QSCoreDataAdapter alloc] initWithPersistenceStack:stack targetContext:context recordZoneID:[self defaultCustomZoneID] delegate:delegate];
+    QSCoreDataAdapter *adapter = [[QSCoreDataAdapter alloc] initWithPersistenceStack:stack targetContext:context recordZoneID:zoneID delegate:delegate];
     NSUserDefaults *suiteUserDefaults = suiteName ? [[NSUserDefaults alloc] initWithSuiteName:suiteName] : [NSUserDefaults standardUserDefaults];
     CKContainer *container = [CKContainer containerWithIdentifier:containerName];
     QSCloudKitSynchronizer *synchronizer = [[QSCloudKitSynchronizer alloc] initWithIdentifier:@"DefaultCoreDataPrivateSynchronizer" containerIdentifier:containerName database:container.privateCloudDatabase adapterProvider:nil keyValueStore:suiteUserDefaults];
     [synchronizer addModelAdapter:adapter];
     
     [self transferOldServerChangeTokenTo:adapter userDefaults:suiteUserDefaults container:containerName];
-
+    
     return synchronizer;
 }
 

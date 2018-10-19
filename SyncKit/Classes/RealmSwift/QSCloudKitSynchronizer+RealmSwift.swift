@@ -21,12 +21,12 @@ extension QSCloudKitSynchronizer {
      
      -Returns: A new CloudKit synchronizer for the given realm.
      */
-    public class func cloudKitPrivateSynchronizer(containerName: String, configuration: Realm.Configuration, suiteName: String? = nil) -> QSCloudKitSynchronizer {
+    public class func cloudKitPrivateSynchronizer(containerName: String, configuration: Realm.Configuration, suiteName: String? = nil, recordZoneID: CKRecordZone.ID = defaultCustomZoneID()) -> QSCloudKitSynchronizer {
         
         ensurePathAvailable(suiteName: suiteName)
         let adapter = RealmSwiftAdapter(persistenceRealmConfiguration: persistenceConfiguration(suiteName: suiteName),
                                                     targetRealmConfiguration: configuration,
-                                                    recordZoneID: defaultCustomZoneID())
+                                                    recordZoneID: recordZoneID)
         let suiteUserDefaults = UserDefaults(suiteName: suiteName)
         let container = CKContainer(identifier: containerName)
         let synchronizer = QSCloudKitSynchronizer(identifier: "DefaultRealmSwiftPrivateSynchronizer",
