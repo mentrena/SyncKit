@@ -274,6 +274,15 @@ static const NSString * QSCoreDataAdapterShareRelationshipKey = @"com.syncKit.sh
     return [record.recordID.recordName substringFromIndex:entityType.length + 1];
 }
 
+- (NSString *)getThreadSafePrimaryKeyValueForManagedObject:(NSManagedObject *)managedObject
+{
+    __block NSString *identifier = nil;
+    [managedObject.managedObjectContext performBlockAndWait:^{
+        identifier = [self uniqueIdentifierForObject:managedObject];
+    }];
+    return identifier;
+}
+
 #pragma mark - Persistence management
 
 #pragma mark Entities
@@ -1428,7 +1437,7 @@ static const NSString * QSCoreDataAdapterShareRelationshipKey = @"com.syncKit.sh
         ![managedObject conformsToProtocol:@protocol(QSPrimaryKey)]) {
         return nil;
     }
-    NSString *objectIdentifier = [self uniqueIdentifierForObject:managedObject];
+    NSString *objectIdentifier = [self getThreadSafePrimaryKeyValueForManagedObject:managedObject];
     
     __block CKRecord *record = nil;
     [self.privateContext performBlockAndWait:^{
@@ -1446,7 +1455,7 @@ static const NSString * QSCoreDataAdapterShareRelationshipKey = @"com.syncKit.sh
         ![managedObject conformsToProtocol:@protocol(QSPrimaryKey)]) {
         return nil;
     }
-    NSString *objectIdentifier = [self uniqueIdentifierForObject:managedObject];
+    NSString *objectIdentifier = [self getThreadSafePrimaryKeyValueForManagedObject:managedObject];
     
     __block CKShare *share = nil;
     [self.privateContext performBlockAndWait:^{
@@ -1464,7 +1473,7 @@ static const NSString * QSCoreDataAdapterShareRelationshipKey = @"com.syncKit.sh
         ![managedObject conformsToProtocol:@protocol(QSPrimaryKey)]) {
         return;
     }
-    NSString *objectIdentifier = [self uniqueIdentifierForObject:managedObject];
+    NSString *objectIdentifier = [self getThreadSafePrimaryKeyValueForManagedObject:managedObject];
     
     [self.privateContext performBlockAndWait:^{
         QSSyncedEntity *syncedEntity = [self syncedEntityWithOriginObjectIdentifier:objectIdentifier];
@@ -1480,7 +1489,7 @@ static const NSString * QSCoreDataAdapterShareRelationshipKey = @"com.syncKit.sh
         ![managedObject conformsToProtocol:@protocol(QSPrimaryKey)]) {
         return;
     }
-    NSString *objectIdentifier = [self uniqueIdentifierForObject:managedObject];
+    NSString *objectIdentifier = [self getThreadSafePrimaryKeyValueForManagedObject:managedObject];
     
     [self.privateContext performBlockAndWait:^{
         QSSyncedEntity *syncedEntity = [self syncedEntityWithOriginObjectIdentifier:objectIdentifier];
