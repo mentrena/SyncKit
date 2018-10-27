@@ -94,13 +94,17 @@ import Foundation
                     let records = savedRecords.filter { $0 != share }
                     modelAdapter.didUploadRecords(records)
                     modelAdapter.persistImportedChanges(completion: { (error) in
-                        if error == nil {
-                            modelAdapter.save(share, for: object)
-                        }
-                        modelAdapter.didFinishImportWithError(error)
                         
-                        DispatchQueue.main.async {
-                            completion?(uploadedShare, error)
+                        self.dispatchQueue.async {
+                            
+                            if error == nil {
+                                modelAdapter.save(share, for: object)
+                            }
+                            modelAdapter.didFinishImportWithError(error)
+                            
+                            DispatchQueue.main.async {
+                                completion?(uploadedShare, error)
+                            }
                         }
                     })
                     
@@ -134,26 +138,32 @@ import Foundation
         let operation = CKModifyRecordsOperation(recordsToSave: [record], recordIDsToDelete: [share.recordID])
         operation.modifyRecordsCompletionBlock = { savedRecords, deletedRecordIDs, operationError in
             
-            if let savedRecords = savedRecords,
-                operationError == nil {
+            self.dispatchQueue.async {
                 
-                modelAdapter.prepareForImport()
-                modelAdapter.didUploadRecords(savedRecords)
-                modelAdapter.persistImportedChanges(completion: { (error) in
-                    if error == nil {
-                        modelAdapter.deleteShare(for: object)
-                    }
-                    modelAdapter.didFinishImportWithError(error)
+                if let savedRecords = savedRecords,
+                    operationError == nil {
+                    
+                    modelAdapter.prepareForImport()
+                    modelAdapter.didUploadRecords(savedRecords)
+                    modelAdapter.persistImportedChanges(completion: { (error) in
+                        
+                        self.dispatchQueue.async {
+                            if error == nil {
+                                modelAdapter.deleteShare(for: object)
+                            }
+                            modelAdapter.didFinishImportWithError(error)
+                            
+                            DispatchQueue.main.async {
+                                completion?(error)
+                            }
+                        }
+                    })
+                    
+                } else {
                     
                     DispatchQueue.main.async {
-                        completion?(error)
+                        completion?(operationError)
                     }
-                })
-                
-            } else {
-                
-                DispatchQueue.main.async {
-                    completion?(operationError)
                 }
             }
         }
