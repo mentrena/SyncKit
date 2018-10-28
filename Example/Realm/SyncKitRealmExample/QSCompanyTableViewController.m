@@ -243,6 +243,7 @@
             CKShare *share = [weakSelf.synchronizer shareFor:company];
             CKContainer *container = [CKContainer containerWithIdentifier:weakSelf.synchronizer.containerIdentifier];
             if (share) {
+                share[CKShareTitleKey] = company.name;
                 sharingController = [[UICloudSharingController alloc] initWithShare:share container:container];
             } else {
                 sharingController = [[UICloudSharingController alloc] initWithPreparationHandler:^(UICloudSharingController * _Nonnull controller, void (^ _Nonnull preparationCompletionHandler)(CKShare * _Nullable, CKContainer * _Nullable, NSError * _Nullable)) {

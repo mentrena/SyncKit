@@ -217,6 +217,7 @@ class QSCompanyTableViewController: UITableViewController, UICloudSharingControl
                 let container = CKContainer(identifier: strongSelf.synchronizer.containerIdentifier)
                 
                 if let share = share {
+                    share[CKShare.SystemFieldKey.title] = company.name as NSString?
                     sharingController = UICloudSharingController(share: share, container: container)
                 } else {
                     sharingController = UICloudSharingController(preparationHandler: { (controller, handler) in
