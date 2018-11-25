@@ -14,6 +14,7 @@ class QSCompanyTableViewController: UITableViewController, UICloudSharingControl
     
     var realm: Realm!
     var synchronizer: QSCloudKitSynchronizer!
+    weak var appDelegate: AppDelegate!
     
     var notificationToken: NotificationToken!
     
@@ -26,6 +27,11 @@ class QSCompanyTableViewController: UITableViewController, UICloudSharingControl
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        setupCompanies()
+    }
+    
+    func setupCompanies() {
         
         companies = realm.objects(QSCompany.self).sorted(byKeyPath: "sortIndex")
         
@@ -84,20 +90,7 @@ class QSCompanyTableViewController: UITableViewController, UICloudSharingControl
     
     @IBAction func synchronize() {
         
-        syncButton?.isHidden = true
-        indicatorView?.startAnimating()
-        
-        synchronizer.synchronize { [weak self] (error) in
-            
-            self?.syncButton?.isHidden = false
-            self?.indicatorView?.stopAnimating()
-            
-            if let error = error {
-                let alertController = UIAlertController(title: "Error", message: "Error: \(error)", preferredStyle: .alert)
-                alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-                self?.present(alertController, animated: true, completion: nil)
-            }
-        }
+        synchronize(completion: nil)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -120,7 +113,7 @@ class QSCompanyTableViewController: UITableViewController, UICloudSharingControl
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return companies!.count
+        return companies?.count ?? 0
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -179,10 +172,14 @@ class QSCompanyTableViewController: UITableViewController, UICloudSharingControl
             
             if let error = error {
                 
-                let alertController = UIAlertController(title: "Error", message: "Error: \(error.localizedDescription)", preferredStyle: .alert)
-                alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-                
-                self?.present(alertController, animated: true, completion: nil)
+                if (error as NSError).code == CKError.changeTokenExpired.rawValue {
+                    self?.appDelegate.didGetChangeTokenExpiredError()
+                } else {
+                    let alertController = UIAlertController(title: "Error", message: "Error: \(error.localizedDescription)", preferredStyle: .alert)
+                    alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                    
+                    self?.present(alertController, animated: true, completion: nil)
+                }
                 
             } else {
                 
@@ -284,6 +281,15 @@ class QSCompanyTableViewController: UITableViewController, UICloudSharingControl
             syncButton?.isHidden = false
             indicatorView?.stopAnimating()
         }
+    }
+    
+    // MARK: - Resetting
+    
+    func stopUsingRealmObjects() {
+        notificationToken.invalidate()
+        sharingCompany = nil
+        companies = nil
+        tableView.reloadData()
     }
     
 }

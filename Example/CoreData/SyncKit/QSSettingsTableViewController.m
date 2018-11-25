@@ -33,16 +33,16 @@
 {
     if (indexPath.row == 0) {
         
-        [self.privateSynchronizer eraseRemoteAndLocalDataForModelAdapter:self.privateSynchronizer.modelAdapters.firstObject withCompletion:^(NSError *error) {
+        [self.privateSynchronizer deleteRecordZoneForModelAdapter:self.privateSynchronizer.modelAdapters.firstObject withCompletion:^(NSError *error) {
             
             dispatch_async(dispatch_get_main_queue(), ^{
                 NSString *message;
                 if (error) {
-                    message = @"There was an error erasing data";
+                    message = @"There was an error deleting this record zone";
                 } else {
-                    message = @"Erased private data";
+                    message = @"Deleted record zone from iCloud";
                 }
-                UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Erase" message:message preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Delete Record Zone" message:message preferredStyle:UIAlertControllerStyleAlert];
                 [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
                 [self presentViewController:alertController animated:YES completion:nil];
             });

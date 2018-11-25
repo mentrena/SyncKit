@@ -122,7 +122,8 @@ public class QSFetchZoneChangesOperation: QSCloudKitSynchronizerOperation {
         operation.fetchRecordZoneChangesCompletionBlock = { operationError in
             
             self.dispatchQueue.async {
-                if let error = operationError {
+                if let error = operationError,
+                    (error as NSError).code != CKError.partialFailure.rawValue { // Partial errors are returned per zone
                     self.finish(error: error)
                 } else if higherModelVersionFound {
                     self.finish(error: NSError(domain: QSCloudKitSynchronizerErrorDomain, code: QSCloudKitSynchronizerErrorCode.higherModelVersionFound.rawValue, userInfo: nil))

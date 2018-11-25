@@ -7,10 +7,10 @@
 //
 
 #import "QSAppDelegate.h"
-#import <SyncKit/QSCloudKitSynchronizer+CoreData.h>
 #import "QSCompanyTableViewController.h"
 #import "QSSharedCompanyTableViewController.h"
 #import "QSSettingsTableViewController.h"
+@import SyncKit;
 
 @interface QSAppDelegate ()
 
@@ -23,21 +23,39 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    // Override point for customization after application launch.
+    [self configureCompanyTableViewController];
+    [self configureSharedCompanyVC];
+    [self configureSettingsVC];
+    
+    return YES;
+}
+
+- (void)configureCompanyTableViewController
+{
     UITabBarController *tabBarController = (UITabBarController *)self.window.rootViewController;
     UINavigationController *navController = (UINavigationController *)tabBarController.viewControllers[0];
     QSCompanyTableViewController *companyVC = (QSCompanyTableViewController *)navController.topViewController;
     if ([companyVC isKindOfClass:[QSCompanyTableViewController class]]) {
-        [(QSCompanyTableViewController *)companyVC setManagedObjectContext:self.managedObjectContext];
-        [(QSCompanyTableViewController *)companyVC setSynchronizer:self.synchronizer];
+        [companyVC setManagedObjectContext:self.managedObjectContext];
+        [companyVC setSynchronizer:self.synchronizer];
+        [companyVC setAppDelegate:self];
     }
+}
+
+- (void)configureSharedCompanyVC
+{
+    UITabBarController *tabBarController = (UITabBarController *)self.window.rootViewController;
     
     UINavigationController *navController2 = (UINavigationController *)tabBarController.viewControllers[1];
     QSSharedCompanyTableViewController *sharedCompanyVC = (QSSharedCompanyTableViewController *)navController2.topViewController;
     if ([sharedCompanyVC isKindOfClass:[QSSharedCompanyTableViewController class]]) {
         [(QSSharedCompanyTableViewController *)sharedCompanyVC setSynchronizer:self.sharedSynchronizer];
     }
-    
+}
+
+- (void)configureSettingsVC
+{
+    UITabBarController *tabBarController = (UITabBarController *)self.window.rootViewController;
     UINavigationController *navController3 = (UINavigationController *)tabBarController.viewControllers[2];
     QSSettingsTableViewController *settingsVC = (QSSettingsTableViewController *)navController3.topViewController;
     if ([settingsVC isKindOfClass:[QSSettingsTableViewController class]]) {
@@ -45,8 +63,6 @@
         settingsVC.privateSynchronizer = self.synchronizer;
         settingsVC.sharedSynchronizer = self.sharedSynchronizer;
     }
-    
-    return YES;
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application
@@ -204,6 +220,26 @@
         }
     };
     [container addOperation:acceptShareOperation];
+}
+
+#pragma mark -
+
+- (void)didGetChangeTokenExpiredError
+{
+    [self deleteAllCompanies];
+    [self.synchronizer eraseLocalMetadata];
+    self.synchronizer = nil;
+    [self configureCompanyTableViewController];
+    [self configureSettingsVC];
+}
+
+- (void)deleteAllCompanies
+{
+    NSArray *companies = [self.managedObjectContext executeFetchRequestWithEntityName:@"QSCompany" error:nil];
+    for (NSManagedObject *object in companies) {
+        [self.managedObjectContext deleteObject:object];
+    }
+    [self.managedObjectContext save:nil];
 }
 
 @end

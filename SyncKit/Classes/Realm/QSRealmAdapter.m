@@ -167,12 +167,24 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
 
 - (void)dealloc
 {
-    for (RLMNotificationToken *token in [self.objectNotificationTokens allValues]) {
-        [token invalidate];
-    }
-    for (RLMNotificationToken *token in self.collectionNotificationTokens) {
-        [token invalidate];
-    }
+    [self invalidateRealmAndTokens];
+}
+
+- (void)invalidateRealmAndTokens
+{
+    runOnMainQueue(^{
+        for (RLMNotificationToken *token in [self.objectNotificationTokens allValues]) {
+            [token invalidate];
+        }
+        [self.objectNotificationTokens removeAllObjects];
+        for (RLMNotificationToken *token in self.collectionNotificationTokens) {
+            [token invalidate];
+        }
+        [self.collectionNotificationTokens removeAllObjects];
+        
+        [self.mainRealmProvider.persistenceRealm invalidate];
+        self.mainRealmProvider = nil;
+    });
 }
 
 + (nonnull RLMRealmConfiguration *)defaultPersistenceConfiguration
@@ -1071,6 +1083,7 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
 
 - (void)deleteChangeTracking
 {
+    [self invalidateRealmAndTokens];
     NSFileManager *manager = [NSFileManager defaultManager];
     RLMRealmConfiguration *config = self.persistenceConfiguration;
     NSArray<NSURL *> *realmFileURLs = @[

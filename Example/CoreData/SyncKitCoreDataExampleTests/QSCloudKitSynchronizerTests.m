@@ -367,13 +367,15 @@
 - (void)testSynchronize_storesServerTokenAfterFetch
 {
     //Make sure no token is carried over from another test
-    [self.synchronizer eraseLocal];
+//    [self.synchronizer eraseLocalMetadata];
     
     XCTestExpectation *expectation = [self expectationWithDescription:@"Sync finished"];
     NSArray *objects = @[[[QSObject alloc] initWithIdentifier:@"1" number:@1], [[QSObject alloc] initWithIdentifier:@"2" number:@2]];
     self.mockAdapter.objects = objects;
     [self.mockAdapter markForUpload:objects];
     [self.mockAdapter saveToken:nil];
+    
+    XCTAssertNil(self.mockAdapter.serverChangeToken);
     
     __weak QSCloudKitSynchronizerTests *weakSelf = self;
     
@@ -395,7 +397,7 @@
     NSArray *objects = @[[[QSObject alloc] initWithIdentifier:@"1" number:@1], [[QSObject alloc] initWithIdentifier:@"2" number:@2]];
     self.mockAdapter.objects = objects;
     
-    [self.synchronizer eraseLocal];
+    [self.synchronizer eraseLocalMetadata];
     
     XCTAssert(self.mockAdapter.objects.count == 0);
     XCTAssertTrue(self.mockAdapter.deleteChangeTrackingCalled);
@@ -408,7 +410,7 @@
         called = YES;
     };
     
-    [self.synchronizer eraseRemoteAndLocalDataForModelAdapter:self.mockAdapter withCompletion:^(NSError *error) {
+    [self.synchronizer deleteRecordZoneForModelAdapter:self.mockAdapter withCompletion:^(NSError *error) {
         
     }];
     

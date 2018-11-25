@@ -21,6 +21,7 @@
 @property (nonatomic, strong) RLMRealm *realm;
 @property (nonatomic, strong) QSCloudKitSynchronizer *synchronizer;
 @property (nonatomic, strong) QSCloudKitSynchronizer *sharedSynchronizer;
+@property (nonatomic, weak) QSCompanyTableViewController *companyViewController;
 
 @end
 
@@ -29,27 +30,47 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
-
     self.realm = [RLMRealm realmWithConfiguration:self.configuration error:nil];
+    [self configureCompanyTableViewController];
+    [self configureSharedCompanyVC];
+    [self configureSettingsVC];
+    
+    return YES;
+}
+
+- (void)configureCompanyTableViewController
+{
     UITabBarController *tabBarController = (UITabBarController *)self.window.rootViewController;
-    UINavigationController *companyNavController = (UINavigationController *)tabBarController.viewControllers.firstObject;
-    QSCompanyTableViewController *companyVC = (QSCompanyTableViewController *)companyNavController.topViewController;
+    UINavigationController *navController = (UINavigationController *)tabBarController.viewControllers[0];
+    QSCompanyTableViewController *companyVC = (QSCompanyTableViewController *)navController.topViewController;
     if ([companyVC isKindOfClass:[QSCompanyTableViewController class]]) {
+        [(QSCompanyTableViewController *)companyVC setSynchronizer:self.synchronizer];
         [companyVC setRealm:self.realm];
         [companyVC setSynchronizer:self.synchronizer];
+        [companyVC setAppDelegate:self];
+        self.companyViewController = companyVC;
     }
+}
+         
+- (void)configureSharedCompanyVC
+{
+    UITabBarController *tabBarController = (UITabBarController *)self.window.rootViewController;
     UINavigationController *sharedNavController = (UINavigationController *)tabBarController.viewControllers[1];
     QSSharedCompanyTableViewController *sharedCompanyVC = (QSSharedCompanyTableViewController *)sharedNavController.topViewController;
     if ([sharedCompanyVC isKindOfClass:[QSSharedCompanyTableViewController class]]) {
         [sharedCompanyVC setSynchronizer:self.sharedSynchronizer];
     }
+}
+
+- (void)configureSettingsVC
+{
+    UITabBarController *tabBarController = (UITabBarController *)self.window.rootViewController;
     UINavigationController *settingsNavController = (UINavigationController *)tabBarController.viewControllers[2];
     QSSettingsTableViewController *settingsVC = (QSSettingsTableViewController *)settingsNavController.topViewController;
     if ([settingsVC isKindOfClass:[QSSettingsTableViewController class]]) {
         settingsVC.privateSynchronizer = self.synchronizer;
         settingsVC.sharedSynchronizer = self.sharedSynchronizer;
     }
-    return YES;
 }
 
 //- (NSURL *)realmPath
@@ -143,5 +164,33 @@
     };
     [container addOperation:acceptShareOperation];
 }
+
+#pragma mark -
+
+- (void)didGetChangeTokenExpiredError
+{
+    [self.companyViewController stopUsingRealmObjects];
+    [self deleteAllCompanies];
+    [self.synchronizer eraseLocalMetadata];
+    self.synchronizer = nil;
+    [self configureCompanyTableViewController];
+    [self configureSettingsVC];
+    [self.companyViewController setupCompanies];
+}
+
+- (void)deleteAllCompanies
+{
+    [self.realm invalidate];
+    
+    RLMResults<QSCompany *> *companies = [QSCompany allObjectsInRealm:self.realm];
+    RLMResults<QSEmployee *> *employees = [QSEmployee allObjectsInRealm:self.realm];
+    
+    [self.realm beginWriteTransaction];
+    [self.realm deleteObjects:employees];
+    [self.realm deleteObjects:companies];
+    [self.realm commitWriteTransaction];
+}
+
+
 
 @end

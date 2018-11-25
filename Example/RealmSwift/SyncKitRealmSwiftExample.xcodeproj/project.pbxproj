@@ -331,7 +331,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-SyncKitRealmSwiftExample/Pods-SyncKitRealmSwiftExample-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-SyncKitRealmSwiftExample/Pods-SyncKitRealmSwiftExample-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
 				"${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/SyncKit/SyncKit.framework",
@@ -344,7 +344,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-SyncKitRealmSwiftExample/Pods-SyncKitRealmSwiftExample-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SyncKitRealmSwiftExample/Pods-SyncKitRealmSwiftExample-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */

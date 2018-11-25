@@ -63,6 +63,7 @@
 		6451CFA620D1665A00BCFEA7 /* QSFetchDatabaseChangesOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6451CFA320D1665900BCFEA7 /* QSFetchDatabaseChangesOperation.swift */; };
 		6451CFA720D1665A00BCFEA7 /* QSFetchZoneChangesOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6451CFA420D1665A00BCFEA7 /* QSFetchZoneChangesOperation.swift */; };
 		6451CFA820D16AB000BCFEA7 /* SyncKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 64F2922F1ECEA5F1000026F1 /* SyncKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		64FB2BE121A18A3500F44819 /* QSDefaultCoreDataAdapterProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64FB2BE021A18A3500F44819 /* QSDefaultCoreDataAdapterProvider.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -125,6 +126,7 @@
 		64F2922C1ECEA5F1000026F1 /* SyncKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SyncKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		64F2922F1ECEA5F1000026F1 /* SyncKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SyncKit.h; sourceTree = "<group>"; };
 		64F292301ECEA5F1000026F1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		64FB2BE021A18A3500F44819 /* QSDefaultCoreDataAdapterProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = QSDefaultCoreDataAdapterProvider.swift; path = ../../../../SyncKit/Classes/CoreData/QSDefaultCoreDataAdapterProvider.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -160,6 +162,7 @@
 				6451CFA220D1665900BCFEA7 /* QSCloudKitSynchronizerOperation.swift */,
 				6451CFA320D1665900BCFEA7 /* QSFetchDatabaseChangesOperation.swift */,
 				6451CFA420D1665A00BCFEA7 /* QSFetchZoneChangesOperation.swift */,
+				64FB2BE021A18A3500F44819 /* QSDefaultCoreDataAdapterProvider.swift */,
 				6451CF3520D1649200BCFEA7 /* QSBackupDetection.h */,
 				6451CF3820D1649200BCFEA7 /* QSBackupDetection.m */,
 				6451CF3620D1649200BCFEA7 /* QSCloudKitSynchronizer.h */,
@@ -354,6 +357,7 @@
 				6451CFA620D1665A00BCFEA7 /* QSFetchDatabaseChangesOperation.swift in Sources */,
 				6451CFA520D1665A00BCFEA7 /* QSCloudKitSynchronizerOperation.swift in Sources */,
 				6451CF9E20D164A200BCFEA7 /* QSPendingRelationship+CoreDataClass.m in Sources */,
+				64FB2BE121A18A3500F44819 /* QSDefaultCoreDataAdapterProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

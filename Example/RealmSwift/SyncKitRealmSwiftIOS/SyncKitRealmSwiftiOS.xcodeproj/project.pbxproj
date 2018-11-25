@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		644A05E11F59782600F69505 /* SyncKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 644A05DF1F59782600F69505 /* SyncKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		644B9FD821ACB3230028B5A2 /* DefaultRealmSwiftAdapterProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 644B9FD721ACB3230028B5A2 /* DefaultRealmSwiftAdapterProvider.swift */; };
 		6451D0F020D25D3400BCFEA7 /* RealmSwiftAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6451D0E720D25D3300BCFEA7 /* RealmSwiftAdapter.swift */; };
 		6451D0F120D25D3400BCFEA7 /* QSCloudKitSynchronizer+RealmSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6451D0E820D25D3300BCFEA7 /* QSCloudKitSynchronizer+RealmSwift.swift */; };
 		6451D0F220D25D3400BCFEA7 /* Record.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6451D0E920D25D3300BCFEA7 /* Record.swift */; };
@@ -43,6 +44,7 @@
 		644A05E01F59782600F69505 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		644A05FF1F5978FC00F69505 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Realm.framework; sourceTree = "<group>"; };
 		644A06001F5978FC00F69505 /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RealmSwift.framework; sourceTree = "<group>"; };
+		644B9FD721ACB3230028B5A2 /* DefaultRealmSwiftAdapterProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DefaultRealmSwiftAdapterProvider.swift; path = ../../../../SyncKit/Classes/RealmSwift/DefaultRealmSwiftAdapterProvider.swift; sourceTree = "<group>"; };
 		6451D0E720D25D3300BCFEA7 /* RealmSwiftAdapter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RealmSwiftAdapter.swift; path = ../../../../SyncKit/Classes/RealmSwift/RealmSwiftAdapter.swift; sourceTree = "<group>"; };
 		6451D0E820D25D3300BCFEA7 /* QSCloudKitSynchronizer+RealmSwift.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "QSCloudKitSynchronizer+RealmSwift.swift"; path = "../../../../SyncKit/Classes/RealmSwift/QSCloudKitSynchronizer+RealmSwift.swift"; sourceTree = "<group>"; };
 		6451D0E920D25D3300BCFEA7 /* Record.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Record.swift; path = ../../../../SyncKit/Classes/RealmSwift/Record.swift; sourceTree = "<group>"; };
@@ -128,6 +130,7 @@
 				6451D0EE20D25D3400BCFEA7 /* QSCloudKitSynchronizer+MultiRealmResultsController.swift */,
 				6451D0E820D25D3300BCFEA7 /* QSCloudKitSynchronizer+RealmSwift.swift */,
 				6451D0E720D25D3300BCFEA7 /* RealmSwiftAdapter.swift */,
+				644B9FD721ACB3230028B5A2 /* DefaultRealmSwiftAdapterProvider.swift */,
 				6451D0E920D25D3300BCFEA7 /* Record.swift */,
 				6451D0EB20D25D3400BCFEA7 /* ServerToken.swift */,
 				6451D0ED20D25D3400BCFEA7 /* SyncedEntity.swift */,
@@ -236,6 +239,7 @@
 				6451D11220D25D3E00BCFEA7 /* QSCloudKitSynchronizer+Subscriptions.swift in Sources */,
 				6451D0F020D25D3400BCFEA7 /* RealmSwiftAdapter.swift in Sources */,
 				6451D0F620D25D3400BCFEA7 /* SyncedEntity.swift in Sources */,
+				644B9FD821ACB3230028B5A2 /* DefaultRealmSwiftAdapterProvider.swift in Sources */,
 				6451D0F320D25D3400BCFEA7 /* DefaultRealmProvider.swift in Sources */,
 				6451D0F220D25D3400BCFEA7 /* Record.swift in Sources */,
 				6451D10F20D25D3E00BCFEA7 /* QSCloudKitSynchronizer+Sharing.swift in Sources */,

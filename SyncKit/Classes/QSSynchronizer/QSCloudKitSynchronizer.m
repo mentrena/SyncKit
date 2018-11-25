@@ -150,24 +150,23 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
     }
 }
 
-- (void)eraseLocal
+- (void)eraseLocalMetadata
 {
     [self storeDatabaseToken:nil];
     [self clearAllStoredSubscriptionIDs];
     [self storeDeviceUUID:nil];
     
-    for (id<QSModelAdapter> modelAdapter in self.modelAdapters) {
+    for (id<QSModelAdapter> modelAdapter in [self.modelAdapters copy]) {
         [modelAdapter deleteChangeTracking];
+        [self removeModelAdapter:modelAdapter];
     }
 }
 
-- (void)eraseRemoteAndLocalDataForModelAdapter:(id<QSModelAdapter>)modelAdapter withCompletion:(void(^)(NSError *error))completion
+- (void)deleteRecordZoneForModelAdapter:(id<QSModelAdapter>)modelAdapter withCompletion:(void(^)(NSError *error))completion
 {
     [self.database deleteRecordZoneWithID:modelAdapter.recordZoneID completionHandler:^(CKRecordZoneID * _Nullable zoneID, NSError * _Nullable error) {
         if (!error) {
             DLog(@"QSCloudKitSynchronizer >> Deleted zone: %@", zoneID);
-            [modelAdapter deleteChangeTracking];
-            [self removeModelAdapter:modelAdapter];
         } else {
             DLog(@"QSCloudKitSynchronizer >> Error: %@", error);
         }
@@ -244,17 +243,21 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
         dispatch_async(self.dispatchQueue, ^{
             [self notifyProviderForDeletedZoneIDs:deletedZoneIDs];
             
-            if (changedZoneIDs.count) {
-                [self loadTokensForZoneIDs:changedZoneIDs];
-                NSArray *toFetchZoneIDs = [self filteredZoneIDs:changedZoneIDs managedByManagerIn:self.modelAdapters];
-                [self fetchZoneChanges:toFetchZoneIDs withCompletion:^() {
-                    
-                    [self synchronizationMergeChangesWithCompletion:^(NSError *error) {
-                        [self resetActiveTokens];
-                        callBlockIfNotNil(completion, databaseToken, error);
-                    }];
+            NSArray *zoneIDsToFetch = [self loadAdaptersAndTokensForZoneIDs:changedZoneIDs];
+            if (zoneIDsToFetch.count) {
+                
+                [self fetchZoneChanges:zoneIDsToFetch withCompletion:^(NSError *error) {
+                    if (error) {
+                        [self finishSynchronizationWithError:error];
+                    } else {
+                        [self synchronizationMergeChangesWithCompletion:^(NSError *error) {
+                            [self resetActiveTokens];
+                            callBlockIfNotNil(completion, databaseToken, error);
+                        }];
+                    }
                 }];
             } else {
+                [self resetActiveTokens];
                 callBlockIfNotNil(completion, databaseToken, nil);
             }
             
@@ -265,9 +268,11 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
     [self runOperation:operation];
 }
 
-- (void)loadTokensForZoneIDs:(NSArray *)zoneIDs
+- (NSArray<CKRecordZoneID *> *)loadAdaptersAndTokensForZoneIDs:(NSArray<CKRecordZoneID *> *)zoneIDs
 {
+    NSMutableArray *filteredZoneIDs = [NSMutableArray array];
     self.activeZoneTokens = [NSMutableDictionary dictionary];
+    
     for (CKRecordZoneID *zoneID in zoneIDs) {
         id<QSModelAdapter> modelAdapter = self.modelAdapterDictionary[zoneID];
         if (!modelAdapter) {
@@ -281,22 +286,11 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
             }
         }
         if (modelAdapter) {
+            [filteredZoneIDs addObject:zoneID];
             self.activeZoneTokens[zoneID] = [modelAdapter serverChangeToken];
         }
     }
-}
-
-- (NSArray *)filteredZoneIDs:(NSArray *)zoneIDs managedByManagerIn:(NSArray *)managers
-{
-    NSMutableArray *filteredZoneIDs = [NSMutableArray array];
-    for (CKRecordZoneID *zoneID in zoneIDs) {
-        for (id<QSModelAdapter> modelAdapter in managers) {
-            if ([modelAdapter.recordZoneID isEqual:zoneID]) {
-                [filteredZoneIDs addObject:zoneID];
-                continue;
-            }
-        }
-    }
+    
     return [filteredZoneIDs copy];
 }
 
@@ -305,17 +299,19 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
     self.activeZoneTokens = [NSMutableDictionary dictionary];
 }
 
-- (void)fetchZoneChanges:(NSArray *)zoneIDs withCompletion:(void(^)(void))completion
+- (void)fetchZoneChanges:(NSArray *)zoneIDs withCompletion:(void(^)(NSError *error))completion
 {
     void (^completionBlock)(NSDictionary<CKRecordZoneID *,QSFetchZoneChangesOperationZoneResult *> * _Nonnull zoneResults) = ^(NSDictionary<CKRecordZoneID *,QSFetchZoneChangesOperationZoneResult *> * _Nonnull zoneResults) {
        
         dispatch_async(self.dispatchQueue, ^{
             NSMutableArray *pendingZones = [NSMutableArray array];
+            __block NSError *error = nil;
             [zoneResults enumerateKeysAndObjectsUsingBlock:^(CKRecordZoneID * _Nonnull zoneID, QSFetchZoneChangesOperationZoneResult * _Nonnull zoneResult, BOOL * _Nonnull stop) {
                 
                 id<QSModelAdapter> modelAdapter = self.modelAdapterDictionary[zoneID];
-                if (zoneResult.error.code == CKErrorChangeTokenExpired) {
-                    [modelAdapter saveToken:nil];
+                if (zoneResult.error) {
+                    error = zoneResult.error;
+                    *stop = YES;
                 } else {
                     DLog(@"QSCloudKitSynchronizer >> Downloaded %ld changed records >> from zone %@", (unsigned long)zoneResult.downloadedRecords.count, zoneID);
                     DLog(@"QSCloudKitSynchronizer >> Downloaded %ld deleted record IDs >> from zone %@", (unsigned long)zoneResult.deletedRecordIDs.count, zoneID);
@@ -328,10 +324,10 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
                 }
             }];
             
-            if (pendingZones.count) {
+            if (pendingZones.count && !error) {
                 [self fetchZoneChanges:pendingZones withCompletion:completion];
             } else {
-                callBlockIfNotNil(completion);
+                callBlockIfNotNil(completion, error);
             }
         });
     };

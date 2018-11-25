@@ -10,46 +10,9 @@
 #import "QSCloudKitSynchronizer+Private.h"
 #import "QSDefaultCoreDataStackProvider.h"
 #import "QSDefaultCoreDataAdapterDelegate.h"
+#import <SyncKit/SyncKit-Swift.h>
 
 @implementation QSCloudKitSynchronizer (CoreData)
-
-+ (NSString *)applicationDocumentsDirectory
-{
-#if TARGET_OS_IPHONE
-    return [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask,YES) lastObject];
-#else
-    NSArray *urls = [[NSFileManager defaultManager] URLsForDirectory:NSApplicationSupportDirectory inDomains:NSUserDomainMask];
-    return [[[urls lastObject] URLByAppendingPathComponent:@"com.mentrena.QSCloudKitSynchronizer"] path];
-#endif
-}
-
-+ (NSString *)applicationDocumentsDirectoryForAppGroup:(NSString *)suiteName
-{
-    if (!suiteName) {
-        return [self applicationDocumentsDirectory];
-    }
-    return [[[NSFileManager defaultManager] containerURLForSecurityApplicationGroupIdentifier:suiteName] path];
-}
-
-+ (NSString *)applicationStoresPathWithAppGroup:(NSString *)suiteName
-{
-    return [[self applicationDocumentsDirectoryForAppGroup:suiteName] stringByAppendingPathComponent:@"Stores"];
-}
-
-+ (NSString *)storePath
-{
-    return [self storePathWithAppGroup:nil];
-}
-
-+ (NSString *)storePathWithAppGroup:(NSString *)suiteName
-{
-    return [[self applicationStoresPathWithAppGroup:suiteName] stringByAppendingPathComponent:[self storeFileName]];
-}
-
-+ (NSString *)storeFileName;
-{
-    return @"QSSyncStore";
-}
 
 + (QSCloudKitSynchronizer *)cloudKitPrivateSynchronizerWithContainerName:(NSString *)containerName managedObjectContext:(NSManagedObjectContext *)context
 {
@@ -63,12 +26,11 @@
 
 + (QSCloudKitSynchronizer *)cloudKitPrivateSynchronizerWithContainerName:(NSString *)containerName managedObjectContext:(NSManagedObjectContext *)context suiteName:(NSString *)suiteName recordZoneID:(CKRecordZoneID *)zoneID
 {
-    QSDefaultCoreDataAdapterDelegate *delegate = [QSDefaultCoreDataAdapterDelegate sharedInstance];
-    QSCoreDataStack *stack = [[QSCoreDataStack alloc] initWithStoreType:NSSQLiteStoreType model:[QSCoreDataAdapter persistenceModel] storePath:[self storePathWithAppGroup:suiteName]];
-    QSCoreDataAdapter *adapter = [[QSCoreDataAdapter alloc] initWithPersistenceStack:stack targetContext:context recordZoneID:zoneID delegate:delegate];
+    QSDefaultCoreDataAdapterProvider *adapterProvider = [[QSDefaultCoreDataAdapterProvider alloc] initWithManagedObjectContext:context zoneID:zoneID appGroup:suiteName];
     NSUserDefaults *suiteUserDefaults = suiteName ? [[NSUserDefaults alloc] initWithSuiteName:suiteName] : [NSUserDefaults standardUserDefaults];
     CKContainer *container = [CKContainer containerWithIdentifier:containerName];
-    QSCloudKitSynchronizer *synchronizer = [[QSCloudKitSynchronizer alloc] initWithIdentifier:@"DefaultCoreDataPrivateSynchronizer" containerIdentifier:containerName database:container.privateCloudDatabase adapterProvider:nil keyValueStore:suiteUserDefaults];
+    QSCloudKitSynchronizer *synchronizer = [[QSCloudKitSynchronizer alloc] initWithIdentifier:@"DefaultCoreDataPrivateSynchronizer" containerIdentifier:containerName database:container.privateCloudDatabase adapterProvider:adapterProvider keyValueStore:suiteUserDefaults];
+    QSCoreDataAdapter *adapter = adapterProvider.adapter;
     [synchronizer addModelAdapter:adapter];
     
     [self transferOldServerChangeTokenTo:adapter userDefaults:suiteUserDefaults container:containerName];
@@ -108,8 +70,9 @@
 
 + (NSEntityMigrationPolicy *)updateIdentifierMigrationPolicy
 {
-    if ([QSEntityIdentifierUpdateMigrationPolicy stack] == nil && [[NSFileManager defaultManager] fileExistsAtPath:[self storePath]]) {
-        QSCoreDataStack *stack = [[QSCoreDataStack alloc] initWithStoreType:NSSQLiteStoreType model:[QSCoreDataAdapter persistenceModel] storePath:[self storePath]];
+    NSString *storePath = [QSDefaultCoreDataAdapterProvider storePathWithAppGroup:nil];
+    if ([QSEntityIdentifierUpdateMigrationPolicy stack] == nil && [[NSFileManager defaultManager] fileExistsAtPath:storePath]) {
+        QSCoreDataStack *stack = [[QSCoreDataStack alloc] initWithStoreType:NSSQLiteStoreType model:[QSCoreDataAdapter persistenceModel] storePath:storePath];
         [QSEntityIdentifierUpdateMigrationPolicy setCoreDataStack:stack];
     }
     return [[QSEntityIdentifierUpdateMigrationPolicy alloc] init];

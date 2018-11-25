@@ -231,11 +231,15 @@
         [weakSelf showLoading:NO];
         
         if (error) {
-            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Error" message:[NSString stringWithFormat:@"Error: %@", error] preferredStyle:UIAlertControllerStyleAlert];
-            
-            [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
-            
-            [weakSelf presentViewController:alertController animated:YES completion:nil];
+            if (error.code == CKErrorChangeTokenExpired) {
+                [self.appDelegate didGetChangeTokenExpiredError];
+            } else {
+                UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Error" message:[NSString stringWithFormat:@"Error: %@", error] preferredStyle:UIAlertControllerStyleAlert];
+                
+                [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
+                
+                [weakSelf presentViewController:alertController animated:YES completion:nil];
+            }
         } else {
             CKRecordZoneID *zoneID = weakSelf.synchronizer.modelAdapters.firstObject.recordZoneID;
             if (zoneID) {
