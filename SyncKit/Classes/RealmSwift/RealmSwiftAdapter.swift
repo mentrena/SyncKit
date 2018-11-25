@@ -112,10 +112,10 @@ public class RealmSwiftAdapter: NSObject, QSModelAdapter {
     }
     
     deinit {
-        invalidateTokens()
+        invalidateRealmAndTokens()
     }
     
-    func invalidateTokens() {
+    func invalidateRealmAndTokens() {
         executeOnMainQueue {
             for token in objectNotificationTokens.values {
                 token.invalidate()
@@ -125,6 +125,9 @@ public class RealmSwiftAdapter: NSObject, QSModelAdapter {
                 token.invalidate()
             }
             collectionNotificationTokens.removeAll()
+            
+            realmProvider?.persistenceRealm.invalidate()
+            realmProvider = nil
         }
     }
     
@@ -1089,9 +1092,9 @@ public class RealmSwiftAdapter: NSObject, QSModelAdapter {
     
     public func deleteChangeTracking() {
         
-        invalidateTokens()
+        invalidateRealmAndTokens()
         
-        let config = self.realmProvider.persistenceRealm.configuration
+        let config = self.persistenceRealmConfiguration
         let realmFileURLs: [URL] = [config.fileURL,
                              config.fileURL?.appendingPathExtension("lock"),
                              config.fileURL?.appendingPathExtension("note"),
@@ -1099,7 +1102,11 @@ public class RealmSwiftAdapter: NSObject, QSModelAdapter {
             ].compactMap { $0 }
         
         for url in realmFileURLs {
-            try? FileManager.default.removeItem(at: url)
+            do {
+                try FileManager.default.removeItem(at: url)
+            } catch {
+                print("Error deleting file at \(url): \(error)")
+            }
         }
     }
     

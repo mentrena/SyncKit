@@ -12,58 +12,6 @@
 
 @implementation QSCloudKitSynchronizer (Realm)
 
-+ (NSString *)realmPath
-{
-    return [self realmPathWithAppGroup:nil];
-}
-
-+ (NSString *)applicationBackupRealmPathWithSuiteName:(NSString *)suiteName
-{
-    NSString *rootDirectory;
-    if (suiteName) {
-        rootDirectory = [[[NSFileManager defaultManager] containerURLForSecurityApplicationGroupIdentifier:suiteName] path];
-    } else {
-        rootDirectory = [self applicationDocumentsDirectory];
-    }
-    return [rootDirectory stringByAppendingPathComponent:@"Realm"];
-}
-
-+ (NSString *)applicationDocumentsDirectory
-{
-#if TARGET_OS_IPHONE
-    return [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask,YES) lastObject];
-#else
-    NSArray *urls = [[NSFileManager defaultManager] URLsForDirectory:NSApplicationSupportDirectory inDomains:NSUserDomainMask];
-    return [[[urls lastObject] URLByAppendingPathComponent:@"com.mentrena.QSCloudKitSynchronizer"] path];
-#endif
-}
-
-+ (NSString *)realmFileName
-{
-    return @"QSSyncStore.realm";
-}
-
-+ (NSString *)realmPathWithAppGroup:(NSString *)suiteName
-{
-    return [[self applicationBackupRealmPathWithSuiteName:suiteName] stringByAppendingPathComponent:[self realmFileName]];
-}
-
-+ (RLMRealmConfiguration *)persistenceConfigurationWithSuiteName:(NSString *)suiteName
-{
-    RLMRealmConfiguration *configuration = [QSRealmAdapter defaultPersistenceConfiguration];
-    configuration.fileURL = [NSURL fileURLWithPath:[self realmPathWithAppGroup:suiteName]];
-    return configuration;
-}
-
-+ (void)ensurePathAvailableWithSuiteName:(NSString *)suiteName
-{
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    
-    if (![fileManager fileExistsAtPath:[self applicationBackupRealmPathWithSuiteName:suiteName]]) {
-        [fileManager createDirectoryAtPath:[self applicationBackupRealmPathWithSuiteName:suiteName] withIntermediateDirectories:YES attributes:nil error:nil];
-    }
-}
-
 + (QSCloudKitSynchronizer *)cloudKitPrivateSynchronizerWithContainerName:(NSString *)containerName realmConfiguration:(RLMRealmConfiguration *)targetRealmConfiguration
 {
     return [QSCloudKitSynchronizer cloudKitPrivateSynchronizerWithContainerName:containerName realmConfiguration:targetRealmConfiguration suiteName:nil recordZoneID:[self defaultCustomZoneID]];
@@ -76,15 +24,13 @@
 
 + (QSCloudKitSynchronizer *)cloudKitPrivateSynchronizerWithContainerName:(NSString *)containerName realmConfiguration:(RLMRealmConfiguration *)targetRealmConfiguration suiteName:(NSString *)suiteName recordZoneID:(CKRecordZoneID *)zoneID
 {
-    [self ensurePathAvailableWithSuiteName:suiteName];
-    
-    QSRealmAdapter *modelAdapter = [[QSRealmAdapter alloc] initWithPersistenceRealmConfiguration:[self persistenceConfigurationWithSuiteName:suiteName] targetRealmConfiguration:targetRealmConfiguration recordZoneID:zoneID];
+    QSDefaultRealmAdapterProvider *provider = [[QSDefaultRealmAdapterProvider alloc] initWithTargetConfiguration:targetRealmConfiguration zoneID:zoneID appGroup:suiteName];
     NSUserDefaults *suiteUserDefaults = [[NSUserDefaults alloc] initWithSuiteName:suiteName];
     CKContainer *container = [CKContainer containerWithIdentifier:containerName];
-    QSCloudKitSynchronizer *synchronizer = [[QSCloudKitSynchronizer alloc] initWithIdentifier:@"DefaultRealmPrivateSynchronizer" containerIdentifier:containerName database:container.privateCloudDatabase adapterProvider:nil keyValueStore:suiteUserDefaults];
-    [synchronizer addModelAdapter:modelAdapter];
+    QSCloudKitSynchronizer *synchronizer = [[QSCloudKitSynchronizer alloc] initWithIdentifier:@"DefaultRealmPrivateSynchronizer" containerIdentifier:containerName database:container.privateCloudDatabase adapterProvider:provider keyValueStore:suiteUserDefaults];
+    [synchronizer addModelAdapter:provider.adapter];
     
-    [self transferOldServerChangeTokenTo:modelAdapter userDefaults:suiteUserDefaults container:containerName];
+    [self transferOldServerChangeTokenTo:provider.adapter userDefaults:suiteUserDefaults container:containerName];
     
     return synchronizer;
 }

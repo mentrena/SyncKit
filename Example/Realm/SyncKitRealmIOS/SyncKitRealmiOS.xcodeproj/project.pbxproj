@@ -43,6 +43,7 @@
 		6451D06320D172E900BCFEA7 /* QSRealmAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 6451D05220D172E800BCFEA7 /* QSRealmAdapter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6451D06420D172E900BCFEA7 /* QSCloudKitSynchronizer+MultiRealmResultsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6451D05320D172E800BCFEA7 /* QSCloudKitSynchronizer+MultiRealmResultsController.m */; };
 		64B441CA1ECEDDF700E66ACB /* SyncKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 64B441C81ECEDDF700E66ACB /* SyncKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		64FAC5BD21AC9C02008FABE9 /* QSDefaultRealmAdapterProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64FAC5BC21AC9C02008FABE9 /* QSDefaultRealmAdapterProvider.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -85,6 +86,7 @@
 		64B441C81ECEDDF700E66ACB /* SyncKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SyncKit.h; sourceTree = "<group>"; };
 		64B441C91ECEDDF700E66ACB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		64B441F51ECEE75700E66ACB /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Realm.framework; sourceTree = "<group>"; };
+		64FAC5BC21AC9C02008FABE9 /* QSDefaultRealmAdapterProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = QSDefaultRealmAdapterProvider.swift; path = ../../../../SyncKit/Classes/Realm/QSDefaultRealmAdapterProvider.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -118,6 +120,7 @@
 		64B441C71ECEDDF700E66ACB /* SyncKitRealm */ = {
 			isa = PBXGroup;
 			children = (
+				64FAC5BC21AC9C02008FABE9 /* QSDefaultRealmAdapterProvider.swift */,
 				6451D01F20D172D600BCFEA7 /* QSBackupDetection.h */,
 				6451D02120D172D600BCFEA7 /* QSBackupDetection.m */,
 				6451D01E20D172D600BCFEA7 /* QSCloudKitSynchronizer.h */,
@@ -267,6 +270,7 @@
 			files = (
 				6451D05420D172E900BCFEA7 /* QSDefaultRealmProvider.swift in Sources */,
 				6451D04220D172DD00BCFEA7 /* QSFetchZoneChangesOperation.swift in Sources */,
+				64FAC5BD21AC9C02008FABE9 /* QSDefaultRealmAdapterProvider.swift in Sources */,
 				6451D03020D172D700BCFEA7 /* QSCloudKitSynchronizer.m in Sources */,
 				6451D03820D172D700BCFEA7 /* QSCloudKitSynchronizer+Private.m in Sources */,
 				6451D04020D172DD00BCFEA7 /* QSCloudKitSynchronizerOperation.swift in Sources */,

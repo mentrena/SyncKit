@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import <SyncKit/QSCloudKitSynchronizer.h>
+#import "AppDelegate.h"
 
 @class RLMRealm;
 
@@ -15,7 +16,10 @@
 
 @property (nonatomic, strong) RLMRealm *realm;
 @property (nonatomic, strong) QSCloudKitSynchronizer *synchronizer;
+@property (nonatomic, weak) AppDelegate *appDelegate;
 
+- (void)setupCompanies;
+- (void)stopUsingRealmObjects;
 
 @end
 

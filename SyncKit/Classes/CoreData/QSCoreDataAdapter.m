@@ -351,10 +351,10 @@ static const NSString * QSCoreDataAdapterShareRelationshipKey = @"com.syncKit.sh
     return [fetchedObjects firstObject];
 }
 
-- (NSDictionary *)referencedSyncedEntitiesByReferenceNameForManagedObject:(NSManagedObject *)object
+- (NSDictionary *)referencedSyncedEntitiesByReferenceNameForManagedObject:(NSManagedObject *)object objectContext:(NSManagedObjectContext *)objectContext
 {
     __block NSDictionary *objectIDsByRelationshipName = nil;
-    [self.targetImportContext performBlockAndWait:^{
+    [objectContext performBlockAndWait:^{
         objectIDsByRelationshipName = [self referencedObjectIdentifiersByRelationshipNameForManagedObject:object];
     }];
     
@@ -579,7 +579,7 @@ static const NSString * QSCoreDataAdapterShareRelationshipKey = @"com.syncKit.sh
         parentKey = [objectClass parentKey];
     }
     
-    NSDictionary *referencedEntities = [self referencedSyncedEntitiesByReferenceNameForManagedObject:originalObject];
+    NSDictionary *referencedEntities = [self referencedSyncedEntitiesByReferenceNameForManagedObject:originalObject objectContext:objectContext];
     [referencedEntities enumerateKeysAndObjectsUsingBlock:^(NSString *  _Nonnull relationshipName, QSSyncedEntity  * _Nonnull entity, BOOL * _Nonnull stop) {
         if (entityState == QSSyncedEntityStateNew || [changedKeys containsObject:relationshipName]) {
             CKRecordID *recordID = [[CKRecordID alloc] initWithRecordName:entity.identifier zoneID:self.recordZoneID];
@@ -621,7 +621,7 @@ static const NSString * QSCoreDataAdapterShareRelationshipKey = @"com.syncKit.sh
                 entitiesByID[entity.identifier] = entity;
                 [pending removeLastObject];
                 
-                CKRecord *record = [self recordToUploadForSyncedEntity:entity context:self.targetImportContext];
+                CKRecord *record = [self recordToUploadForSyncedEntity:entity context:self.targetContext];
                 [records addObject:record];
             }
             

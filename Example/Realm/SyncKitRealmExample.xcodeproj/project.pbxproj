@@ -456,7 +456,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-SyncKitRealmExample/Pods-SyncKitRealmExample-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-SyncKitRealmExample/Pods-SyncKitRealmExample-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
 				"${BUILT_PRODUCTS_DIR}/SyncKit/SyncKit.framework",
 			);
@@ -467,7 +467,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-SyncKitRealmExample/Pods-SyncKitRealmExample-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SyncKitRealmExample/Pods-SyncKitRealmExample-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		B815D01E473E92460BCC1BB3 /* [CP] Check Pods Manifest.lock */ = {

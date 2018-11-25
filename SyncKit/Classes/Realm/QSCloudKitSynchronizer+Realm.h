@@ -66,19 +66,4 @@
  */
 + (QSCloudKitSynchronizer *)cloudKitSharedSynchronizerWithContainerName:(NSString *)containerName realmConfiguration:(RLMRealmConfiguration *)targetRealmConfiguration suiteName:(NSString *)suiteName;
 
-/**
- *  @return File path of database used by SyncKit to keep track of model changes.
- */
-+ (NSString *)realmPath;
-
-/**
- *  If using app groups, SyncKit offers the option to store its tracking database in the shared container so that it's
- *  accessible by SyncKit from any of the apps in the group. This method returns the path used in this case.
- *
- *  @param  suiteName   Identifier of an App Group this app belongs to.
- *
- *  @return File path, in the shared container, where SyncKit will store its tracking database.
- */
-+ (NSString *)realmPathWithAppGroup:(NSString *)suiteName;
-
 @end

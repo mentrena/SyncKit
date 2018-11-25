@@ -43,6 +43,7 @@
 		6451D0AB20D1774100BCFEA7 /* QSFetchDatabaseChangesOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6451D0A820D1774000BCFEA7 /* QSFetchDatabaseChangesOperation.swift */; };
 		6451D0AC20D1774100BCFEA7 /* QSFetchZoneChangesOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6451D0A920D1774100BCFEA7 /* QSFetchZoneChangesOperation.swift */; };
 		6451D0AE20D1778E00BCFEA7 /* SyncKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 6451D0AD20D1778E00BCFEA7 /* SyncKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		64FAC5BB21AC9BFB008FABE9 /* QSDefaultRealmAdapterProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64FAC5BA21AC9BFA008FABE9 /* QSDefaultRealmAdapterProvider.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -85,6 +86,7 @@
 		6451D0A820D1774000BCFEA7 /* QSFetchDatabaseChangesOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = QSFetchDatabaseChangesOperation.swift; path = ../../../../SyncKit/Classes/QSSynchronizer/Operations/QSFetchDatabaseChangesOperation.swift; sourceTree = "<group>"; };
 		6451D0A920D1774100BCFEA7 /* QSFetchZoneChangesOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = QSFetchZoneChangesOperation.swift; path = ../../../../SyncKit/Classes/QSSynchronizer/Operations/QSFetchZoneChangesOperation.swift; sourceTree = "<group>"; };
 		6451D0AD20D1778E00BCFEA7 /* SyncKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SyncKit.h; sourceTree = "<group>"; };
+		64FAC5BA21AC9BFA008FABE9 /* QSDefaultRealmAdapterProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = QSDefaultRealmAdapterProvider.swift; path = ../../../../SyncKit/Classes/Realm/QSDefaultRealmAdapterProvider.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -119,6 +121,7 @@
 			children = (
 				644B0ED01ED13CB8003B0C51 /* Realm.framework */,
 				6451D08920D1773400BCFEA7 /* QSBackupDetection.h */,
+				64FAC5BA21AC9BFA008FABE9 /* QSDefaultRealmAdapterProvider.swift */,
 				6451D0A720D1774000BCFEA7 /* QSCloudKitSynchronizerOperation.swift */,
 				6451D0A820D1774000BCFEA7 /* QSFetchDatabaseChangesOperation.swift */,
 				6451D0A920D1774100BCFEA7 /* QSFetchZoneChangesOperation.swift */,
@@ -259,6 +262,7 @@
 			files = (
 				6451D0AC20D1774100BCFEA7 /* QSFetchZoneChangesOperation.swift in Sources */,
 				6451D07820D1772A00BCFEA7 /* QSCloudKitSynchronizer+Realm.m in Sources */,
+				64FAC5BB21AC9BFB008FABE9 /* QSDefaultRealmAdapterProvider.swift in Sources */,
 				6451D08220D1772A00BCFEA7 /* QSRealmAdapter.m in Sources */,
 				6451D0AA20D1774100BCFEA7 /* QSCloudKitSynchronizerOperation.swift in Sources */,
 				6451D0A620D1773500BCFEA7 /* QSTempFileManager.m in Sources */,

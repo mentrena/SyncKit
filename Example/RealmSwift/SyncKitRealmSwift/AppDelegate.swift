@@ -28,41 +28,65 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return configuration
     }()
     
+    weak var companyViewController: QSCompanyTableViewController?
+    
     var realm: Realm!
-    lazy var synchronizer: QSCloudKitSynchronizer! = QSCloudKitSynchronizer.cloudKitPrivateSynchronizer(containerName: "your-container-name",
-                                                                                                        configuration: self.realmConfiguration)
-    lazy var sharedSynchronizer: QSCloudKitSynchronizer! = QSCloudKitSynchronizer.cloudKitSharedSynchronizer(containerName: "your-container-name", configuration: self.realmConfiguration)
+    fileprivate var _synchronizer: QSCloudKitSynchronizer!
+    var synchronizer: QSCloudKitSynchronizer! {
+        if _synchronizer == nil {
+            _synchronizer = QSCloudKitSynchronizer.cloudKitPrivateSynchronizer(containerName: "iCloud.com.mentrena.SyncKitRealmSwift", configuration: self.realmConfiguration)
+        }
+        return _synchronizer
+    }
+    fileprivate var _sharedSynchronizer: QSCloudKitSynchronizer!
+    var sharedSynchronizer: QSCloudKitSynchronizer! {
+        if _sharedSynchronizer == nil {
+            _sharedSynchronizer = QSCloudKitSynchronizer.cloudKitSharedSynchronizer(containerName: "iCloud.com.mentrena.SyncKitRealmSwift", configuration: self.realmConfiguration)
+        }
+        return _sharedSynchronizer
+    }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         
         realm = try! Realm(configuration: realmConfiguration)
         
-        if let tabBarController = window?.rootViewController as? UITabBarController {
-            
-            if let navController = tabBarController.viewControllers![0] as? UINavigationController,
-                let companyVC = navController.topViewController as? QSCompanyTableViewController {
-                
-                companyVC.realm = realm
-                companyVC.synchronizer = synchronizer
-            }
-            
-            if let navController = tabBarController.viewControllers![1] as? UINavigationController,
-                let sharedCompanyVC = navController.topViewController as? QSSharedCompanyTableViewController {
-                
-                sharedCompanyVC.synchronizer = sharedSynchronizer
-            }
-            
-            if let navController = tabBarController.viewControllers![2] as? UINavigationController,
-                let settingsVC = navController.topViewController as? QSSettingsTableViewController {
-                
-                settingsVC.privateSynchronizer = synchronizer
-                settingsVC.sharedSynchronizer = sharedSynchronizer
-            }
-        }
-        
+        configureCompanyVC()
+        configureSharedCompanyVC()
+        configureSettingsVC()
         
         return true
+    }
+    
+    func configureCompanyVC() {
+        if let tabBarController = window?.rootViewController as? UITabBarController,
+            let navController = tabBarController.viewControllers![0] as? UINavigationController,
+            let companyVC = navController.topViewController as? QSCompanyTableViewController {
+            
+            companyVC.realm = realm
+            companyVC.synchronizer = synchronizer
+            companyVC.appDelegate = self
+            companyViewController = companyVC
+        }
+    }
+    
+    func configureSharedCompanyVC() {
+        if let tabBarController = window?.rootViewController as? UITabBarController,
+            let navController = tabBarController.viewControllers![1] as? UINavigationController,
+            let sharedCompanyVC = navController.topViewController as? QSSharedCompanyTableViewController {
+            
+            sharedCompanyVC.synchronizer = sharedSynchronizer
+        }
+    }
+    
+    func configureSettingsVC() {
+        if let tabBarController = window?.rootViewController as? UITabBarController,
+            let navController = tabBarController.viewControllers![2] as? UINavigationController,
+            let settingsVC = navController.topViewController as? QSSettingsTableViewController {
+            
+            settingsVC.privateSynchronizer = synchronizer
+            settingsVC.sharedSynchronizer = sharedSynchronizer
+        }
     }
 
     func applicationWillResignActive(_ application: UIApplication) {
@@ -105,5 +129,29 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         container.add(acceptSharesOperation)
     }
 
+    // MARK: -
+    
+    func didGetChangeTokenExpiredError() {
+        
+        companyViewController?.stopUsingRealmObjects()
+        deleteAllCompanies()
+        _synchronizer.eraseLocalMetadata()
+        _synchronizer = nil
+        configureCompanyVC()
+        configureSettingsVC()
+        companyViewController?.setupCompanies()
+    }
+    
+    func deleteAllCompanies() {
+        
+        realm.invalidate()
+        let companies = realm.objects(QSCompany.self)
+        let employees = realm.objects(QSEmployee.self)
+        
+        try? realm.write {
+            realm.delete(employees)
+            realm.delete(companies)
+        }
+    }
 }
 

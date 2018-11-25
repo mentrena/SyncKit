@@ -38,40 +38,37 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
+    [self setupCompanies];
 }
 
-- (RLMResults<QSCompany *> *)companies
+- (void)setupCompanies
 {
-    if (!_companies) {
-        _companies = [[QSCompany allObjectsInRealm:self.realm] sortedResultsUsingKeyPath:@"sortIndex" ascending:YES];
-        
-        __weak QSCompanyTableViewController *weakSelf = self;
-        self.notificationToken = [_companies addNotificationBlock:^(RLMResults<QSCompany *> *results, RLMCollectionChange *changes, NSError *error) {
-            if (error) {
-                NSLog(@"Failed to open Realm on background worker: %@", error);
-                return;
-            }
-            
-            UITableView *tableView = weakSelf.tableView;
-            // Initial run of the query will pass nil for the change information
-            if (!changes) {
-                [tableView reloadData];
-                return;
-            }
-            
-            // Query results have changed, so apply them to the UITableView
-            [tableView beginUpdates];
-            [tableView deleteRowsAtIndexPaths:[changes deletionsInSection:0]
-                             withRowAnimation:UITableViewRowAnimationAutomatic];
-            [tableView insertRowsAtIndexPaths:[changes insertionsInSection:0]
-                             withRowAnimation:UITableViewRowAnimationAutomatic];
-            [tableView reloadRowsAtIndexPaths:[changes modificationsInSection:0]
-                             withRowAnimation:UITableViewRowAnimationAutomatic];
-            [tableView endUpdates];
-        }];
-    }
+    self.companies = [[QSCompany allObjectsInRealm:self.realm] sortedResultsUsingKeyPath:@"sortIndex" ascending:YES];
     
-    return _companies;
+    __weak QSCompanyTableViewController *weakSelf = self;
+    self.notificationToken = [_companies addNotificationBlock:^(RLMResults<QSCompany *> *results, RLMCollectionChange *changes, NSError *error) {
+        if (error) {
+            NSLog(@"Failed to open Realm on background worker: %@", error);
+            return;
+        }
+        
+        UITableView *tableView = weakSelf.tableView;
+        // Initial run of the query will pass nil for the change information
+        if (!changes) {
+            [tableView reloadData];
+            return;
+        }
+        
+        // Query results have changed, so apply them to the UITableView
+        [tableView beginUpdates];
+        [tableView deleteRowsAtIndexPaths:[changes deletionsInSection:0]
+                         withRowAnimation:UITableViewRowAnimationAutomatic];
+        [tableView insertRowsAtIndexPaths:[changes insertionsInSection:0]
+                         withRowAnimation:UITableViewRowAnimationAutomatic];
+        [tableView reloadRowsAtIndexPaths:[changes modificationsInSection:0]
+                         withRowAnimation:UITableViewRowAnimationAutomatic];
+        [tableView endUpdates];
+    }];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -204,11 +201,16 @@
         [weakSelf showLoading:NO];
         
         if (error) {
-            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Error" message:[NSString stringWithFormat:@"Error: %@", error] preferredStyle:UIAlertControllerStyleAlert];
             
-            [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
-            
-            [weakSelf presentViewController:alertController animated:YES completion:nil];
+            if (error.code == CKErrorChangeTokenExpired) {
+                [self.appDelegate didGetChangeTokenExpiredError];
+            } else {
+                UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Error" message:[NSString stringWithFormat:@"Error: %@", error] preferredStyle:UIAlertControllerStyleAlert];
+                
+                [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
+                
+                [weakSelf presentViewController:alertController animated:YES completion:nil];
+            }
         } else {
             [self.tableView reloadData];
             CKRecordZoneID *zoneID = weakSelf.synchronizer.modelAdapters.firstObject.recordZoneID;
@@ -298,6 +300,16 @@
         self.syncButton.hidden = NO;
         [self.indicatorView stopAnimating];
     }
+}
+
+#pragma mark - Resetting
+
+- (void)stopUsingRealmObjects
+{
+    [self.notificationToken invalidate];
+    self.sharingCompany = nil;
+    self.companies = nil;
+    [self.tableView reloadData];
 }
 
 @end
