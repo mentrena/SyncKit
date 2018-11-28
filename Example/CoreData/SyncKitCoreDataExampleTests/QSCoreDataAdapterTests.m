@@ -31,13 +31,13 @@
     [super setUp];
 
     self.targetCoreDataStack = [self coreDataStackWithModelName:@"QSExample"];
-    self.coreDataStack = [[QSCoreDataStack alloc] initWithStoreType:NSInMemoryStoreType model:[QSCoreDataAdapter persistenceModel] storePath:nil concurrencyType:NSPrivateQueueConcurrencyType dispatchImmediately:YES];
+    self.coreDataStack = [[QSCoreDataStack alloc] initWithStoreType:NSInMemoryStoreType model:[QSCoreDataAdapter persistenceModel] storePath:nil concurrencyType:NSMainQueueConcurrencyType dispatchImmediately:YES];
 }
 
 - (QSCoreDataStack *)coreDataStackWithModelName:(NSString *)modelName
 {
     NSURL *modelURL = [[NSBundle bundleForClass:[self class]] URLForResource:modelName withExtension:@"momd"];
-    QSCoreDataStack *stack = [[QSCoreDataStack alloc] initWithStoreType:NSInMemoryStoreType model:[[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL] storePath:nil concurrencyType:NSPrivateQueueConcurrencyType dispatchImmediately:YES];
+    QSCoreDataStack *stack = [[QSCoreDataStack alloc] initWithStoreType:NSInMemoryStoreType model:[[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL] storePath:nil concurrencyType:NSMainQueueConcurrencyType dispatchImmediately:YES];
     return stack;
 }
 
