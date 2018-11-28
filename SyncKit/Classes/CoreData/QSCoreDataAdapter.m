@@ -1532,9 +1532,8 @@ static const NSString * QSCoreDataAdapterShareRelationshipKey = @"com.syncKit.sh
 - (void)deleteChangeTracking
 {
     [self.stack deleteStore];
-    
-    [self.targetImportContext reset];
-    self.targetImportContext = nil;
+    self.privateContext = nil;
+    [self clearImportContext];
     self.targetContext = nil;
 }
 
