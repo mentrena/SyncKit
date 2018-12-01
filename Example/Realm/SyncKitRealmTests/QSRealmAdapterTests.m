@@ -1294,6 +1294,32 @@
     XCTAssertNil(updatedShare);
 }
 
+- (void)testRecordsToUpload_includesAnyParentRecordsInBatch
+{
+    RLMRealm *realm = [self realmWithIdentifier:@"t57"];
+    QSCompany *company = [self insertCompanyWithValues:@{@"identifier": @"com1", @"name": @"company1", @"sortIndex": @1} inRealm:realm];
+    [self insertEmployeeWithValues:@{@"identifier": @"em1", @"name": @"employee1", @"sortIndex": @1, @"company": company} inRealm:realm];
+    QSRealmAdapter *realmAdapter = [self realmAdapterWithTarget:realm.configuration
+                                                    persistence:[self persistenceConfigurationWithIdentifier:@"p56"]];
+    
+    [realmAdapter prepareForImport];
+    NSArray *records = [realmAdapter recordsToUploadWithLimit:1];
+    [realmAdapter didFinishImportWithError:nil];
+    
+    XCTAssertEqual(records.count, 2);
+    BOOL includesCompany = NO;
+    BOOL includesEmployee = NO;
+    for (CKRecord *record in records) {
+        if ([record.recordID.recordName containsString:@"com1"]) {
+            includesCompany = YES;
+        }
+        if ([record.recordID.recordName containsString:@"em1"]) {
+            includesEmployee = YES;
+        }
+    }
+}
+
+
 #pragma  mark - Updating parent relationship
 
 - (void)testRecordsToUpdateParentRelationshipsForRoot_returnsRecords

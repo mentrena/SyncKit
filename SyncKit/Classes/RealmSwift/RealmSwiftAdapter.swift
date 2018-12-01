@@ -704,19 +704,27 @@ public class RealmSwiftAdapter: NSObject, QSModelAdapter {
         let predicate = NSPredicate(format: "state == %ld", state.rawValue)
         let results = realmProvider.persistenceRealm.objects(SyncedEntity.self).filter(predicate)
         var resultArray = [CKRecord]()
+        var includedEntityIDs = Set<String>()
         for syncedEntity in results {
             
             if resultArray.count > limit {
                 break
             }
             
-            resultArray.append(recordToUpload(syncedEntity: syncedEntity, realmProvider: realmProvider))
+            var entity: SyncedEntity! = syncedEntity
+            while entity != nil && entity.state == state.rawValue && !includedEntityIDs.contains(entity.identifier) {
+                var parentEntity: SyncedEntity? = nil
+                let record = recordToUpload(syncedEntity: entity, realmProvider: realmProvider, parentSyncedEntity: &parentEntity)
+                resultArray.append(record)
+                includedEntityIDs.insert(entity.identifier)
+                entity = parentEntity
+            }
         }
         
         return resultArray
     }
     
-    func recordToUpload(syncedEntity: SyncedEntity, realmProvider: RealmProvider) -> CKRecord {
+    func recordToUpload(syncedEntity: SyncedEntity, realmProvider: RealmProvider, parentSyncedEntity: inout SyncedEntity?) -> CKRecord {
         
         let record = getRecord(for: syncedEntity) ?? CKRecord(recordType: syncedEntity.entityType, recordID: CKRecord.ID(recordName: syncedEntity.identifier, zoneID: zoneID))
         
@@ -732,6 +740,8 @@ public class RealmSwiftAdapter: NSObject, QSModelAdapter {
             parentKey = type(of: childObject).parentKey()
         }
         
+        var parent: Object? = nil
+        
         for property in object!.objectSchema.properties {
             
             if property.type == PropertyType.object &&
@@ -746,6 +756,9 @@ public class RealmSwiftAdapter: NSObject, QSModelAdapter {
                     let action: CKRecord.Reference.Action = parentKey == property.name ? .deleteSelf : .none
                     let recordReference = CKRecord.Reference(recordID: recordID, action: action)
                     record[property.name] = recordReference;
+                    if parentKey == property.name {
+                        parent = target
+                    }
                 }
                 
             } else if !property.isArray &&
@@ -774,6 +787,9 @@ public class RealmSwiftAdapter: NSObject, QSModelAdapter {
             let reference = record[parentKey] as? CKRecord.Reference {
             
             record.parent = CKRecord.Reference(recordID: reference.recordID, action: .none)
+            if let parent = parent {
+                parentSyncedEntity = self.syncedEntity(for: parent, realm: realmProvider.persistenceRealm)
+            }
         }
         
         return record;
@@ -784,7 +800,8 @@ public class RealmSwiftAdapter: NSObject, QSModelAdapter {
     func childrenRecords(for syncedEntity: SyncedEntity) -> [CKRecord] {
 
         var records = [CKRecord]()
-        records.append(recordToUpload(syncedEntity: syncedEntity, realmProvider: realmProvider))
+        var parent: SyncedEntity?
+        records.append(recordToUpload(syncedEntity: syncedEntity, realmProvider: realmProvider, parentSyncedEntity: &parent))
         
         if let relationships = childRelationships[syncedEntity.entityType] {
             for relationship in relationships {
@@ -1029,7 +1046,8 @@ public class RealmSwiftAdapter: NSObject, QSModelAdapter {
         
         executeOnMainQueue {
             if let syncedEntity = syncedEntity(for: realmObject, realm: self.realmProvider.persistenceRealm) {
-                record = recordToUpload(syncedEntity: syncedEntity, realmProvider: self.realmProvider)
+                var parent: SyncedEntity?
+                record = recordToUpload(syncedEntity: syncedEntity, realmProvider: self.realmProvider, parentSyncedEntity: &parent)
             }
         }
         

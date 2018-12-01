@@ -1381,6 +1381,35 @@
     }
 }
 
+- (void)testRecordsToUpload_includesAnyParentRecordsInBatch
+{
+    QSCompany *company = [self insertCompanyWithName:@"new name"
+                                          identifier:@"id1"
+                                           inContext:self.targetCoreDataStack.managedObjectContext];
+    [self insertEmployeeWithName:@"employee1"
+                      identifier:@"em1"
+                         company:company
+                       inContext:self.targetCoreDataStack.managedObjectContext];
+    
+    QSCoreDataAdapter *coreDataAdapter = [[QSCoreDataAdapter alloc] initWithPersistenceStack:self.coreDataStack targetContext:self.targetCoreDataStack.managedObjectContext recordZoneID:[[CKRecordZoneID alloc] initWithZoneName:@"zone" ownerName:@"owner"] delegate:self];
+    
+    [coreDataAdapter prepareForImport];
+    NSArray *records = [coreDataAdapter recordsToUploadWithLimit:1];
+    [coreDataAdapter didFinishImportWithError:nil];
+    
+    XCTAssertEqual(records.count, 2);
+    BOOL includesCompany = NO;
+    BOOL includesEmployee = NO;
+    for (CKRecord *record in records) {
+        if ([record.recordID.recordName containsString:@"id1"]) {
+            includesCompany = YES;
+        }
+        if ([record.recordID.recordName containsString:@"em1"]) {
+            includesEmployee = YES;
+        }
+    }
+}
+
 #pragma mark - Transformable
 
 - (void)testRecordsToUploadWithLimit_transformableProperty_usesValueTransformer
