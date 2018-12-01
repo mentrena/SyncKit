@@ -691,7 +691,7 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
     return [[QSCloudKitSynchronizer synchronizerMetadataKeys] containsObject:key];
 }
 
-- (CKRecord *)recordToUploadForSyncedEntity:(QSSyncedEntity *)syncedEntity realmProvider:(QSRealmProvider *)realmProvider
+- (CKRecord *)recordToUploadForSyncedEntity:(QSSyncedEntity *)syncedEntity realmProvider:(QSRealmProvider *)realmProvider parentSyncedEntity:(QSSyncedEntity **)parentSyncedEntity
 {
     if (!syncedEntity) {
         return nil;
@@ -713,6 +713,7 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
         parentKey = [objectClass parentKey];
     }
 
+    RLMObject *parent = nil;
     for (RLMProperty *property in object.objectSchema.properties) {
         if (property.type == RLMPropertyTypeObject &&
             (entityState == QSSyncedEntityStateNew || [changedKeys containsObject:property.name])) {
@@ -726,6 +727,9 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
                 CKReferenceAction action = [parentKey isEqualToString:property.name] ? CKReferenceActionDeleteSelf : CKReferenceActionNone;
                 CKReference *recordReference = [[CKReference alloc] initWithRecordID:recordID action:action];
                 record[property.name] = recordReference;
+                if ([parentKey isEqualToString:property.name]) {
+                    parent = target;
+                }
             }
         } else if (!property.array &&
                    property.type != RLMPropertyTypeLinkingObjects &&
@@ -748,6 +752,9 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
         if (reference.recordID) {
             // For the parent reference we have to use action .none though, even if we must use .deleteSelf for the attribute (see ^)
             record.parent = [[CKReference alloc] initWithRecordID:reference.recordID action:CKReferenceActionNone];
+            if (parent) {
+                *parentSyncedEntity = [self syncedEntityForObject:parent inRealm:realmProvider.persistenceRealm];
+            }
         }
     }
 
@@ -759,12 +766,21 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
 {
     RLMResults<QSSyncedEntity *> *results = [QSSyncedEntity objectsInRealm:realmProvider.persistenceRealm where:@"state == %@", @(state)];
     NSMutableArray *resultArray = [NSMutableArray array];
+    NSMutableSet *includedEntityIDs = [NSMutableSet set];
+    
     for (QSSyncedEntity *syncedEntity in results) {
         if (resultArray.count > limit) {
             break;
         }
         
-        [resultArray addObject:[self recordToUploadForSyncedEntity:syncedEntity realmProvider:realmProvider]];
+        QSSyncedEntity *entity = syncedEntity;
+        while (entity != nil && [entity.state integerValue] == state && ![includedEntityIDs containsObject:entity.identifier]) {
+            QSSyncedEntity *parentEntity = nil;
+            CKRecord *record = [self recordToUploadForSyncedEntity:entity realmProvider:realmProvider parentSyncedEntity:&parentEntity];
+            [resultArray addObject:record];
+            [includedEntityIDs addObject:entity.identifier];
+            entity = parentEntity;
+        }
     }
     
     return [resultArray copy];
@@ -787,7 +803,7 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
 {
     // Add record for this entity
     NSMutableArray *childrenRecords = [NSMutableArray array];
-    [childrenRecords addObject:[self recordToUploadForSyncedEntity:syncedEntity realmProvider:self.mainRealmProvider]];
+    [childrenRecords addObject:[self recordToUploadForSyncedEntity:syncedEntity realmProvider:self.mainRealmProvider parentSyncedEntity:nil]];
     
     NSArray *childrenRelationships = self.childrenRelationships[syncedEntity.entityType];
     for (QSChildRelationship *relationship in childrenRelationships) {
@@ -1020,7 +1036,7 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
     
     runOnMainQueue(^{
         QSSyncedEntity *syncedEntity = [self syncedEntityForObject:realmObject inRealm:self.mainRealmProvider.persistenceRealm];
-        record = [self recordToUploadForSyncedEntity:syncedEntity realmProvider:self.mainRealmProvider];
+        record = [self recordToUploadForSyncedEntity:syncedEntity realmProvider:self.mainRealmProvider parentSyncedEntity:nil];
     });
     
     return record;

@@ -532,7 +532,7 @@ static const NSString * QSCoreDataAdapterShareRelationshipKey = @"com.syncKit.sh
     return syncedEntity;
 }
 
-- (CKRecord *)recordToUploadForSyncedEntity:(QSSyncedEntity *)entity context:(NSManagedObjectContext *)objectContext
+- (CKRecord *)recordToUploadForSyncedEntity:(QSSyncedEntity *)entity context:(NSManagedObjectContext *)objectContext parentSyncedEntity:(QSSyncedEntity **)parentSyncedEntity;
 {
     if (!entity) {
         return nil;
@@ -595,6 +595,7 @@ static const NSString * QSCoreDataAdapterShareRelationshipKey = @"com.syncKit.sh
         if (reference.recordID) {
             // For the parent reference we have to use action .none though, even if we must use .deleteSelf for the attribute (see ^)
             record.parent = [[CKReference alloc] initWithRecordID:reference.recordID action:CKReferenceActionNone];
+            *parentSyncedEntity = referencedEntities[parentKey];
         }
     }
     
@@ -614,15 +615,19 @@ static const NSString * QSCoreDataAdapterShareRelationshipKey = @"com.syncKit.sh
         } else {
             NSMutableArray *pending = [NSMutableArray arrayWithArray:entities];
             NSMutableArray *records = [NSMutableArray array];
-            NSMutableDictionary *entitiesByID = [NSMutableDictionary dictionary];
+            NSMutableSet *includedEntityIDs = [NSMutableSet set];
             
             while (records.count < limit && pending.count) {
                 QSSyncedEntity *entity = [pending lastObject];
-                entitiesByID[entity.identifier] = entity;
-                [pending removeLastObject];
                 
-                CKRecord *record = [self recordToUploadForSyncedEntity:entity context:self.targetContext];
-                [records addObject:record];
+                while (entity != nil && [entity.state integerValue] == state && ![includedEntityIDs containsObject:entity.identifier]) {
+                    QSSyncedEntity *parentEntity = nil;
+                    [pending removeObject:entity];
+                    CKRecord *record = [self recordToUploadForSyncedEntity:entity context:self.targetContext parentSyncedEntity:&parentEntity];
+                    [records addObject:record];
+                    [includedEntityIDs addObject:entity.identifier];
+                    entity = parentEntity;
+                }
             }
             
             recordsArray = [records copy];
@@ -981,7 +986,7 @@ static const NSString * QSCoreDataAdapterShareRelationshipKey = @"com.syncKit.sh
 {
     // Add record for this entity
     NSMutableArray *childrenRecords = [NSMutableArray array];
-    [childrenRecords addObject:[self recordToUploadForSyncedEntity:syncedEntity context:self.targetContext]];
+    [childrenRecords addObject:[self recordToUploadForSyncedEntity:syncedEntity context:self.targetContext parentSyncedEntity:nil]];
     
     NSArray *childrenRelationships = self.childrenRelationships[syncedEntity.entityType];
     for (QSChildRelationship *relationship in childrenRelationships) {
@@ -1443,7 +1448,7 @@ static const NSString * QSCoreDataAdapterShareRelationshipKey = @"com.syncKit.sh
     [self.privateContext performBlockAndWait:^{
         
         QSSyncedEntity *syncedEntity = [self syncedEntityWithOriginObjectIdentifier:objectIdentifier];
-        record = [self recordToUploadForSyncedEntity:syncedEntity context:self.targetContext];
+        record = [self recordToUploadForSyncedEntity:syncedEntity context:self.targetContext parentSyncedEntity:nil];
     }];
     return record;
 }

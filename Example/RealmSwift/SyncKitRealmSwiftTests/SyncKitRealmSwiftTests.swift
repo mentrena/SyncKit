@@ -1211,6 +1211,24 @@ class SyncKitRealmSwiftTests: XCTestCase, RealmSwiftAdapterDelegate {
         XCTAssertNil(updatedShare)
     }
     
+    func testRecordsToUpload_includesAnyParentRecordsInBatch() {
+        let realm = realmWith(identifier: "t57")
+        let company = insertCompany(values: ["identifier": "com1", "name": "company1", "sortIndex": 1], realm: realm)
+        insertEmployee(values: ["identifier": "emp1", "name": "employee1", "sortIndex": NSNumber(value: 1), "company": company], realm: realm)
+        let adapter = realmAdapter(targetConfiguration: realm.configuration,
+                                   persistenceConfiguration: persistenceConfigurationWith(identifier: "p57"))
+        
+        adapter.prepareForImport()
+        let records = adapter.recordsToUpload(withLimit: 1)
+        adapter.didFinishImportWithError(nil)
+        
+        XCTAssertEqual(records.count, 2);
+        let companyRecord = records.first { $0.recordID.recordName.contains("com1") }
+        let employeeRecord = records.first { $0.recordID.recordName.contains("emp1") }
+        XCTAssertNotNil(companyRecord)
+        XCTAssertNotNil(employeeRecord)
+    }
+    
     func testRecordsToUpdateParentRelationshipsForRoot_returnsRecords() {
         
         let realm = realmWith(identifier: "t60")
