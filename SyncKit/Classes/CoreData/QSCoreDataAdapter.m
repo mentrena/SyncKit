@@ -595,7 +595,9 @@ static const NSString * QSCoreDataAdapterShareRelationshipKey = @"com.syncKit.sh
         if (reference.recordID) {
             // For the parent reference we have to use action .none though, even if we must use .deleteSelf for the attribute (see ^)
             record.parent = [[CKReference alloc] initWithRecordID:reference.recordID action:CKReferenceActionNone];
-            *parentSyncedEntity = referencedEntities[parentKey];
+            if (parentSyncedEntity) {
+                *parentSyncedEntity = referencedEntities[parentKey];
+            }
         }
     }
     

@@ -752,7 +752,7 @@ typedef NS_ENUM(NSInteger, QSObjectUpdateType)
         if (reference.recordID) {
             // For the parent reference we have to use action .none though, even if we must use .deleteSelf for the attribute (see ^)
             record.parent = [[CKReference alloc] initWithRecordID:reference.recordID action:CKReferenceActionNone];
-            if (parent) {
+            if (parent && parentSyncedEntity) {
                 *parentSyncedEntity = [self syncedEntityForObject:parent inRealm:realmProvider.persistenceRealm];
             }
         }

@@ -82,9 +82,10 @@ typedef NS_ENUM(NSInteger, QSCloudKitSynchronizeMode)
  */
 @property (atomic, readonly, getter=isSyncing) BOOL syncing;
 /**
- *  Maximum number of items that will be included in an upload to CloudKit. (read-only)
+ *  Number of items that will be included in an upload to CloudKit.
+ *  Could be changed by the synchronizer to adjust to CloudKit limits.
  */
-@property (nonatomic, readonly) NSInteger batchSize;
+@property (nonatomic, assign) NSInteger batchSize;
 
 /**
  *  If the version is set (!= 0) and the synchronizer downloads records with a higher version then

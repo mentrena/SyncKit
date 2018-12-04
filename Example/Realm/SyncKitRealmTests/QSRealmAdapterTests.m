@@ -1300,7 +1300,7 @@
     QSCompany *company = [self insertCompanyWithValues:@{@"identifier": @"com1", @"name": @"company1", @"sortIndex": @1} inRealm:realm];
     [self insertEmployeeWithValues:@{@"identifier": @"em1", @"name": @"employee1", @"sortIndex": @1, @"company": company} inRealm:realm];
     QSRealmAdapter *realmAdapter = [self realmAdapterWithTarget:realm.configuration
-                                                    persistence:[self persistenceConfigurationWithIdentifier:@"p56"]];
+                                                     persistence:[self persistenceConfigurationWithIdentifier:@"p57"]];
     
     [realmAdapter prepareForImport];
     NSArray *records = [realmAdapter recordsToUploadWithLimit:1];

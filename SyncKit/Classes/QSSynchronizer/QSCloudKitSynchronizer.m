@@ -23,7 +23,7 @@ NSString * const QSCloudKitSynchronizerDidSynchronizeNotification = @"QSCloudKit
 NSString * const QSCloudKitSynchronizerDidFailToSynchronizeNotification = @"QSCloudKitSynchronizerDidFailToSynchronizeNotification";
 NSString * const QSCloudKitSynchronizerErrorKey = @"QSCloudKitSynchronizerErrorKey";
 
-static const NSInteger QSDefaultBatchSize = 100;
+static const NSInteger QSDefaultBatchSize = 200;
 NSString * const QSCloudKitDeviceUUIDKey = @"QSCloudKitDeviceUUIDKey";
 NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompatibilityVersionKey";
 
@@ -39,8 +39,6 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
 @property (nonatomic, strong) CKDatabase *database;
 @property (atomic, readwrite, assign, getter=isSyncing) BOOL syncing;
 
-@property (nonatomic, assign) NSInteger batchSize;
-
 @property (nonatomic, strong, readwrite) NSDictionary *modelAdapterDictionary;
 @property (nonatomic, readwrite, strong) NSString *deviceIdentifier;
 
@@ -54,6 +52,7 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
 
 @property (nonatomic, readwrite, strong) id<QSKeyValueStore> keyValueStore;
 @property (nonatomic, readwrite, strong) id<QSCloudKitSynchronizerAdapterProvider> adapterProvider;
+@property (nonatomic, assign) NSInteger maxBatchSize;
 
 @end
 
@@ -79,7 +78,8 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
         self.containerIdentifier = containerIdentifier;
         self.modelAdapterDictionary = @{};
         
-        self.batchSize = QSDefaultBatchSize;
+        self.maxBatchSize = QSDefaultBatchSize;
+        self.batchSize = self.maxBatchSize;
         self.compatibilityVersion = 0;
         self.syncMode = QSCloudKitSynchronizeModeSync;
         self.database = database;
@@ -482,8 +482,8 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
                 
                 if (!operationError) {
                     
-                    if (self.batchSize < QSDefaultBatchSize) {
-                        self.batchSize = self.batchSize + 1;
+                    if (self.batchSize < self.maxBatchSize) {
+                        self.batchSize += 5;
                     }
                     
                     [modelAdapter didUploadRecords:savedRecords];
@@ -545,8 +545,8 @@ NSString * const QSCloudKitModelCompatibilityVersionKey = @"QSCloudKitModelCompa
                 
                 if (operationError.code == CKErrorLimitExceeded) {
                     self.batchSize = self.batchSize / 2;
-                } else if (self.batchSize < QSDefaultBatchSize) {
-                    self.batchSize++;
+                } else if (self.batchSize < self.maxBatchSize) {
+                    self.batchSize += 5;
                 }
                 
                 [modelAdapter didDeleteRecordIDs:deletedRecordIDs];
