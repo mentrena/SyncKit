@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'SyncKit'
- s.version          = '0.6.11'
+ s.version          = '0.7'
   s.summary          = 'CloudKit synchronization for your Core Data or Realm model.'
 
   s.description      = <<-DESC
@@ -19,7 +19,7 @@ SyncKit automates the process of synchronizing your Core Data/Realm models using
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'Manuel Entrena' => 'manuel@mentrena.com' }
   s.source           = { :git => 'https://github.com/mentrena/SyncKit.git', :tag => s.version.to_s }
-  s.swift_version    = '4.2'
+  s.swift_version    = '5.0'
   s.module_name		 = 'SyncKit'
 
 s.ios.deployment_target = '10.0'
@@ -29,15 +29,13 @@ s.watchos.deployment_target = '3.0'
 s.default_subspec = 'Core'
 
 s.subspec 'Core' do |cs|
-	cs.public_header_files = 'SyncKit/Classes/QSSynchronizer/*.h'
-	cs.source_files = 'SyncKit/Classes/QSSynchronizer/*.{h,m,swift}', 'SyncKit/Classes/QSSynchronizer/Operations/*.swift'
+	cs.source_files = 'SyncKit/Classes/QSSynchronizer/*.swift', 'SyncKit/Classes/QSSynchronizer/Operations/*.swift'
 	cs.frameworks = 'CloudKit'
 end
 
 s.subspec 'CoreData' do |cs|
 	cs.dependency 'SyncKit/Core'
-	cs.public_header_files = 'SyncKit/Classes/CoreData/*.h'
-	cs.source_files = 'SyncKit/Classes/CoreData/*.{h,m,swift}'
+	cs.source_files = 'SyncKit/Classes/CoreData/*.swift'
 	cs.preserve_paths = 'SyncKit/Classes/CoreData/*.xcdatamodeld'
 	cs.resources = 'SyncKit/Classes/CoreData/*.xcdatamodeld'
 	cs.frameworks = 'CoreData'
@@ -46,8 +44,7 @@ end
 s.subspec 'Realm' do |cs|
 	cs.dependency 'SyncKit/Core'
 	cs.dependency 'Realm', '~> 3.0'
-	cs.public_header_files = 'SyncKit/Classes/Realm/*.h'
-	cs.source_files = 'SyncKit/Classes/Realm/*.{h,m,swift}'
+	cs.source_files = 'SyncKit/Classes/Realm/*.swift'
 end
 
 s.subspec 'RealmSwift' do |cs|

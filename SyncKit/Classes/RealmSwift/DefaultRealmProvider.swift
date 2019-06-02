@@ -7,20 +7,21 @@
 
 import Foundation
 import RealmSwift
+import CloudKit
 
 // For Swift
 public extension Notification.Name {
-    public static let realmProviderDidAddAdapter = NSNotification.Name("realmProviderDidAddAdapter")
-    public static let realmProviderDidRemoveAdapter = NSNotification.Name("realmProviderDidRemoveAdapter")
+    static let realmProviderDidAddAdapter = NSNotification.Name("realmProviderDidAddAdapter")
+    static let realmProviderDidRemoveAdapter = NSNotification.Name("realmProviderDidRemoveAdapter")
 }
 
 // For Obj-C
 public extension NSNotification {
-    public static let DefaultRealmProviderDidAddAdapterNotification: NSString = "realmProviderDidAddAdapter"
-    public static let DefaultRealmProviderDidRemoveAdapterNotification: NSString = "realmProviderDidRemoveAdapter"
+    static let DefaultRealmProviderDidAddAdapterNotification: NSString = "realmProviderDidAddAdapter"
+    static let DefaultRealmProviderDidRemoveAdapterNotification: NSString = "realmProviderDidRemoveAdapter"
 }
 
-public class DefaultRealmProvider: NSObject, QSCloudKitSynchronizerAdapterProvider {
+public class DefaultRealmProvider: NSObject, AdapterProvider {
     
     let identifier: String
     private(set) var adapterDictionary: [CKRecordZone.ID: RealmSwiftAdapter]
@@ -115,7 +116,7 @@ public class DefaultRealmProvider: NSObject, QSCloudKitSynchronizerAdapterProvid
         return recordZoneID.zoneName + ".zoneID." + recordZoneID.ownerName
     }
     
-    public func cloudKitSynchronizer(_ synchronizer: QSCloudKitSynchronizer, modelAdapterFor recordZoneID: CKRecordZone.ID) -> QSModelAdapter? {
+    public func cloudKitSynchronizer(_ synchronizer: CloudKitSynchronizer, modelAdapterForRecordZoneID recordZoneID: CKRecordZone.ID) -> ModelAdapter? {
         
         if let adapter = adapterDictionary[recordZoneID] {
             return adapter
@@ -139,10 +140,10 @@ public class DefaultRealmProvider: NSObject, QSCloudKitSynchronizerAdapterProvid
         return adapter
     }
     
-    public func cloudKitSynchronizer(_ synchronizer: QSCloudKitSynchronizer, zoneWasDeletedWith recordZoneID: CKRecordZone.ID) {
+    public func cloudKitSynchronizer(_ synchronizer: CloudKitSynchronizer, zoneWasDeletedWithZoneID recordZoneID: CKRecordZone.ID) {
         
         guard let adapter = adapterDictionary[recordZoneID],
-            adapter.serverChangeToken() != nil else {
+            adapter.serverChangeToken != nil else {
                 return
         }
         

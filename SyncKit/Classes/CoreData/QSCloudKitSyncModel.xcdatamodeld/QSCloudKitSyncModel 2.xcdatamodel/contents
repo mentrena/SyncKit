@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14133" systemVersion="17E199" minimumToolsVersion="Xcode 7.0" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="2">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14490.98" systemVersion="18D109" minimumToolsVersion="Xcode 7.0" sourceLanguage="Swift" userDefinedModelVersionIdentifier="2">
     <entity name="QSPendingRelationship" representedClassName="QSPendingRelationship" syncable="YES">
         <attribute name="relationshipName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="targetIdentifier" optional="YES" attributeType="String" syncable="YES"/>

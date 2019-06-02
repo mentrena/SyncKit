@@ -8,7 +8,7 @@
 import Foundation
 import RealmSwift
 
-extension QSCloudKitSynchronizer {
+extension CloudKitSynchronizer {
     
     public func multiRealmResultsController<T: Object>(predicate: NSPredicate? = nil) -> MultiRealmResultsController<T>? {
         

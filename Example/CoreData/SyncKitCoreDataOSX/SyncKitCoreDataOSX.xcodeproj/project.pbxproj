@@ -3,134 +3,96 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 50;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		6451CFE320D16B5A00BCFEA7 /* QSCoreDataStack.m in Sources */ = {isa = PBXBuildFile; fileRef = 6451CFA920D16B4F00BCFEA7 /* QSCoreDataStack.m */; };
-		6451CFE420D16B5A00BCFEA7 /* QSCloudKitSyncModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6451CFAA20D16B4F00BCFEA7 /* QSCloudKitSyncModel.xcdatamodeld */; };
-		6451CFE520D16B5A00BCFEA7 /* QSBackupDetection.m in Sources */ = {isa = PBXBuildFile; fileRef = 6451CFAD20D16B4F00BCFEA7 /* QSBackupDetection.m */; };
-		6451CFE620D16B5A00BCFEA7 /* QSCloudKitSynchronizer+Subscriptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6451CFAE20D16B5000BCFEA7 /* QSCloudKitSynchronizer+Subscriptions.swift */; };
-		6451CFE720D16B5A00BCFEA7 /* QSCloudKitSynchronizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 6451CFAF20D16B5000BCFEA7 /* QSCloudKitSynchronizer.m */; };
-		6451CFE820D16B5A00BCFEA7 /* QSCoreDataAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 6451CFB020D16B5000BCFEA7 /* QSCoreDataAdapter.m */; };
-		6451CFE920D16B5A00BCFEA7 /* QSRecord+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 6451CFB120D16B5000BCFEA7 /* QSRecord+CoreDataProperties.m */; };
-		6451CFEA20D16B5A00BCFEA7 /* QSServerToken+CoreDataClass.h in Headers */ = {isa = PBXBuildFile; fileRef = 6451CFB220D16B5000BCFEA7 /* QSServerToken+CoreDataClass.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6451CFEB20D16B5A00BCFEA7 /* QSCloudKitSynchronizer+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 6451CFB320D16B5000BCFEA7 /* QSCloudKitSynchronizer+Private.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6451CFEC20D16B5A00BCFEA7 /* QSPendingRelationship+CoreDataProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = 6451CFB420D16B5000BCFEA7 /* QSPendingRelationship+CoreDataProperties.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6451CFED20D16B5A00BCFEA7 /* QSFetchZoneChangesOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6451CFB520D16B5100BCFEA7 /* QSFetchZoneChangesOperation.swift */; };
-		6451CFEE20D16B5A00BCFEA7 /* QSCloudKitSynchronizer+MultiFetchedResultsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6451CFB620D16B5100BCFEA7 /* QSCloudKitSynchronizer+MultiFetchedResultsController.m */; };
-		6451CFEF20D16B5A00BCFEA7 /* QSEntityIdentifierUpdateMigrationPolicy.m in Sources */ = {isa = PBXBuildFile; fileRef = 6451CFB720D16B5100BCFEA7 /* QSEntityIdentifierUpdateMigrationPolicy.m */; };
-		6451CFF020D16B5A00BCFEA7 /* QSFetchDatabaseChangesOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6451CFB820D16B5100BCFEA7 /* QSFetchDatabaseChangesOperation.swift */; };
-		6451CFF120D16B5A00BCFEA7 /* QSTempFileManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 6451CFB920D16B5100BCFEA7 /* QSTempFileManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6451CFF220D16B5A00BCFEA7 /* QSCloudKitSynchronizer+MultiFetchedResultsController.h in Headers */ = {isa = PBXBuildFile; fileRef = 6451CFBA20D16B5100BCFEA7 /* QSCloudKitSynchronizer+MultiFetchedResultsController.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6451CFF320D16B5A00BCFEA7 /* QSEntityIdentifierUpdateMigrationPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 6451CFBB20D16B5200BCFEA7 /* QSEntityIdentifierUpdateMigrationPolicy.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6451CFF420D16B5A00BCFEA7 /* QSSyncedEntity+CoreDataClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 6451CFBC20D16B5200BCFEA7 /* QSSyncedEntity+CoreDataClass.m */; };
-		6451CFF520D16B5A00BCFEA7 /* QSPendingRelationship+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 6451CFBD20D16B5200BCFEA7 /* QSPendingRelationship+CoreDataProperties.m */; };
-		6451CFF620D16B5A00BCFEA7 /* QSKeyValueStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 6451CFBE20D16B5200BCFEA7 /* QSKeyValueStore.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6451CFF720D16B5A00BCFEA7 /* QSDefaultCoreDataStackProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 6451CFBF20D16B5200BCFEA7 /* QSDefaultCoreDataStackProvider.m */; };
-		6451CFF820D16B5A00BCFEA7 /* QSServerToken+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 6451CFC020D16B5200BCFEA7 /* QSServerToken+CoreDataProperties.m */; };
-		6451CFF920D16B5A00BCFEA7 /* QSSyncedEntity+CoreDataProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = 6451CFC120D16B5300BCFEA7 /* QSSyncedEntity+CoreDataProperties.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6451CFFA20D16B5A00BCFEA7 /* QSSyncedEntity+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 6451CFC220D16B5300BCFEA7 /* QSSyncedEntity+CoreDataProperties.m */; };
-		6451CFFB20D16B5A00BCFEA7 /* NSManagedObjectContext+QSFetch.h in Headers */ = {isa = PBXBuildFile; fileRef = 6451CFC320D16B5300BCFEA7 /* NSManagedObjectContext+QSFetch.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6451CFFC20D16B5A00BCFEA7 /* QSSyncedEntityState.h in Headers */ = {isa = PBXBuildFile; fileRef = 6451CFC420D16B5300BCFEA7 /* QSSyncedEntityState.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6451CFFD20D16B5A00BCFEA7 /* QSCloudKitSynchronizer+Private.m in Sources */ = {isa = PBXBuildFile; fileRef = 6451CFC520D16B5300BCFEA7 /* QSCloudKitSynchronizer+Private.m */; };
-		6451CFFE20D16B5A00BCFEA7 /* QSPendingRelationship+CoreDataClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 6451CFC620D16B5300BCFEA7 /* QSPendingRelationship+CoreDataClass.m */; };
-		6451CFFF20D16B5A00BCFEA7 /* QSServerToken+CoreDataProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = 6451CFC720D16B5400BCFEA7 /* QSServerToken+CoreDataProperties.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6451D00020D16B5A00BCFEA7 /* QSSyncedEntity+CoreDataClass.h in Headers */ = {isa = PBXBuildFile; fileRef = 6451CFC820D16B5400BCFEA7 /* QSSyncedEntity+CoreDataClass.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6451D00120D16B5A00BCFEA7 /* QSCoreDataStack.h in Headers */ = {isa = PBXBuildFile; fileRef = 6451CFC920D16B5400BCFEA7 /* QSCoreDataStack.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6451D00220D16B5A00BCFEA7 /* QSDefaultCoreDataAdapterDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6451CFCA20D16B5400BCFEA7 /* QSDefaultCoreDataAdapterDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6451D00320D16B5A00BCFEA7 /* QSCoreDataMultiFetchedResultsController.h in Headers */ = {isa = PBXBuildFile; fileRef = 6451CFCB20D16B5400BCFEA7 /* QSCoreDataMultiFetchedResultsController.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6451D00420D16B5A00BCFEA7 /* QSCloudKitSynchronizer+CoreData.m in Sources */ = {isa = PBXBuildFile; fileRef = 6451CFCC20D16B5500BCFEA7 /* QSCloudKitSynchronizer+CoreData.m */; };
-		6451D00520D16B5A00BCFEA7 /* QSModelAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 6451CFCD20D16B5500BCFEA7 /* QSModelAdapter.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6451D00620D16B5A00BCFEA7 /* QSCloudKitSynchronizerOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6451CFCE20D16B5500BCFEA7 /* QSCloudKitSynchronizerOperation.swift */; };
-		6451D00720D16B5A00BCFEA7 /* QSCloudKitSynchronizer+CoreData.h in Headers */ = {isa = PBXBuildFile; fileRef = 6451CFCF20D16B5500BCFEA7 /* QSCloudKitSynchronizer+CoreData.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6451D00820D16B5A00BCFEA7 /* QSRecord+CoreDataClass.h in Headers */ = {isa = PBXBuildFile; fileRef = 6451CFD020D16B5500BCFEA7 /* QSRecord+CoreDataClass.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6451D00920D16B5A00BCFEA7 /* QSCloudKitSynchronizer+Sharing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6451CFD120D16B5600BCFEA7 /* QSCloudKitSynchronizer+Sharing.swift */; };
-		6451D00B20D16B5A00BCFEA7 /* QSPrimaryKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 6451CFD320D16B5600BCFEA7 /* QSPrimaryKey.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6451D00C20D16B5A00BCFEA7 /* QSBackupDetection.h in Headers */ = {isa = PBXBuildFile; fileRef = 6451CFD420D16B5600BCFEA7 /* QSBackupDetection.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6451D00D20D16B5A00BCFEA7 /* QSRecord+CoreDataClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 6451CFD520D16B5600BCFEA7 /* QSRecord+CoreDataClass.m */; };
-		6451D00E20D16B5A00BCFEA7 /* NSManagedObjectContext+QSFetch.m in Sources */ = {isa = PBXBuildFile; fileRef = 6451CFD620D16B5700BCFEA7 /* NSManagedObjectContext+QSFetch.m */; };
-		6451D00F20D16B5A00BCFEA7 /* QSDefaultCoreDataAdapterDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6451CFD720D16B5700BCFEA7 /* QSDefaultCoreDataAdapterDelegate.m */; };
-		6451D01020D16B5A00BCFEA7 /* QSServerToken+CoreDataClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 6451CFD820D16B5700BCFEA7 /* QSServerToken+CoreDataClass.m */; };
-		6451D01120D16B5A00BCFEA7 /* QSRecord+CoreDataProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = 6451CFD920D16B5800BCFEA7 /* QSRecord+CoreDataProperties.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6451D01220D16B5A00BCFEA7 /* QSTempFileManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 6451CFDA20D16B5800BCFEA7 /* QSTempFileManager.m */; };
-		6451D01320D16B5A00BCFEA7 /* QSManagedObjectContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 6451CFDB20D16B5800BCFEA7 /* QSManagedObjectContext.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6451D01420D16B5A00BCFEA7 /* QSCloudKitSynchronizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 6451CFDC20D16B5800BCFEA7 /* QSCloudKitSynchronizer.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6451D01520D16B5A00BCFEA7 /* QSManagedObjectContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 6451CFDD20D16B5800BCFEA7 /* QSManagedObjectContext.m */; };
-		6451D01620D16B5A00BCFEA7 /* QSPendingRelationship+CoreDataClass.h in Headers */ = {isa = PBXBuildFile; fileRef = 6451CFDE20D16B5900BCFEA7 /* QSPendingRelationship+CoreDataClass.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6451D01720D16B5A00BCFEA7 /* QSDefaultCoreDataStackProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 6451CFDF20D16B5900BCFEA7 /* QSDefaultCoreDataStackProvider.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6451D01820D16B5A00BCFEA7 /* QSCoreDataMultiFetchedResultsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6451CFE020D16B5900BCFEA7 /* QSCoreDataMultiFetchedResultsController.m */; };
-		6451D01920D16B5A00BCFEA7 /* SyncKitLog.h in Headers */ = {isa = PBXBuildFile; fileRef = 6451CFE120D16B5900BCFEA7 /* SyncKitLog.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6451D01A20D16B5A00BCFEA7 /* QSCoreDataAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 6451CFE220D16B5A00BCFEA7 /* QSCoreDataAdapter.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6451D01C20D16BFF00BCFEA7 /* SyncKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 6451D01B20D16BFD00BCFEA7 /* SyncKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		64FB2BE321A18A3D00F44819 /* QSDefaultCoreDataAdapterProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64FB2BE221A18A3C00F44819 /* QSDefaultCoreDataAdapterProvider.swift */; };
+		648D93E522CBEF4D00C01529 /* FetchDatabaseChangesOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 648D93E222CBEF4D00C01529 /* FetchDatabaseChangesOperation.swift */; };
+		648D93E622CBEF4D00C01529 /* FetchZoneChangesOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 648D93E322CBEF4D00C01529 /* FetchZoneChangesOperation.swift */; };
+		648D93E722CBEF4D00C01529 /* CloudKitSynchronizerOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 648D93E422CBEF4D00C01529 /* CloudKitSynchronizerOperation.swift */; };
+		648D93F522CBEF5600C01529 /* QSCoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 648D93E822CBEF5600C01529 /* QSCoder.swift */; };
+		648D93F622CBEF5600C01529 /* CloudKitSynchronizer+Private.swift in Sources */ = {isa = PBXBuildFile; fileRef = 648D93E922CBEF5600C01529 /* CloudKitSynchronizer+Private.swift */; };
+		648D93F722CBEF5600C01529 /* SyncedEntityState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 648D93EA22CBEF5600C01529 /* SyncedEntityState.swift */; };
+		648D93F822CBEF5600C01529 /* CloudKitSynchronizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 648D93EB22CBEF5600C01529 /* CloudKitSynchronizer.swift */; };
+		648D93F922CBEF5600C01529 /* PrimaryKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 648D93EC22CBEF5600C01529 /* PrimaryKey.swift */; };
+		648D93FA22CBEF5600C01529 /* CloudKitSynchronizer+Sharing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 648D93ED22CBEF5600C01529 /* CloudKitSynchronizer+Sharing.swift */; };
+		648D93FB22CBEF5600C01529 /* CloudKitSynchronizer+Subscriptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 648D93EE22CBEF5600C01529 /* CloudKitSynchronizer+Subscriptions.swift */; };
+		648D93FC22CBEF5600C01529 /* BackupDetection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 648D93EF22CBEF5600C01529 /* BackupDetection.swift */; };
+		648D93FD22CBEF5600C01529 /* CloudKitDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 648D93F022CBEF5600C01529 /* CloudKitDatabase.swift */; };
+		648D93FE22CBEF5600C01529 /* TempFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 648D93F122CBEF5600C01529 /* TempFileManager.swift */; };
+		648D93FF22CBEF5600C01529 /* KeyValueStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 648D93F222CBEF5600C01529 /* KeyValueStore.swift */; };
+		648D940022CBEF5600C01529 /* CloudKitSynchronizer+Sync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 648D93F322CBEF5600C01529 /* CloudKitSynchronizer+Sync.swift */; };
+		648D940122CBEF5600C01529 /* ModelAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 648D93F422CBEF5600C01529 /* ModelAdapter.swift */; };
+		649236E722C7C1430074A142 /* CloudKitSynchronizer+CoreData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6433B3FF22C006CF00EAC16C /* CloudKitSynchronizer+CoreData.swift */; };
+		649236E822C7C1430074A142 /* CoreDataAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6433B41622C006D100EAC16C /* CoreDataAdapter.swift */; };
+		649236E922C7C1430074A142 /* CoreDataAdapter+ModelAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6433B40922C006D000EAC16C /* CoreDataAdapter+ModelAdapter.swift */; };
+		649236EA22C7C1430074A142 /* CoreDataAdapter+Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6433B40022C006D000EAC16C /* CoreDataAdapter+Notifications.swift */; };
+		649236EB22C7C1430074A142 /* CoreDataAdapter+Private.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6433B40122C006D000EAC16C /* CoreDataAdapter+Private.swift */; };
+		649236EC22C7C1430074A142 /* CoreDataMultiFetchedResultsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6433B41222C006D100EAC16C /* CoreDataMultiFetchedResultsController.swift */; };
+		649236ED22C7C1430074A142 /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6433B40622C006D000EAC16C /* CoreDataStack.swift */; };
+		649236EE22C7C1430074A142 /* DefaultCoreDataAdapterDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6433B41322C006D100EAC16C /* DefaultCoreDataAdapterDelegate.swift */; };
+		649236EF22C7C1430074A142 /* DefaultCoreDataAdapterProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6433B40822C006D000EAC16C /* DefaultCoreDataAdapterProvider.swift */; };
+		649236F022C7C1430074A142 /* DefaultCoreDataStackProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6433B41422C006D100EAC16C /* DefaultCoreDataStackProvider.swift */; };
+		649236F122C7C1430074A142 /* NSManagedObjectContext+Fetch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6433B41522C006D100EAC16C /* NSManagedObjectContext+Fetch.swift */; };
+		649236F222C7C1460074A142 /* QSManagedObjectContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6433B40722C006D000EAC16C /* QSManagedObjectContext.swift */; };
+		649236F322C7C1460074A142 /* QSPendingRelationship+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6433B40222C006D000EAC16C /* QSPendingRelationship+CoreDataClass.swift */; };
+		649236F422C7C1460074A142 /* QSPendingRelationship+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6433B40D22C006D000EAC16C /* QSPendingRelationship+CoreDataProperties.swift */; };
+		649236F522C7C1460074A142 /* QSRecord+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6433B40B22C006D000EAC16C /* QSRecord+CoreDataClass.swift */; };
+		649236F622C7C1460074A142 /* QSRecord+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6433B40322C006D000EAC16C /* QSRecord+CoreDataProperties.swift */; };
+		649236F722C7C1460074A142 /* QSServerToken+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6433B40422C006D000EAC16C /* QSServerToken+CoreDataClass.swift */; };
+		649236F822C7C1460074A142 /* QSServerToken+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6433B40A22C006D000EAC16C /* QSServerToken+CoreDataProperties.swift */; };
+		649236F922C7C1460074A142 /* QSSyncedEntity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6433B40522C006D000EAC16C /* QSSyncedEntity+CoreDataClass.swift */; };
+		649236FA22C7C1460074A142 /* QSSyncedEntity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6433B40C22C006D000EAC16C /* QSSyncedEntity+CoreDataProperties.swift */; };
+		649236FB22C7C14D0074A142 /* QSCloudKitSyncModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6433B40E22C006D100EAC16C /* QSCloudKitSyncModel.xcdatamodeld */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		644B0EDC1ED13CE4003B0C51 /* SyncKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SyncKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		644B0EE01ED13CE4003B0C51 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		6451CFA920D16B4F00BCFEA7 /* QSCoreDataStack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = QSCoreDataStack.m; path = ../../../../SyncKit/Classes/CoreData/QSCoreDataStack.m; sourceTree = "<group>"; };
-		6451CFAB20D16B4F00BCFEA7 /* QSCloudKitSyncModel 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "QSCloudKitSyncModel 2.xcdatamodel"; sourceTree = "<group>"; };
-		6451CFAC20D16B4F00BCFEA7 /* QSCloudKitSyncModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = QSCloudKitSyncModel.xcdatamodel; sourceTree = "<group>"; };
-		6451CFAD20D16B4F00BCFEA7 /* QSBackupDetection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = QSBackupDetection.m; path = ../../../../SyncKit/Classes/QSSynchronizer/QSBackupDetection.m; sourceTree = "<group>"; };
-		6451CFAE20D16B5000BCFEA7 /* QSCloudKitSynchronizer+Subscriptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "QSCloudKitSynchronizer+Subscriptions.swift"; path = "../../../../SyncKit/Classes/QSSynchronizer/QSCloudKitSynchronizer+Subscriptions.swift"; sourceTree = "<group>"; };
-		6451CFAF20D16B5000BCFEA7 /* QSCloudKitSynchronizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = QSCloudKitSynchronizer.m; path = ../../../../SyncKit/Classes/QSSynchronizer/QSCloudKitSynchronizer.m; sourceTree = "<group>"; };
-		6451CFB020D16B5000BCFEA7 /* QSCoreDataAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = QSCoreDataAdapter.m; path = ../../../../SyncKit/Classes/CoreData/QSCoreDataAdapter.m; sourceTree = "<group>"; };
-		6451CFB120D16B5000BCFEA7 /* QSRecord+CoreDataProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "QSRecord+CoreDataProperties.m"; path = "../../../../SyncKit/Classes/CoreData/QSRecord+CoreDataProperties.m"; sourceTree = "<group>"; };
-		6451CFB220D16B5000BCFEA7 /* QSServerToken+CoreDataClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "QSServerToken+CoreDataClass.h"; path = "../../../../SyncKit/Classes/CoreData/QSServerToken+CoreDataClass.h"; sourceTree = "<group>"; };
-		6451CFB320D16B5000BCFEA7 /* QSCloudKitSynchronizer+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "QSCloudKitSynchronizer+Private.h"; path = "../../../../SyncKit/Classes/QSSynchronizer/QSCloudKitSynchronizer+Private.h"; sourceTree = "<group>"; };
-		6451CFB420D16B5000BCFEA7 /* QSPendingRelationship+CoreDataProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "QSPendingRelationship+CoreDataProperties.h"; path = "../../../../SyncKit/Classes/CoreData/QSPendingRelationship+CoreDataProperties.h"; sourceTree = "<group>"; };
-		6451CFB520D16B5100BCFEA7 /* QSFetchZoneChangesOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = QSFetchZoneChangesOperation.swift; path = ../../../../SyncKit/Classes/QSSynchronizer/Operations/QSFetchZoneChangesOperation.swift; sourceTree = "<group>"; };
-		6451CFB620D16B5100BCFEA7 /* QSCloudKitSynchronizer+MultiFetchedResultsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "QSCloudKitSynchronizer+MultiFetchedResultsController.m"; path = "../../../../SyncKit/Classes/CoreData/QSCloudKitSynchronizer+MultiFetchedResultsController.m"; sourceTree = "<group>"; };
-		6451CFB720D16B5100BCFEA7 /* QSEntityIdentifierUpdateMigrationPolicy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = QSEntityIdentifierUpdateMigrationPolicy.m; path = ../../../../SyncKit/Classes/CoreData/QSEntityIdentifierUpdateMigrationPolicy.m; sourceTree = "<group>"; };
-		6451CFB820D16B5100BCFEA7 /* QSFetchDatabaseChangesOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = QSFetchDatabaseChangesOperation.swift; path = ../../../../SyncKit/Classes/QSSynchronizer/Operations/QSFetchDatabaseChangesOperation.swift; sourceTree = "<group>"; };
-		6451CFB920D16B5100BCFEA7 /* QSTempFileManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QSTempFileManager.h; path = ../../../../SyncKit/Classes/QSSynchronizer/QSTempFileManager.h; sourceTree = "<group>"; };
-		6451CFBA20D16B5100BCFEA7 /* QSCloudKitSynchronizer+MultiFetchedResultsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "QSCloudKitSynchronizer+MultiFetchedResultsController.h"; path = "../../../../SyncKit/Classes/CoreData/QSCloudKitSynchronizer+MultiFetchedResultsController.h"; sourceTree = "<group>"; };
-		6451CFBB20D16B5200BCFEA7 /* QSEntityIdentifierUpdateMigrationPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QSEntityIdentifierUpdateMigrationPolicy.h; path = ../../../../SyncKit/Classes/CoreData/QSEntityIdentifierUpdateMigrationPolicy.h; sourceTree = "<group>"; };
-		6451CFBC20D16B5200BCFEA7 /* QSSyncedEntity+CoreDataClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "QSSyncedEntity+CoreDataClass.m"; path = "../../../../SyncKit/Classes/CoreData/QSSyncedEntity+CoreDataClass.m"; sourceTree = "<group>"; };
-		6451CFBD20D16B5200BCFEA7 /* QSPendingRelationship+CoreDataProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "QSPendingRelationship+CoreDataProperties.m"; path = "../../../../SyncKit/Classes/CoreData/QSPendingRelationship+CoreDataProperties.m"; sourceTree = "<group>"; };
-		6451CFBE20D16B5200BCFEA7 /* QSKeyValueStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QSKeyValueStore.h; path = ../../../../SyncKit/Classes/QSSynchronizer/QSKeyValueStore.h; sourceTree = "<group>"; };
-		6451CFBF20D16B5200BCFEA7 /* QSDefaultCoreDataStackProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = QSDefaultCoreDataStackProvider.m; path = ../../../../SyncKit/Classes/CoreData/QSDefaultCoreDataStackProvider.m; sourceTree = "<group>"; };
-		6451CFC020D16B5200BCFEA7 /* QSServerToken+CoreDataProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "QSServerToken+CoreDataProperties.m"; path = "../../../../SyncKit/Classes/CoreData/QSServerToken+CoreDataProperties.m"; sourceTree = "<group>"; };
-		6451CFC120D16B5300BCFEA7 /* QSSyncedEntity+CoreDataProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "QSSyncedEntity+CoreDataProperties.h"; path = "../../../../SyncKit/Classes/CoreData/QSSyncedEntity+CoreDataProperties.h"; sourceTree = "<group>"; };
-		6451CFC220D16B5300BCFEA7 /* QSSyncedEntity+CoreDataProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "QSSyncedEntity+CoreDataProperties.m"; path = "../../../../SyncKit/Classes/CoreData/QSSyncedEntity+CoreDataProperties.m"; sourceTree = "<group>"; };
-		6451CFC320D16B5300BCFEA7 /* NSManagedObjectContext+QSFetch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSManagedObjectContext+QSFetch.h"; path = "../../../../SyncKit/Classes/CoreData/NSManagedObjectContext+QSFetch.h"; sourceTree = "<group>"; };
-		6451CFC420D16B5300BCFEA7 /* QSSyncedEntityState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QSSyncedEntityState.h; path = ../../../../SyncKit/Classes/QSSynchronizer/QSSyncedEntityState.h; sourceTree = "<group>"; };
-		6451CFC520D16B5300BCFEA7 /* QSCloudKitSynchronizer+Private.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "QSCloudKitSynchronizer+Private.m"; path = "../../../../SyncKit/Classes/QSSynchronizer/QSCloudKitSynchronizer+Private.m"; sourceTree = "<group>"; };
-		6451CFC620D16B5300BCFEA7 /* QSPendingRelationship+CoreDataClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "QSPendingRelationship+CoreDataClass.m"; path = "../../../../SyncKit/Classes/CoreData/QSPendingRelationship+CoreDataClass.m"; sourceTree = "<group>"; };
-		6451CFC720D16B5400BCFEA7 /* QSServerToken+CoreDataProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "QSServerToken+CoreDataProperties.h"; path = "../../../../SyncKit/Classes/CoreData/QSServerToken+CoreDataProperties.h"; sourceTree = "<group>"; };
-		6451CFC820D16B5400BCFEA7 /* QSSyncedEntity+CoreDataClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "QSSyncedEntity+CoreDataClass.h"; path = "../../../../SyncKit/Classes/CoreData/QSSyncedEntity+CoreDataClass.h"; sourceTree = "<group>"; };
-		6451CFC920D16B5400BCFEA7 /* QSCoreDataStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QSCoreDataStack.h; path = ../../../../SyncKit/Classes/CoreData/QSCoreDataStack.h; sourceTree = "<group>"; };
-		6451CFCA20D16B5400BCFEA7 /* QSDefaultCoreDataAdapterDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QSDefaultCoreDataAdapterDelegate.h; path = ../../../../SyncKit/Classes/CoreData/QSDefaultCoreDataAdapterDelegate.h; sourceTree = "<group>"; };
-		6451CFCB20D16B5400BCFEA7 /* QSCoreDataMultiFetchedResultsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QSCoreDataMultiFetchedResultsController.h; path = ../../../../SyncKit/Classes/CoreData/QSCoreDataMultiFetchedResultsController.h; sourceTree = "<group>"; };
-		6451CFCC20D16B5500BCFEA7 /* QSCloudKitSynchronizer+CoreData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "QSCloudKitSynchronizer+CoreData.m"; path = "../../../../SyncKit/Classes/CoreData/QSCloudKitSynchronizer+CoreData.m"; sourceTree = "<group>"; };
-		6451CFCD20D16B5500BCFEA7 /* QSModelAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QSModelAdapter.h; path = ../../../../SyncKit/Classes/QSSynchronizer/QSModelAdapter.h; sourceTree = "<group>"; };
-		6451CFCE20D16B5500BCFEA7 /* QSCloudKitSynchronizerOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = QSCloudKitSynchronizerOperation.swift; path = ../../../../SyncKit/Classes/QSSynchronizer/Operations/QSCloudKitSynchronizerOperation.swift; sourceTree = "<group>"; };
-		6451CFCF20D16B5500BCFEA7 /* QSCloudKitSynchronizer+CoreData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "QSCloudKitSynchronizer+CoreData.h"; path = "../../../../SyncKit/Classes/CoreData/QSCloudKitSynchronizer+CoreData.h"; sourceTree = "<group>"; };
-		6451CFD020D16B5500BCFEA7 /* QSRecord+CoreDataClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "QSRecord+CoreDataClass.h"; path = "../../../../SyncKit/Classes/CoreData/QSRecord+CoreDataClass.h"; sourceTree = "<group>"; };
-		6451CFD120D16B5600BCFEA7 /* QSCloudKitSynchronizer+Sharing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "QSCloudKitSynchronizer+Sharing.swift"; path = "../../../../SyncKit/Classes/QSSynchronizer/QSCloudKitSynchronizer+Sharing.swift"; sourceTree = "<group>"; };
-		6451CFD320D16B5600BCFEA7 /* QSPrimaryKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QSPrimaryKey.h; path = ../../../../SyncKit/Classes/QSSynchronizer/QSPrimaryKey.h; sourceTree = "<group>"; };
-		6451CFD420D16B5600BCFEA7 /* QSBackupDetection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QSBackupDetection.h; path = ../../../../SyncKit/Classes/QSSynchronizer/QSBackupDetection.h; sourceTree = "<group>"; };
-		6451CFD520D16B5600BCFEA7 /* QSRecord+CoreDataClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "QSRecord+CoreDataClass.m"; path = "../../../../SyncKit/Classes/CoreData/QSRecord+CoreDataClass.m"; sourceTree = "<group>"; };
-		6451CFD620D16B5700BCFEA7 /* NSManagedObjectContext+QSFetch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSManagedObjectContext+QSFetch.m"; path = "../../../../SyncKit/Classes/CoreData/NSManagedObjectContext+QSFetch.m"; sourceTree = "<group>"; };
-		6451CFD720D16B5700BCFEA7 /* QSDefaultCoreDataAdapterDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = QSDefaultCoreDataAdapterDelegate.m; path = ../../../../SyncKit/Classes/CoreData/QSDefaultCoreDataAdapterDelegate.m; sourceTree = "<group>"; };
-		6451CFD820D16B5700BCFEA7 /* QSServerToken+CoreDataClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "QSServerToken+CoreDataClass.m"; path = "../../../../SyncKit/Classes/CoreData/QSServerToken+CoreDataClass.m"; sourceTree = "<group>"; };
-		6451CFD920D16B5800BCFEA7 /* QSRecord+CoreDataProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "QSRecord+CoreDataProperties.h"; path = "../../../../SyncKit/Classes/CoreData/QSRecord+CoreDataProperties.h"; sourceTree = "<group>"; };
-		6451CFDA20D16B5800BCFEA7 /* QSTempFileManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = QSTempFileManager.m; path = ../../../../SyncKit/Classes/QSSynchronizer/QSTempFileManager.m; sourceTree = "<group>"; };
-		6451CFDB20D16B5800BCFEA7 /* QSManagedObjectContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QSManagedObjectContext.h; path = ../../../../SyncKit/Classes/CoreData/QSManagedObjectContext.h; sourceTree = "<group>"; };
-		6451CFDC20D16B5800BCFEA7 /* QSCloudKitSynchronizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QSCloudKitSynchronizer.h; path = ../../../../SyncKit/Classes/QSSynchronizer/QSCloudKitSynchronizer.h; sourceTree = "<group>"; };
-		6451CFDD20D16B5800BCFEA7 /* QSManagedObjectContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = QSManagedObjectContext.m; path = ../../../../SyncKit/Classes/CoreData/QSManagedObjectContext.m; sourceTree = "<group>"; };
-		6451CFDE20D16B5900BCFEA7 /* QSPendingRelationship+CoreDataClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "QSPendingRelationship+CoreDataClass.h"; path = "../../../../SyncKit/Classes/CoreData/QSPendingRelationship+CoreDataClass.h"; sourceTree = "<group>"; };
-		6451CFDF20D16B5900BCFEA7 /* QSDefaultCoreDataStackProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QSDefaultCoreDataStackProvider.h; path = ../../../../SyncKit/Classes/CoreData/QSDefaultCoreDataStackProvider.h; sourceTree = "<group>"; };
-		6451CFE020D16B5900BCFEA7 /* QSCoreDataMultiFetchedResultsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = QSCoreDataMultiFetchedResultsController.m; path = ../../../../SyncKit/Classes/CoreData/QSCoreDataMultiFetchedResultsController.m; sourceTree = "<group>"; };
-		6451CFE120D16B5900BCFEA7 /* SyncKitLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SyncKitLog.h; path = ../../../../SyncKit/Classes/QSSynchronizer/SyncKitLog.h; sourceTree = "<group>"; };
-		6451CFE220D16B5A00BCFEA7 /* QSCoreDataAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QSCoreDataAdapter.h; path = ../../../../SyncKit/Classes/CoreData/QSCoreDataAdapter.h; sourceTree = "<group>"; };
-		6451D01B20D16BFD00BCFEA7 /* SyncKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SyncKit.h; sourceTree = "<group>"; };
-		64FB2BE221A18A3C00F44819 /* QSDefaultCoreDataAdapterProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = QSDefaultCoreDataAdapterProvider.swift; path = ../../../../SyncKit/Classes/CoreData/QSDefaultCoreDataAdapterProvider.swift; sourceTree = "<group>"; };
+		6433B37F22C001D200EAC16C /* SyncKitCoreDataOSX.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SyncKitCoreDataOSX.h; sourceTree = "<group>"; };
+		6433B38022C001D200EAC16C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6433B3FF22C006CF00EAC16C /* CloudKitSynchronizer+CoreData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "CloudKitSynchronizer+CoreData.swift"; path = "../../../../../SyncKit/Classes/CoreData/CloudKitSynchronizer+CoreData.swift"; sourceTree = "<group>"; };
+		6433B40022C006D000EAC16C /* CoreDataAdapter+Notifications.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "CoreDataAdapter+Notifications.swift"; path = "../../../../../SyncKit/Classes/CoreData/CoreDataAdapter+Notifications.swift"; sourceTree = "<group>"; };
+		6433B40122C006D000EAC16C /* CoreDataAdapter+Private.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "CoreDataAdapter+Private.swift"; path = "../../../../../SyncKit/Classes/CoreData/CoreDataAdapter+Private.swift"; sourceTree = "<group>"; };
+		6433B40222C006D000EAC16C /* QSPendingRelationship+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "QSPendingRelationship+CoreDataClass.swift"; path = "../../../../../SyncKit/Classes/CoreData/QSPendingRelationship+CoreDataClass.swift"; sourceTree = "<group>"; };
+		6433B40322C006D000EAC16C /* QSRecord+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "QSRecord+CoreDataProperties.swift"; path = "../../../../../SyncKit/Classes/CoreData/QSRecord+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		6433B40422C006D000EAC16C /* QSServerToken+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "QSServerToken+CoreDataClass.swift"; path = "../../../../../SyncKit/Classes/CoreData/QSServerToken+CoreDataClass.swift"; sourceTree = "<group>"; };
+		6433B40522C006D000EAC16C /* QSSyncedEntity+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "QSSyncedEntity+CoreDataClass.swift"; path = "../../../../../SyncKit/Classes/CoreData/QSSyncedEntity+CoreDataClass.swift"; sourceTree = "<group>"; };
+		6433B40622C006D000EAC16C /* CoreDataStack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CoreDataStack.swift; path = ../../../../../SyncKit/Classes/CoreData/CoreDataStack.swift; sourceTree = "<group>"; };
+		6433B40722C006D000EAC16C /* QSManagedObjectContext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = QSManagedObjectContext.swift; path = ../../../../../SyncKit/Classes/CoreData/QSManagedObjectContext.swift; sourceTree = "<group>"; };
+		6433B40822C006D000EAC16C /* DefaultCoreDataAdapterProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DefaultCoreDataAdapterProvider.swift; path = ../../../../../SyncKit/Classes/CoreData/DefaultCoreDataAdapterProvider.swift; sourceTree = "<group>"; };
+		6433B40922C006D000EAC16C /* CoreDataAdapter+ModelAdapter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "CoreDataAdapter+ModelAdapter.swift"; path = "../../../../../SyncKit/Classes/CoreData/CoreDataAdapter+ModelAdapter.swift"; sourceTree = "<group>"; };
+		6433B40A22C006D000EAC16C /* QSServerToken+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "QSServerToken+CoreDataProperties.swift"; path = "../../../../../SyncKit/Classes/CoreData/QSServerToken+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		6433B40B22C006D000EAC16C /* QSRecord+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "QSRecord+CoreDataClass.swift"; path = "../../../../../SyncKit/Classes/CoreData/QSRecord+CoreDataClass.swift"; sourceTree = "<group>"; };
+		6433B40C22C006D000EAC16C /* QSSyncedEntity+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "QSSyncedEntity+CoreDataProperties.swift"; path = "../../../../../SyncKit/Classes/CoreData/QSSyncedEntity+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		6433B40D22C006D000EAC16C /* QSPendingRelationship+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "QSPendingRelationship+CoreDataProperties.swift"; path = "../../../../../SyncKit/Classes/CoreData/QSPendingRelationship+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		6433B40F22C006D100EAC16C /* QSCloudKitSyncModel 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "QSCloudKitSyncModel 2.xcdatamodel"; sourceTree = "<group>"; };
+		6433B41022C006D100EAC16C /* QSCloudKitSyncModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = QSCloudKitSyncModel.xcdatamodel; sourceTree = "<group>"; };
+		6433B41122C006D100EAC16C /* QSCloudKitSyncModel 3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "QSCloudKitSyncModel 3.xcdatamodel"; sourceTree = "<group>"; };
+		6433B41222C006D100EAC16C /* CoreDataMultiFetchedResultsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CoreDataMultiFetchedResultsController.swift; path = ../../../../../SyncKit/Classes/CoreData/CoreDataMultiFetchedResultsController.swift; sourceTree = "<group>"; };
+		6433B41322C006D100EAC16C /* DefaultCoreDataAdapterDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DefaultCoreDataAdapterDelegate.swift; path = ../../../../../SyncKit/Classes/CoreData/DefaultCoreDataAdapterDelegate.swift; sourceTree = "<group>"; };
+		6433B41422C006D100EAC16C /* DefaultCoreDataStackProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DefaultCoreDataStackProvider.swift; path = ../../../../../SyncKit/Classes/CoreData/DefaultCoreDataStackProvider.swift; sourceTree = "<group>"; };
+		6433B41522C006D100EAC16C /* NSManagedObjectContext+Fetch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "NSManagedObjectContext+Fetch.swift"; path = "../../../../../SyncKit/Classes/CoreData/NSManagedObjectContext+Fetch.swift"; sourceTree = "<group>"; };
+		6433B41622C006D100EAC16C /* CoreDataAdapter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CoreDataAdapter.swift; path = ../../../../../SyncKit/Classes/CoreData/CoreDataAdapter.swift; sourceTree = "<group>"; };
+		648D93E222CBEF4D00C01529 /* FetchDatabaseChangesOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FetchDatabaseChangesOperation.swift; path = ../../../../../SyncKit/Classes/QSSynchronizer/Operations/FetchDatabaseChangesOperation.swift; sourceTree = "<group>"; };
+		648D93E322CBEF4D00C01529 /* FetchZoneChangesOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FetchZoneChangesOperation.swift; path = ../../../../../SyncKit/Classes/QSSynchronizer/Operations/FetchZoneChangesOperation.swift; sourceTree = "<group>"; };
+		648D93E422CBEF4D00C01529 /* CloudKitSynchronizerOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CloudKitSynchronizerOperation.swift; path = ../../../../../SyncKit/Classes/QSSynchronizer/Operations/CloudKitSynchronizerOperation.swift; sourceTree = "<group>"; };
+		648D93E822CBEF5600C01529 /* QSCoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = QSCoder.swift; path = ../../../../../SyncKit/Classes/QSSynchronizer/QSCoder.swift; sourceTree = "<group>"; };
+		648D93E922CBEF5600C01529 /* CloudKitSynchronizer+Private.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "CloudKitSynchronizer+Private.swift"; path = "../../../../../SyncKit/Classes/QSSynchronizer/CloudKitSynchronizer+Private.swift"; sourceTree = "<group>"; };
+		648D93EA22CBEF5600C01529 /* SyncedEntityState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SyncedEntityState.swift; path = ../../../../../SyncKit/Classes/QSSynchronizer/SyncedEntityState.swift; sourceTree = "<group>"; };
+		648D93EB22CBEF5600C01529 /* CloudKitSynchronizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CloudKitSynchronizer.swift; path = ../../../../../SyncKit/Classes/QSSynchronizer/CloudKitSynchronizer.swift; sourceTree = "<group>"; };
+		648D93EC22CBEF5600C01529 /* PrimaryKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PrimaryKey.swift; path = ../../../../../SyncKit/Classes/QSSynchronizer/PrimaryKey.swift; sourceTree = "<group>"; };
+		648D93ED22CBEF5600C01529 /* CloudKitSynchronizer+Sharing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "CloudKitSynchronizer+Sharing.swift"; path = "../../../../../SyncKit/Classes/QSSynchronizer/CloudKitSynchronizer+Sharing.swift"; sourceTree = "<group>"; };
+		648D93EE22CBEF5600C01529 /* CloudKitSynchronizer+Subscriptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "CloudKitSynchronizer+Subscriptions.swift"; path = "../../../../../SyncKit/Classes/QSSynchronizer/CloudKitSynchronizer+Subscriptions.swift"; sourceTree = "<group>"; };
+		648D93EF22CBEF5600C01529 /* BackupDetection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BackupDetection.swift; path = ../../../../../SyncKit/Classes/QSSynchronizer/BackupDetection.swift; sourceTree = "<group>"; };
+		648D93F022CBEF5600C01529 /* CloudKitDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CloudKitDatabase.swift; path = ../../../../../SyncKit/Classes/QSSynchronizer/CloudKitDatabase.swift; sourceTree = "<group>"; };
+		648D93F122CBEF5600C01529 /* TempFileManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TempFileManager.swift; path = ../../../../../SyncKit/Classes/QSSynchronizer/TempFileManager.swift; sourceTree = "<group>"; };
+		648D93F222CBEF5600C01529 /* KeyValueStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = KeyValueStore.swift; path = ../../../../../SyncKit/Classes/QSSynchronizer/KeyValueStore.swift; sourceTree = "<group>"; };
+		648D93F322CBEF5600C01529 /* CloudKitSynchronizer+Sync.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "CloudKitSynchronizer+Sync.swift"; path = "../../../../../SyncKit/Classes/QSSynchronizer/CloudKitSynchronizer+Sync.swift"; sourceTree = "<group>"; };
+		648D93F422CBEF5600C01529 /* ModelAdapter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ModelAdapter.swift; path = ../../../../../SyncKit/Classes/QSSynchronizer/ModelAdapter.swift; sourceTree = "<group>"; };
+		649236DF22C7C1230074A142 /* SyncKitCoreDataOSX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SyncKitCoreDataOSX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		644B0ED81ED13CE4003B0C51 /* Frameworks */ = {
+		649236DC22C7C1230074A142 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -140,181 +102,148 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		644B0ED21ED13CE4003B0C51 = {
+		6433B37222C001D200EAC16C = {
 			isa = PBXGroup;
 			children = (
-				644B0EDE1ED13CE4003B0C51 /* SyncKitCoreDataOSX */,
-				644B0EDD1ED13CE4003B0C51 /* Products */,
+				6433B37E22C001D200EAC16C /* SyncKitCoreDataOSX */,
+				6433B37D22C001D200EAC16C /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		644B0EDD1ED13CE4003B0C51 /* Products */ = {
+		6433B37D22C001D200EAC16C /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				644B0EDC1ED13CE4003B0C51 /* SyncKit.framework */,
+				649236DF22C7C1230074A142 /* SyncKitCoreDataOSX.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		644B0EDE1ED13CE4003B0C51 /* SyncKitCoreDataOSX */ = {
+		6433B37E22C001D200EAC16C /* SyncKitCoreDataOSX */ = {
 			isa = PBXGroup;
 			children = (
-				6451CFCE20D16B5500BCFEA7 /* QSCloudKitSynchronizerOperation.swift */,
-				6451CFB820D16B5100BCFEA7 /* QSFetchDatabaseChangesOperation.swift */,
-				6451CFB520D16B5100BCFEA7 /* QSFetchZoneChangesOperation.swift */,
-				64FB2BE221A18A3C00F44819 /* QSDefaultCoreDataAdapterProvider.swift */,
-				6451CFD420D16B5600BCFEA7 /* QSBackupDetection.h */,
-				6451CFAD20D16B4F00BCFEA7 /* QSBackupDetection.m */,
-				6451CFDC20D16B5800BCFEA7 /* QSCloudKitSynchronizer.h */,
-				6451CFAF20D16B5000BCFEA7 /* QSCloudKitSynchronizer.m */,
-				6451CFB320D16B5000BCFEA7 /* QSCloudKitSynchronizer+Private.h */,
-				6451CFC520D16B5300BCFEA7 /* QSCloudKitSynchronizer+Private.m */,
-				6451CFD120D16B5600BCFEA7 /* QSCloudKitSynchronizer+Sharing.swift */,
-				6451CFAE20D16B5000BCFEA7 /* QSCloudKitSynchronizer+Subscriptions.swift */,
-				6451CFBE20D16B5200BCFEA7 /* QSKeyValueStore.h */,
-				6451CFCD20D16B5500BCFEA7 /* QSModelAdapter.h */,
-				6451CFD320D16B5600BCFEA7 /* QSPrimaryKey.h */,
-				6451CFC420D16B5300BCFEA7 /* QSSyncedEntityState.h */,
-				6451CFB920D16B5100BCFEA7 /* QSTempFileManager.h */,
-				6451CFDA20D16B5800BCFEA7 /* QSTempFileManager.m */,
-				6451CFE120D16B5900BCFEA7 /* SyncKitLog.h */,
-				6451CFC320D16B5300BCFEA7 /* NSManagedObjectContext+QSFetch.h */,
-				6451CFD620D16B5700BCFEA7 /* NSManagedObjectContext+QSFetch.m */,
-				6451CFCF20D16B5500BCFEA7 /* QSCloudKitSynchronizer+CoreData.h */,
-				6451CFCC20D16B5500BCFEA7 /* QSCloudKitSynchronizer+CoreData.m */,
-				6451CFBA20D16B5100BCFEA7 /* QSCloudKitSynchronizer+MultiFetchedResultsController.h */,
-				6451CFB620D16B5100BCFEA7 /* QSCloudKitSynchronizer+MultiFetchedResultsController.m */,
-				6451CFAA20D16B4F00BCFEA7 /* QSCloudKitSyncModel.xcdatamodeld */,
-				6451CFE220D16B5A00BCFEA7 /* QSCoreDataAdapter.h */,
-				6451CFB020D16B5000BCFEA7 /* QSCoreDataAdapter.m */,
-				6451CFCB20D16B5400BCFEA7 /* QSCoreDataMultiFetchedResultsController.h */,
-				6451CFE020D16B5900BCFEA7 /* QSCoreDataMultiFetchedResultsController.m */,
-				6451CFC920D16B5400BCFEA7 /* QSCoreDataStack.h */,
-				6451CFA920D16B4F00BCFEA7 /* QSCoreDataStack.m */,
-				6451CFCA20D16B5400BCFEA7 /* QSDefaultCoreDataAdapterDelegate.h */,
-				6451CFD720D16B5700BCFEA7 /* QSDefaultCoreDataAdapterDelegate.m */,
-				6451CFDF20D16B5900BCFEA7 /* QSDefaultCoreDataStackProvider.h */,
-				6451CFBF20D16B5200BCFEA7 /* QSDefaultCoreDataStackProvider.m */,
-				6451CFBB20D16B5200BCFEA7 /* QSEntityIdentifierUpdateMigrationPolicy.h */,
-				6451CFB720D16B5100BCFEA7 /* QSEntityIdentifierUpdateMigrationPolicy.m */,
-				6451CFDB20D16B5800BCFEA7 /* QSManagedObjectContext.h */,
-				6451CFDD20D16B5800BCFEA7 /* QSManagedObjectContext.m */,
-				6451CFDE20D16B5900BCFEA7 /* QSPendingRelationship+CoreDataClass.h */,
-				6451CFC620D16B5300BCFEA7 /* QSPendingRelationship+CoreDataClass.m */,
-				6451CFB420D16B5000BCFEA7 /* QSPendingRelationship+CoreDataProperties.h */,
-				6451CFBD20D16B5200BCFEA7 /* QSPendingRelationship+CoreDataProperties.m */,
-				6451CFD020D16B5500BCFEA7 /* QSRecord+CoreDataClass.h */,
-				6451CFD520D16B5600BCFEA7 /* QSRecord+CoreDataClass.m */,
-				6451CFD920D16B5800BCFEA7 /* QSRecord+CoreDataProperties.h */,
-				6451CFB120D16B5000BCFEA7 /* QSRecord+CoreDataProperties.m */,
-				6451CFB220D16B5000BCFEA7 /* QSServerToken+CoreDataClass.h */,
-				6451CFD820D16B5700BCFEA7 /* QSServerToken+CoreDataClass.m */,
-				6451CFC720D16B5400BCFEA7 /* QSServerToken+CoreDataProperties.h */,
-				6451CFC020D16B5200BCFEA7 /* QSServerToken+CoreDataProperties.m */,
-				6451CFC820D16B5400BCFEA7 /* QSSyncedEntity+CoreDataClass.h */,
-				6451CFBC20D16B5200BCFEA7 /* QSSyncedEntity+CoreDataClass.m */,
-				6451CFC120D16B5300BCFEA7 /* QSSyncedEntity+CoreDataProperties.h */,
-				6451CFC220D16B5300BCFEA7 /* QSSyncedEntity+CoreDataProperties.m */,
-				6451D01B20D16BFD00BCFEA7 /* SyncKit.h */,
-				644B0EE01ED13CE4003B0C51 /* Info.plist */,
+				648D93E122CBEF4700C01529 /* Core */,
+				6433B3D022C0027000EAC16C /* CoreData */,
+				6433B37F22C001D200EAC16C /* SyncKitCoreDataOSX.h */,
+				6433B38022C001D200EAC16C /* Info.plist */,
 			);
 			path = SyncKitCoreDataOSX;
+			sourceTree = "<group>";
+		};
+		6433B3D022C0027000EAC16C /* CoreData */ = {
+			isa = PBXGroup;
+			children = (
+				6433B3FF22C006CF00EAC16C /* CloudKitSynchronizer+CoreData.swift */,
+				6433B41622C006D100EAC16C /* CoreDataAdapter.swift */,
+				6433B40922C006D000EAC16C /* CoreDataAdapter+ModelAdapter.swift */,
+				6433B40022C006D000EAC16C /* CoreDataAdapter+Notifications.swift */,
+				6433B40122C006D000EAC16C /* CoreDataAdapter+Private.swift */,
+				6433B41222C006D100EAC16C /* CoreDataMultiFetchedResultsController.swift */,
+				6433B40622C006D000EAC16C /* CoreDataStack.swift */,
+				6433B41322C006D100EAC16C /* DefaultCoreDataAdapterDelegate.swift */,
+				6433B40822C006D000EAC16C /* DefaultCoreDataAdapterProvider.swift */,
+				6433B41422C006D100EAC16C /* DefaultCoreDataStackProvider.swift */,
+				6433B41522C006D100EAC16C /* NSManagedObjectContext+Fetch.swift */,
+				6433B40E22C006D100EAC16C /* QSCloudKitSyncModel.xcdatamodeld */,
+				6433B40722C006D000EAC16C /* QSManagedObjectContext.swift */,
+				6433B40222C006D000EAC16C /* QSPendingRelationship+CoreDataClass.swift */,
+				6433B40D22C006D000EAC16C /* QSPendingRelationship+CoreDataProperties.swift */,
+				6433B40B22C006D000EAC16C /* QSRecord+CoreDataClass.swift */,
+				6433B40322C006D000EAC16C /* QSRecord+CoreDataProperties.swift */,
+				6433B40422C006D000EAC16C /* QSServerToken+CoreDataClass.swift */,
+				6433B40A22C006D000EAC16C /* QSServerToken+CoreDataProperties.swift */,
+				6433B40522C006D000EAC16C /* QSSyncedEntity+CoreDataClass.swift */,
+				6433B40C22C006D000EAC16C /* QSSyncedEntity+CoreDataProperties.swift */,
+			);
+			path = CoreData;
+			sourceTree = "<group>";
+		};
+		648D93E122CBEF4700C01529 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				648D93E422CBEF4D00C01529 /* CloudKitSynchronizerOperation.swift */,
+				648D93E222CBEF4D00C01529 /* FetchDatabaseChangesOperation.swift */,
+				648D93E322CBEF4D00C01529 /* FetchZoneChangesOperation.swift */,
+				648D93EF22CBEF5600C01529 /* BackupDetection.swift */,
+				648D93F022CBEF5600C01529 /* CloudKitDatabase.swift */,
+				648D93EB22CBEF5600C01529 /* CloudKitSynchronizer.swift */,
+				648D93E922CBEF5600C01529 /* CloudKitSynchronizer+Private.swift */,
+				648D93ED22CBEF5600C01529 /* CloudKitSynchronizer+Sharing.swift */,
+				648D93EE22CBEF5600C01529 /* CloudKitSynchronizer+Subscriptions.swift */,
+				648D93F322CBEF5600C01529 /* CloudKitSynchronizer+Sync.swift */,
+				648D93F222CBEF5600C01529 /* KeyValueStore.swift */,
+				648D93F422CBEF5600C01529 /* ModelAdapter.swift */,
+				648D93EC22CBEF5600C01529 /* PrimaryKey.swift */,
+				648D93E822CBEF5600C01529 /* QSCoder.swift */,
+				648D93EA22CBEF5600C01529 /* SyncedEntityState.swift */,
+				648D93F122CBEF5600C01529 /* TempFileManager.swift */,
+			);
+			path = Core;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		644B0ED91ED13CE4003B0C51 /* Headers */ = {
+		649236DA22C7C1230074A142 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6451CFF320D16B5A00BCFEA7 /* QSEntityIdentifierUpdateMigrationPolicy.h in Headers */,
-				6451CFEC20D16B5A00BCFEA7 /* QSPendingRelationship+CoreDataProperties.h in Headers */,
-				6451D01720D16B5A00BCFEA7 /* QSDefaultCoreDataStackProvider.h in Headers */,
-				6451D01920D16B5A00BCFEA7 /* SyncKitLog.h in Headers */,
-				6451D00120D16B5A00BCFEA7 /* QSCoreDataStack.h in Headers */,
-				6451D00C20D16B5A00BCFEA7 /* QSBackupDetection.h in Headers */,
-				6451CFF220D16B5A00BCFEA7 /* QSCloudKitSynchronizer+MultiFetchedResultsController.h in Headers */,
-				6451CFFF20D16B5A00BCFEA7 /* QSServerToken+CoreDataProperties.h in Headers */,
-				6451D00720D16B5A00BCFEA7 /* QSCloudKitSynchronizer+CoreData.h in Headers */,
-				6451CFF920D16B5A00BCFEA7 /* QSSyncedEntity+CoreDataProperties.h in Headers */,
-				6451D00820D16B5A00BCFEA7 /* QSRecord+CoreDataClass.h in Headers */,
-				6451CFEB20D16B5A00BCFEA7 /* QSCloudKitSynchronizer+Private.h in Headers */,
-				6451CFFC20D16B5A00BCFEA7 /* QSSyncedEntityState.h in Headers */,
-				6451D00020D16B5A00BCFEA7 /* QSSyncedEntity+CoreDataClass.h in Headers */,
-				6451D01620D16B5A00BCFEA7 /* QSPendingRelationship+CoreDataClass.h in Headers */,
-				6451D00320D16B5A00BCFEA7 /* QSCoreDataMultiFetchedResultsController.h in Headers */,
-				6451CFFB20D16B5A00BCFEA7 /* NSManagedObjectContext+QSFetch.h in Headers */,
-				6451D00B20D16B5A00BCFEA7 /* QSPrimaryKey.h in Headers */,
-				6451CFF620D16B5A00BCFEA7 /* QSKeyValueStore.h in Headers */,
-				6451D01120D16B5A00BCFEA7 /* QSRecord+CoreDataProperties.h in Headers */,
-				6451D00520D16B5A00BCFEA7 /* QSModelAdapter.h in Headers */,
-				6451CFF120D16B5A00BCFEA7 /* QSTempFileManager.h in Headers */,
-				6451D01320D16B5A00BCFEA7 /* QSManagedObjectContext.h in Headers */,
-				6451D00220D16B5A00BCFEA7 /* QSDefaultCoreDataAdapterDelegate.h in Headers */,
-				6451D01A20D16B5A00BCFEA7 /* QSCoreDataAdapter.h in Headers */,
-				6451CFEA20D16B5A00BCFEA7 /* QSServerToken+CoreDataClass.h in Headers */,
-				6451D01C20D16BFF00BCFEA7 /* SyncKit.h in Headers */,
-				6451D01420D16B5A00BCFEA7 /* QSCloudKitSynchronizer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		644B0EDB1ED13CE4003B0C51 /* SyncKit */ = {
+		649236DE22C7C1230074A142 /* SyncKitCoreDataOSX */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 644B0EE41ED13CE4003B0C51 /* Build configuration list for PBXNativeTarget "SyncKit" */;
+			buildConfigurationList = 649236E422C7C1230074A142 /* Build configuration list for PBXNativeTarget "SyncKitCoreDataOSX" */;
 			buildPhases = (
-				644B0ED71ED13CE4003B0C51 /* Sources */,
-				644B0ED81ED13CE4003B0C51 /* Frameworks */,
-				644B0ED91ED13CE4003B0C51 /* Headers */,
-				644B0EDA1ED13CE4003B0C51 /* Resources */,
+				649236DA22C7C1230074A142 /* Headers */,
+				649236DB22C7C1230074A142 /* Sources */,
+				649236DC22C7C1230074A142 /* Frameworks */,
+				649236DD22C7C1230074A142 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = SyncKit;
+			name = SyncKitCoreDataOSX;
 			productName = SyncKitCoreDataOSX;
-			productReference = 644B0EDC1ED13CE4003B0C51 /* SyncKit.framework */;
+			productReference = 649236DF22C7C1230074A142 /* SyncKitCoreDataOSX.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		644B0ED31ED13CE4003B0C51 /* Project object */ = {
+		6433B37322C001D200EAC16C /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0940;
-				ORGANIZATIONNAME = Colourbox;
+				LastUpgradeCheck = 1020;
+				ORGANIZATIONNAME = "Manuel Entrena";
 				TargetAttributes = {
-					644B0EDB1ED13CE4003B0C51 = {
-						CreatedOnToolsVersion = 8.3.2;
-						DevelopmentTeam = 2UHP7K87SQ;
-						ProvisioningStyle = Automatic;
+					649236DE22C7C1230074A142 = {
+						CreatedOnToolsVersion = 10.2;
 					};
 				};
 			};
-			buildConfigurationList = 644B0ED61ED13CE4003B0C51 /* Build configuration list for PBXProject "SyncKitCoreDataOSX" */;
-			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			buildConfigurationList = 6433B37622C001D200EAC16C /* Build configuration list for PBXProject "SyncKitCoreDataOSX" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 			);
-			mainGroup = 644B0ED21ED13CE4003B0C51;
-			productRefGroup = 644B0EDD1ED13CE4003B0C51 /* Products */;
+			mainGroup = 6433B37222C001D200EAC16C;
+			productRefGroup = 6433B37D22C001D200EAC16C /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				644B0EDB1ED13CE4003B0C51 /* SyncKit */,
+				649236DE22C7C1230074A142 /* SyncKitCoreDataOSX */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		644B0EDA1ED13CE4003B0C51 /* Resources */ = {
+		649236DD22C7C1230074A142 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -324,55 +253,64 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		644B0ED71ED13CE4003B0C51 /* Sources */ = {
+		649236DB22C7C1230074A142 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6451CFFA20D16B5A00BCFEA7 /* QSSyncedEntity+CoreDataProperties.m in Sources */,
-				6451D00F20D16B5A00BCFEA7 /* QSDefaultCoreDataAdapterDelegate.m in Sources */,
-				6451D00920D16B5A00BCFEA7 /* QSCloudKitSynchronizer+Sharing.swift in Sources */,
-				6451CFEE20D16B5A00BCFEA7 /* QSCloudKitSynchronizer+MultiFetchedResultsController.m in Sources */,
-				6451CFED20D16B5A00BCFEA7 /* QSFetchZoneChangesOperation.swift in Sources */,
-				6451CFF020D16B5A00BCFEA7 /* QSFetchDatabaseChangesOperation.swift in Sources */,
-				6451CFF520D16B5A00BCFEA7 /* QSPendingRelationship+CoreDataProperties.m in Sources */,
-				6451CFE520D16B5A00BCFEA7 /* QSBackupDetection.m in Sources */,
-				6451D00620D16B5A00BCFEA7 /* QSCloudKitSynchronizerOperation.swift in Sources */,
-				6451D01020D16B5A00BCFEA7 /* QSServerToken+CoreDataClass.m in Sources */,
-				6451CFE620D16B5A00BCFEA7 /* QSCloudKitSynchronizer+Subscriptions.swift in Sources */,
-				6451CFE820D16B5A00BCFEA7 /* QSCoreDataAdapter.m in Sources */,
-				6451CFF820D16B5A00BCFEA7 /* QSServerToken+CoreDataProperties.m in Sources */,
-				6451D01520D16B5A00BCFEA7 /* QSManagedObjectContext.m in Sources */,
-				6451CFE920D16B5A00BCFEA7 /* QSRecord+CoreDataProperties.m in Sources */,
-				6451D00E20D16B5A00BCFEA7 /* NSManagedObjectContext+QSFetch.m in Sources */,
-				6451D00D20D16B5A00BCFEA7 /* QSRecord+CoreDataClass.m in Sources */,
-				6451CFF720D16B5A00BCFEA7 /* QSDefaultCoreDataStackProvider.m in Sources */,
-				6451CFFE20D16B5A00BCFEA7 /* QSPendingRelationship+CoreDataClass.m in Sources */,
-				6451CFFD20D16B5A00BCFEA7 /* QSCloudKitSynchronizer+Private.m in Sources */,
-				6451D01220D16B5A00BCFEA7 /* QSTempFileManager.m in Sources */,
-				6451CFE420D16B5A00BCFEA7 /* QSCloudKitSyncModel.xcdatamodeld in Sources */,
-				6451CFF420D16B5A00BCFEA7 /* QSSyncedEntity+CoreDataClass.m in Sources */,
-				6451D01820D16B5A00BCFEA7 /* QSCoreDataMultiFetchedResultsController.m in Sources */,
-				6451D00420D16B5A00BCFEA7 /* QSCloudKitSynchronizer+CoreData.m in Sources */,
-				6451CFE720D16B5A00BCFEA7 /* QSCloudKitSynchronizer.m in Sources */,
-				6451CFE320D16B5A00BCFEA7 /* QSCoreDataStack.m in Sources */,
-				6451CFEF20D16B5A00BCFEA7 /* QSEntityIdentifierUpdateMigrationPolicy.m in Sources */,
-				64FB2BE321A18A3D00F44819 /* QSDefaultCoreDataAdapterProvider.swift in Sources */,
+				648D93FF22CBEF5600C01529 /* KeyValueStore.swift in Sources */,
+				648D93FD22CBEF5600C01529 /* CloudKitDatabase.swift in Sources */,
+				649236FB22C7C14D0074A142 /* QSCloudKitSyncModel.xcdatamodeld in Sources */,
+				649236ED22C7C1430074A142 /* CoreDataStack.swift in Sources */,
+				649236F322C7C1460074A142 /* QSPendingRelationship+CoreDataClass.swift in Sources */,
+				648D940122CBEF5600C01529 /* ModelAdapter.swift in Sources */,
+				648D93FA22CBEF5600C01529 /* CloudKitSynchronizer+Sharing.swift in Sources */,
+				649236F722C7C1460074A142 /* QSServerToken+CoreDataClass.swift in Sources */,
+				648D93FC22CBEF5600C01529 /* BackupDetection.swift in Sources */,
+				649236E922C7C1430074A142 /* CoreDataAdapter+ModelAdapter.swift in Sources */,
+				649236E822C7C1430074A142 /* CoreDataAdapter.swift in Sources */,
+				648D93E622CBEF4D00C01529 /* FetchZoneChangesOperation.swift in Sources */,
+				649236EE22C7C1430074A142 /* DefaultCoreDataAdapterDelegate.swift in Sources */,
+				649236F222C7C1460074A142 /* QSManagedObjectContext.swift in Sources */,
+				648D93F922CBEF5600C01529 /* PrimaryKey.swift in Sources */,
+				648D93FE22CBEF5600C01529 /* TempFileManager.swift in Sources */,
+				648D940022CBEF5600C01529 /* CloudKitSynchronizer+Sync.swift in Sources */,
+				649236F022C7C1430074A142 /* DefaultCoreDataStackProvider.swift in Sources */,
+				648D93F822CBEF5600C01529 /* CloudKitSynchronizer.swift in Sources */,
+				648D93F722CBEF5600C01529 /* SyncedEntityState.swift in Sources */,
+				649236F522C7C1460074A142 /* QSRecord+CoreDataClass.swift in Sources */,
+				649236E722C7C1430074A142 /* CloudKitSynchronizer+CoreData.swift in Sources */,
+				648D93FB22CBEF5600C01529 /* CloudKitSynchronizer+Subscriptions.swift in Sources */,
+				648D93E722CBEF4D00C01529 /* CloudKitSynchronizerOperation.swift in Sources */,
+				649236EB22C7C1430074A142 /* CoreDataAdapter+Private.swift in Sources */,
+				649236EA22C7C1430074A142 /* CoreDataAdapter+Notifications.swift in Sources */,
+				648D93E522CBEF4D00C01529 /* FetchDatabaseChangesOperation.swift in Sources */,
+				649236EF22C7C1430074A142 /* DefaultCoreDataAdapterProvider.swift in Sources */,
+				649236F422C7C1460074A142 /* QSPendingRelationship+CoreDataProperties.swift in Sources */,
+				649236F822C7C1460074A142 /* QSServerToken+CoreDataProperties.swift in Sources */,
+				649236EC22C7C1430074A142 /* CoreDataMultiFetchedResultsController.swift in Sources */,
+				649236FA22C7C1460074A142 /* QSSyncedEntity+CoreDataProperties.swift in Sources */,
+				649236F922C7C1460074A142 /* QSSyncedEntity+CoreDataClass.swift in Sources */,
+				648D93F622CBEF5600C01529 /* CloudKitSynchronizer+Private.swift in Sources */,
+				648D93F522CBEF5600C01529 /* QSCoder.swift in Sources */,
+				649236F622C7C1460074A142 /* QSRecord+CoreDataProperties.swift in Sources */,
+				649236F122C7C1430074A142 /* NSManagedObjectContext+Fetch.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		644B0EE21ED13CE4003B0C51 /* Debug */ = {
+		6433B38222C001D200EAC16C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
@@ -391,15 +329,16 @@
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -413,25 +352,29 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
-				MTL_ENABLE_DEBUG_INFO = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = macosx;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
 			name = Debug;
 		};
-		644B0EE31ED13CE4003B0C51 /* Release */ = {
+		6433B38322C001D200EAC16C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
@@ -450,15 +393,16 @@
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -466,76 +410,89 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
-				SDKROOT = macosx;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
 			name = Release;
 		};
-		644B0EE51ED13CE4003B0C51 /* Debug */ = {
+		649236E522C7C1230074A142 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 2UHP7K87SQ;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_VERSION = A;
 				INFOPLIST_FILE = SyncKitCoreDataOSX/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_BUNDLE_IDENTIFIER = com.mentrena.SyncKitCoreDataOSX;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
-		644B0EE61ED13CE4003B0C51 /* Release */ = {
+		649236E622C7C1230074A142 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 2UHP7K87SQ;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_VERSION = A;
 				INFOPLIST_FILE = SyncKitCoreDataOSX/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_BUNDLE_IDENTIFIER = com.mentrena.SyncKitCoreDataOSX;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		644B0ED61ED13CE4003B0C51 /* Build configuration list for PBXProject "SyncKitCoreDataOSX" */ = {
+		6433B37622C001D200EAC16C /* Build configuration list for PBXProject "SyncKitCoreDataOSX" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				644B0EE21ED13CE4003B0C51 /* Debug */,
-				644B0EE31ED13CE4003B0C51 /* Release */,
+				6433B38222C001D200EAC16C /* Debug */,
+				6433B38322C001D200EAC16C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		644B0EE41ED13CE4003B0C51 /* Build configuration list for PBXNativeTarget "SyncKit" */ = {
+		649236E422C7C1230074A142 /* Build configuration list for PBXNativeTarget "SyncKitCoreDataOSX" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				644B0EE51ED13CE4003B0C51 /* Debug */,
-				644B0EE61ED13CE4003B0C51 /* Release */,
+				649236E522C7C1230074A142 /* Debug */,
+				649236E622C7C1230074A142 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -543,19 +500,20 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
-		6451CFAA20D16B4F00BCFEA7 /* QSCloudKitSyncModel.xcdatamodeld */ = {
+		6433B40E22C006D100EAC16C /* QSCloudKitSyncModel.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
-				6451CFAB20D16B4F00BCFEA7 /* QSCloudKitSyncModel 2.xcdatamodel */,
-				6451CFAC20D16B4F00BCFEA7 /* QSCloudKitSyncModel.xcdatamodel */,
+				6433B40F22C006D100EAC16C /* QSCloudKitSyncModel 2.xcdatamodel */,
+				6433B41022C006D100EAC16C /* QSCloudKitSyncModel.xcdatamodel */,
+				6433B41122C006D100EAC16C /* QSCloudKitSyncModel 3.xcdatamodel */,
 			);
-			currentVersion = 6451CFAB20D16B4F00BCFEA7 /* QSCloudKitSyncModel 2.xcdatamodel */;
+			currentVersion = 6433B41122C006D100EAC16C /* QSCloudKitSyncModel 3.xcdatamodel */;
 			name = QSCloudKitSyncModel.xcdatamodeld;
-			path = ../../../../SyncKit/Classes/CoreData/QSCloudKitSyncModel.xcdatamodeld;
+			path = ../../../../../SyncKit/Classes/CoreData/QSCloudKitSyncModel.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};
 /* End XCVersionGroup section */
 	};
-	rootObject = 644B0ED31ED13CE4003B0C51 /* Project object */;
+	rootObject = 6433B37322C001D200EAC16C /* Project object */;
 }

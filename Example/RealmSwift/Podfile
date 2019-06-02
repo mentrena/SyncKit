@@ -1,19 +1,16 @@
 use_frameworks!
-inhibit_all_warnings!
 
 workspace 'SyncKitRealmSwift.xcworkspace'
+project 'SyncKitRealmSwiftExample/SyncKitRealmSwiftExample'
 
 target 'SyncKitRealmSwiftExample' do
+	
+  platform :ios, '10.0'
 
-	project 'SyncKitRealmSwiftExample'
- 	platform :ios, '10.0'
+  pod 'RealmSwift'
+  pod 'SyncKit/RealmSwift', :path => '../../'
 
-	pod 'SyncKit/RealmSwift', :path => '../../'
-
-	pod 'RealmSwift', '~> 3.0'
-
-	target 'SyncKitRealmSwiftExampleTests' do
-		inherit! :search_paths
-	end
+  target 'SyncKitRealmSwiftExampleTests' do
+    inherit! :search_paths
+  end
 end
-
