@@ -9,7 +9,7 @@ import Foundation
 import CloudKit
 import RealmSwift
 
-public class DefaultRealmSwiftAdapterProvider: NSObject, QSCloudKitSynchronizerAdapterProvider {
+public class DefaultRealmSwiftAdapterProvider: NSObject, AdapterProvider {
     
     let zoneID: CKRecordZone.ID
     let persistenceConfiguration: Realm.Configuration
@@ -26,16 +26,16 @@ public class DefaultRealmSwiftAdapterProvider: NSObject, QSCloudKitSynchronizerA
         adapter = createAdapter()
     }
     
-    public func cloudKitSynchronizer(_ synchronizer: QSCloudKitSynchronizer, modelAdapterFor recordZoneID: CKRecordZone.ID) -> QSModelAdapter? {
+    public func cloudKitSynchronizer(_ synchronizer: CloudKitSynchronizer, modelAdapterForRecordZoneID recordZoneID: CKRecordZone.ID) -> ModelAdapter? {
         
         guard recordZoneID == zoneID else { return nil }
         
         return adapter
     }
     
-    public func cloudKitSynchronizer(_ synchronizer: QSCloudKitSynchronizer, zoneWasDeletedWith recordZoneID: CKRecordZone.ID) {
+    public func cloudKitSynchronizer(_ synchronizer: CloudKitSynchronizer, zoneWasDeletedWithZoneID recordZoneID: CKRecordZone.ID) {
         
-        let adapterHasSyncedBefore = adapter.serverChangeToken() != nil
+        let adapterHasSyncedBefore = adapter.serverChangeToken != nil
         if recordZoneID == zoneID && adapterHasSyncedBefore {
             
             adapter.deleteChangeTracking()

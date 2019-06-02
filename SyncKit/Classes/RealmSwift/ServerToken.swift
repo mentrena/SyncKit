@@ -5,6 +5,7 @@
 //  Created by Manuel Entrena on 07/06/2018.
 //
 
+import Foundation
 import RealmSwift
 
 class ServerToken: Object {

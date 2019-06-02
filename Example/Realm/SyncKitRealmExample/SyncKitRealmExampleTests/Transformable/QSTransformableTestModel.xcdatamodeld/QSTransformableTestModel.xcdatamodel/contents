@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14490.98" systemVersion="18F132" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="QSTestEntity" representedClassName=".QSTestEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="identifier" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="names" optional="YES" attributeType="Transformable" valueTransformerName="QSNamesTransformer" customClassName=".NSArray" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="QSTestEntity" positionX="-54" positionY="9" width="128" height="75"/>
+    </elements>
+</model>

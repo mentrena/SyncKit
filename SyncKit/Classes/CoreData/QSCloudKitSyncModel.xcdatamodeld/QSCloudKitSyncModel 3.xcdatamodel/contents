@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14490.98" systemVersion="18F132" minimumToolsVersion="Xcode 7.0" sourceLanguage="Swift" userDefinedModelVersionIdentifier="3">
+    <entity name="QSPendingRelationship" representedClassName="QSPendingRelationship" syncable="YES">
+        <attribute name="relationshipName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="targetIdentifier" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="forEntity" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="QSSyncedEntity" inverseName="pendingRelationships" inverseEntity="QSSyncedEntity" syncable="YES"/>
+    </entity>
+    <entity name="QSRecord" representedClassName="QSRecord" syncable="YES">
+        <attribute name="encodedRecord" optional="YES" attributeType="Binary" syncable="YES"/>
+        <relationship name="forEntity" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="QSSyncedEntity" inverseName="record" inverseEntity="QSSyncedEntity" syncable="YES"/>
+    </entity>
+    <entity name="QSServerToken" representedClassName="QSServerToken" syncable="YES">
+        <attribute name="token" optional="YES" attributeType="Binary" syncable="YES"/>
+    </entity>
+    <entity name="QSSyncedEntity" representedClassName="QSSyncedEntity" syncable="YES">
+        <attribute name="changedKeys" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="entityType" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="identifier" optional="YES" attributeType="String" indexed="YES" syncable="YES"/>
+        <attribute name="originObjectID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="state" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="updatedDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <relationship name="pendingRelationships" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="QSPendingRelationship" inverseName="forEntity" inverseEntity="QSPendingRelationship" syncable="YES"/>
+        <relationship name="record" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="QSRecord" inverseName="forEntity" inverseEntity="QSRecord" syncable="YES"/>
+        <relationship name="share" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="QSSyncedEntity" inverseName="shareForEntity" inverseEntity="QSSyncedEntity" syncable="YES"/>
+        <relationship name="shareForEntity" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="QSSyncedEntity" inverseName="share" inverseEntity="QSSyncedEntity" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="QSPendingRelationship" positionX="-362" positionY="279" width="128" height="88"/>
+        <element name="QSRecord" positionX="-72" positionY="339" width="128" height="75"/>
+        <element name="QSServerToken" positionX="-234" positionY="135" width="128" height="60"/>
+        <element name="QSSyncedEntity" positionX="-405" positionY="-18" width="128" height="195"/>
+    </elements>
+</model>

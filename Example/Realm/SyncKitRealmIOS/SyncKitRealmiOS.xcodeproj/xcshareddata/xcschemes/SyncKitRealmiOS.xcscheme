@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1000"
+   LastUpgradeVersion = "1020"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "64B441C41ECEDDF700E66ACB"
-               BuildableName = "SyncKit.framework"
-               BlueprintName = "SyncKit"
+               BlueprintIdentifier = "640C330722A2F15100A85508"
+               BuildableName = "SyncKitRealmiOS.framework"
+               BlueprintName = "SyncKitRealmiOS"
                ReferencedContainer = "container:SyncKitRealmiOS.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -45,9 +45,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "64B441C41ECEDDF700E66ACB"
-            BuildableName = "SyncKit.framework"
-            BlueprintName = "SyncKit"
+            BlueprintIdentifier = "640C330722A2F15100A85508"
+            BuildableName = "SyncKitRealmiOS.framework"
+            BlueprintName = "SyncKitRealmiOS"
             ReferencedContainer = "container:SyncKitRealmiOS.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -63,9 +63,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "64B441C41ECEDDF700E66ACB"
-            BuildableName = "SyncKit.framework"
-            BlueprintName = "SyncKit"
+            BlueprintIdentifier = "640C330722A2F15100A85508"
+            BuildableName = "SyncKitRealmiOS.framework"
+            BlueprintName = "SyncKitRealmiOS"
             ReferencedContainer = "container:SyncKitRealmiOS.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

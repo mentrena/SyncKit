@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1000"
+   LastUpgradeVersion = "1020"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "644A05DB1F59782600F69505"
-               BuildableName = "SyncKit.framework"
-               BlueprintName = "SyncKit"
-               ReferencedContainer = "container:SyncKitRealmSwiftIOS.xcodeproj">
+               BlueprintIdentifier = "640C330722A2F15100A85508"
+               BuildableName = "SyncKitRealmSwiftiOS.framework"
+               BlueprintName = "SyncKitRealmSwiftiOS"
+               ReferencedContainer = "container:SyncKitRealmSwiftiOS.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -45,10 +45,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "644A05DB1F59782600F69505"
-            BuildableName = "SyncKit.framework"
-            BlueprintName = "SyncKit"
-            ReferencedContainer = "container:SyncKitRealmSwiftIOS.xcodeproj">
+            BlueprintIdentifier = "640C330722A2F15100A85508"
+            BuildableName = "SyncKitRealmSwiftiOS.framework"
+            BlueprintName = "SyncKitRealmSwiftiOS"
+            ReferencedContainer = "container:SyncKitRealmSwiftiOS.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -63,10 +63,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "644A05DB1F59782600F69505"
-            BuildableName = "SyncKit.framework"
-            BlueprintName = "SyncKit"
-            ReferencedContainer = "container:SyncKitRealmSwiftIOS.xcodeproj">
+            BlueprintIdentifier = "640C330722A2F15100A85508"
+            BuildableName = "SyncKitRealmSwiftiOS.framework"
+            BlueprintName = "SyncKitRealmSwiftiOS"
+            ReferencedContainer = "container:SyncKitRealmSwiftiOS.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

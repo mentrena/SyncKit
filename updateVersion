@@ -1,9 +1,9 @@
 #!/bin/sh
 
- plutil -replace CFBundleShortVersionString -string $1 ./Example/CoreData/SyncKitCoreDataIOS/SyncKitCoreData/Info.plist
+ plutil -replace CFBundleShortVersionString -string $1 ./Example/CoreData/SyncKitCoreDataiOS/SyncKit/Info.plist
  plutil -replace CFBundleShortVersionString -string $1 ./Example/CoreData/SyncKitCoreDataOSX/SyncKitCoreDataOSX/Info.plist
- plutil -replace CFBundleShortVersionString -string $1 ./Example/Realm/SyncKitRealmIOS/SyncKitRealm/Info.plist
+ plutil -replace CFBundleShortVersionString -string $1 ./Example/Realm/SyncKitRealmiOS/SyncKit/Info.plist
  plutil -replace CFBundleShortVersionString -string $1 ./Example/Realm/SyncKitRealmOSX/SyncKitRealmOSX/Info.plist
- plutil -replace CFBundleShortVersionString -string $1 ./Example/RealmSwift/SyncKitRealmSwiftIOS/SyncKitRealmSwiftIOS/Info.plist
+ plutil -replace CFBundleShortVersionString -string $1 ./Example/RealmSwift/SyncKitRealmSwiftiOS/SyncKit/Info.plist
  plutil -replace CFBundleShortVersionString -string $1 ./Example/RealmSwift/SyncKitRealmSwiftOSX/SyncKitRealmSwiftOSX/Info.plist
  sed -i '' -e "/s.version          = /s/.*/ s.version          = '$1'/" SyncKit.podspec

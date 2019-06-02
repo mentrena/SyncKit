@@ -71,20 +71,18 @@ struct ObjectUpdate {
 }
 
 
-public class RealmSwiftAdapter: NSObject, QSModelAdapter {
-    
-    public static let hasChangesNotification = Notification.Name("QSModelAdapterHasChangesNotification")
+public class RealmSwiftAdapter: NSObject, ModelAdapter {
     
     static let shareRelationshipKey = "com.syncKit.shareRelationship"
     
     public let persistenceRealmConfiguration: Realm.Configuration
     public let targetRealmConfiguration: Realm.Configuration
     public let zoneID: CKRecordZone.ID
-    public var mergePolicy: QSModelAdapterMergePolicy = QSModelAdapterMergePolicy.server
+    public var mergePolicy: MergePolicy = .server
     public var delegate: RealmSwiftAdapterDelegate?
     public var forceDataTypeInsteadOfAsset: Bool = false
     
-    private var tempFileManager = QSTempFileManager()
+    private var tempFileManager = TempFileManager()
     
     var realmProvider: RealmProvider!
     
@@ -93,7 +91,7 @@ public class RealmSwiftAdapter: NSObject, QSModelAdapter {
     var pendingTrackingUpdates = [ObjectUpdate]()
     var childRelationships = [String: Array<ChildRelationship>]()
     var modelTypes = [String: Object.Type]()
-    var hasChangesValue = false
+    public private(set) var hasChanges = false
     
     /* Should be initialized on main queue */
     public init(persistenceRealmConfiguration: Realm.Configuration, targetRealmConfiguration: Realm.Configuration, recordZoneID: CKRecordZone.ID) {
@@ -235,9 +233,9 @@ public class RealmSwiftAdapter: NSObject, QSModelAdapter {
         
         updateHasChanges(realm: realmProvider.persistenceRealm)
         
-        if hasChangesValue {
+        if hasChanges {
             
-            NotificationCenter.default.post(name: RealmSwiftAdapter.hasChangesNotification, object: self)
+            NotificationCenter.default.post(name: .ModelAdapterHasChangesNotification, object: self)
         }
     }
     
@@ -248,10 +246,10 @@ public class RealmSwiftAdapter: NSObject, QSModelAdapter {
     
     func updateHasChanges(realm: Realm) {
         
-        let predicate = NSPredicate(format: "state != %ld", QSSyncedEntityState.synced.rawValue)
+        let predicate = NSPredicate(format: "state != %ld", SyncedEntityState.synced.rawValue)
         let results = realm.objects(SyncedEntity.self).filter(predicate)
         
-        hasChangesValue = results.count > 0;
+        hasChanges = results.count > 0;
     }
     
     func setupChildrenRelationshipsLookup() {
@@ -261,7 +259,7 @@ public class RealmSwiftAdapter: NSObject, QSModelAdapter {
         for objectSchema in realmProvider.targetRealm.schema.objectSchema {
             
             let objectClass = realmObjectClass(name: objectSchema.className)
-            if let parentClass = objectClass.self as? QSParentKey.Type {
+            if let parentClass = objectClass.self as? ParentKey.Type {
                 let parentKey = parentClass.parentKey()
                 let parentProperty = objectSchema.properties.first { $0.name == parentKey }
                 
@@ -339,7 +337,7 @@ public class RealmSwiftAdapter: NSObject, QSModelAdapter {
             
             if let syncedEntity = syncedEntity {
                 realmProvider.persistenceRealm.beginWrite()
-                syncedEntity.state = QSSyncedEntityState.deleted.rawValue
+                syncedEntity.state = SyncedEntityState.deleted.rawValue
                 try? realmProvider.persistenceRealm.commitWrite()
             }
             
@@ -381,16 +379,16 @@ public class RealmSwiftAdapter: NSObject, QSModelAdapter {
             
             realmProvider.persistenceRealm.beginWrite()
             syncedEntity.changedKeys = (changedKeys.allObjects as! [String]).joined(separator: ",")
-            if syncedEntity.state == QSSyncedEntityState.synced.rawValue && !syncedEntity.changedKeys!.isEmpty {
-                syncedEntity.state = QSSyncedEntityState.changed.rawValue
+            if syncedEntity.state == SyncedEntityState.synced.rawValue && !syncedEntity.changedKeys!.isEmpty {
+                syncedEntity.state = SyncedEntityState.changed.rawValue
                 // If state was New then leave it as that
             }
             try? realmProvider.persistenceRealm.commitWrite()
         }
         
-        if !hasChangesValue && isNewChange {
-            hasChangesValue = true
-            NotificationCenter.default.post(name: RealmSwiftAdapter.hasChangesNotification, object: self)
+        if !hasChanges && isNewChange {
+            hasChanges = true
+            NotificationCenter.default.post(name: .ModelAdapterHasChangesNotification, object: self)
         }
     }
     
@@ -402,7 +400,7 @@ public class RealmSwiftAdapter: NSObject, QSModelAdapter {
     @discardableResult
     func createSyncedEntity(entityType: String, identifier: String, realm: Realm) -> SyncedEntity {
         
-        let syncedEntity = SyncedEntity(entityType: entityType, identifier: "\(entityType).\(identifier)", state: QSSyncedEntityState.new.rawValue)
+        let syncedEntity = SyncedEntity(entityType: entityType, identifier: "\(entityType).\(identifier)", state: SyncedEntityState.new.rawValue)
         
         realm.beginWrite()
         realm.add(syncedEntity)
@@ -413,7 +411,7 @@ public class RealmSwiftAdapter: NSObject, QSModelAdapter {
     
     func createSyncedEntity(record: CKRecord, realmProvider: RealmProvider) -> SyncedEntity {
         
-        let syncedEntity = SyncedEntity(entityType: record.recordType, identifier: record.recordID.recordName, state: QSSyncedEntityState.synced.rawValue)
+        let syncedEntity = SyncedEntity(entityType: record.recordType, identifier: record.recordID.recordName, state: SyncedEntityState.synced.rawValue)
         
         realmProvider.persistenceRealm.add(syncedEntity)
         
@@ -450,14 +448,14 @@ public class RealmSwiftAdapter: NSObject, QSModelAdapter {
     
     func shouldIgnore(key: String) -> Bool {
         
-        return QSCloudKitSynchronizer.synchronizerMetadataKeys().contains(key)
+        return CloudKitSynchronizer.metadataKeys.contains(key)
     }
     
     func applyChanges(in record: CKRecord, to object: Object, syncedEntity: SyncedEntity, realmProvider: RealmProvider) {
         
-        if syncedEntity.state == QSSyncedEntityState.changed.rawValue || syncedEntity.state == QSSyncedEntityState.new.rawValue {
+        if syncedEntity.state == SyncedEntityState.changed.rawValue || syncedEntity.state == SyncedEntityState.new.rawValue {
         
-            if mergePolicy ==  QSModelAdapterMergePolicy.server {
+            if mergePolicy == .server {
                 
                 for property in object.objectSchema.properties {
                     if shouldIgnore(key: property.name) {
@@ -470,7 +468,7 @@ public class RealmSwiftAdapter: NSObject, QSModelAdapter {
                     applyChange(property: property.name, record: record, object: object, syncedEntity: syncedEntity, realmProvider: realmProvider)
                 }
                 
-            } else if mergePolicy == QSModelAdapterMergePolicy.client {
+            } else if mergePolicy == .client {
                 
                 let changedKeys: [String] = syncedEntity.changedKeys?.components(separatedBy: ",") ?? []
                 
@@ -482,13 +480,13 @@ public class RealmSwiftAdapter: NSObject, QSModelAdapter {
                     
                     if !shouldIgnore(key: property.name) &&
                     !changedKeys.contains(property.name) &&
-                        syncedEntity.state != QSSyncedEntityState.new.rawValue {
+                        syncedEntity.state != SyncedEntityState.new.rawValue {
                         
                         applyChange(property: property.name, record: record, object: object, syncedEntity: syncedEntity, realmProvider: realmProvider)
                     }
                 }
                 
-            } else if mergePolicy == QSModelAdapterMergePolicy.custom {
+            } else if mergePolicy == .custom {
                 
                 var recordChanges = [String: Any]()
                 
@@ -502,7 +500,7 @@ public class RealmSwiftAdapter: NSObject, QSModelAdapter {
                         !(record[property.name] is CKRecord.Reference) {
 
                         if let asset = record[property.name] as? CKAsset {
-                            recordChanges[property.name] = NSData(contentsOf: asset.fileURL)
+                            recordChanges[property.name] = asset.fileURL != nil ? NSData(contentsOf: asset.fileURL!) : NSNull()
                         } else {
                             recordChanges[property.name] = record[property.name] ?? NSNull()
                         }
@@ -543,9 +541,10 @@ public class RealmSwiftAdapter: NSObject, QSModelAdapter {
             let objectIdentifier = String(recordName[separatorRange.upperBound...])
             savePendingRelationship(name: key, syncedEntity: syncedEntity, targetIdentifier: objectIdentifier, realm: realmProvider.persistenceRealm)
         } else if let asset = value as? CKAsset {
-            // Take data from asset url
-            let data = NSData(contentsOf: asset.fileURL)
-            object.setValue(data, forKey: key)
+            if let fileURL = asset.fileURL,
+                let data =  NSData(contentsOf: fileURL) {
+                object.setValue(data, forKey: key)
+            }
         } else {
             // If property is not a relationship or property is nil
             object.setValue(value, forKey: key)
@@ -689,17 +688,17 @@ public class RealmSwiftAdapter: NSObject, QSModelAdapter {
         entityForShare.entityType = "CKShare"
         entityForShare.identifier = share.recordID.recordName
         entityForShare.updated = Date()
-        entityForShare.state = QSSyncedEntityState.synced.rawValue
+        entityForShare.state = SyncedEntityState.synced.rawValue
         realmProvider.persistenceRealm.add(entityForShare)
         
         return entityForShare
     }
     
-    func nextStateToSync(after state: QSSyncedEntityState) -> QSSyncedEntityState {
-        return QSSyncedEntityState(rawValue: state.rawValue + 1)!
+    func nextStateToSync(after state: SyncedEntityState) -> SyncedEntityState {
+        return SyncedEntityState(rawValue: state.rawValue + 1)!
     }
     
-    func recordsToUpload(withState state: QSSyncedEntityState, limit: Int, realmProvider: RealmProvider) -> [CKRecord] {
+    func recordsToUpload(withState state: SyncedEntityState, limit: Int, realmProvider: RealmProvider) -> [CKRecord] {
         
         let predicate = NSPredicate(format: "state == %ld", state.rawValue)
         let results = realmProvider.persistenceRealm.objects(SyncedEntity.self).filter(predicate)
@@ -736,7 +735,7 @@ public class RealmSwiftAdapter: NSObject, QSModelAdapter {
         let changedKeys = (syncedEntity.changedKeys ?? "").components(separatedBy: ",")
         
         var parentKey: String?
-        if let childObject = object as? QSParentKey {
+        if let childObject = object as? ParentKey {
             parentKey = type(of: childObject).parentKey()
         }
         
@@ -745,7 +744,7 @@ public class RealmSwiftAdapter: NSObject, QSModelAdapter {
         for property in object!.objectSchema.properties {
             
             if property.type == PropertyType.object &&
-                (entityState == QSSyncedEntityState.new.rawValue || changedKeys.contains(property.name)) {
+                (entityState == SyncedEntityState.new.rawValue || changedKeys.contains(property.name)) {
                 
                 if let target = object?.value(forKey: property.name) as? Object {
                     
@@ -764,14 +763,14 @@ public class RealmSwiftAdapter: NSObject, QSModelAdapter {
             } else if !property.isArray &&
             property.type != PropertyType.linkingObjects &&
             !(property.name == objectClass.primaryKey()!) &&
-                (entityState == QSSyncedEntityState.new.rawValue || changedKeys.contains(property.name)) {
+                (entityState == SyncedEntityState.new.rawValue || changedKeys.contains(property.name)) {
                 
                 let value = object!.value(forKey: property.name)
                 if property.type == PropertyType.data,
                     let data = value as? Data,
-                    forceDataTypeInsteadOfAsset == false,
-                    let fileURL = self.tempFileManager.store(data) {
+                    forceDataTypeInsteadOfAsset == false  {
                     
+                    let fileURL = self.tempFileManager.store(data: data)
                     let asset = CKAsset(fileURL: fileURL)
                     record[property.name] = asset
                 } else if value == nil {
@@ -783,7 +782,7 @@ public class RealmSwiftAdapter: NSObject, QSModelAdapter {
         }
         
         if let parentKey = parentKey,
-            entityState == QSSyncedEntityState.new.rawValue || changedKeys.contains(parentKey),
+            entityState == SyncedEntityState.new.rawValue || changedKeys.contains(parentKey),
             let reference = record[parentKey] as? CKRecord.Reference {
             
             record.parent = CKRecord.Reference(recordID: reference.recordID, action: .none)
@@ -836,12 +835,7 @@ public class RealmSwiftAdapter: NSObject, QSModelAdapter {
     
     // MARK: - QSModelAdapter
     
-    public func hasChanges() -> Bool {
-        
-        return hasChangesValue
-    }
-    
-    public func prepareForImport() {
+    public func prepareToImport() {
         
     }
     
@@ -870,7 +864,7 @@ public class RealmSwiftAdapter: NSObject, QSModelAdapter {
                     }
                 }
                 
-                if syncedEntity.state != QSSyncedEntityState.deleted.rawValue && syncedEntity.entityType != "CKShare" {
+                if syncedEntity.state != SyncedEntityState.deleted.rawValue && syncedEntity.entityType != "CKShare" {
                     
                     let objectClass = realmObjectClass(name: record.recordType)
                     let objectIdentifier = getObjectIdentifier(for: syncedEntity)
@@ -943,17 +937,17 @@ public class RealmSwiftAdapter: NSObject, QSModelAdapter {
         completion(nil)
     }
     
-    public func recordsToUpload(withLimit limit: Int) -> [CKRecord] {
+    public func recordsToUpload(limit: Int) -> [CKRecord] {
         
         var recordsArray = [CKRecord]()
         
         executeOnMainQueue {
             
             let recordLimit = limit == 0 ? Int.max : limit
-            var uploadingState = QSSyncedEntityState.new
+            var uploadingState = SyncedEntityState.new
             
             var innerLimit = recordLimit
-            while recordsArray.count < recordLimit && uploadingState.rawValue < QSSyncedEntityState.deleted.rawValue {
+            while recordsArray.count < recordLimit && uploadingState.rawValue < SyncedEntityState.deleted.rawValue {
                 recordsArray.append(contentsOf: self.recordsToUpload(withState: uploadingState, limit: innerLimit, realmProvider: self.realmProvider))
                 uploadingState = self.nextStateToSync(after: uploadingState)
                 innerLimit = recordLimit - recordsArray.count
@@ -963,7 +957,7 @@ public class RealmSwiftAdapter: NSObject, QSModelAdapter {
         return recordsArray
     }
     
-    public func didUploadRecords(_ savedRecords: [CKRecord]) {
+    public func didUpload(savedRecords: [CKRecord]) {
         
         executeOnMainQueue {
             
@@ -972,7 +966,7 @@ public class RealmSwiftAdapter: NSObject, QSModelAdapter {
                 
                 if let syncedEntity = self.realmProvider.persistenceRealm.object(ofType: SyncedEntity.self, forPrimaryKey: record.recordID.recordName) {
                     
-                    syncedEntity.state = QSSyncedEntityState.synced.rawValue
+                    syncedEntity.state = SyncedEntityState.synced.rawValue
                     syncedEntity.changedKeys = nil
                     self.save(record: record, for: syncedEntity)
                 }
@@ -982,12 +976,12 @@ public class RealmSwiftAdapter: NSObject, QSModelAdapter {
         }
     }
     
-    public func recordIDsMarkedForDeletion(withLimit limit: Int) -> [CKRecord.ID] {
+    public func recordIDsMarkedForDeletion(limit: Int) -> [CKRecord.ID] {
         
         var recordIDs = [CKRecord.ID]()
         executeOnMainQueue {
             
-            let predicate = NSPredicate(format: "state == %ld", QSSyncedEntityState.deleted.rawValue)
+            let predicate = NSPredicate(format: "state == %ld", SyncedEntityState.deleted.rawValue)
             let deletedEntities = self.realmProvider.persistenceRealm.objects(SyncedEntity.self).filter(predicate)
             
             for syncedEntity in deletedEntities {
@@ -1002,7 +996,7 @@ public class RealmSwiftAdapter: NSObject, QSModelAdapter {
         return recordIDs
     }
     
-    public func didDelete(_ deletedRecordIDs: [CKRecord.ID]) {
+    public func didDelete(recordIDs deletedRecordIDs: [CKRecord.ID]) {
         
         executeOnMainQueue {
             
@@ -1027,8 +1021,8 @@ public class RealmSwiftAdapter: NSObject, QSModelAdapter {
         return hasRecord
     }
     
-    public func didFinishImportWithError(_ error: Error?) {
-        
+    public func didFinishImport(with error: Error?) {
+    
         tempFileManager.clearTempFiles()
         
         executeOnMainQueue {
@@ -1036,7 +1030,7 @@ public class RealmSwiftAdapter: NSObject, QSModelAdapter {
         }
     }
     
-    public func record(for object: Any!) -> CKRecord? {
+    public func record(for object: AnyObject) -> CKRecord? {
         
         guard let realmObject = object as? Object else {
             return nil
@@ -1054,7 +1048,7 @@ public class RealmSwiftAdapter: NSObject, QSModelAdapter {
         return record
     }
     
-    public func share(for object: Any!) -> CKShare? {
+    public func share(for object: AnyObject) -> CKShare? {
         
         guard let realmObject = object as? Object else {
             return nil
@@ -1071,8 +1065,8 @@ public class RealmSwiftAdapter: NSObject, QSModelAdapter {
         return share
     }
     
-    public func save(_ share: CKShare, for object: Any!) {
-        
+    public func save(share: CKShare, for object: AnyObject) {
+    
         guard let realmObject = object as? Object else {
             return
         }
@@ -1087,7 +1081,7 @@ public class RealmSwiftAdapter: NSObject, QSModelAdapter {
         }
     }
     
-    public func deleteShare(for object: Any!) {
+    public func deleteShare(for object: AnyObject) {
         
         guard let realmObject = object as? Object else {
             return
@@ -1128,12 +1122,12 @@ public class RealmSwiftAdapter: NSObject, QSModelAdapter {
         }
     }
     
-    public func recordZoneID() -> CKRecordZone.ID {
+    public var recordZoneID: CKRecordZone.ID {
         return zoneID
     }
     
-    public func serverChangeToken() -> CKServerChangeToken? {
-        
+    public var serverChangeToken: CKServerChangeToken? {
+    
         var token: CKServerChangeToken?
         executeOnMainQueue {
             let serverToken = self.realmProvider.persistenceRealm.objects(ServerToken.self).first
@@ -1144,8 +1138,8 @@ public class RealmSwiftAdapter: NSObject, QSModelAdapter {
         return token
     }
     
-    public func save(_ token: CKServerChangeToken?) {
-        
+    public func saveToken(_ token: CKServerChangeToken?) {
+    
         executeOnMainQueue {
             var serverToken: ServerToken! = self.realmProvider.persistenceRealm.objects(ServerToken.self).first
             
@@ -1166,9 +1160,9 @@ public class RealmSwiftAdapter: NSObject, QSModelAdapter {
         }
     }
     
-    public func recordsToUpdateParentRelationships(forRoot object: Any!) -> [CKRecord]! {
+    public func recordsToUpdateParentRelationshipsForRoot(_ object: AnyObject) -> [CKRecord] {
         guard let realmObject = object as? Object else {
-            return nil
+            return []
         }
         
         var records: [CKRecord]?
@@ -1178,6 +1172,6 @@ public class RealmSwiftAdapter: NSObject, QSModelAdapter {
             }
         }
         
-        return records
+        return records ?? []
     }
 }
