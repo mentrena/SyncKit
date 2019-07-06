@@ -26,7 +26,7 @@ extension CloudKitSynchronizer {
         set {
             let key = userDefaultsKey(for: storedDeviceUUIDKey)
             if let value = newValue {
-                keyValueStore.set(value, forKey: key)
+                keyValueStore.set(value: value, forKey: key)
             } else {
                 keyValueStore.removeObject(forKey: key)
             }
@@ -45,7 +45,7 @@ extension CloudKitSynchronizer {
             let key = userDefaultsKey(for: databaseServerChangeTokenKey)
             if let token = newValue,
                 let encodedToken = QSCoder.shared.data(from: token) {
-                keyValueStore.set(encodedToken, forKey: key)
+                keyValueStore.set(value: encodedToken, forKey: key)
             } else {
                 keyValueStore.removeObject(forKey: key)
             }
@@ -105,7 +105,7 @@ extension CloudKitSynchronizer {
     fileprivate func setStoredSubscriptionIDsDictionary(_ dict: [String: String]?) {
         let key = userDefaultsKey(for: subscriptionIdentifierKey)
         if dict != nil {
-            keyValueStore.set(dict, forKey: key)
+            keyValueStore.set(value: dict, forKey: key)
         } else {
             keyValueStore.removeObject(forKey: key)
         }
@@ -119,7 +119,7 @@ extension CloudKitSynchronizer {
         return userDefaultsKey(for: "\(zoneID.ownerName).\(zoneID.zoneName)")
     }
     
-    fileprivate func storeKey(for database: CloudKitDatabase) -> String {
+    fileprivate func storeKey(for database: CloudKitDatabaseAdapter) -> String {
         return userDefaultsKey(for: "\(database.databaseScope == .private ? "privateDatabase" : "sharedDatabase")")
     }
 }

@@ -415,24 +415,15 @@
 			files = (
 			);
 			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${SRCROOT}/../Pods/Target Support Files/Pods-SyncKitRealmSwiftExample/Pods-SyncKitRealmSwiftExample-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
-				"${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework",
-				"${BUILT_PRODUCTS_DIR}/SyncKit/SyncKit.framework",
+				"${PODS_ROOT}/Target Support Files/Pods-SyncKitRealmSwiftExample/Pods-SyncKitRealmSwiftExample-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-			);
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RealmSwift.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SyncKit.framework",
+				"${PODS_ROOT}/Target Support Files/Pods-SyncKitRealmSwiftExample/Pods-SyncKitRealmSwiftExample-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/../Pods/Target Support Files/Pods-SyncKitRealmSwiftExample/Pods-SyncKitRealmSwiftExample-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SyncKitRealmSwiftExample/Pods-SyncKitRealmSwiftExample-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		F119B248F6C2DFAB9DFBAF82 /* [CP] Check Pods Manifest.lock */ = {

@@ -73,7 +73,7 @@ public class CloudKitSynchronizer: NSObject {
     
     @objc public let identifier: String
     @objc public let containerIdentifier: String
-    public let database: CloudKitDatabase
+    public let database: CloudKitDatabaseAdapter
     @objc public let adapterProvider: AdapterProvider
     public let keyValueStore: KeyValueStore
     
@@ -107,7 +107,7 @@ public class CloudKitSynchronizer: NSObject {
      *  @return Initialized synchronizer or `nil` if no iCloud container can be found with the provided identifier.
      */
     
-    public init(identifier: String, containerIdentifier: String, database: CloudKitDatabase, adapterProvider: AdapterProvider, keyValueStore: KeyValueStore = UserDefaults.standard) {
+    @objc public init(identifier: String, containerIdentifier: String, database: CloudKitDatabaseAdapter, adapterProvider: AdapterProvider, keyValueStore: KeyValueStore = UserDefaultsAdapter(userDefaults: UserDefaults.standard)) {
         self.identifier = identifier
         self.containerIdentifier = containerIdentifier
         self.adapterProvider = adapterProvider

@@ -19,7 +19,7 @@ public class FetchZoneChangesOperationZoneResult: NSObject {
 
 public class FetchZoneChangesOperation: CloudKitSynchronizerOperation {
     
-    let database: CloudKitDatabase
+    let database: CloudKitDatabaseAdapter
     let zoneIDs: [CKRecordZone.ID]
     var zoneChangeTokens: [CKRecordZone.ID: CKServerChangeToken]
     let modelVersion: Int
@@ -32,7 +32,7 @@ public class FetchZoneChangesOperation: CloudKitSynchronizerOperation {
     let dispatchQueue = DispatchQueue(label: "fetchZoneChangesDispatchQueue")
     weak var internalOperation: CKFetchRecordZoneChangesOperation?
     
-    public init(database: CloudKitDatabase,
+    public init(database: CloudKitDatabaseAdapter,
                       zoneIDs: [CKRecordZone.ID],
                       zoneChangeTokens: [CKRecordZone.ID: CKServerChangeToken],
                       modelVersion: Int,

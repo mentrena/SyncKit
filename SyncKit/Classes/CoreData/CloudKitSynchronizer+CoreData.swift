@@ -21,15 +21,16 @@ extension CloudKitSynchronizer {
                                                              appGroup: suiteName)
         let userDefaults: UserDefaults! = suiteName != nil ? UserDefaults(suiteName: suiteName!) : UserDefaults.standard
         let container = CKContainer(identifier: containerName)
+        let userDefaultsAdapter = UserDefaultsAdapter(userDefaults: userDefaults)
         let synchronizer = CloudKitSynchronizer(identifier: "DefaultCoreDataPrivateSynchronizer",
                                                 containerIdentifier: containerName,
-                                                database: container.privateCloudDatabase,
+                                                database: DefaultCloudKitDatabaseAdapter(database: container.privateCloudDatabase),
                                                 adapterProvider: adapterProvider,
-                                                keyValueStore: userDefaults)
+                                                keyValueStore: userDefaultsAdapter)
         synchronizer.addModelAdapter(adapterProvider.adapter)
         
         transferOldServerChangeToken(to: adapterProvider.adapter,
-                                     userDefaults: userDefaults,
+                                     userDefaults: userDefaultsAdapter,
                                      containerName: containerName)
         
         return synchronizer
@@ -46,9 +47,9 @@ extension CloudKitSynchronizer {
         let container = CKContainer(identifier: containerName)
         let synchronizer = CloudKitSynchronizer(identifier: "DefaultCoreDataSharedSynchronizer",
                                                 containerIdentifier: containerName,
-                                                database: container.sharedCloudDatabase,
+                                                database: DefaultCloudKitDatabaseAdapter(database: container.sharedCloudDatabase),
                                                 adapterProvider: provider,
-                                                keyValueStore: userDefaults)
+                                                keyValueStore: UserDefaultsAdapter(userDefaults: userDefaults))
         provider.adapterDictionary.forEach { (_, adapter) in
             synchronizer.addModelAdapter(adapter)
         }

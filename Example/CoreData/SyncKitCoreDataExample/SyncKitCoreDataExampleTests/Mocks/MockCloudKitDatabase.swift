@@ -10,7 +10,7 @@ import Foundation
 import SyncKit
 import CloudKit
 
-class MockCloudKitDatabase: CloudKitDatabase {
+class MockCloudKitDatabase: CloudKitDatabaseAdapter {
     
     var databaseScope: CKDatabase.Scope = .private
     
@@ -109,7 +109,7 @@ class MockCloudKitDatabase: CloudKitDatabase {
     }
     
     var savedRecordZone: CKRecordZone?
-    func save(_ zone: CKRecordZone, completionHandler: @escaping (CKRecordZone?, Error?) -> Void) {
+    func save(zone: CKRecordZone, completionHandler: @escaping (CKRecordZone?, Error?) -> Void) {
         savedRecordZone = zone
         completionHandler(zone, nil)
     }
@@ -119,7 +119,7 @@ class MockCloudKitDatabase: CloudKitDatabase {
         completionHandler(subscriptions, nil)
     }
     
-    func save(_ subscription: CKSubscription, completionHandler: @escaping (CKSubscription?, Error?) -> Void) {
+    func save(subscription: CKSubscription, completionHandler: @escaping (CKSubscription?, Error?) -> Void) {
         saveSubscriptionCalledBlock?(subscription)
         if subscription is CKDatabaseSubscription {
             completionHandler(CKDatabaseSubscription(subscriptionID: subscriptionIdReturnValue!), nil)

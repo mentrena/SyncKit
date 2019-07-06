@@ -21,12 +21,12 @@ class MockKeyValueStore: KeyValueStore {
         return dictionary[defaultName] as? Bool ?? false
     }
     
-    func set(_ value: Any?, forKey defaultName: String) {
+    func set(value: Any?, forKey defaultName: String) {
         dictionary[defaultName] = value
     }
     
-    func set(_ value: Bool, forKey defaultName: String) {
-        dictionary[defaultName] = value
+    func set(boolValue: Bool, forKey defaultName: String) {
+        dictionary[defaultName] = boolValue
     }
     
     func removeObject(forKey defaultName: String) {

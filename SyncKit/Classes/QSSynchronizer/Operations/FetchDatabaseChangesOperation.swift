@@ -10,7 +10,7 @@ import CloudKit
 
 public class FetchDatabaseChangesOperation: CloudKitSynchronizerOperation {
     
-    let database: CloudKitDatabase
+    let database: CloudKitDatabaseAdapter
     let databaseToken: CKServerChangeToken?
     let completion: (CKServerChangeToken?, [CKRecordZone.ID], [CKRecordZone.ID]) -> ()
     
@@ -18,7 +18,7 @@ public class FetchDatabaseChangesOperation: CloudKitSynchronizerOperation {
     var deletedZoneIDs = [CKRecordZone.ID]()
     weak var internalOperation: CKFetchDatabaseChangesOperation?
     
-    public init(database: CloudKitDatabase, databaseToken: CKServerChangeToken?, completion: @escaping (CKServerChangeToken?, [CKRecordZone.ID], [CKRecordZone.ID]) -> ()) {
+    public init(database: CloudKitDatabaseAdapter, databaseToken: CKServerChangeToken?, completion: @escaping (CKServerChangeToken?, [CKRecordZone.ID], [CKRecordZone.ID]) -> ()) {
         self.databaseToken = databaseToken
         self.database = database
         self.completion = completion

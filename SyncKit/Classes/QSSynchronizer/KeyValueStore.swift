@@ -7,13 +7,39 @@
 
 import Foundation
 
-public protocol KeyValueStore {
+@objc public protocol KeyValueStore {
     
     func object(forKey defaultName: String) -> Any?
     func bool(forKey defaultName: String) -> Bool
-    func set(_ value: Any?, forKey defaultName: String)
-    func set(_ value: Bool, forKey defaultName: String)
+    func set(value: Any?, forKey defaultName: String)
+    func set(boolValue: Bool, forKey defaultName: String)
     func removeObject(forKey defaultName: String)
 }
 
-extension UserDefaults: KeyValueStore {}
+@objc public class UserDefaultsAdapter: NSObject, KeyValueStore {
+    
+    @objc public let userDefaults: UserDefaults
+    @objc public init(userDefaults: UserDefaults) {
+        self.userDefaults = userDefaults
+    }
+    
+    @objc public func object(forKey defaultName: String) -> Any? {
+        return userDefaults.object(forKey: defaultName)
+    }
+    
+    @objc public func bool(forKey defaultName: String) -> Bool {
+        return userDefaults.bool(forKey: defaultName)
+    }
+    
+    @objc public func set(value: Any?, forKey defaultName: String) {
+        userDefaults.set(value, forKey: defaultName)
+    }
+    
+    @objc public func set(boolValue: Bool, forKey defaultName: String) {
+        userDefaults.set(boolValue, forKey: defaultName)
+    }
+    
+    @objc public func removeObject(forKey defaultName: String) {
+        userDefaults.removeObject(forKey: defaultName)
+    }
+}

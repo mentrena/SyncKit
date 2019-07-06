@@ -68,7 +68,7 @@ import CloudKit
                 notificationInfo.shouldSendContentAvailable = true
                 subscription.notificationInfo = notificationInfo
                 
-                self.database.save(subscription, completionHandler: { (subscription, error) in
+                self.database.save(subscription: subscription, completionHandler: { (subscription, error) in
                     if error == nil,
                         let subscription = subscription {
                         self.databaseSubscriptionID = subscription.subscriptionID
@@ -115,7 +115,7 @@ import CloudKit
                 notificationInfo.shouldSendContentAvailable = true
                 subscription.notificationInfo = notificationInfo
                 
-                self.database.save(subscription, completionHandler: { (subscription, error) in
+                self.database.save(subscription: subscription, completionHandler: { (subscription, error) in
                     if error == nil,
                         let subscription = subscription {
                         

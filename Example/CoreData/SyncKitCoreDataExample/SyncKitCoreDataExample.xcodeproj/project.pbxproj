@@ -496,20 +496,15 @@
 			files = (
 			);
 			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${SRCROOT}/../Pods/Target Support Files/Pods-SyncKitCoreDataExample/Pods-SyncKitCoreDataExample-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/SyncKit/SyncKit.framework",
+				"${PODS_ROOT}/Target Support Files/Pods-SyncKitCoreDataExample/Pods-SyncKitCoreDataExample-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-			);
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SyncKit.framework",
+				"${PODS_ROOT}/Target Support Files/Pods-SyncKitCoreDataExample/Pods-SyncKitCoreDataExample-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/../Pods/Target Support Files/Pods-SyncKitCoreDataExample/Pods-SyncKitCoreDataExample-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SyncKitCoreDataExample/Pods-SyncKitCoreDataExample-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		F119B248F6C2DFAB9DFBAF82 /* [CP] Check Pods Manifest.lock */ = {

@@ -24,15 +24,16 @@ extension CloudKitSynchronizer {
     public class func privateSynchronizer(containerName: String, configuration: RLMRealmConfiguration, suiteName: String? = nil, recordZoneID: CKRecordZone.ID? = nil) -> CloudKitSynchronizer {
         let zoneID = recordZoneID ?? defaultCustomZoneID
         let provider = DefaultRealmAdapterProvider(targetConfiguration: configuration, zoneID: zoneID)
-        let suiteUserDefaults = UserDefaults(suiteName: suiteName)
+        let userDefaults = UserDefaults(suiteName: suiteName)!
         let container = CKContainer(identifier: containerName)
+        let userDefaultsAdapter = UserDefaultsAdapter(userDefaults: userDefaults)
         let synchronizer = CloudKitSynchronizer(identifier: "DefaultRealmPrivateSynchronizer",
                                                 containerIdentifier: containerName,
-                                                database: container.privateCloudDatabase,
+                                                database: DefaultCloudKitDatabaseAdapter(database: container.privateCloudDatabase),
                                                 adapterProvider: provider,
-                                                keyValueStore: suiteUserDefaults!)
+                                                keyValueStore: userDefaultsAdapter)
         synchronizer.addModelAdapter(provider.adapter)
-        transferOldServerChangeToken(to: provider.adapter, userDefaults: suiteUserDefaults!, containerName: containerName)
+        transferOldServerChangeToken(to: provider.adapter, userDefaults: userDefaultsAdapter, containerName: containerName)
         return synchronizer
     }
     
@@ -47,16 +48,17 @@ extension CloudKitSynchronizer {
      */
     public class func sharedSynchronizer(containerName: String, configuration: RLMRealmConfiguration, suiteName: String? = nil) -> CloudKitSynchronizer {
         
-        let suiteUserDefaults = UserDefaults(suiteName: suiteName)
+        let userDefaults = UserDefaults(suiteName: suiteName)!
+        let userDefaultsAdapter = UserDefaultsAdapter(userDefaults: userDefaults)
         let container = CKContainer(identifier: containerName)
         let provider = DefaultRealmProvider(identifier: "DefaultRealmSharedStackProvider",
                                             realmConfiguration: configuration,
                                             appGroup: suiteName)
         let synchronizer = CloudKitSynchronizer(identifier: "DefaultRealmSharedSynchronizer",
                                                 containerIdentifier: containerName,
-                                                database: container.sharedCloudDatabase,
+                                                database: DefaultCloudKitDatabaseAdapter(database: container.sharedCloudDatabase),
                                                 adapterProvider: provider,
-                                                keyValueStore: suiteUserDefaults!)
+                                                keyValueStore: userDefaultsAdapter)
         
         for adapter in provider.adapterDictionary.values {
             synchronizer.addModelAdapter(adapter)
@@ -64,7 +66,7 @@ extension CloudKitSynchronizer {
         return synchronizer
     }
     
-    fileprivate class func transferOldServerChangeToken(to adapter: ModelAdapter, userDefaults: UserDefaults, containerName: String) {
+    fileprivate class func transferOldServerChangeToken(to adapter: ModelAdapter, userDefaults: KeyValueStore, containerName: String) {
         
         let key = containerName.appending("QSCloudKitFetchChangesServerTokenKey")
         if let encodedToken = userDefaults.object(forKey: key) as? Data {

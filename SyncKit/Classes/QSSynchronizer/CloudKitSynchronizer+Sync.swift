@@ -344,7 +344,7 @@ extension CloudKitSynchronizer {
         database.fetch(withRecordZoneID: zoneID) { (zone, error) in
             if self.isZoneNotFoundOrDeletedError(error) {
                 let newZone = CKRecordZone(zoneID: zoneID)
-                self.database.save(newZone, completionHandler: { (zone, error) in
+                self.database.save(zone: newZone, completionHandler: { (zone, error) in
                     if error == nil && zone != nil {
                         debugPrint("QSCloudKitSynchronizer >> Created custom record zone: \(newZone.description)")
                     }
