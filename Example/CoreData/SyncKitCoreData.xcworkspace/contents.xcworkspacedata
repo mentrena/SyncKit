@@ -11,6 +11,12 @@
       location = "group:SyncKitCoreDataExample/SyncKitCoreDataExample.xcodeproj">
    </FileRef>
    <FileRef
+      location = "group:/Users/manuel/Documents/Apps/SyncKit/Example/CoreData/WatchApp/WatchApp.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:Pods/Pods.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:WatchApp/WatchApp.xcodeproj">
    </FileRef>
 </Workspace>

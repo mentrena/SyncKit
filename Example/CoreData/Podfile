@@ -13,3 +13,9 @@ target 'SyncKitCoreDataExample' do
     inherit! :search_paths
   end
 end
+
+target 'WatchApp' do
+	project 'WatchApp/WatchApp'
+	platform :watchos, '3.0'
+	pod 'SyncKit/CoreData', :path => '../../'
+end

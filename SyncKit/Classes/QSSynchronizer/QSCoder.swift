@@ -21,7 +21,7 @@ class QSCoder {
     }
     
     func encode<T: CKRecord>(_ record: T, onlySystemFields: Bool = false) -> Data {
-        if #available(iOS 12, OSX 10.13, *) {
+        if #available(iOS 12, OSX 10.13, watchOS 4.0, *) {
             let archiver = NSKeyedArchiver(requiringSecureCoding: false)
             if onlySystemFields {
                 record.encodeSystemFields(with: archiver)
@@ -45,7 +45,7 @@ class QSCoder {
     
     func decode<T: CKRecord>(from data: Data) -> T? {
         var unarchiver: NSKeyedUnarchiver?
-        if #available(iOS 12, OSX 10.13, *) {
+        if #available(iOS 12, OSX 10.13, watchOS 4.0, *) {
             unarchiver = try? NSKeyedUnarchiver(forReadingFrom: data)
         } else {
             unarchiver = NSKeyedUnarchiver(forReadingWith: data)
