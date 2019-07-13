@@ -10,15 +10,15 @@ import CloudKit
 
 // For Swift
 public extension Notification.Name {
-    static let WillSynchronize = Notification.Name("QSCloudKitSynchronizerWillSynchronizeNotification")
-    static let WillFetchChanges = Notification.Name("QSCloudKitSynchronizerWillFetchChangesNotification")
-    static let WillUploadChanges = Notification.Name("QSCloudKitSynchronizerWillUploadChangesNotification")
-    static let DidSynchronize = Notification.Name("QSCloudKitSynchronizerDidSynchronizeNotification")
-    static let DidFail = Notification.Name("QSCloudKitSynchronizerDidFailToSynchronizeNotification")
+    static let SynchronizerWillSynchronize = Notification.Name("QSCloudKitSynchronizerWillSynchronizeNotification")
+    static let SynchronizerWillFetchChanges = Notification.Name("QSCloudKitSynchronizerWillFetchChangesNotification")
+    static let SynchronizerWillUploadChanges = Notification.Name("QSCloudKitSynchronizerWillUploadChangesNotification")
+    static let SynchronizerDidSynchronize = Notification.Name("QSCloudKitSynchronizerDidSynchronizeNotification")
+    static let SynchronizerDidFailToSynchronize = Notification.Name("QSCloudKitSynchronizerDidFailToSynchronizeNotification")
 }
 
 // For Obj-C
-public extension NSNotification {
+@objc public extension NSNotification {
     static let CloudKitSynchronizerWillSynchronizeNotification: NSString = "QSCloudKitSynchronizerWillSynchronizeNotification"
     static let CloudKitSynchronizerWillFetchChangesNotification: NSString = "QSCloudKitSynchronizerWillFetchChangesNotification"
     static let CloudKitSynchronizerWillUploadChangesNotification: NSString = "QSCloudKitSynchronizerWillUploadChangesNotification"

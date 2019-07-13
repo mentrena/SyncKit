@@ -12,7 +12,7 @@ extension CloudKitSynchronizer {
     
     func performSynchronization() {
         dispatchQueue.async {
-            self.postNotification(.WillSynchronize)
+            self.postNotification(.SynchronizerWillSynchronize)
             self.serverChangeToken = self.storedDatabaseToken
             
             self.modelAdapters.forEach {
@@ -34,9 +34,9 @@ extension CloudKitSynchronizer {
         }
         
         if let error = error {
-            self.postNotification(.DidFail, userInfo: [CloudKitSynchronizer.errorKey: error])
+            self.postNotification(.SynchronizerDidFailToSynchronize, userInfo: [CloudKitSynchronizer.errorKey: error])
         } else {
-            self.postNotification(.DidSynchronize)
+            self.postNotification(.SynchronizerDidSynchronize)
         }
         
         DispatchQueue.main.async {
@@ -171,7 +171,7 @@ extension CloudKitSynchronizer {
             return
         }
         
-        postNotification(.WillFetchChanges)
+        postNotification(.SynchronizerWillFetchChanges)
         fetchDatabaseChanges() { token, error in
             guard error == nil else {
                 self.finishSynchronization(error: error)
@@ -294,7 +294,7 @@ extension CloudKitSynchronizer {
             return
         }
         
-        postNotification(.WillUploadChanges)
+        postNotification(.SynchronizerWillUploadChanges)
         
         uploadChanges() { (error) in
             if let error = error {
