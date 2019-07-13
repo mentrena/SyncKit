@@ -32,4 +32,13 @@ class SyncedEntity: Object {
         
         return "identifier"
     }
+    
+    var entityState: SyncedEntityState {
+        set {
+            state = newValue.rawValue
+        }
+        get {
+            return SyncedEntityState(rawValue: state)!
+        }
+    }
 }

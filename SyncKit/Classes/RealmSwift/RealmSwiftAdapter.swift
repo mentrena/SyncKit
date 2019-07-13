@@ -583,19 +583,23 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
         realmProvider.targetRealm.beginWrite()
         for relationship in pendingRelationships {
             
-            let syncedEntity = relationship.forSyncedEntity
-            let originObjectClass = realmObjectClass(name: syncedEntity!.entityType)
-            let objectIdentifier = getObjectIdentifier(for: syncedEntity!)
-            let originObject = realmProvider.targetRealm.object(ofType: originObjectClass, forPrimaryKey: objectIdentifier)
+            let entity = relationship.forSyncedEntity
+            
+            guard let syncedEntity = entity,
+                syncedEntity.entityState != .deleted else { continue }
+            
+            let originObjectClass = realmObjectClass(name: syncedEntity.entityType)
+            let objectIdentifier = getObjectIdentifier(for: syncedEntity)
+            guard let originObject = realmProvider.targetRealm.object(ofType: originObjectClass, forPrimaryKey: objectIdentifier) else { continue }
             
             if relationship.relationshipName == RealmSwiftAdapter.shareRelationshipKey {
-                syncedEntity?.share = getSyncedEntity(objectIdentifier: relationship.targetIdentifier, realm: realmProvider.persistenceRealm)
+                syncedEntity.share = getSyncedEntity(objectIdentifier: relationship.targetIdentifier, realm: realmProvider.persistenceRealm)
                 realmProvider.persistenceRealm.delete(relationship)
                 continue;
             }
             
             var targetClassName: String?
-            for property in originObject!.objectSchema.properties {
+            for property in originObject.objectSchema.properties {
                 if property.name == relationship.relationshipName {
                     targetClassName = property.objectClassName
                     break
@@ -609,10 +613,10 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
             let targetObjectClass = realmObjectClass(name: className)
             let targetObject = realmProvider.targetRealm.object(ofType: targetObjectClass, forPrimaryKey: relationship.targetIdentifier)
             
-            guard let origin = originObject, let target = targetObject else {
+            guard let target = targetObject else {
                 continue
             }
-            origin.setValue(target, forKey: relationship.relationshipName)
+            originObject.setValue(target, forKey: relationship.relationshipName)
             
             realmProvider.persistenceRealm.delete(relationship)
         }
@@ -864,7 +868,7 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
                     }
                 }
                 
-                if syncedEntity.state != SyncedEntityState.deleted.rawValue && syncedEntity.entityType != "CKShare" {
+                if syncedEntity.entityState != .deleted && syncedEntity.entityType != "CKShare" {
                     
                     let objectClass = realmObjectClass(name: record.recordType)
                     let objectIdentifier = getObjectIdentifier(for: syncedEntity)

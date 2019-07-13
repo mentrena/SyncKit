@@ -32,4 +32,13 @@ class SyncedEntity: RLMObject {
         
         return "identifier"
     }
+    
+    var entityState: SyncedEntityState {
+        set {
+            state = newValue.rawValue
+        }
+        get {
+            return SyncedEntityState(rawValue: state)!
+        }
+    }
 }

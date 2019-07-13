@@ -570,19 +570,23 @@ struct ObjectUpdate {
         realmProvider.targetRealm.beginWriteTransaction()
         for object in pendingRelationships {
             let relationship = object as! PendingRelationship
-            let syncedEntity = relationship.forSyncedEntity
-            let originObjectClass = realmObjectClass(name: syncedEntity!.entityType)
-            let objectIdentifier = getObjectIdentifier(for: syncedEntity!)
-            let originObject = originObjectClass.object(in: realmProvider.targetRealm, forPrimaryKey: objectIdentifier)
+            let entity = relationship.forSyncedEntity
+            
+            guard let syncedEntity = entity,
+                syncedEntity.entityState != .deleted else { continue }
+            
+            let originObjectClass = realmObjectClass(name: syncedEntity.entityType)
+            let objectIdentifier = getObjectIdentifier(for: syncedEntity)
+            guard let originObject = originObjectClass.object(in: realmProvider.targetRealm, forPrimaryKey: objectIdentifier) else { continue }
             
             if relationship.relationshipName == RealmAdapter.shareRelationshipKey {
-                syncedEntity?.share = getSyncedEntity(objectIdentifier: relationship.targetIdentifier, realm: realmProvider.persistenceRealm)
+                syncedEntity.share = getSyncedEntity(objectIdentifier: relationship.targetIdentifier, realm: realmProvider.persistenceRealm)
                 realmProvider.persistenceRealm.delete(relationship)
                 continue;
             }
             
             var targetClassName: String?
-            for property in originObject!.objectSchema.properties {
+            for property in originObject.objectSchema.properties {
                 if property.name == relationship.relationshipName {
                     targetClassName = property.objectClassName
                     break
@@ -596,10 +600,10 @@ struct ObjectUpdate {
             let targetObjectClass = realmObjectClass(name: className)
             let targetObject = targetObjectClass.object(in: realmProvider.targetRealm, forPrimaryKey: relationship.targetIdentifier)
             
-            guard let origin = originObject, let target = targetObject else {
+            guard let target = targetObject else {
                 continue
             }
-            origin.setValue(target, forKey: relationship.relationshipName)
+            originObject.setValue(target, forKey: relationship.relationshipName)
             
             realmProvider.persistenceRealm.delete(relationship)
         }
@@ -851,7 +855,7 @@ struct ObjectUpdate {
                     }
                 }
                 
-                if syncedEntity.state != SyncedEntityState.deleted.rawValue && syncedEntity.entityType != "CKShare" {
+                if syncedEntity.entityState != .deleted && syncedEntity.entityType != "CKShare" {
                     
                     let objectClass = realmObjectClass(name: record.recordType)
                     let objectIdentifier = getObjectIdentifier(for: syncedEntity)

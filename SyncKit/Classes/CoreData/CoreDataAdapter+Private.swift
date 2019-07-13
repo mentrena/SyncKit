@@ -596,6 +596,9 @@ extension CoreDataAdapter {
         let entities = entitiesWithPendingRelationships()
         var queriesByEntityType = [String: [String: QueryData]]()
         for entity in entities {
+            
+            guard entity.entityState != .deleted else { continue }
+            
             var pendingCount = entity.pendingRelationships?.count ?? 0
             if let pendingShare = pendingShareRelationship(for: entity) {
                 let share = syncedEntity(withIdentifier: pendingShare.targetIdentifier!)
