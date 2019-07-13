@@ -25,7 +25,7 @@ public extension Notification.Name {
     static let ModelAdapterHasChangesNotification = Notification.Name("QSModelAdapterHasChangesNotification")
 }
 
-public extension NSNotification {
+@objc public extension NSNotification {
     static let ModelAdapterHasChangesNotification: NSString = "QSModelAdapterHasChangesNotification"
 }
 
