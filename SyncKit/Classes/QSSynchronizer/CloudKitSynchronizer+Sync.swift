@@ -72,14 +72,14 @@ extension CloudKitSynchronizer {
         }
     }
     
-    func loadAdaptersAndTokens(for zoneIDs: [CKRecordZone.ID]) -> [CKRecordZone.ID] {
+    func loadTokens(for zoneIDs: [CKRecordZone.ID], loadAdapters: Bool) -> [CKRecordZone.ID] {
         
         var filteredZoneIDs = [CKRecordZone.ID]()
         activeZoneTokens = [CKRecordZone.ID: CKServerChangeToken]()
         
         for zoneID in zoneIDs {
             var modelAdapter = modelAdapterDictionary[zoneID]
-            if modelAdapter == nil {
+            if modelAdapter == nil && loadAdapters {
                 if let newModelAdapter = adapterProvider.cloudKitSynchronizer(self, modelAdapterForRecordZoneID: zoneID) {
                     modelAdapter = newModelAdapter
                     modelAdapterDictionary[zoneID] = newModelAdapter
@@ -179,6 +179,7 @@ extension CloudKitSynchronizer {
             }
             
             self.serverChangeToken = token
+            self.storedDatabaseToken = token
             if self.syncMode == .sync {
                 self.uploadChanges()
             } else {
@@ -193,7 +194,7 @@ extension CloudKitSynchronizer {
             self.dispatchQueue.async {
                 self.notifyProviderForDeletedZoneIDs(deletedZoneIDs)
                 
-                let zoneIDsToFetch = self.loadAdaptersAndTokens(for: changedZoneIDs)
+                let zoneIDsToFetch = self.loadTokens(for: changedZoneIDs, loadAdapters: true)
                 
                 guard zoneIDsToFetch.count > 0 else {
                     self.resetActiveTokens()
@@ -208,7 +209,6 @@ extension CloudKitSynchronizer {
                     }
                     
                     self.mergeChanges() { error in
-                        self.resetActiveTokens()
                         completion(token, error)
                     }
                 }
@@ -438,7 +438,8 @@ extension CloudKitSynchronizer {
             self.dispatchQueue.async {
                 self.notifyProviderForDeletedZoneIDs(deletedZoneIDs)
                 if changedZoneIDs.count > 0 {
-                    self.updateServerToken(for: changedZoneIDs, completion: { (needsToFetchChanges) in
+                    let zoneIDs = self.loadTokens(for: changedZoneIDs, loadAdapters: false)
+                    self.updateServerToken(for: zoneIDs, completion: { (needsToFetchChanges) in
                         if needsToFetchChanges {
                             self.performSynchronization()
                         } else {
@@ -455,6 +456,19 @@ extension CloudKitSynchronizer {
     }
     
     func updateServerToken(for recordZoneIDs: [CKRecordZone.ID], completion: @escaping (Bool)->()) {
+        
+        // If we found a new record zone at this point then needsToFetchChanges=true
+        var hasAllTokens = true
+        for zoneID in recordZoneIDs {
+            if activeZoneTokens[zoneID] == nil {
+                hasAllTokens = false
+            }
+        }
+        guard hasAllTokens else {
+            completion(true)
+            return
+        }
+        
         let operation = FetchZoneChangesOperation(database: database, zoneIDs: recordZoneIDs, zoneChangeTokens: activeZoneTokens, modelVersion: compatibilityVersion, ignoreDeviceIdentifier: deviceIdentifier, desiredKeys: ["recordID", CloudKitSynchronizer.deviceUUIDKey]) { (zoneResults) in
             self.dispatchQueue.async {
                 var pendingZones = [CKRecordZone.ID]()
