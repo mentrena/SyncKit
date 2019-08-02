@@ -145,8 +145,9 @@ public class CloudKitSynchronizer: NSObject {
     
     @objc
     public func synchronize(completion: ((Error?) -> ())?) {
-        if syncing {
+        guard !syncing else {
             completion?(SyncError.alreadySyncing)
+            return
         }
         
         debugPrint("CloudKitSynchronizer >> Initiating synchronization")
