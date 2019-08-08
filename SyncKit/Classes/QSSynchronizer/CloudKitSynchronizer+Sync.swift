@@ -103,7 +103,7 @@ extension CloudKitSynchronizer {
     func isServerRecordChangedError(_ error: NSError) -> Bool {
         
         if error.code == CKError.partialFailure.rawValue,
-            let errorsByItemID = error.userInfo[CKPartialErrorsByItemIDKey] as? [String: NSError],
+            let errorsByItemID = error.userInfo[CKPartialErrorsByItemIDKey] as? [CKRecord.ID: NSError],
             errorsByItemID.values.contains(where: { (error) -> Bool in
                 return error.code == CKError.serverRecordChanged.rawValue
             }) {
@@ -126,7 +126,7 @@ extension CloudKitSynchronizer {
     func isLimitExceededError(_ error: NSError) -> Bool {
         
         if error.code == CKError.partialFailure.rawValue,
-            let errorsByItemID = error.userInfo[CKPartialErrorsByItemIDKey] as? [String: NSError],
+            let errorsByItemID = error.userInfo[CKPartialErrorsByItemIDKey] as? [CKRecord.ID: NSError],
             errorsByItemID.values.contains(where: { (error) -> Bool in
                 return error.code == CKError.limitExceeded.rawValue
             }) {

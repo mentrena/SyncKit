@@ -240,11 +240,12 @@ class CloudKitSynchronizerTests: XCTestCase {
     func testSynchronize_limitExceededErrorInPartialError_decreasesBatchSizeAndEndsWithError() {
         let expectation = self.expectation(description: "sync finished")
         let batchSize = synchronizer.batchSize
+        let innerError = NSError(domain: CKErrorDomain,
+                                 code: CKError.limitExceeded.rawValue,
+                                 userInfo: nil)
         let error = NSError(domain: CKErrorDomain,
                             code: CKError.partialFailure.rawValue,
-                            userInfo: [CKPartialErrorsByItemIDKey: ["itemId": NSError(domain: CKErrorDomain,
-                                                                                      code: CKError.limitExceeded.rawValue,
-                                                                                      userInfo: nil)]])
+                            userInfo: [CKPartialErrorsByItemIDKey: [CKRecord.ID(recordName: "itemID", zoneID: recordZoneID): innerError]])
         mockDatabase.uploadError = error
         let object = QSObject(identifier: "1", number: 1)
         mockAdapter.objects = [object]
