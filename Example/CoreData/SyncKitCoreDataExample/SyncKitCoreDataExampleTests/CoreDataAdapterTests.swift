@@ -630,6 +630,36 @@ extension CoreDataAdapterTests {
         XCTAssertTrue(QSNamesTransformer.reverseTransformedValueCalled)
         XCTAssertFalse(QSNamesTransformer.transformedValueCalled)
     }
+    
+    func testRecordsToUploadWithLimit_transformablePropertyNoValueTransformer_usesKeyedArchiver() {
+        targetCoreDataStack = coreDataStack(modelName: "QSTransformableTestModel")
+        
+        insert(entityType: "QSTestEntity2",
+               properties: ["identifier": "identifier",
+                            "names": ["1", "2"]],
+               context: targetCoreDataStack.managedObjectContext)
+        let adapter = createAdapter()
+        let records = waitUntilSynced(adapter: adapter).updated
+        XCTAssertEqual(records.count, 1)
+        let record = records.first!
+        let names = (try? NSKeyedUnarchiver.unarchivedObject(ofClass: NSArray.self, from: record["names"]!)) as? [String]
+        XCTAssertEqual(names, ["1", "2"])
+    }
+    
+    func testSaveChangesInRecords_transformablePropertyNoValueTransformer_usesKeyedArchiver() {
+        targetCoreDataStack = coreDataStack(modelName: "QSTransformableTestModel")
+        let adapter = createAdapter()
+        let record = CKRecord(recordType: "QSTestEntity2", recordID: CKRecord.ID(recordName: "QSTestEntity2.ent1"))
+        record["identifier"] = "ent1"
+        record["names"] = try? NSKeyedArchiver.archivedData(withRootObject: ["1", "2", "3"], requiringSecureCoding: false)
+        
+        waitUntilSynced(adapter: adapter, downloaded: [record])
+        let objects = try! targetCoreDataStack.managedObjectContext.executeFetchRequest(entityName: "QSTestEntity2") as? [QSTestEntity2]
+        XCTAssertEqual(objects?.count, 1)
+        let testEntity = objects?.first
+        XCTAssertEqual(testEntity?.identifier, "ent1")
+        XCTAssertEqual(testEntity?.names, ["1", "2", "3"])
+    }
 }
 
 extension CoreDataAdapterTests: CoreDataAdapterDelegate, CoreDataAdapterConflictResolutionDelegate {

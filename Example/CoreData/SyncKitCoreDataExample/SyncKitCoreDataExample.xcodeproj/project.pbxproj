@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -35,6 +35,8 @@
 		6433B3F522C0057000EAC16C /* Company.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6433B3F322C0057000EAC16C /* Company.swift */; };
 		6433B3F822C0058300EAC16C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6433B3F622C0058200EAC16C /* Main.storyboard */; };
 		6433B3F922C0058300EAC16C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6433B3F722C0058300EAC16C /* LaunchScreen.storyboard */; };
+		64369247232EB25A004393B1 /* QSTestEntity2+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64369245232EB25A004393B1 /* QSTestEntity2+CoreDataProperties.swift */; };
+		64369248232EB25A004393B1 /* QSTestEntity2+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64369246232EB25A004393B1 /* QSTestEntity2+CoreDataClass.swift */; };
 		6465959722B64C8E00DC9A17 /* QSCompany.1739C6A5-C07E-48A5-B83E-AB07694F23DF in Resources */ = {isa = PBXBuildFile; fileRef = 6465959622B64C8E00DC9A17 /* QSCompany.1739C6A5-C07E-48A5-B83E-AB07694F23DF */; };
 		64B3A38222AEF0A500E4E942 /* DefaultCoreDataAdapterDelegateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64B3A38122AEF0A500E4E942 /* DefaultCoreDataAdapterDelegateTests.swift */; };
 		64B3A38422AEF0D800E4E942 /* MockManagedObjectContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64B3A38322AEF0D800E4E942 /* MockManagedObjectContext.swift */; };
@@ -114,6 +116,8 @@
 		6433B3F322C0057000EAC16C /* Company.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Company.swift; path = ../../../../Common/Model/Company.swift; sourceTree = "<group>"; };
 		6433B3F622C0058200EAC16C /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = Main.storyboard; path = ../../../Common/Views/Main.storyboard; sourceTree = "<group>"; };
 		6433B3F722C0058300EAC16C /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = ../../../Common/Views/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		64369245232EB25A004393B1 /* QSTestEntity2+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "QSTestEntity2+CoreDataProperties.swift"; path = "/Users/manuel/Documents/Apps/SyncKit/Example/CoreData/SyncKitCoreDataExample/SyncKitCoreDataExampleTests/Transformable/QSTestEntity2+CoreDataProperties.swift"; sourceTree = "<absolute>"; };
+		64369246232EB25A004393B1 /* QSTestEntity2+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "QSTestEntity2+CoreDataClass.swift"; path = "/Users/manuel/Documents/Apps/SyncKit/Example/CoreData/SyncKitCoreDataExample/SyncKitCoreDataExampleTests/Transformable/QSTestEntity2+CoreDataClass.swift"; sourceTree = "<absolute>"; };
 		6465959622B64C8E00DC9A17 /* QSCompany.1739C6A5-C07E-48A5-B83E-AB07694F23DF */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "QSCompany.1739C6A5-C07E-48A5-B83E-AB07694F23DF"; sourceTree = "<group>"; };
 		64B3A38122AEF0A500E4E942 /* DefaultCoreDataAdapterDelegateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultCoreDataAdapterDelegateTests.swift; sourceTree = "<group>"; };
 		64B3A38322AEF0D800E4E942 /* MockManagedObjectContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockManagedObjectContext.swift; sourceTree = "<group>"; };
@@ -272,6 +276,8 @@
 				64B46BF322B9629A0017268F /* QSTestEntity+CoreDataClass.swift */,
 				64B46BF422B9629A0017268F /* QSTestEntity+CoreDataProperties.swift */,
 				64B46BE822B95D570017268F /* QSNamesTransformer.swift */,
+				64369246232EB25A004393B1 /* QSTestEntity2+CoreDataClass.swift */,
+				64369245232EB25A004393B1 /* QSTestEntity2+CoreDataProperties.swift */,
 				64B46BEA22B960040017268F /* QSTransformableTestModel.xcdatamodeld */,
 			);
 			path = Transformable;
@@ -578,12 +584,14 @@
 				640C33E222AD837000A85508 /* QSCloudKitSynchronizerOperationTests.swift in Sources */,
 				64B46BF522B9629A0017268F /* QSTestEntity+CoreDataClass.swift in Sources */,
 				64CFAF2D22CD26E4009CF1F1 /* QSCompany+CoreDataProperties.swift in Sources */,
+				64369247232EB25A004393B1 /* QSTestEntity2+CoreDataProperties.swift in Sources */,
 				64B3A38422AEF0D800E4E942 /* MockManagedObjectContext.swift in Sources */,
 				64B3A3B622B51F0100E4E942 /* CoreDataAdapterTests.swift in Sources */,
 				64CFAF2E22CD26E4009CF1F1 /* QSEmployee+CoreDataClass.swift in Sources */,
 				64B3A3A522B0293800E4E942 /* QSExample.xcdatamodeld in Sources */,
 				64B3A38822B01C1700E4E942 /* DefaultCoreDataStackProviderTests.swift in Sources */,
 				64CFAF2F22CD26E4009CF1F1 /* QSEmployee+CoreDataProperties.swift in Sources */,
+				64369248232EB25A004393B1 /* QSTestEntity2+CoreDataClass.swift in Sources */,
 				64B46BE922B95D570017268F /* QSNamesTransformer.swift in Sources */,
 				64B3A3B022B1A91500E4E942 /* MockKeyValueStore.swift in Sources */,
 				640C33E922AD8AA100A85508 /* FetchDatabaseChangesOperationTests.swift in Sources */,
