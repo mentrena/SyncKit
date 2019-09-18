@@ -15,6 +15,7 @@ extension NSManagedObjectContext {
                                     fetchLimit: Int? = nil,
                                     resultType: NSFetchRequestResultType = .managedObjectResultType,
                                     propertiesToFetch: [String]? = nil,
+                                    includesSubentities: Bool = false,
                                     preload: Bool = false) throws -> [NSFetchRequestResult] {
         
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>()
@@ -22,6 +23,7 @@ extension NSManagedObjectContext {
         fetchRequest.entity = entity
         fetchRequest.resultType = resultType
         fetchRequest.predicate = predicate
+        fetchRequest.includesSubentities = includesSubentities
         if preload {
             fetchRequest.returnsObjectsAsFaults = false
         }
