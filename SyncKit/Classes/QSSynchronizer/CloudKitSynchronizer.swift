@@ -60,6 +60,7 @@ public class CloudKitSynchronizer: NSObject {
     @objc public enum SyncError: Int, Error {
         case alreadySyncing
         case higherModelVersionFound
+        case recordNotFound
         case cancelled
     }
     
