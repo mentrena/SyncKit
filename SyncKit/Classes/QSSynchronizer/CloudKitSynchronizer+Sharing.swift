@@ -69,7 +69,7 @@ import CloudKit
         
         guard let modelAdapter = modelAdapter(for: object),
             let record = modelAdapter.record(for: object) else {
-                completion?(nil, nil)
+                completion?(nil, CloudKitSynchronizer.SyncError.recordNotFound)
                 return
         }
         let share = CKShare(rootRecord: record)
