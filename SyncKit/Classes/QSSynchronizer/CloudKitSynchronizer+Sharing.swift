@@ -69,6 +69,7 @@ import CloudKit
         
         guard let modelAdapter = modelAdapter(for: object),
             let record = modelAdapter.record(for: object) else {
+                completion?(nil, nil)
                 return
         }
         let share = CKShare(rootRecord: record)
