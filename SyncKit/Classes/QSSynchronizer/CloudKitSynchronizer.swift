@@ -165,6 +165,19 @@ public class CloudKitSynchronizer: NSObject {
         currentOperation?.cancel()
     }
     
+    /**
+    *  Deletes saved database token, so next synchronization will include changes in all record zones in the database.
+    * This does not reset tokens stored by model adapters.
+    */
+    @objc
+    public func resetDatabaseToken() {
+        storedDatabaseToken = nil
+    }
+    
+    /**
+    * Deletes saved database token and all local metadata used to track changes in models.
+    * The synchronizer should not be used after calling this function, create a new synchronizer instead if you need it.
+    */
     @objc
     public func eraseLocalMetadata() {
 
