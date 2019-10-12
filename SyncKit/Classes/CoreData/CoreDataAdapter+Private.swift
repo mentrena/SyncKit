@@ -95,9 +95,11 @@ extension CoreDataAdapter {
         return entityPrimaryKeys[entityName]!;
     }
     
-    func uniqueIdentifier(for object: NSManagedObject) -> String {
-        let key = identifierFieldName(forEntity: object.entity.name!)
-        return object.value(forKey: key) as! String
+    func uniqueIdentifier(for object: NSManagedObject) -> String? {
+        guard let entityName = object.entity.name else { return nil }
+            
+        let key = identifierFieldName(forEntity: entityName)
+        return object.value(forKey: key) as? String
     }
     
     func uniqueIdentifier(forObjectFrom record: CKRecord) -> String {
@@ -488,9 +490,7 @@ extension CoreDataAdapter {
             targetContext.performAndWait {
                 originalObject = self.managedObject(entityName: entityType, identifier: objectID, context: self.targetContext)
                 let childrenObjects = self.children(of: originalObject, relationship: relationship)
-                for child in childrenObjects {
-                    childrenIdentifiers.append(self.uniqueIdentifier(for: child))
-                }
+                childrenIdentifiers.append(contentsOf: childrenObjects.compactMap { self.uniqueIdentifier(for: $0) })
             }
             // get their syncedEntities
             for identifier in childrenIdentifiers {
@@ -650,7 +650,8 @@ extension CoreDataAdapter {
                                               identifiers: Array(queries.keys),
                                               context: context)
             for managedObject in objects {
-                guard let query = queries[self.uniqueIdentifier(for: managedObject)] else { continue }
+                guard let identifier = self.uniqueIdentifier(for: managedObject),
+                    let query = queries[identifier] else { continue }
                 query.targetRelationshipsDictionary?.forEach({ (relationshipName, target) in
                     let shouldApplyTarget = query.state.rawValue > SyncedEntityState.changed.rawValue ||
                         self.mergePolicy == .server ||
