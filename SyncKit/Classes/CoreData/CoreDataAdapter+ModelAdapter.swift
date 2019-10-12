@@ -65,11 +65,12 @@ extension CoreDataAdapter: ModelAdapter {
             self.targetImportContext.performAndWait {
                 debugPrint("Applying attribute changes in records")
                 for entityType in queryByEntityType.keys {
-                    var queries = queryByEntityType[entityType]!
+                    guard let queries = queryByEntityType[entityType] else { continue }
                     let objects = self.managedObjects(entityName: entityType, identifiers: Array(queries.keys), context: self.targetImportContext)
                     for object in objects {
-                        guard let query = queries[self.uniqueIdentifier(for: object)],
-                        let record = query.record else { continue }
+                        guard let identifier = self.uniqueIdentifier(for: object),
+                            let query = queries[identifier],
+                            let record = query.record else { continue }
                         self.applyAttributeChanges(record: record,
                                                    to: object,
                                                    state: query.state,

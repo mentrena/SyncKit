@@ -580,16 +580,6 @@ extension CoreDataAdapterTests {
         XCTAssertNotNil(empRecord)
         XCTAssertNotNil(emp2Record)
     }
-    
-    func testRecordsToUpload_includesAnyParentRecordsInBatch() {
-        let company = insertCompany()
-        insertEmployee(company: company)
-        let adapter = createAdapter()
-        adapter.prepareToImport()
-        let records = adapter.recordsToUpload(limit: 1)
-        adapter.didFinishImport(with: nil)
-        XCTAssertEqual(records.count, 2)
-    }
 }
 
 // MARK: - Transformable

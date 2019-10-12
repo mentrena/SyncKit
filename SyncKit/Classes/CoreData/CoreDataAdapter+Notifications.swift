@@ -16,7 +16,6 @@ extension CoreDataAdapter {
             let updated = Array(targetContext.updatedObjects)
             var identifiersAndChanges = [String: [String]]()
             for object in updated {
-                let identifier = uniqueIdentifier(for: object)
                 var changedValueKeys = [String]()
                 for key in object.changedValues().keys {
                     let relationship = object.entity.relationshipsByName[key]
@@ -26,8 +25,25 @@ extension CoreDataAdapter {
                         changedValueKeys.append(key)
                     }
                 }
-                if changedValueKeys.count > 0 {
+                if let identifier = uniqueIdentifier(for: object),
+                    changedValueKeys.count > 0 {
                     identifiersAndChanges[identifier] = changedValueKeys
+                }
+            }
+            
+            var deletedIDs = [String]()
+            
+            targetContext.deletedObjects.forEach {
+                if self.uniqueIdentifier(for: $0) == nil,
+                    let entityName = $0.entity.name {
+                    // Properties become nil when objects are deleted as a result of using an undo manager
+                    // Here we can retrieve their last known identifier and mark the corresponding synced
+                    // entity for deletion
+                    let identifierFieldName = self.identifierFieldName(forEntity: entityName)
+                    let committedValues = $0.committedValues(forKeys: [identifierFieldName])
+                    if let identifier = committedValues[identifierFieldName] as? String {
+                        deletedIDs.append(identifier)
+                    }
                 }
             }
             
@@ -41,6 +57,17 @@ extension CoreDataAdapter {
                     }
                     entity.changedKeysArray = Array(changedKeys)
                 }
+                
+                deletedIDs.forEach { (identifier) in
+                    guard let entity = self.syncedEntity(withOriginIdentifier: identifier) else { return }
+                    entity.entityState = .deleted
+                    entity.updatedDate = NSDate()
+                }
+                
+                if !deletedIDs.isEmpty {
+                    debugPrint("QSCloudKitSynchronizer >> Will Save >> Tracking %ld deletions", deletedIDs.count)
+                }
+                
                 self.savePrivateContext()
             }
         }
@@ -55,13 +82,14 @@ extension CoreDataAdapter {
             
             var insertedIdentifiersAndEntityNames = [String: String]()
             inserted?.forEach {
-                if let entityName = $0.entity.name {
-                    insertedIdentifiersAndEntityNames[uniqueIdentifier(for: $0)] = entityName
+                if let entityName = $0.entity.name,
+                    let identifier = uniqueIdentifier(for: $0) {
+                    insertedIdentifiersAndEntityNames[identifier] = entityName
                 }
             }
             
-            let updatedIDs = updated?.map { uniqueIdentifier(for: $0) } ?? []
-            let deletedIDs = deleted?.map { uniqueIdentifier(for: $0) } ?? []
+            let updatedIDs = updated?.compactMap { uniqueIdentifier(for: $0) } ?? []
+            let deletedIDs = deleted?.compactMap { uniqueIdentifier(for: $0) } ?? []
             
             let willHaveChanges = !insertedIdentifiersAndEntityNames.isEmpty || !updatedIDs.isEmpty || !deletedIDs.isEmpty
             
@@ -87,9 +115,9 @@ extension CoreDataAdapter {
                     entity.updatedDate = NSDate()
                 }
                 
-                debugPrint("QSCloudKitSynchronizer >> Tracking %ld insertions", inserted?.count ?? 0)
-                debugPrint("QSCloudKitSynchronizer >> Tracking %ld updates", updated?.count ?? 0)
-                debugPrint("QSCloudKitSynchronizer >> Tracking %ld deletions", deleted?.count ?? 0)
+                debugPrint("QSCloudKitSynchronizer >> Did Save >> Tracking %ld insertions", inserted?.count ?? 0)
+                debugPrint("QSCloudKitSynchronizer >> Did Save >> Tracking %ld updates", updated?.count ?? 0)
+                debugPrint("QSCloudKitSynchronizer >> Did Save >> Tracking %ld deletions", deleted?.count ?? 0)
                 
                 self.savePrivateContext()
                 
