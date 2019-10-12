@@ -134,6 +134,8 @@ public extension Notification.Name {
     
     /**
      *  Deletes all tracking information and detaches from local model.
+     *  This adapter should not be used after calling this method, create a new adapter if you wish to synchronize
+     *  the same model again.
      */
     func deleteChangeTracking()
     
@@ -171,6 +173,9 @@ public extension Notification.Name {
     @available(iOS 10.0, OSX 10.12, *)
     func deleteShare(for object: AnyObject)
     
-    
+    /**
+     * @param object Model object.
+     * @return Array of `CKRecord` corresponding to the given object and any parent records.
+    */
     func recordsToUpdateParentRelationshipsForRoot(_ object: AnyObject) -> [CKRecord]
 }

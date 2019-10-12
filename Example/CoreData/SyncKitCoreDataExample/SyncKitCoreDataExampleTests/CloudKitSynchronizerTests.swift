@@ -308,6 +308,11 @@ class CloudKitSynchronizerTests: XCTestCase {
     func testEraseLocal_deletesAdapterTracking() {
         synchronizer.eraseLocalMetadata()
         XCTAssertTrue(mockAdapter.deleteChangeTrackingCalled)
+        XCTAssertEqual(synchronizer.modelAdapters.count, 0)
+        weak var weakAdapter: ModelAdapter? = mockAdapter
+        mockAdapter = nil
+        mockAdapterProvider.modelAdapterValue = nil
+        XCTAssertNil(weakAdapter)
     }
     
     func testdeleteRecordZoneForAdapter_deletesRecordZone() {

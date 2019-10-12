@@ -230,6 +230,7 @@ extension CoreDataAdapter: ModelAdapter {
     }
     
     public func deleteChangeTracking() {
+        NotificationCenter.default.removeObserver(self)
         stack.deleteStore()
         privateContext = nil
         clearImportContext()
