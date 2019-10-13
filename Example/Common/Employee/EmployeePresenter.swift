@@ -40,10 +40,6 @@ class DefaultEmployeePresenter: NSObject, EmployeePresenter {
         super.init()
     }
     
-    deinit {
-        print("hi")
-    }
-    
     func viewDidLoad() {
         interactor.load()
         view.canWrite = canEdit
