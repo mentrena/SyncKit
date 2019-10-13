@@ -59,7 +59,8 @@ class DefaultCompanyPresenter: NSObject, CompanyPresenter {
             self?.view?.showLoading(false)
             if let error = error {
                 self?.handle(error)
-            } else if let zoneID = self?.synchronizer.modelAdapters.first?.recordZoneID {
+            } else if let zoneID = self?.synchronizer.modelAdapters.first?.recordZoneID,
+                self?.synchronizer.database.databaseScope == CKDatabase.Scope.private {
                 self?.synchronizer.subscribeForChanges(in: zoneID, completion: { (error) in
                     if let error = error {
                         debugPrint("Failed to subscribe: \(error.localizedDescription)")
