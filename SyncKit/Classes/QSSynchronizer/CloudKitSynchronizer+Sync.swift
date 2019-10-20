@@ -479,6 +479,7 @@ extension CloudKitSynchronizer {
                     if result.downloadedRecords.count > 0 || result.deletedRecordIDs.count > 0 {
                         needsToRefetch = true
                     } else {
+                        self.activeZoneTokens[zoneID] = result.serverChangeToken
                         adapter?.saveToken(result.serverChangeToken)
                     }
                     if result.moreComing {
