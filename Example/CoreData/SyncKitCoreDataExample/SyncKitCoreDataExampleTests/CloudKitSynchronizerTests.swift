@@ -587,4 +587,25 @@ class CloudKitSynchronizerTests: XCTestCase {
         
         XCTAssertTrue(mockAdapterProvider.zoneWasDeletedWithIDCalled)
     }
+    
+    func testReuploadRecordsForChildrenOf_moreThanBatchSize_doesMultipleOperations() {
+        let expectation = self.expectation(description: "upload finished")
+        let objects = objectArray(range: 1...synchronizer.batchSize + 5)
+        mockAdapter.objects = objects
+        mockAdapter.recordsToUpdateParentRelationshipForRootValue = objects.map { $0.record(with: recordZoneID) }
+        
+        var uploadOperations = 0
+        mockDatabase.modifyRecordsOperationEnqueuedBlock = { _ in
+            uploadOperations += 1
+        }
+        
+        synchronizer.reuploadRecordsForChildrenOf(root: objects.first!) { (error) in
+            expectation.fulfill()
+        }
+        
+        waitForExpectations(timeout: 1, handler: nil)
+        
+        XCTAssertTrue(uploadOperations > 1)
+        XCTAssertEqual(mockDatabase.receivedRecords.count, objects.count)
+    }
 }

@@ -136,7 +136,11 @@ class MockModelAdapter: ModelAdapter {
     var mergePolicy: MergePolicy = .server
     
     func record(for object: AnyObject) -> CKRecord? {
-        return nil
+        guard let object = object as? QSObject,
+            objects.contains(object) else {
+            return nil
+        }
+        return object.record(with: recordZoneID)
     }
     
     func share(for object: AnyObject) -> CKShare? {
@@ -151,7 +155,8 @@ class MockModelAdapter: ModelAdapter {
         
     }
     
+    var recordsToUpdateParentRelationshipForRootValue: [CKRecord]?
     func recordsToUpdateParentRelationshipsForRoot(_ object: AnyObject) -> [CKRecord] {
-        return []
+        return recordsToUpdateParentRelationshipForRootValue ?? []
     }
 }
