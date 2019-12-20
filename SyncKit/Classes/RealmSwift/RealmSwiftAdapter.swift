@@ -545,8 +545,10 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
                 let data =  NSData(contentsOf: fileURL) {
                 object.setValue(data, forKey: key)
             }
-        } else {
-            // If property is not a relationship or property is nil
+        } else if value != nil || object.objectSchema[key]?.isOptional == true {
+            // If property is not a relationship or value is nil and property is optional.
+            // If value is nil and property is non-optional, it is ignored. This is something that could happen
+            // when extending an object model with a new non-optional property, when an old record is applied to the object.
             object.setValue(value, forKey: key)
         }
     }
