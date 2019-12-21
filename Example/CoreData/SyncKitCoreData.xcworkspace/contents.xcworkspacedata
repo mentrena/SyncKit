@@ -2,12 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:/Users/manuel/Documents/Apps/SyncKit/Example/CoreData/SyncKitCoreDataExample/SyncKitCoreDataExampleTests/Transformable/QSTestEntity2+CoreDataClass.swift">
-   </FileRef>
-   <FileRef
-      location = "group:/Users/manuel/Documents/Apps/SyncKit/Example/CoreData/SyncKitCoreDataExample/SyncKitCoreDataExampleTests/Transformable/QSTestEntity2+CoreDataProperties.swift">
-   </FileRef>
-   <FileRef
       location = "group:SyncKitCoreDataiOS/SyncKitCoreDataiOS.xcodeproj">
    </FileRef>
    <FileRef

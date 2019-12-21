@@ -43,6 +43,7 @@ import CoreData
         
         try? persistentStoreCoordinator.remove(store)
         managedObjectContext = nil
+        store = nil
         if let url = storeURL {
             try? FileManager.default.removeItem(at: url)
         }

@@ -16,30 +16,54 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
     var coreDataStack: CoreDataStack!
+    var settingsManager = SettingsManager()
+    var settingsViewController: SettingsViewController?
+    
+    var synchronizer: CloudKitSynchronizer?
+    lazy var sharedSynchronizer = CloudKitSynchronizer.sharedSynchronizer(containerName: "your-iCloud-container",
+                                                                          objectModel: self.coreDataStack.model)
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
-        loadCoreData()
         
+        settingsManager.delegate = self
+        loadCoreData()
+        loadSyncKit()
+        loadPrivateModule()
+        loadSharedModule()
+        loadSettingsModule()
+        
+        return true
+    }
+    
+    func loadPrivateModule() {
         let tabBarController: UITabBarController! = window?.rootViewController as? UITabBarController
         let navigationController: UINavigationController! = tabBarController.viewControllers?[0] as? UINavigationController
-        let sharedNavigationController: UINavigationController! = tabBarController.viewControllers?[1] as? UINavigationController
+        
         let employeeWireframe = CoreDataEmployeeWireframe(navigationController: navigationController,
                                                           managedObjectContext: coreDataStack.managedObjectContext)
         let coreDataWireframe = CoreDataCompanyWireframe(navigationController: navigationController,
                                                          managedObjectContext: coreDataStack.managedObjectContext,
                                                          employeeWireframe: employeeWireframe,
-                                                         synchronizer: synchronizer)
-        let coreDataSharedWireframe = CoreDataSharedCompanyWireframe(navigationController: sharedNavigationController,
-                                                                     synchronizer: sharedSynchronizer)
+                                                         synchronizer: synchronizer,
+                                                         showsSync: settingsManager.isSyncEnabled)
         coreDataWireframe.show()
+    }
+    
+    func loadSharedModule() {
+        let tabBarController: UITabBarController! = window?.rootViewController as? UITabBarController
+        let sharedNavigationController: UINavigationController! = tabBarController.viewControllers?[1] as? UINavigationController
+        let coreDataSharedWireframe = CoreDataSharedCompanyWireframe(navigationController: sharedNavigationController,
+                                                                     synchronizer: sharedSynchronizer,
+                                                                     showsSync: settingsManager.isSyncEnabled)
         coreDataSharedWireframe.show()
-        
+    }
+    
+    func loadSettingsModule() {
+        let tabBarController: UITabBarController! = window?.rootViewController as? UITabBarController
         let settingsNavigationController: UINavigationController! = tabBarController.viewControllers?[2] as? UINavigationController
-        let settingsViewController = settingsNavigationController.topViewController as? SettingsViewController
+        settingsViewController = settingsNavigationController.topViewController as? SettingsViewController
         settingsViewController?.privateSynchronizer = synchronizer
-        
-        return true
+        settingsViewController?.settingsManager = settingsManager
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
@@ -59,11 +83,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                       storeURL: storeURL!)
     }
     
-    lazy var synchronizer = CloudKitSynchronizer.privateSynchronizer(containerName: "your-iCloud-container-name",
-                                                                     managedObjectContext: self.coreDataStack.managedObjectContext)
-    
-    lazy var sharedSynchronizer = CloudKitSynchronizer.sharedSynchronizer(containerName: "your-iCloud-container-name",
-                                                                          objectModel: self.coreDataStack.model)
+    func loadSyncKit() {
+        if settingsManager.isSyncEnabled {
+            synchronizer = CloudKitSynchronizer.privateSynchronizer(containerName: "your-iCloud-container",
+                                                                    managedObjectContext: self.coreDataStack.managedObjectContext)
+        }
+    }
     
     func application(_ application: UIApplication, userDidAcceptCloudKitShareWith cloudKitShareMetadata: CKShare.Metadata) {
         let container = CKContainer(identifier: cloudKitShareMetadata.containerIdentifier)
@@ -80,6 +105,43 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         container.add(acceptSharesOperation)
     }
-    
 }
 
+extension AppDelegate: SettingsManagerDelegate {
+    func didSetSyncEnabled(value: Bool) {
+        if value == false {
+            synchronizer?.eraseLocalMetadata()
+            synchronizer = nil
+            settingsViewController?.privateSynchronizer = nil
+            loadPrivateModule()
+            
+        } else {
+            connectSyncKit()
+        }
+    }
+    
+    func connectSyncKit() {
+        let alertController = UIAlertController(title: "Connecting CloudKit", message: "Would you like to bring existing data into CloudKit?", preferredStyle: .alert)
+        let keepData = UIAlertAction(title: "Keep existing data", style: .default) { (_) in
+            self.createNewSynchronizer()
+        }
+        
+        let removeData = UIAlertAction(title: "No", style: .destructive) { (_) in
+            let interactor = CoreDataCompanyInteractor(managedObjectContext: self.coreDataStack.managedObjectContext,
+                                                       shareController: nil)
+            interactor.load()
+            interactor.deleteAll()
+            self.createNewSynchronizer()
+        }
+        alertController.addAction(keepData)
+        alertController.addAction(removeData)
+        settingsViewController?.present(alertController, animated: true, completion: nil)
+    }
+    
+    func createNewSynchronizer() {
+        loadSyncKit()
+        settingsViewController?.privateSynchronizer = synchronizer
+        loadPrivateModule()
+    }
+}
+ 

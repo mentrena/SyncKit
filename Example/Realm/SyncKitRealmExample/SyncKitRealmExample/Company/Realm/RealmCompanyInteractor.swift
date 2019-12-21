@@ -13,11 +13,11 @@ class RealmCompanyInteractor: CompanyInteractor {
     
     let realm: RLMRealm
     weak var delegate: CompanyInteractorDelegate?
-    let shareController: ShareController
+    let shareController: ShareController?
     private var results: RLMResults<QSCompany>!
     private var notificationToken: RLMNotificationToken!
     
-    init(realm: RLMRealm, shareController: ShareController) {
+    init(realm: RLMRealm, shareController: ShareController?) {
         self.realm = realm
         self.shareController = shareController
     }
@@ -44,11 +44,26 @@ class RealmCompanyInteractor: CompanyInteractor {
     func delete(company: Company) {
         guard let com = results?.first(where: {
             ($0 as? QSCompany)?.identifier == company.identifier
-        }) else { return }
+        }) as? QSCompany else { return }
         
+        delete(realmCompany: com)
+    }
+    
+    func delete(realmCompany: QSCompany) {
         realm.beginWriteTransaction()
-        realm.delete(com)
+        for emp in realmCompany.employees {
+            realm.delete(emp)
+        }
+        realm.delete(realmCompany)
         try! realm.commitWriteTransaction()
+    }
+    
+    func deleteAll() {
+        for object in results {
+            if let com = object as? QSCompany {
+                delete(realmCompany: com)
+            }
+        }
     }
     
     func modelObject(for company: Company) -> AnyObject? {
@@ -65,7 +80,7 @@ class RealmCompanyInteractor: CompanyInteractor {
         let translatedCompanies = companies?.map {
             Company(name: $0.name,
                     identifier: $0.identifier!,
-                    isSharing: self.shareController.isObjectShared(object: $0),
+                    isSharing: self.shareController?.isObjectShared(object: $0) ?? false,
                     isShared: false)
             } ?? []
         delegate?.didUpdateCompanies([translatedCompanies])

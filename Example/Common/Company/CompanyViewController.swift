@@ -12,6 +12,7 @@ protocol CompanyView: UIViewController {
     var companySections: [CompanySection] { get set }
     func showLoading(_ loading: Bool)
     var canEdit: Bool { get set }
+    var showsSync: Bool { get set }
 }
 
 class CompanyViewController: UITableViewController, CompanyView {
@@ -25,6 +26,12 @@ class CompanyViewController: UITableViewController, CompanyView {
     var canEdit = false {
         didSet {
             insertButton?.isHidden = !canEdit
+        }
+    }
+    
+    var showsSync = true {
+        didSet {
+            syncButton?.isHidden = !showsSync
         }
     }
     

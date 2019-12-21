@@ -58,9 +58,22 @@ public protocol AdapterProvider {
 public class CloudKitSynchronizer: NSObject {
     
     @objc public enum SyncError: Int, Error {
+        /**
+         *  Received when synchronize is called while there was an ongoing synchronization.
+         */
         case alreadySyncing
+        /**
+         *  A synchronizer with a higer `compatibilityVersion` value uploaded changes to CloudKit, so those changes won't be imported here.
+         *  This error can be detected to prompt the user to update the app to a newer version.
+         */
         case higherModelVersionFound
+        /**
+         *  A record fot the provided object was not found, so the object cannot be shared on CloudKit.
+         */
         case recordNotFound
+        /**
+         *  Synchronization was manually cancelled.
+         */
         case cancelled
     }
     
@@ -78,9 +91,22 @@ public class CloudKitSynchronizer: NSObject {
     @objc public let adapterProvider: AdapterProvider
     public let keyValueStore: KeyValueStore
     
+    /**
+    *  Indicates whether the instance is currently synchronizing data.
+    */
     @objc public internal(set) var syncing: Bool = false
+    /**
+    *  Number of records that are sent in an upload operation.
+    */
     @objc public var batchSize: Int = CloudKitSynchronizer.defaultBatchSize
+    /**
+    *  When set, if the synchronizer finds records uploaded by a different device using a higher compatibility version,
+    *   it will end synchronization with a `higherModelVersionFound` error.
+    */
     @objc public var compatibilityVersion: Int = 0
+    /**
+    *  Whether the synchronizer will only download data or also upload any local changes.
+    */
     @objc public var syncMode: SynchronizeMode = .sync
     
     internal let dispatchQueue = DispatchQueue(label: "QSCloudKitSynchronizer")
@@ -90,7 +116,7 @@ public class CloudKitSynchronizer: NSObject {
     internal var activeZoneTokens = [CKRecordZone.ID: CKServerChangeToken]()
     internal var cancelSync = false
     internal var completion: ((Error?) -> ())?
-    internal var currentOperation: Operation?
+    internal weak var currentOperation: Operation?
     
     internal static let defaultBatchSize = 200
     static let deviceUUIDKey = "QSCloudKitDeviceUUIDKey"
@@ -142,8 +168,15 @@ public class CloudKitSynchronizer: NSObject {
     
     // MARK: - Public
     
+    /**
+    *  These keys will be added to CKRecords uploaded to CloudKit and are used by SyncKit internally.
+    */
     public static let metadataKeys: [String] = [CloudKitSynchronizer.deviceUUIDKey, CloudKitSynchronizer.modelCompatibilityVersionKey]
     
+    /**
+     *  Synchronize data with CloudKit.
+     *  @return Error. Could be a SyncError, CKError, or any other error found during synchronization.
+     */
     @objc
     public func synchronize(completion: ((Error?) -> ())?) {
         guard !syncing else {
@@ -158,6 +191,9 @@ public class CloudKitSynchronizer: NSObject {
         performSynchronization()
     }
     
+    /**
+    *  Cancel synchronization. It will cause a current synchronization to end with a `cancelled` error.
+    */
     @objc
     public func cancelSynchronization() {
         guard syncing, !cancelSync else { return }
@@ -191,6 +227,9 @@ public class CloudKitSynchronizer: NSObject {
         }
     }
     
+    /**
+    * Deletes the corresponding record zone on CloudKit, along with any data in it.
+    */
     @objc
     public func deleteRecordZone(for adapter: ModelAdapter, completion: ((Error?)->())?) {
         database.delete(withRecordZoneID: adapter.recordZoneID) { (zoneID, error) in
@@ -203,16 +242,25 @@ public class CloudKitSynchronizer: NSObject {
         }
     }
     
+    /**
+    * Model adapters in use by this synchronizer.
+    */
     @objc
     public var modelAdapters: [ModelAdapter] {
         return Array(modelAdapterDictionary.values)
     }
     
+    /**
+    * Adds a new model adapter to be synchronized with CloudKit.
+    */
     @objc
     public func addModelAdapter(_ adapter: ModelAdapter) {
         modelAdapterDictionary[adapter.recordZoneID] = adapter
     }
     
+    /**
+    * Removes the model adapter so data managed by it won't be synced with CloudKit any more.
+    */
     @objc 
     public func removeModelAdapter(_ adapter: ModelAdapter) {
         modelAdapterDictionary.removeValue(forKey: adapter.recordZoneID)
