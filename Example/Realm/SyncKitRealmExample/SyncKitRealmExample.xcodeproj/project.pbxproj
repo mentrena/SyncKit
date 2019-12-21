@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -22,12 +22,13 @@
 		6433B3ED22C0055600EAC16C /* CompanyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6433B3E722C0055600EAC16C /* CompanyViewController.swift */; };
 		6433B3EE22C0055600EAC16C /* CompanyWireframe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6433B3E822C0055600EAC16C /* CompanyWireframe.swift */; };
 		6433B3EF22C0055600EAC16C /* CompanyInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6433B3E922C0055600EAC16C /* CompanyInteractor.swift */; };
-		6433B3F122C0056000EAC16C /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6433B3F022C0056000EAC16C /* SettingsViewController.swift */; };
 		6433B3F422C0057000EAC16C /* Employee.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6433B3F222C0057000EAC16C /* Employee.swift */; };
 		6433B3F522C0057000EAC16C /* Company.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6433B3F322C0057000EAC16C /* Company.swift */; };
 		6433B3F822C0058300EAC16C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6433B3F622C0058200EAC16C /* Main.storyboard */; };
 		6433B3F922C0058300EAC16C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6433B3F722C0058300EAC16C /* LaunchScreen.storyboard */; };
 		6465959722B64C8E00DC9A17 /* QSCompany.1739C6A5-C07E-48A5-B83E-AB07694F23DF in Resources */ = {isa = PBXBuildFile; fileRef = 6465959622B64C8E00DC9A17 /* QSCompany.1739C6A5-C07E-48A5-B83E-AB07694F23DF */; };
+		64768B6C23B264C900C1EC44 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64768B6A23B264C900C1EC44 /* SettingsViewController.swift */; };
+		64768B6D23B264C900C1EC44 /* SettingsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64768B6B23B264C900C1EC44 /* SettingsManager.swift */; };
 		649236C522C696890074A142 /* RealmCompanyInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 649236C122C696880074A142 /* RealmCompanyInteractor.swift */; };
 		649236C622C696890074A142 /* RealmCompanyWireframe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 649236C222C696880074A142 /* RealmCompanyWireframe.swift */; };
 		649236C722C696890074A142 /* RealmSharedCompanyWireframe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 649236C322C696880074A142 /* RealmSharedCompanyWireframe.swift */; };
@@ -107,12 +108,13 @@
 		6433B3E722C0055600EAC16C /* CompanyViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CompanyViewController.swift; path = ../../../../Common/Company/CompanyViewController.swift; sourceTree = "<group>"; };
 		6433B3E822C0055600EAC16C /* CompanyWireframe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CompanyWireframe.swift; path = ../../../../Common/Company/CompanyWireframe.swift; sourceTree = "<group>"; };
 		6433B3E922C0055600EAC16C /* CompanyInteractor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CompanyInteractor.swift; path = ../../../../Common/Company/CompanyInteractor.swift; sourceTree = "<group>"; };
-		6433B3F022C0056000EAC16C /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SettingsViewController.swift; path = ../../../../Common/Settings/SettingsViewController.swift; sourceTree = "<group>"; };
 		6433B3F222C0057000EAC16C /* Employee.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Employee.swift; path = ../../../../Common/Model/Employee.swift; sourceTree = "<group>"; };
 		6433B3F322C0057000EAC16C /* Company.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Company.swift; path = ../../../../Common/Model/Company.swift; sourceTree = "<group>"; };
 		6433B3F622C0058200EAC16C /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = Main.storyboard; path = ../../../Common/Views/Main.storyboard; sourceTree = "<group>"; };
 		6433B3F722C0058300EAC16C /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = ../../../Common/Views/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		6465959622B64C8E00DC9A17 /* QSCompany.1739C6A5-C07E-48A5-B83E-AB07694F23DF */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "QSCompany.1739C6A5-C07E-48A5-B83E-AB07694F23DF"; sourceTree = "<group>"; };
+		64768B6A23B264C900C1EC44 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SettingsViewController.swift; path = ../../../../Common/Settings/SettingsViewController.swift; sourceTree = "<group>"; };
+		64768B6B23B264C900C1EC44 /* SettingsManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SettingsManager.swift; path = ../../../../Common/Settings/SettingsManager.swift; sourceTree = "<group>"; };
 		649236C122C696880074A142 /* RealmCompanyInteractor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmCompanyInteractor.swift; sourceTree = "<group>"; };
 		649236C222C696880074A142 /* RealmCompanyWireframe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmCompanyWireframe.swift; sourceTree = "<group>"; };
 		649236C322C696880074A142 /* RealmSharedCompanyWireframe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmSharedCompanyWireframe.swift; sourceTree = "<group>"; };
@@ -202,7 +204,7 @@
 				649236D722C6A2800074A142 /* SyncKitRealmExample.entitlements */,
 				64B46C1322BCE86B0017268F /* Employee */,
 				64B46C0022BCD9A30017268F /* Company */,
-				6433B36822BE96F600EAC16C /* Settings */,
+				64768B6923B264BA00C1EC44 /* Settings */,
 				64B3A38C22B01E2500E4E942 /* Model */,
 				640C33B922AC48C700A85508 /* AppDelegate.swift */,
 				6433B3F722C0058300EAC16C /* LaunchScreen.storyboard */,
@@ -225,10 +227,11 @@
 			path = SyncKitRealmExampleTests;
 			sourceTree = "<group>";
 		};
-		6433B36822BE96F600EAC16C /* Settings */ = {
+		64768B6923B264BA00C1EC44 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
-				6433B3F022C0056000EAC16C /* SettingsViewController.swift */,
+				64768B6B23B264C900C1EC44 /* SettingsManager.swift */,
+				64768B6A23B264C900C1EC44 /* SettingsViewController.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -548,22 +551,15 @@
 			files = (
 			);
 			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${SRCROOT}/../Pods/Target Support Files/Pods-SyncKitRealmExample/Pods-SyncKitRealmExample-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
-				"${BUILT_PRODUCTS_DIR}/SyncKit/SyncKit.framework",
+				"${PODS_ROOT}/Target Support Files/Pods-SyncKitRealmExample/Pods-SyncKitRealmExample-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-			);
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SyncKit.framework",
+				"${PODS_ROOT}/Target Support Files/Pods-SyncKitRealmExample/Pods-SyncKitRealmExample-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/../Pods/Target Support Files/Pods-SyncKitRealmExample/Pods-SyncKitRealmExample-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SyncKitRealmExample/Pods-SyncKitRealmExample-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		F119B248F6C2DFAB9DFBAF82 /* [CP] Check Pods Manifest.lock */ = {
@@ -616,9 +612,10 @@
 				6433B3F522C0057000EAC16C /* Company.swift in Sources */,
 				6433B3E022C0051700EAC16C /* EmployeeInteractor.swift in Sources */,
 				649236D222C69A8F0074A142 /* RealmEmployeeInteractor.swift in Sources */,
+				64768B6D23B264C900C1EC44 /* SettingsManager.swift in Sources */,
 				6433B3EF22C0055600EAC16C /* CompanyInteractor.swift in Sources */,
-				6433B3F122C0056000EAC16C /* SettingsViewController.swift in Sources */,
 				649236D122C69A8F0074A142 /* RealmEmployeeWireframe.swift in Sources */,
+				64768B6C23B264C900C1EC44 /* SettingsViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -28,6 +28,7 @@ class CompanyTableViewCell: UITableViewCell {
         } else {
             shareButton?.setTitle(viewModel.isSharing ? "Sharing" : "Share", for: .normal)
         }
+        shareButton?.isHidden = !viewModel.showShareStatus
     }
     
     @IBAction func didTapShare() {

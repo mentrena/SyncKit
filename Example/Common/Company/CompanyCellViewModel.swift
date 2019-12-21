@@ -16,5 +16,6 @@ struct CompanyCellViewModel {
     let name: String
     let isSharing: Bool
     let isSharedWithMe: Bool
+    let showShareStatus: Bool
     let shareAction: (()->())?
 }

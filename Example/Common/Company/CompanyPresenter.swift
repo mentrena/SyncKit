@@ -23,13 +23,14 @@ class DefaultCompanyPresenter: NSObject, CompanyPresenter {
     weak var view: CompanyView?
     let interactor: CompanyInteractor
     let wireframe: CompanyWireframe
-    let synchronizer: CloudKitSynchronizer
+    let synchronizer: CloudKitSynchronizer?
     let canEdit: Bool
+    let showsSync: Bool
     var companies: [[Company]] = [] {
         didSet {
             let companySections = companies.map {
                 CompanySection(companies: $0.map { company in
-                    CompanyCellViewModel(name: company.name ?? "Nil name", isSharing: company.isSharing, isSharedWithMe: company.isShared, shareAction: { [weak self] in
+                    CompanyCellViewModel(name: company.name ?? "Nil name", isSharing: company.isSharing, isSharedWithMe: company.isShared, showShareStatus: showsSync, shareAction: { [weak self] in
                         self?.share(company: company)
                     })
                 })
@@ -39,29 +40,33 @@ class DefaultCompanyPresenter: NSObject, CompanyPresenter {
     }
     private var sharingCompany: Company?
     
-    init(view: CompanyView, interactor: CompanyInteractor, wireframe: CompanyWireframe, synchronizer: CloudKitSynchronizer, canEdit: Bool) {
+    init(view: CompanyView, interactor: CompanyInteractor, wireframe: CompanyWireframe, synchronizer: CloudKitSynchronizer?, canEdit: Bool, showsSync: Bool) {
         self.view = view
         self.interactor = interactor
         self.wireframe = wireframe
         self.synchronizer = synchronizer
         self.canEdit = canEdit
+        self.showsSync = showsSync
         super.init()
     }
     
     func viewDidLoad() {
         view?.canEdit = canEdit
+        view?.showsSync = showsSync
         interactor.load()
     }
     
     func didTapSynchronize() {
+        guard let synchronizer = synchronizer else { return }
         view?.showLoading(true)
         synchronizer.synchronize { [weak self](error) in
-            self?.view?.showLoading(false)
+            guard let self = self else { return }
+            self.view?.showLoading(false)
             if let error = error {
-                self?.handle(error)
-            } else if let zoneID = self?.synchronizer.modelAdapters.first?.recordZoneID,
-                self?.synchronizer.database.databaseScope == CKDatabase.Scope.private {
-                self?.synchronizer.subscribeForChanges(in: zoneID, completion: { (error) in
+                self.handle(error)
+            } else if let zoneID = synchronizer.modelAdapters.first?.recordZoneID,
+                self.synchronizer?.database.databaseScope == CKDatabase.Scope.private {
+                self.synchronizer?.subscribeForChanges(in: zoneID, completion: { (error) in
                     if let error = error {
                         debugPrint("Failed to subscribe: \(error.localizedDescription)")
                     } else {
@@ -87,7 +92,7 @@ class DefaultCompanyPresenter: NSObject, CompanyPresenter {
         let company = companies[indexPath.section][indexPath.row]
         var canEdit = true
         if company.isShared {
-            if let share = synchronizer.share(for: interactor.modelObject(for: company)!) {
+            if let share = synchronizer?.share(for: interactor.modelObject(for: company)!) {
                 canEdit = share.currentUserParticipant?.permission == .readWrite
             } else {
                 canEdit = false
@@ -101,27 +106,28 @@ class DefaultCompanyPresenter: NSObject, CompanyPresenter {
     }
     
     func share(company: Company) {
-        sharingCompany = company
+        guard let synchronizer = synchronizer else { return }
         
+        sharingCompany = company
         synchronizer.synchronize { [weak self](error) in
             guard error == nil,
                 let strongSelf = self,
                 let company = strongSelf.sharingCompany,
                 let modelObject = strongSelf.interactor.modelObject(for: company) else { return }
             
-            let share = strongSelf.synchronizer.share(for: modelObject)
-            let container = CKContainer(identifier: strongSelf.synchronizer.containerIdentifier)
+            let share = synchronizer.share(for: modelObject)
+            let container = CKContainer(identifier: synchronizer.containerIdentifier)
             let sharingController: UICloudSharingController
             if let share = share {
                 sharingController = UICloudSharingController(share: share, container: container)
             } else {
                 sharingController = UICloudSharingController(preparationHandler: { (controller, completionHandler) in
-                    strongSelf.synchronizer.share(object: modelObject,
-                                                  publicPermission: .readOnly,
-                                                  participants: [],
-                                                  completion: { (share, error) in
-                                                    share?[CKShare.SystemFieldKey.title] = company.name
-                                                    completionHandler(share, container, error)
+                    synchronizer.share(object: modelObject,
+                                       publicPermission: .readOnly,
+                                       participants: [],
+                                       completion: { (share, error) in
+                                        share?[CKShare.SystemFieldKey.title] = company.name
+                                        completionHandler(share, container, error)
                     })
                 })
             }
@@ -168,7 +174,8 @@ extension DefaultCompanyPresenter: UICloudSharingControllerDelegate {
     }
     
     func cloudSharingControllerDidSaveShare(_ csc: UICloudSharingController) {
-        guard let share = csc.share,
+        guard let synchronizer = synchronizer,
+            let share = csc.share,
             let company = sharingCompany,
             let modelObject = interactor.modelObject(for: company) else { return }
         synchronizer.saveShare(share, for: modelObject)
@@ -176,7 +183,8 @@ extension DefaultCompanyPresenter: UICloudSharingControllerDelegate {
     }
     
     func cloudSharingControllerDidStopSharing(_ csc: UICloudSharingController) {
-        guard let company = sharingCompany,
+        guard let synchronizer = synchronizer,
+            let company = sharingCompany,
             let modelObject = interactor.modelObject(for: company) else { return }
         synchronizer.deleteShare(for: modelObject)
         interactor.refreshObjects()

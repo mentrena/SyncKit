@@ -15,9 +15,9 @@ class CoreDataCompanyInteractor: NSObject, CompanyInteractor {
     let managedObjectContext: NSManagedObjectContext
     let fetchedResultsController: NSFetchedResultsController<QSCompany>
     weak var delegate: CompanyInteractorDelegate?
-    let shareController: ShareController
+    let shareController: ShareController?
     
-    init(managedObjectContext: NSManagedObjectContext, shareController: ShareController) {
+    init(managedObjectContext: NSManagedObjectContext, shareController: ShareController?) {
         self.managedObjectContext = managedObjectContext
         self.shareController = shareController
         let fetchRequest = NSFetchRequest<QSCompany>(entityName: "QSCompany")
@@ -46,7 +46,7 @@ class CoreDataCompanyInteractor: NSObject, CompanyInteractor {
         let translatedCompanies = companies?.map {
             Company(name: $0.name,
                     identifier: $0.identifier!,
-                    isSharing: self.shareController.isObjectShared(object: $0),
+                    isSharing: self.shareController?.isObjectShared(object: $0) ?? false,
                     isShared: false)
             } ?? []
         delegate?.didUpdateCompanies([translatedCompanies])
@@ -72,6 +72,16 @@ class CoreDataCompanyInteractor: NSObject, CompanyInteractor {
     
     func refreshObjects() {
         update(companies: fetchedResultsController.fetchedObjects)
+    }
+    
+    func deleteAll() {
+        guard let companies = fetchedResultsController.fetchedObjects else { return }
+        managedObjectContext.perform {
+            for object in companies {
+                self.managedObjectContext.delete(object)
+            }
+            try? self.managedObjectContext.save()
+        }
     }
 }
 

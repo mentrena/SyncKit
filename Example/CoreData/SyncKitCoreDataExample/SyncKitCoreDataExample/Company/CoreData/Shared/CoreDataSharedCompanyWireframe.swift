@@ -15,9 +15,11 @@ class CoreDataSharedCompanyWireframe: CompanyWireframe {
     let navigationController: UINavigationController
     let synchronizer: CloudKitSynchronizer
     var interactor: CoreDataSharedCompanyInteractor!
-    init(navigationController: UINavigationController, synchronizer: CloudKitSynchronizer) {
+    let showsSync: Bool
+    init(navigationController: UINavigationController, synchronizer: CloudKitSynchronizer, showsSync: Bool) {
         self.navigationController = navigationController
         self.synchronizer = synchronizer
+        self.showsSync = showsSync
     }
     
     func show() {
@@ -30,7 +32,8 @@ class CoreDataSharedCompanyWireframe: CompanyWireframe {
                                                 interactor: interactor,
                                                 wireframe: self,
                                                 synchronizer: synchronizer,
-                                                canEdit: false)
+                                                canEdit: false,
+                                                showsSync: showsSync)
         viewController.presenter = presenter
         interactor.delegate = presenter
         navigationController.viewControllers = [viewController]

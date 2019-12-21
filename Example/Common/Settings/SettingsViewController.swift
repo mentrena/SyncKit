@@ -11,7 +11,16 @@ import SyncKit
 
 class SettingsViewController: UITableViewController {
     
-    var privateSynchronizer: CloudKitSynchronizer!
+    weak var privateSynchronizer: CloudKitSynchronizer!
+    var settingsManager: SettingsManager!
+    
+    @IBOutlet weak var syncEnabledSwitch: UISwitch!
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        syncEnabledSwitch.isOn = settingsManager.isSyncEnabled
+    }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.row == 0 {
@@ -29,5 +38,9 @@ class SettingsViewController: UITableViewController {
                 }
             }
         }
+    }
+    
+    @IBAction func didChangeSyncEnabled() {
+        settingsManager.isSyncEnabled = syncEnabledSwitch.isOn
     }
 }

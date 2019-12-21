@@ -13,11 +13,11 @@ class RealmCompanyInteractor: CompanyInteractor {
     
     let realm: Realm
     weak var delegate: CompanyInteractorDelegate?
-    let shareController: ShareController
+    let shareController: ShareController?
     private var results: Results<QSCompany>!
     private var notificationToken: NotificationToken!
     
-    init(realm: Realm, shareController: ShareController) {
+    init(realm: Realm, shareController: ShareController?) {
         self.realm = realm
         self.shareController = shareController
     }
@@ -46,8 +46,25 @@ class RealmCompanyInteractor: CompanyInteractor {
             $0.identifier == company.identifier
         }) else { return }
         
+        delete(realmCompany: com)
+        
         try! realm.write {
             realm.delete(com)
+        }
+    }
+    
+    func delete(realmCompany: QSCompany) {
+        try! realm.write {
+            for emp in realmCompany.employees {
+                realm.delete(emp)
+            }
+            realm.delete(realmCompany)
+        }
+    }
+    
+    func deleteAll() {
+        for object in results {
+            delete(realmCompany: object)
         }
     }
     
@@ -65,7 +82,7 @@ class RealmCompanyInteractor: CompanyInteractor {
         let translatedCompanies = companies?.map {
             Company(name: $0.name,
                     identifier: $0.identifier!,
-                    isSharing: self.shareController.isObjectShared(object: $0),
+                    isSharing: self.shareController?.isObjectShared(object: $0) ?? false,
                     isShared: false)
             } ?? []
         delegate?.didUpdateCompanies([translatedCompanies])
