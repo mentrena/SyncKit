@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.7.9
+### Changed
+- Fixes for record reupload, RealmSwift non-optional properties.
+- Sample project shows how to connect/disconnect SyncKit.
+
+## 0.7.2
+### Changed
+- Ported all code to Swift.
+- Updated sample project.
+
+## 0.6.6
+### Added
+- Support for database subscriptions.
+
+## 0.6.4
+### Changed
+- Fixes for sharing and UICloudSharingController.
+- Updated to Swift 4.2
+
+## 0.6.1
+### Changed
+- Requiring QSPrimaryKey for Core Data.
+
 ## 0.6.0
 
 ### Added
