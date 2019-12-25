@@ -16,13 +16,13 @@ class RealmCompanyWireframe: CompanyWireframe {
     let realm: RLMRealm
     let employeeWireframe: EmployeeWireframe
     let synchronizer: CloudKitSynchronizer?
-    let showsSync: Bool
-    init(navigationController: UINavigationController, realm: RLMRealm, employeeWireframe: EmployeeWireframe, synchronizer: CloudKitSynchronizer?, showsSync: Bool) {
+    let settingsManager: SettingsManager
+    init(navigationController: UINavigationController, realm: RLMRealm, employeeWireframe: EmployeeWireframe, synchronizer: CloudKitSynchronizer?, settingsManager: SettingsManager) {
         self.navigationController = navigationController
         self.realm = realm
         self.employeeWireframe = employeeWireframe
         self.synchronizer = synchronizer
-        self.showsSync = showsSync
+        self.settingsManager = settingsManager
     }
     
     func show() {
@@ -33,7 +33,7 @@ class RealmCompanyWireframe: CompanyWireframe {
                                                 wireframe: self,
                                                 synchronizer: synchronizer,
                                                 canEdit: true,
-                                                showsSync: showsSync)
+                                                settingsManager: settingsManager)
         viewController.presenter = presenter
         interactor.delegate = presenter
         navigationController.viewControllers = [viewController]

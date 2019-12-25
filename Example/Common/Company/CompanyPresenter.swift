@@ -25,9 +25,10 @@ class DefaultCompanyPresenter: NSObject, CompanyPresenter {
     let wireframe: CompanyWireframe
     let synchronizer: CloudKitSynchronizer?
     let canEdit: Bool
-    let showsSync: Bool
+    let settingsManager: SettingsManager
     var companies: [[Company]] = [] {
         didSet {
+            let showsSync = settingsManager.isSyncEnabled
             let companySections = companies.map {
                 CompanySection(companies: $0.map { company in
                     CompanyCellViewModel(name: company.name ?? "Nil name", isSharing: company.isSharing, isSharedWithMe: company.isShared, showShareStatus: showsSync, shareAction: { [weak self] in
@@ -40,19 +41,19 @@ class DefaultCompanyPresenter: NSObject, CompanyPresenter {
     }
     private var sharingCompany: Company?
     
-    init(view: CompanyView, interactor: CompanyInteractor, wireframe: CompanyWireframe, synchronizer: CloudKitSynchronizer?, canEdit: Bool, showsSync: Bool) {
+    init(view: CompanyView, interactor: CompanyInteractor, wireframe: CompanyWireframe, synchronizer: CloudKitSynchronizer?, canEdit: Bool, settingsManager: SettingsManager) {
         self.view = view
         self.interactor = interactor
         self.wireframe = wireframe
         self.synchronizer = synchronizer
         self.canEdit = canEdit
-        self.showsSync = showsSync
+        self.settingsManager = settingsManager
         super.init()
     }
     
     func viewDidLoad() {
         view?.canEdit = canEdit
-        view?.showsSync = showsSync
+        view?.showsSync = settingsManager.isSyncEnabled
         interactor.load()
     }
     
@@ -152,7 +153,15 @@ extension DefaultCompanyPresenter {
     func handle(_ error: Error) {
         if let nserror = error as NSError?,
             nserror.code == CKError.changeTokenExpired.rawValue {
-                //handle
+            //handle
+            let alertController = UIAlertController(title: "Error",
+                                                    message: "The app hasn't synced in too long and the CloudKit token isn't valid. Data must be synced from scratch. Syncing will be disabled now, you can enable it again in Settings",
+                                                    preferredStyle: .alert)
+            alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_) in
+                // reset SyncKit
+                self.settingsManager.isSyncEnabled = false
+            }))
+            view?.present(alertController, animated: true, completion: nil)
         } else {
             let alertController = UIAlertController(title: "Error",
                                                     message: error.localizedDescription,

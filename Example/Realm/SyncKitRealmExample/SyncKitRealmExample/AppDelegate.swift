@@ -52,7 +52,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                                          realm: realm,
                                                          employeeWireframe: employeeWireframe,
                                                          synchronizer: synchronizer,
-                                                         showsSync: settingsManager.isSyncEnabled)
+                                                         settingsManager: settingsManager)
         companyWireframe.show()
     }
     
@@ -61,7 +61,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let sharedNavigationController: UINavigationController! = tabBarController.viewControllers?[1] as? UINavigationController
         let realmSharedWireframe = RealmSharedCompanyWireframe(navigationController: sharedNavigationController,
                                                                synchronizer: sharedSynchronizer,
-                                                               showsSync: settingsManager.isSyncEnabled)
+                                                               settingsManager: settingsManager)
         realmSharedWireframe.show()
     }
     

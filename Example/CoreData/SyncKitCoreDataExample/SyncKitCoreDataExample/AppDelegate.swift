@@ -45,7 +45,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                                          managedObjectContext: coreDataStack.managedObjectContext,
                                                          employeeWireframe: employeeWireframe,
                                                          synchronizer: synchronizer,
-                                                         showsSync: settingsManager.isSyncEnabled)
+                                                         settingsManager: settingsManager)
         coreDataWireframe.show()
     }
     
@@ -54,7 +54,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let sharedNavigationController: UINavigationController! = tabBarController.viewControllers?[1] as? UINavigationController
         let coreDataSharedWireframe = CoreDataSharedCompanyWireframe(navigationController: sharedNavigationController,
                                                                      synchronizer: sharedSynchronizer,
-                                                                     showsSync: settingsManager.isSyncEnabled)
+                                                                     settingsManager: settingsManager)
         coreDataSharedWireframe.show()
     }
     
@@ -114,7 +114,6 @@ extension AppDelegate: SettingsManagerDelegate {
             synchronizer = nil
             settingsViewController?.privateSynchronizer = nil
             loadPrivateModule()
-            
         } else {
             connectSyncKit()
         }

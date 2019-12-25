@@ -16,13 +16,13 @@ class CoreDataCompanyWireframe: CompanyWireframe {
     let managedObjectContext: NSManagedObjectContext
     let employeeWireframe: EmployeeWireframe
     let synchronizer: CloudKitSynchronizer?
-    let showsSync: Bool
-    init(navigationController: UINavigationController, managedObjectContext: NSManagedObjectContext, employeeWireframe: EmployeeWireframe, synchronizer: CloudKitSynchronizer?, showsSync: Bool) {
+    let settingsManager: SettingsManager
+    init(navigationController: UINavigationController, managedObjectContext: NSManagedObjectContext, employeeWireframe: EmployeeWireframe, synchronizer: CloudKitSynchronizer?, settingsManager: SettingsManager) {
         self.navigationController = navigationController
         self.managedObjectContext = managedObjectContext
         self.employeeWireframe = employeeWireframe
         self.synchronizer = synchronizer
-        self.showsSync = showsSync
+        self.settingsManager = settingsManager
     }
     
     func show() {
@@ -34,7 +34,7 @@ class CoreDataCompanyWireframe: CompanyWireframe {
                                                 wireframe: self,
                                                 synchronizer: synchronizer,
                                                 canEdit: true,
-                                                showsSync: showsSync)
+                                                settingsManager: settingsManager)
         viewController.presenter = presenter
         interactor.delegate = presenter
         navigationController.viewControllers = [viewController]
