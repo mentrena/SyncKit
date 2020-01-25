@@ -218,6 +218,7 @@ public class CloudKitSynchronizer: NSObject {
     @objc
     public func eraseLocalMetadata() {
 
+        cancelSynchronization()
         storedDatabaseToken = nil
         clearAllStoredSubscriptionIDs()
         deviceUUID = nil

@@ -11,7 +11,7 @@ import SyncKit
 
 class SettingsViewController: UITableViewController {
     
-    weak var privateSynchronizer: CloudKitSynchronizer!
+    weak var privateSynchronizer: CloudKitSynchronizer?
     var settingsManager: SettingsManager!
     
     @IBOutlet weak var syncEnabledSwitch: UISwitch!
@@ -24,7 +24,8 @@ class SettingsViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.row == 0 {
-            privateSynchronizer.deleteRecordZone(for: privateSynchronizer.modelAdapters.first!) { (error) in
+            guard let adapter = privateSynchronizer?.modelAdapters.first else { return }
+            privateSynchronizer?.deleteRecordZone(for: adapter) { (error) in
                 DispatchQueue.main.async {
                     let message: String
                     if error != nil {
