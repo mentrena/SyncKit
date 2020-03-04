@@ -847,7 +847,8 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
     
     public func saveChanges(in records: [CKRecord]) {
         
-        if records.count == 0 {
+        guard records.count != 0,
+            realmProvider != nil else {
             return
         }
         
@@ -893,7 +894,8 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
     
     public func deleteRecords(with recordIDs: [CKRecord.ID]) {
         
-        if recordIDs.count == 0 {
+        guard recordIDs.count != 0,
+            realmProvider != nil else {
             return
         }
         
@@ -934,6 +936,10 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
     }
     
     public func persistImportedChanges(completion: @escaping ((Error?) -> Void)) {
+        guard realmProvider != nil else {
+            completion(nil)
+            return
+        }
         
         executeOnMainQueue {
             
@@ -944,6 +950,8 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
     }
     
     public func recordsToUpload(limit: Int) -> [CKRecord] {
+        
+        guard realmProvider != nil else { return [] }
         
         var recordsArray = [CKRecord]()
         
@@ -964,6 +972,7 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
     }
     
     public func didUpload(savedRecords: [CKRecord]) {
+        guard realmProvider != nil else { return }
         
         executeOnMainQueue {
             
@@ -983,6 +992,7 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
     }
     
     public func recordIDsMarkedForDeletion(limit: Int) -> [CKRecord.ID] {
+        guard realmProvider != nil else { return [] }
         
         var recordIDs = [CKRecord.ID]()
         executeOnMainQueue {
@@ -1004,6 +1014,8 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
     
     public func didDelete(recordIDs deletedRecordIDs: [CKRecord.ID]) {
         
+        guard realmProvider != nil else { return }
+        
         executeOnMainQueue {
             
             self.realmProvider.persistenceRealm.beginWrite()
@@ -1019,6 +1031,8 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
     
     public func hasRecordID(_ recordID: CKRecord.ID) -> Bool {
         
+        guard realmProvider != nil else { return false }
+        
         var hasRecord = false
         executeOnMainQueue {
             let syncedEntity = self.realmProvider.persistenceRealm.object(ofType: SyncedEntity.self, forPrimaryKey: recordID.recordName)
@@ -1029,6 +1043,8 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
     
     public func didFinishImport(with error: Error?) {
     
+        guard realmProvider != nil else { return }
+        
         tempFileManager.clearTempFiles()
         
         executeOnMainQueue {
@@ -1038,7 +1054,8 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
     
     public func record(for object: AnyObject) -> CKRecord? {
         
-        guard let realmObject = object as? Object else {
+        guard realmProvider != nil,
+            let realmObject = object as? Object else {
             return nil
         }
         
@@ -1056,7 +1073,8 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
     
     public func share(for object: AnyObject) -> CKShare? {
         
-        guard let realmObject = object as? Object else {
+        guard realmProvider != nil,
+            let realmObject = object as? Object else {
             return nil
         }
         
@@ -1073,7 +1091,8 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
     
     public func save(share: CKShare, for object: AnyObject) {
     
-        guard let realmObject = object as? Object else {
+        guard realmProvider != nil,
+            let realmObject = object as? Object else {
             return
         }
         
@@ -1089,7 +1108,8 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
     
     public func deleteShare(for object: AnyObject) {
         
-        guard let realmObject = object as? Object else {
+        guard realmProvider != nil,
+            let realmObject = object as? Object else {
             return
         }
         
@@ -1134,6 +1154,8 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
     
     public var serverChangeToken: CKServerChangeToken? {
     
+        guard realmProvider != nil else { return nil }
+        
         var token: CKServerChangeToken?
         executeOnMainQueue {
             let serverToken = self.realmProvider.persistenceRealm.objects(ServerToken.self).first
@@ -1146,6 +1168,8 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
     
     public func saveToken(_ token: CKServerChangeToken?) {
     
+        guard realmProvider != nil else { return }
+        
         executeOnMainQueue {
             var serverToken: ServerToken! = self.realmProvider.persistenceRealm.objects(ServerToken.self).first
             
@@ -1167,7 +1191,8 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
     }
     
     public func recordsToUpdateParentRelationshipsForRoot(_ object: AnyObject) -> [CKRecord] {
-        guard let realmObject = object as? Object else {
+        guard realmProvider != nil,
+            let realmObject = object as? Object else {
             return []
         }
         
