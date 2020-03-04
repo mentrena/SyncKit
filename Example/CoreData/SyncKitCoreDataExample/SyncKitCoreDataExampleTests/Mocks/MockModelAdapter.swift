@@ -10,7 +10,7 @@ import Foundation
 import SyncKit
 import CloudKit
 
-class MockModelAdapter: ModelAdapter {
+class MockModelAdapter: NSObject, ModelAdapter {
     
     private var toUpload = [QSObject]()
     private var toDelete = [QSObject]()
@@ -128,9 +128,11 @@ class MockModelAdapter: ModelAdapter {
         self.token = token
     }
     
+    var deleteChangeTrackingCalledClosure: (() -> ())?
     var deleteChangeTrackingCalled = false
     func deleteChangeTracking() {
         deleteChangeTrackingCalled = true
+        deleteChangeTrackingCalledClosure?()
     }
     
     var mergePolicy: MergePolicy = .server

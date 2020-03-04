@@ -832,7 +832,8 @@ struct ObjectUpdate {
     
     public func saveChanges(in records: [CKRecord]) {
         
-        if records.count == 0 {
+        guard records.count != 0,
+            realmProvider != nil else {
             return
         }
         
@@ -878,7 +879,8 @@ struct ObjectUpdate {
     
     public func deleteRecords(with recordIDs: [CKRecord.ID]) {
         
-        if recordIDs.count == 0 {
+        guard recordIDs.count != 0,
+            realmProvider != nil else {
             return
         }
         
@@ -920,6 +922,11 @@ struct ObjectUpdate {
     
     public func persistImportedChanges(completion: @escaping ((Error?) -> Void)) {
         
+        guard realmProvider != nil else  {
+            completion(nil)
+            return
+        }
+        
         executeOnMainQueue {
             
             self.applyPendingRelationships(realmProvider: self.realmProvider)
@@ -929,6 +936,8 @@ struct ObjectUpdate {
     }
     
     public func recordsToUpload(limit: Int) -> [CKRecord] {
+        
+        guard realmProvider != nil else { return [] }
         
         var recordsArray = [CKRecord]()
         
@@ -950,6 +959,8 @@ struct ObjectUpdate {
     
     public func didUpload(savedRecords: [CKRecord]) {
         
+        guard realmProvider != nil else { return }
+        
         executeOnMainQueue {
             
             self.realmProvider.persistenceRealm.beginWriteTransaction()
@@ -968,6 +979,8 @@ struct ObjectUpdate {
     }
     
     public func recordIDsMarkedForDeletion(limit: Int) -> [CKRecord.ID] {
+        
+        guard realmProvider != nil else { return [] }
         
         var recordIDs = [CKRecord.ID]()
         executeOnMainQueue {
@@ -990,6 +1003,8 @@ struct ObjectUpdate {
     
     public func didDelete(recordIDs deletedRecordIDs: [CKRecord.ID]) {
         
+        guard realmProvider != nil else { return }
+        
         executeOnMainQueue {
             
             self.realmProvider.persistenceRealm.beginWriteTransaction()
@@ -1005,6 +1020,8 @@ struct ObjectUpdate {
     
     public func hasRecordID(_ recordID: CKRecord.ID) -> Bool {
         
+        guard realmProvider != nil else { return false }
+        
         var hasRecord = false
         executeOnMainQueue {
             let syncedEntity = SyncedEntity.object(in: realmProvider.persistenceRealm, forPrimaryKey: recordID.recordName)
@@ -1015,6 +1032,8 @@ struct ObjectUpdate {
     
     public func didFinishImport(with error: Error?) {
     
+        guard realmProvider != nil else { return }
+        
         tempFileManager.clearTempFiles()
         
         executeOnMainQueue {
@@ -1024,7 +1043,8 @@ struct ObjectUpdate {
     
     public func record(for object: AnyObject) -> CKRecord? {
         
-        guard let realmObject = object as? RLMObject else {
+        guard realmProvider != nil,
+            let realmObject = object as? RLMObject else {
             return nil
         }
         
@@ -1042,7 +1062,8 @@ struct ObjectUpdate {
     
     public func share(for object: AnyObject) -> CKShare? {
         
-        guard let realmObject = object as? RLMObject else {
+        guard realmProvider != nil,
+            let realmObject = object as? RLMObject else {
             return nil
         }
         
@@ -1059,7 +1080,8 @@ struct ObjectUpdate {
     
     public func save(share: CKShare, for object: AnyObject) {
     
-        guard let realmObject = object as? RLMObject else {
+        guard realmProvider != nil,
+            let realmObject = object as? RLMObject else {
             return
         }
         
@@ -1075,7 +1097,8 @@ struct ObjectUpdate {
     
     public func deleteShare(for object: AnyObject) {
         
-        guard let realmObject = object as? RLMObject else {
+        guard realmProvider != nil,
+            let realmObject = object as? RLMObject else {
             return
         }
         
@@ -1120,6 +1143,8 @@ struct ObjectUpdate {
     
     public var serverChangeToken: CKServerChangeToken? {
     
+        guard realmProvider != nil else { return nil }
+        
         var token: CKServerChangeToken?
         executeOnMainQueue {
             let serverToken = ServerToken.allObjects(in: realmProvider.persistenceRealm).firstObject() as? ServerToken
@@ -1132,6 +1157,8 @@ struct ObjectUpdate {
     
     public func saveToken(_ token: CKServerChangeToken?) {
     
+        guard realmProvider != nil else { return }
+        
         executeOnMainQueue {
             var serverToken: ServerToken! = ServerToken.allObjects(in: realmProvider.persistenceRealm).firstObject() as? ServerToken
             
@@ -1153,7 +1180,8 @@ struct ObjectUpdate {
     }
     
     public func recordsToUpdateParentRelationshipsForRoot(_ object: AnyObject) -> [CKRecord] {
-        guard let realmObject = object as? RLMObject else {
+        guard realmProvider != nil,
+            let realmObject = object as? RLMObject else {
             return []
         }
         

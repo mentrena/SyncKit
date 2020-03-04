@@ -22,7 +22,8 @@ extension CoreDataAdapter: ModelAdapter {
     }
     
     public func saveChanges(in records: [CKRecord]) {
-        guard records.count > 0 else { return }
+        guard records.count > 0,
+            privateContext != nil else { return }
         
         privateContext.perform {
             debugPrint("Save changes in records")
@@ -100,7 +101,8 @@ extension CoreDataAdapter: ModelAdapter {
     }
     
     public func deleteRecords(with recordIDs: [CKRecord.ID]) {
-        guard recordIDs.count > 0 else { return }
+        guard recordIDs.count > 0,
+        privateContext != nil else { return }
         
         privateContext.perform {
             let entities = recordIDs.compactMap { self.syncedEntity(withIdentifier: $0.recordName) }
@@ -109,6 +111,11 @@ extension CoreDataAdapter: ModelAdapter {
     }
     
     public func persistImportedChanges(completion: @escaping (Error?)->()) {
+        guard privateContext != nil else {
+            completion(nil)
+            return
+        }
+        
         privateContext.perform {
             self.applyPendingRelationships()
             self.mergeChangesIntoTargetContext(completion: { (error) in
@@ -123,6 +130,7 @@ extension CoreDataAdapter: ModelAdapter {
     }
     
     public func recordsToUpload(limit: Int) -> [CKRecord] {
+        guard privateContext != nil else { return [] }
         var uploadingState = SyncedEntityState.new
         var recordsArray = [CKRecord]()
         let limit = limit == 0 ? Int.max : limit
@@ -136,7 +144,9 @@ extension CoreDataAdapter: ModelAdapter {
     }
     
     public func didUpload(savedRecords: [CKRecord]) {
-        guard savedRecords.count > 0 else { return }
+        guard savedRecords.count > 0,
+            privateContext != nil else { return }
+        
         privateContext.perform {
             for record in savedRecords {
                 if let entity = self.syncedEntity(withIdentifier: record.recordID.recordName) {
@@ -152,6 +162,8 @@ extension CoreDataAdapter: ModelAdapter {
     }
     
     public func recordIDsMarkedForDeletion(limit: Int) -> [CKRecord.ID] {
+        guard privateContext != nil else { return [] }
+        
         var recordIDs = [CKRecord.ID]()
         privateContext.performAndWait {
             let deletedEntities = self.fetchEntities(state: .deleted)
@@ -171,7 +183,9 @@ extension CoreDataAdapter: ModelAdapter {
     }
     
     public func didDelete(recordIDs: [CKRecord.ID]) {
-        guard recordIDs.count > 0 else { return }
+        guard recordIDs.count > 0,
+            privateContext != nil else { return }
+        
         privateContext.perform {
             for recordID in recordIDs {
                 if let entity = self.syncedEntity(withIdentifier: recordID.recordName) {
@@ -183,6 +197,8 @@ extension CoreDataAdapter: ModelAdapter {
     }
     
     public func hasRecordID(_ recordID: CKRecord.ID) -> Bool {
+        guard privateContext != nil else { return false }
+        
         var hasEntity = false
         privateContext.performAndWait {
             if self.syncedEntity(withIdentifier: recordID.recordName) != nil {
@@ -193,6 +209,8 @@ extension CoreDataAdapter: ModelAdapter {
     }
     
     public func didFinishImport(with error: Error?) {
+        guard privateContext != nil else { return }
+        
         privateContext.performAndWait {
             self.savePrivateContext()
             self.updateHasChanges()
@@ -203,6 +221,8 @@ extension CoreDataAdapter: ModelAdapter {
     }
     
     public var serverChangeToken: CKServerChangeToken? {
+        guard privateContext != nil else { return nil }
+        
         var token: CKServerChangeToken?
         privateContext.performAndWait {
             if let qsToken = try? self.privateContext.executeFetchRequest(entityName: "QSServerToken",
@@ -215,6 +235,8 @@ extension CoreDataAdapter: ModelAdapter {
     }
     
     public func saveToken(_ token: CKServerChangeToken?) {
+        guard privateContext != nil else { return }
+        
         privateContext.performAndWait {
             var qsToken: QSServerToken! = try? self.privateContext.executeFetchRequest(entityName: "QSServerToken",
                                                                                        fetchLimit: 1).first as? QSServerToken
@@ -235,10 +257,12 @@ extension CoreDataAdapter: ModelAdapter {
         stack.deleteStore()
         privateContext = nil
         clearImportContext()
+        tempFileManager.clearTempFiles()
     }
     
     public func record(for object: AnyObject) -> CKRecord? {
-        guard let object = object as? IdentifiableManagedObject else { return nil }
+        guard let object = object as? IdentifiableManagedObject,
+            privateContext != nil else { return nil }
         let objectIdentifier = threadSafePrimaryKeyValue(for: object)
         var record: CKRecord?
         privateContext.performAndWait {
@@ -252,7 +276,8 @@ extension CoreDataAdapter: ModelAdapter {
     
     @available(iOS 10.0, OSX 10.12, *)
     public func share(for object: AnyObject) -> CKShare? {
-        guard let object = object as? IdentifiableManagedObject else { return nil }
+        guard let object = object as? IdentifiableManagedObject,
+            privateContext != nil else { return nil }
         let objectIdentifier = threadSafePrimaryKeyValue(for: object)
         var record: CKShare?
         privateContext.performAndWait {
@@ -265,7 +290,8 @@ extension CoreDataAdapter: ModelAdapter {
     
     @available(iOS 10.0, OSX 10.12, *)
     public func save(share: CKShare, for object: AnyObject) {
-        guard let object = object as? IdentifiableManagedObject else { return }
+        guard let object = object as? IdentifiableManagedObject,
+            privateContext != nil else { return }
         let objectIdentifier = threadSafePrimaryKeyValue(for: object)
         privateContext.performAndWait {
             if let entity = syncedEntity(withOriginIdentifier: objectIdentifier) {
@@ -277,7 +303,8 @@ extension CoreDataAdapter: ModelAdapter {
     
     @available(iOS 10.0, OSX 10.12, *)
     public func deleteShare(for object: AnyObject) {
-        guard let object = object as? IdentifiableManagedObject else { return }
+        guard let object = object as? IdentifiableManagedObject,
+            privateContext != nil else { return }
         let objectIdentifier = threadSafePrimaryKeyValue(for: object)
         privateContext.performAndWait {
             if let share = syncedEntity(withOriginIdentifier: objectIdentifier)?.share {
@@ -291,7 +318,8 @@ extension CoreDataAdapter: ModelAdapter {
     }
     
     public func recordsToUpdateParentRelationshipsForRoot(_ object: AnyObject) -> [CKRecord] {
-        guard let object = object as? IdentifiableManagedObject else { return [] }
+        guard let object = object as? IdentifiableManagedObject,
+            privateContext != nil else { return [] }
         let objectIdentifier = threadSafePrimaryKeyValue(for: object)
         var records: [CKRecord]!
         privateContext.performAndWait {
