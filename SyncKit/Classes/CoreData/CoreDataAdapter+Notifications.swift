@@ -31,9 +31,7 @@ extension CoreDataAdapter {
                 }
             }
             
-            var deletedIDs = [String]()
-            
-            targetContext.deletedObjects.forEach {
+            let deletedIDs: [String] = targetContext.deletedObjects.compactMap {
                 if self.uniqueIdentifier(for: $0) == nil,
                     let entityName = $0.entity.name {
                     // Properties become nil when objects are deleted as a result of using an undo manager
@@ -41,9 +39,9 @@ extension CoreDataAdapter {
                     // entity for deletion
                     let identifierFieldName = self.identifierFieldName(forEntity: entityName)
                     let committedValues = $0.committedValues(forKeys: [identifierFieldName])
-                    if let identifier = committedValues[identifierFieldName] as? String {
-                        deletedIDs.append(identifier)
-                    }
+                    return committedValues[identifierFieldName] as? String
+                } else {
+                    return uniqueIdentifier(for: $0)
                 }
             }
             
@@ -56,6 +54,8 @@ extension CoreDataAdapter {
                         changedKeys.insert(key)
                     }
                     entity.changedKeysArray = Array(changedKeys)
+                    entity.entityState = .changed
+                    entity.updatedDate = NSDate()
                 }
                 
                 deletedIDs.forEach { (identifier) in
@@ -64,9 +64,8 @@ extension CoreDataAdapter {
                     entity.updatedDate = NSDate()
                 }
                 
-                if !deletedIDs.isEmpty {
-                    debugPrint("QSCloudKitSynchronizer >> Will Save >> Tracking %ld deletions", deletedIDs.count)
-                }
+                debugPrint("QSCloudKitSynchronizer >> Will Save >> Tracking %ld updates", updated.count)
+                debugPrint("QSCloudKitSynchronizer >> Will Save >> Tracking %ld deletions", deletedIDs.count)
                 
                 self.savePrivateContext()
             }
@@ -88,10 +87,10 @@ extension CoreDataAdapter {
                 }
             }
             
-            let updatedIDs = updated?.compactMap { uniqueIdentifier(for: $0) } ?? []
-            let deletedIDs = deleted?.compactMap { uniqueIdentifier(for: $0) } ?? []
+            let updatedCount = updated?.count ?? 0
+            let deletedCount = deleted?.count ?? 0
             
-            let willHaveChanges = !insertedIdentifiersAndEntityNames.isEmpty || !updatedIDs.isEmpty || !deletedIDs.isEmpty
+            let willHaveChanges = !insertedIdentifiersAndEntityNames.isEmpty || updatedCount > 0 || deletedCount > 0
             
             privateContext.perform {
                 insertedIdentifiersAndEntityNames.forEach({ (identifier, entityName) in
@@ -101,23 +100,7 @@ extension CoreDataAdapter {
                     }
                 })
                 
-                updatedIDs.forEach({ (identifier) in
-                    guard let entity = self.syncedEntity(withOriginIdentifier: identifier) else { return }
-                    if entity.entityState == .synced && !entity.changedKeysArray.isEmpty {
-                        entity.entityState = .changed
-                    }
-                    entity.updatedDate = NSDate()
-                })
-                
-                deletedIDs.forEach { (identifier) in
-                    guard let entity = self.syncedEntity(withOriginIdentifier: identifier) else { return }
-                    entity.entityState = .deleted
-                    entity.updatedDate = NSDate()
-                }
-                
                 debugPrint("QSCloudKitSynchronizer >> Did Save >> Tracking %ld insertions", inserted?.count ?? 0)
-                debugPrint("QSCloudKitSynchronizer >> Did Save >> Tracking %ld updates", updated?.count ?? 0)
-                debugPrint("QSCloudKitSynchronizer >> Did Save >> Tracking %ld deletions", deleted?.count ?? 0)
                 
                 self.savePrivateContext()
                 

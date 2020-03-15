@@ -150,7 +150,7 @@ extension CoreDataAdapter: ModelAdapter {
         privateContext.perform {
             for record in savedRecords {
                 if let entity = self.syncedEntity(withIdentifier: record.recordID.recordName) {
-                    if record[CoreDataAdapter.timestampKey] == entity.updatedDate {
+                    if record[CoreDataAdapter.timestampKey] == entity.updatedDate && entity.entityState != .deleted {
                         entity.entityState = .synced
                         entity.changedKeysArray = []
                     }
