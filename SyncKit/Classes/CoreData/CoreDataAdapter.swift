@@ -124,7 +124,9 @@ import CloudKit
     public var hasChanges = false
     var isMergingImportedChanges = false
     var entityPrimaryKeys = [String: String]()
-    var tempFileManager = TempFileManager()
+    lazy var tempFileManager: TempFileManager = {
+        TempFileManager(identifier: "\(self.recordZoneID.ownerName).\(self.recordZoneID.zoneName)")
+    }()
     var childrenRelationships = [String: [ChildRelationship]]()
     public static let timestampKey = "QSCloudKitTimestampKey"
     
