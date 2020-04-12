@@ -54,7 +54,9 @@ extension CoreDataAdapter {
                         changedKeys.insert(key)
                     }
                     entity.changedKeysArray = Array(changedKeys)
-                    entity.entityState = .changed
+                    if entity.entityState == .synced && !entity.changedKeysArray.isEmpty {
+                        entity.entityState = .changed
+                    }
                     entity.updatedDate = NSDate()
                 }
                 
