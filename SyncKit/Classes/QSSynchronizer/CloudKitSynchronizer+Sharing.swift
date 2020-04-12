@@ -67,11 +67,19 @@ import CloudKit
      */
     @objc func share(object: AnyObject, publicPermission: CKShare.Participant.Permission, participants: [CKShare.Participant], completion: ((CKShare?, Error?) -> ())?) {
         
+        guard !syncing else {
+            completion?(nil, CloudKitSynchronizer.SyncError.alreadySyncing)
+            return
+        }
+        
         guard let modelAdapter = modelAdapter(for: object),
             let record = modelAdapter.record(for: object) else {
                 completion?(nil, CloudKitSynchronizer.SyncError.recordNotFound)
                 return
         }
+        
+        syncing = true
+        
         let share = CKShare(rootRecord: record)
         share.publicPermission = publicPermission
         for participant in participants {
@@ -105,6 +113,7 @@ import CloudKit
                             modelAdapter.didFinishImport(with: error)
                             
                             DispatchQueue.main.async {
+                                self.syncing = false
                                 completion?(uploadedShare, error)
                             }
                         }
@@ -113,6 +122,7 @@ import CloudKit
                 } else {
                     
                     DispatchQueue.main.async {
+                        self.syncing = false
                         completion?(uploadedShare, operationError)
                     }
                 }
@@ -130,12 +140,19 @@ import CloudKit
      */
     @objc func removeShare(for object: AnyObject, completion: ((Error?) -> ())?) {
         
+        guard !syncing else {
+            completion?(CloudKitSynchronizer.SyncError.alreadySyncing)
+            return
+        }
+        
         guard let modelAdapter = modelAdapter(for: object),
             let share = modelAdapter.share(for: object),
             let record = modelAdapter.record(for: object) else {
                 completion?(nil)
                 return
         }
+        
+        syncing = true
         
         let operation = CKModifyRecordsOperation(recordsToSave: [record], recordIDsToDelete: [share.recordID])
         operation.modifyRecordsCompletionBlock = { savedRecords, deletedRecordIDs, operationError in
@@ -156,6 +173,7 @@ import CloudKit
                             modelAdapter.didFinishImport(with: error)
                             
                             DispatchQueue.main.async {
+                                self.syncing = false
                                 completion?(error)
                             }
                         }
@@ -164,6 +182,7 @@ import CloudKit
                 } else {
                     
                     DispatchQueue.main.async {
+                        self.syncing = false
                         completion?(operationError)
                     }
                 }
@@ -181,6 +200,11 @@ import CloudKit
      */
     @objc func reuploadRecordsForChildrenOf(root: AnyObject, completion: @escaping ((Error?) -> ())) {
         
+        guard !syncing else {
+            completion(CloudKitSynchronizer.SyncError.alreadySyncing)
+            return
+        }
+        
         guard let modelAdapter = modelAdapter(for: root) else {
             completion(nil)
             return
@@ -193,8 +217,17 @@ import CloudKit
                 return
         }
         
+        syncing = true
+        
         let chunks = stride(from: 0, to: records.count, by: batchSize).map {
             Array(records[$0..<Swift.min($0 + batchSize, records.count)])
+        }
+        
+        let finalBlock: ((Error?) -> ()) = { error in
+            DispatchQueue.main.async {
+                self.syncing = false
+                completion(error)
+            }
         }
         
         sequential(objects: chunks,
@@ -211,7 +244,6 @@ import CloudKit
                             if self.isLimitExceededError(error as NSError) {
                                 self.batchSize = self.batchSize / 2
                             }
-                            completion(error)
                         }
                         
                         uploadCompletion(operationError)
@@ -219,6 +251,6 @@ import CloudKit
                     self.currentOperation = operation
                     self.database.add(operation)
         },
-                   final: completion)
+                   final: finalBlock)
     }
 }
