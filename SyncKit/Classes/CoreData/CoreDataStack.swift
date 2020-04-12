@@ -40,13 +40,11 @@ import CoreData
         managedObjectContext.performAndWait {
             self.managedObjectContext.reset()
         }
-        
-        try? persistentStoreCoordinator.remove(store)
+        if let storeURL = storeURL {
+            try? persistentStoreCoordinator.destroyPersistentStore(at: storeURL, ofType: storeType, options: nil)
+        }
         managedObjectContext = nil
         store = nil
-        if let url = storeURL {
-            try? FileManager.default.removeItem(at: url)
-        }
     }
     
     private func ensureStoreDirectoryExists() {
