@@ -8,9 +8,8 @@
 import Foundation
 import CloudKit
 
+@available(iOS 10.0, macOS 10.12, watchOS 6.0, *)
 @objc public extension CloudKitSynchronizer {
-    
-    #if os(iOS) || os(OSX)
     
     /**
      *  Returns identifier for a registered `CKSubscription` to track changes.
@@ -207,6 +206,4 @@ import CloudKit
             completion?(error)
         }
     }
-    
-    #endif
 }
