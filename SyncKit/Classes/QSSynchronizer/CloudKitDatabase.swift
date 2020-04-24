@@ -51,17 +51,18 @@ import CloudKit
         return database.databaseScope
     }
     
-    #if os(iOS) || os(OSX)
+    @available(iOS 10.0, macOS 10.12, watchOS 6.0, *)
     public func fetchAllSubscriptions(completionHandler: @escaping ([CKSubscription]?, Error?) -> Void) {
         database.fetchAllSubscriptions(completionHandler: completionHandler)
     }
     
+    @available(iOS 10.0, macOS 10.12, watchOS 6.0, *)
     public func save(subscription: CKSubscription, completionHandler: @escaping (CKSubscription?, Error?) -> Void) {
         database.save(subscription, completionHandler: completionHandler)
     }
     
+    @available(iOS 10.0, macOS 10.12, watchOS 6.0, *)
     public func delete(withSubscriptionID subscriptionID: CKSubscription.ID, completionHandler: @escaping (String?, Error?) -> Void) {
         database.delete(withSubscriptionID: subscriptionID, completionHandler: completionHandler)
     }
-    #endif
 }
