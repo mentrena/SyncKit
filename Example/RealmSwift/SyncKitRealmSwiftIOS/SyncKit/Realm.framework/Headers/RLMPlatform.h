@@ -16,7 +16,30 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-#if !TARGET_OS_IPHONE
-#error Attempting to use Realm's iOS framework in an OSX project.
+#ifdef REALM_BUILDING_FOR_MACOS
+#if !__is_target_os(macosx)
+#error Attempting to use Realm's macOS framework in a non-macOS target.
+#endif
 #endif
 
+#ifdef REALM_BUILDING_FOR_MACCATALYST
+#if !__is_target_os(ios) || !__is_target_environment(macabi)
+#error Attempting to use Realm's Catalyst framework in a non-Catalyst target.
+#endif
+#endif
+
+#if !__is_target_os(ios) || __is_target_environment(macabi)
+#error Attempting to use Realm's iOS framework in a non-iOS target.
+#endif
+
+#ifdef REALM_BUILDING_FOR_TVOS
+#if !__is_target_os(tvos)
+#error Attempting to use Realm's tvOS framework in a non-tvOS target.
+#endif
+#endif
+
+#ifdef REALM_BUILDING_FOR_WATCHOS
+#if !__is_target_os(watchos)
+#error Attempting to use Realm's watchOS framework in a non-watchOS target.
+#endif
+#endif
