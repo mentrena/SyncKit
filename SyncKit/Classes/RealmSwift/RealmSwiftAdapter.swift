@@ -1004,7 +1004,7 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
             
             for syncedEntity in deletedEntities {
                 
-                if recordIDs.count > limit {
+                if recordIDs.count >= limit {
                     break
                 }
                 recordIDs.append(CKRecord.ID(recordName: syncedEntity.identifier, zoneID: zoneID))
