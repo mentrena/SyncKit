@@ -408,6 +408,7 @@ extension CloudKitSynchronizer {
         
         let recordIDs = adapter.recordIDsMarkedForDeletion(limit: batchSize)
         let recordCount = recordIDs.count
+        let requestedBatchSize = batchSize
         
         guard recordCount > 0 else {
             completion(nil)
@@ -419,17 +420,24 @@ extension CloudKitSynchronizer {
             self.dispatchQueue.async {
                 debugPrint("QSCloudKitSynchronizer >> Deleted \(recordCount) records")
                 
-                if let error = operationError,
-                    self.isLimitExceededError(error as NSError) {
-                        
-                    self.batchSize = self.batchSize / 2
-                } else if self.batchSize < CloudKitSynchronizer.defaultBatchSize {
-                    self.batchSize = self.batchSize + 5
+                if let error = operationError {
+                    if self.isLimitExceededError(error as NSError) {
+                        self.batchSize = self.batchSize / 2
+                    }
+                    completion(error)
+                } else {
+                    if self.batchSize < CloudKitSynchronizer.defaultBatchSize {
+                        self.batchSize = self.batchSize + 5
+                    }
+                    
+                    adapter.didDelete(recordIDs: deletedRecordIDs ?? [])
+                    
+                    if recordCount >= requestedBatchSize {
+                        self.uploadDeletions(adapter: adapter, completion: completion)
+                    } else {
+                        completion(nil)
+                    }
                 }
-                
-                adapter.didDelete(recordIDs: deletedRecordIDs ?? [])
-                
-                completion(operationError)
             }
         }
         
