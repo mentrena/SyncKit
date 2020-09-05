@@ -174,7 +174,7 @@ extension CoreDataAdapter: ModelAdapter {
                 } else {
                     self.privateContext.delete(entity)
                 }
-                if recordIDs.count > limit {
+                if recordIDs.count >= limit {
                     break
                 }
             }

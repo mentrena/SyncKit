@@ -991,7 +991,7 @@ struct ObjectUpdate {
             let deletedEntities = SyncedEntity.objects(in: realmProvider.persistenceRealm, with: predicate)
             
             for object in deletedEntities {
-                if recordIDs.count > limit {
+                if recordIDs.count >= limit {
                     break
                 }
                 
