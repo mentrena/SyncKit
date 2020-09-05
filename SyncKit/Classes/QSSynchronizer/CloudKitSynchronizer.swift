@@ -118,7 +118,7 @@ public class CloudKitSynchronizer: NSObject {
     internal var completion: ((Error?) -> ())?
     internal weak var currentOperation: Operation?
     
-    internal static let defaultBatchSize = 200
+    @objc public static var defaultBatchSize = 200
     static let deviceUUIDKey = "QSCloudKitDeviceUUIDKey"
     static let modelCompatibilityVersionKey = "QSCloudKitModelCompatibilityVersionKey"
     

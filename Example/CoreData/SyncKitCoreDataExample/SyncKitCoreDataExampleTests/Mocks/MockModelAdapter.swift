@@ -65,6 +65,9 @@ class MockModelAdapter: NSObject, ModelAdapter {
         if let index = objects.firstIndex(where: { $0.identifier == recordID.recordName }) {
             objects.remove(at: index)
         }
+        if let index = toDelete.firstIndex(where: { $0.identifier == recordID.recordName }) {
+            toDelete.remove(at: index)
+        }
     }
     
     var persistImportedChangesCalled = false

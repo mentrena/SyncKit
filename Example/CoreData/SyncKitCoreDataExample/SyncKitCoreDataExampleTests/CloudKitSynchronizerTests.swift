@@ -266,7 +266,10 @@ class CloudKitSynchronizerTests: XCTestCase {
     func testSynchronize_moreThanBatchSizeItems_performsMultipleUploads() {
         let expectation = self.expectation(description: "sync finished")
         
-        let objects = objectArray(range: 0...(synchronizer.batchSize + 10))
+        CloudKitSynchronizer.defaultBatchSize = 5
+        synchronizer.batchSize = 5
+        
+        let objects = objectArray(range: 0...(2 * synchronizer.batchSize - 1))
         mockAdapter.objects = objects
         mockAdapter.markForUpload(objects)
         
@@ -282,6 +285,29 @@ class CloudKitSynchronizerTests: XCTestCase {
         waitForExpectations(timeout: 1, handler: nil)
         
         XCTAssertEqual(operationCount, 2)
+    }
+    
+    func testSynchronize_moreThanBatchSizeItemsToDelete_performsMultipleDeleteOperations() {
+        let expectation = self.expectation(description: "sync finished")
+        CloudKitSynchronizer.defaultBatchSize = 5
+        synchronizer.batchSize = 5
+        
+        let objects = objectArray(range: 0...(3 * synchronizer.batchSize - 1))
+        mockAdapter.objects = objects
+        mockAdapter.markForDeletion(objects)
+        
+        var operationCount = 0
+        mockDatabase.modifyRecordsOperationEnqueuedBlock = { _ in
+            operationCount = operationCount + 1
+        }
+        
+        synchronizer.synchronize { (_) in
+            expectation.fulfill()
+        }
+        
+        waitForExpectations(timeout: 1, handler: nil)
+        
+        XCTAssertEqual(operationCount, 3)
     }
     
     func testSynchronize_storesServerTokenAfterFetch() {
