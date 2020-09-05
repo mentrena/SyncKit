@@ -24,9 +24,6 @@ extension CloudKitSynchronizer {
     }
     
     func finishSynchronization(error: Error?) {
-        syncing = false
-        cancelSync = false
-        
         resetActiveTokens()
         
         for adapter in modelAdapters {
@@ -40,6 +37,8 @@ extension CloudKitSynchronizer {
         }
         
         DispatchQueue.main.async {
+            self.syncing = false
+            self.cancelSync = false
             self.completion?(error)
             self.completion = nil
             
