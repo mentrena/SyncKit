@@ -41,7 +41,7 @@ extension CoreDataAdapter {
     func deleteInsertedButUnmergedEntities() {
         let pendingEntities = fetchEntities(state: .inserted)
         pendingEntities.forEach {
-            $0.entityState = .synced
+            self.privateContext.delete($0)
         }
     }
     
