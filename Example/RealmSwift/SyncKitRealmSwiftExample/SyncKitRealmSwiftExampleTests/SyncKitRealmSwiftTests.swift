@@ -1280,4 +1280,58 @@ class SyncKitRealmSwiftTests: XCTestCase, RealmSwiftAdapterDelegate {
         XCTAssertTrue(adapterToken == token);
         XCTAssertNil(UserDefaults.standard.object(forKey: "containerQSCloudKitFetchChangesServerTokenKey"))
     }
+    
+    // MARK: - Object created in more than one device
+    
+    func testSync_sameObjectCreatedTwice_allowsObjectUpdate() {
+        let realm = realmWith(identifier: "t80")
+        insertCompany(values: ["identifier": "1", "name": "company1", "sortIndex": 1], realm: realm)
+        let adapter = realmAdapter(targetConfiguration: realm.configuration, persistenceConfiguration: persistenceConfigurationWith(identifier: "p80"))
+        
+        let realm2 = realmWith(identifier: "t80-2")
+        let company2 = insertCompany(values: ["identifier": "1", "name": "company1Too", "sortIndex": 1], realm: realm2)
+        let adapter2 = realmAdapter(targetConfiguration: realm2.configuration, persistenceConfiguration: persistenceConfigurationWith(identifier: "p80-2"))
+        
+        let exp = expectation(description: "synced")
+        
+        fullySync(adapter: adapter) { (uploaded, _, _) in
+            self.fullySync(adapter: adapter2, downloaded: uploaded, deleted: [], completion: { (_, _, _) in
+                exp.fulfill()
+            })
+        }
+        
+        waitForExpectations(timeout: 1, handler: nil)
+        
+        XCTAssertTrue(company2.name == "company1")
+    }
+    
+    func testSync_objectCreatedForExistingRecord_usesDownloadedRecordForUpdate() {
+        
+        // Load saved record
+        let data = try! Data(contentsOf: Bundle(for: SyncKitRealmSwiftTests.self).url(forResource: "QSCompany.1739C6A5-C07E-48A5-B83E-AB07694F23DF", withExtension: "")!)
+        let unarchiver = NSKeyedUnarchiver(forReadingWith: data)
+        let record = CKRecord(coder: unarchiver)
+        unarchiver.finishDecoding()
+        
+        guard record != nil else { XCTFail("Could not load record"); return}
+        
+        // Create new realm with object with same ID as record
+        let realm = realmWith(identifier: "t81")
+        insertCompany(values: ["identifier": "1739C6A5-C07E-48A5-B83E-AB07694F23DF", "name": "company1Too", "sortIndex": 1], realm: realm)
+        let adapter = realmAdapter(targetConfiguration: realm.configuration, persistenceConfiguration: persistenceConfigurationWith(identifier: "p80"))
+        
+        let exp = expectation(description: "synced")
+        var uploadedRecord: CKRecord?
+        
+        self.fullySync(adapter: adapter, downloaded: [record!], deleted: [], completion: { (uploaded, _, _) in
+            uploadedRecord = uploaded.first
+            exp.fulfill()
+        })
+        
+        waitForExpectations(timeout: 1, handler: nil)
+        
+        XCTAssertNotNil(uploadedRecord)
+        XCTAssertEqual(uploadedRecord?.recordChangeTag, record!.recordChangeTag)
+    
+    }
 }
