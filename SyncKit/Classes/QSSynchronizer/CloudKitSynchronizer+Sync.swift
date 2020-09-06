@@ -14,6 +14,7 @@ extension CloudKitSynchronizer {
         dispatchQueue.async {
             self.postNotification(.SynchronizerWillSynchronize)
             self.serverChangeToken = self.storedDatabaseToken
+            self.uploadRetries = 0
             
             self.modelAdapters.forEach {
                 $0.prepareToImport()
@@ -25,6 +26,8 @@ extension CloudKitSynchronizer {
     
     func finishSynchronization(error: Error?) {
         resetActiveTokens()
+        
+        self.uploadRetries = 0
         
         for adapter in modelAdapters {
             adapter.didFinishImport(with: error)
@@ -97,6 +100,14 @@ extension CloudKitSynchronizer {
     
     func resetActiveTokens() {
         activeZoneTokens = [CKRecordZone.ID: CKServerChangeToken]()
+    }
+    
+    func shouldRetryUpload(for error: NSError) -> Bool {
+        if isServerRecordChangedError(error) || isLimitExceededError(error) {
+            return uploadRetries < 2
+        } else {
+            return false
+        }
     }
     
     func isServerRecordChangedError(_ error: NSError) -> Bool {
@@ -304,12 +315,14 @@ extension CloudKitSynchronizer {
         
         uploadChanges() { (error) in
             if let error = error {
-                if self.isServerRecordChangedError(error as NSError) {
+                if self.shouldRetryUpload(for: error as NSError) {
+                    self.uploadRetries += 1
                     self.fetchChanges()
                 } else {
                     self.finishSynchronization(error: error)
                 }
             } else {
+                self.increaseBatchSize()
                 self.updateTokens()
             }
         }
@@ -371,26 +384,21 @@ extension CloudKitSynchronizer {
         //Add metadata: device UUID and model version
         addMetadata(to: records)
         
-        let modifyRecordsOperation = CKModifyRecordsOperation(recordsToSave: records, recordIDsToDelete: nil)
-        
-        modifyRecordsOperation.modifyRecordsCompletionBlock = { savedRecords, deletedRecordIDs, operationError in
-            
+        let modifyRecordsOperation = ModifyRecordsOperation(database: database,
+                                               records: records,
+                                               recordIDsToDelete: nil)
+        { (savedRecords, deleted, conflicted, operationError) in
             self.dispatchQueue.async {
+                
+                debugPrint("QSCloudKitSynchronizer >> Uploaded \(savedRecords?.count ?? 0) records")
+                adapter.didUpload(savedRecords: savedRecords ?? [])
                 
                 if let error = operationError {
                     if self.isLimitExceededError(error as NSError) {
-                        self.batchSize = self.batchSize / 2
+                        self.reduceBatchSize()
                     }
                     completion(error)
                 } else {
-                    if self.batchSize < CloudKitSynchronizer.defaultBatchSize {
-                        self.batchSize = self.batchSize + 5
-                    }
-                    
-                    adapter.didUpload(savedRecords: savedRecords ?? [])
-                    
-                    debugPrint("QSCloudKitSynchronizer >> Uploaded \(savedRecords?.count ?? 0) records")
-                    
                     if recordCount >= requestedBatchSize {
                         self.uploadRecords(adapter: adapter, completion: completion)
                     } else {
@@ -400,8 +408,7 @@ extension CloudKitSynchronizer {
             }
         }
         
-        currentOperation = modifyRecordsOperation
-        database.add(modifyRecordsOperation)
+        runOperation(modifyRecordsOperation)
     }
     
     func uploadDeletions(adapter: ModelAdapter, completion: @escaping (Error?)->()) {
@@ -418,20 +425,16 @@ extension CloudKitSynchronizer {
         let modifyRecordsOperation = CKModifyRecordsOperation(recordsToSave: nil, recordIDsToDelete: recordIDs)
         modifyRecordsOperation.modifyRecordsCompletionBlock = { savedRecords, deletedRecordIDs, operationError in
             self.dispatchQueue.async {
+                
                 debugPrint("QSCloudKitSynchronizer >> Deleted \(recordCount) records")
+                adapter.didDelete(recordIDs: deletedRecordIDs ?? [])
                 
                 if let error = operationError {
                     if self.isLimitExceededError(error as NSError) {
-                        self.batchSize = self.batchSize / 2
+                        self.reduceBatchSize()
                     }
                     completion(error)
                 } else {
-                    if self.batchSize < CloudKitSynchronizer.defaultBatchSize {
-                        self.batchSize = self.batchSize + 5
-                    }
-                    
-                    adapter.didDelete(recordIDs: deletedRecordIDs ?? [])
-                    
                     if recordCount >= requestedBatchSize {
                         self.uploadDeletions(adapter: adapter, completion: completion)
                     } else {
@@ -509,5 +512,15 @@ extension CloudKitSynchronizer {
             }
         }
         runOperation(operation)
+    }
+    
+    func reduceBatchSize() {
+        self.batchSize = self.batchSize / 2
+    }
+    
+    func increaseBatchSize() {
+        if self.batchSize < CloudKitSynchronizer.defaultBatchSize {
+            self.batchSize = self.batchSize + 5
+        }
     }
 }

@@ -117,6 +117,7 @@ public class CloudKitSynchronizer: NSObject {
     internal var cancelSync = false
     internal var completion: ((Error?) -> ())?
     internal weak var currentOperation: Operation?
+    internal var uploadRetries = 0
     
     @objc public static var defaultBatchSize = 200
     static let deviceUUIDKey = "QSCloudKitDeviceUUIDKey"

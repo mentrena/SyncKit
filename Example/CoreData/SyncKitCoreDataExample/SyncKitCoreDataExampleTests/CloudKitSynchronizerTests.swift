@@ -163,6 +163,39 @@ class CloudKitSynchronizerTests: XCTestCase {
         XCTAssertEqual(receivedError as? TestError, TestError.error)
     }
     
+    func testSynchronize_partialErrorInUpload_savesSuccessfulRecordsAndEndsWithError() {
+        let expectation = self.expectation(description: "sync finished")
+        
+        mockAdapter.objects = objectArray(range: 0...5)
+        mockAdapter.markForUpload(mockAdapter.objects)
+        
+        let successfulObjects = mockAdapter.objects.prefix(2)
+        let successfulRecords = successfulObjects.map { $0.record(with: self.recordZoneID) }
+        
+        mockDatabase.filterUploadRecords = { record in
+            return successfulObjects.contains { $0.identifier == record.recordID.recordName }
+        }
+        let partialErrors = mockAdapter.objects.suffix(3).reduce(into: [CKRecord.ID: CKError](), { (result, object) in
+            let record = object.record(with: self.recordZoneID)
+            result[record.recordID] = CKError(.serverRecordChanged, userInfo: [CKRecordChangedErrorServerRecordKey: record])
+        })
+        mockDatabase.uploadError = CKError(.partialFailure, userInfo: [CKPartialErrorsByItemIDKey: partialErrors])
+        
+        var receivedError: Error?
+        synchronizer.synchronize { (error) in
+            receivedError = error
+            expectation.fulfill()
+        }
+        
+        waitForExpectations(timeout: 1, handler: nil)
+        
+        XCTAssertEqual(receivedError as? CKError, mockDatabase.uploadError as? CKError)
+        XCTAssertEqual(mockAdapter.didUploadCalled, true)
+        mockAdapter.didUploadRecords?.forEach({ (record) in
+            XCTAssertTrue(successfulRecords.contains(record))
+        })
+    }
+    
     func testSynchronize_recordZoneNotCreated_createsRecordZone() {
         let expectation = self.expectation(description: "sync finished")
         let objects = objectArray(range: 1...2)
@@ -200,14 +233,24 @@ class CloudKitSynchronizerTests: XCTestCase {
         XCTAssertEqual((receivedError as NSError?)?.code, CKError.zoneNotFound.rawValue)
     }
     
-    func testSynchronize_limitExceededError_decreasesBatchSizeAndEndsWithError() {
+    func testSynchronize_limitExceededError_decreasesBatchSizeAndRetries() {
         let expectation = self.expectation(description: "sync finished")
-        let batchSize = synchronizer.batchSize
-        let error = NSError(domain: CKErrorDomain, code: CKError.limitExceeded.rawValue, userInfo: nil)
-        mockDatabase.uploadError = error
-        let object = QSObject(identifier: "1", number: 1)
-        mockAdapter.objects = [object]
-        mockAdapter.markForUpload([object])
+        
+        let batchSize = 100
+        
+        CloudKitSynchronizer.defaultBatchSize = batchSize
+        synchronizer.batchSize = batchSize
+        
+        let objects = objectArray(range: 0...(batchSize - 1))
+        mockAdapter.objects = objects
+        mockAdapter.markForUpload(objects)
+        
+        var tries = 0
+        
+        mockDatabase.uploadLimit = batchSize - 1
+        mockDatabase.modifyRecordsOperationEnqueuedBlock = { _ in
+            tries += 1
+        }
         
         var receivedError: Error?
         synchronizer.synchronize { (error) in
@@ -216,28 +259,13 @@ class CloudKitSynchronizerTests: XCTestCase {
         }
         
         waitForExpectations(timeout: 1, handler: nil)
-        let halfBatchSize = synchronizer.batchSize
-        XCTAssertEqual(receivedError as NSError?, error)
-        XCTAssertEqual(halfBatchSize, batchSize / 2)
-        
-        /*
-         Synchronize without error increases batch size
-         */
-        mockDatabase.uploadError = nil
-        mockAdapter.objects = [object]
-        mockAdapter.markForUpload([object])
-        let expectation2 = self.expectation(description: "sync finished")
-        synchronizer.synchronize { (error) in
-            receivedError = error
-            expectation2.fulfill()
-        }
-        waitForExpectations(timeout: 1, handler: nil)
-        
+        let finalBatchSize = synchronizer.batchSize
         XCTAssertNil(receivedError)
-        XCTAssertTrue(synchronizer.batchSize > halfBatchSize)
+        XCTAssertEqual(tries, 3)
+        XCTAssertTrue(finalBatchSize < batchSize)
     }
     
-    func testSynchronize_limitExceededErrorInPartialError_decreasesBatchSizeAndEndsWithError() {
+    func testSynchronize_limitExceededErrorInPartialError_retriesUpTo3Times() {
         let expectation = self.expectation(description: "sync finished")
         let batchSize = synchronizer.batchSize
         let innerError = NSError(domain: CKErrorDomain,
@@ -246,8 +274,18 @@ class CloudKitSynchronizerTests: XCTestCase {
         let error = NSError(domain: CKErrorDomain,
                             code: CKError.partialFailure.rawValue,
                             userInfo: [CKPartialErrorsByItemIDKey: [CKRecord.ID(recordName: "itemID", zoneID: recordZoneID): innerError]])
+        
         mockDatabase.uploadError = error
+        
         let object = QSObject(identifier: "1", number: 1)
+        mockDatabase.filterUploadRecords = { $0.recordID.recordName != object.identifier }
+        
+        var tries = 0
+        
+        mockDatabase.modifyRecordsOperationEnqueuedBlock = { _ in
+            tries += 1
+        }
+        
         mockAdapter.objects = [object]
         mockAdapter.markForUpload([object])
         var receivedError: Error?
@@ -260,7 +298,8 @@ class CloudKitSynchronizerTests: XCTestCase {
         waitForExpectations(timeout: 1, handler: nil)
         
         XCTAssertEqual(receivedError as NSError?, error)
-        XCTAssertEqual(synchronizer.batchSize, batchSize / 2)
+        XCTAssertEqual(tries, 3)
+        XCTAssertTrue(synchronizer.batchSize < batchSize)
     }
     
     func testSynchronize_moreThanBatchSizeItems_performsMultipleUploads() {

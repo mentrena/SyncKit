@@ -83,8 +83,10 @@ class MockModelAdapter: NSObject, ModelAdapter {
     }
     
     var didUploadCalled = false
+    var didUploadRecords: [CKRecord]?
     func didUpload(savedRecords: [CKRecord]) {
         didUploadCalled = true
+        didUploadRecords = savedRecords
         savedRecords.forEach { record in
             if let index = self.toUpload.firstIndex(where: { $0.identifier == record.recordID.recordName }) {
                 self.toUpload.remove(at: index)
