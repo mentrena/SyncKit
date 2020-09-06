@@ -29,6 +29,9 @@ class MockCloudKitDatabase: CloudKitDatabaseAdapter {
     var fetchRecordZoneError: Error?
     var fetchError: Error?
     var uploadError: Error?
+    var filterUploadRecords: ((CKRecord) -> Bool) = { record in true }
+    var serverRecordChangedForIDs: [CKRecord.ID]?
+    var uploadLimit: Int = .max
     
     var modifyRecordsOperationEnqueuedBlock: ((CKModifyRecordsOperation)->())?
     var fetchDatabaseChangesOperationEnqueuedBlock: ((CKFetchDatabaseChangesOperation) -> ())?
@@ -90,12 +93,41 @@ class MockCloudKitDatabase: CloudKitDatabaseAdapter {
     }
     
     func handleModifyRecordsOperation(_ operation: CKModifyRecordsOperation) {
+        
         modifyRecordsOperationEnqueuedBlock?(operation)
+        
+        guard (operation.recordsToSave?.count ?? 0) + (operation.recordIDsToDelete?.count ?? 0) < uploadLimit else {
+            operation.modifyRecordsCompletionBlock?(nil, nil, CKError(.limitExceeded))
+            return
+        }
         
         receivedRecords.append(contentsOf: operation.recordsToSave ?? [])
         deletedRecordIDs.append(contentsOf: operation.recordIDsToDelete ?? [])
         
-        operation.modifyRecordsCompletionBlock?(operation.recordsToSave, operation.recordIDsToDelete, uploadError)
+        var operationError: CKError?
+        var savedRecords = operation.recordsToSave
+        
+        var conflicted: [CKRecord] = []
+        var perIDErrors: [CKRecord.ID: CKError]?
+        if let changed = serverRecordChangedForIDs {
+            conflicted = operation.recordsToSave?.filter({ changed.contains($0.recordID) }) ?? []
+            
+            if !conflicted.isEmpty {
+                let errors = conflicted.reduce(into: [CKRecord.ID: CKError]()) { (result, record) in
+                    result[record.recordID] = CKError(.serverRecordChanged, userInfo: [CKRecordChangedErrorServerRecordKey: record])
+                }
+                operationError = CKError(.partialFailure, userInfo: [CKPartialErrorsByItemIDKey: errors])
+                perIDErrors = errors
+            }
+            
+            savedRecords = savedRecords?.filter { !changed.contains($0.recordID) }
+        }
+        
+        operation.recordsToSave?.forEach({ (record) in
+            operation.perRecordCompletionBlock?(record, perIDErrors?[record.recordID])
+        })
+        
+        operation.modifyRecordsCompletionBlock?(savedRecords?.filter(filterUploadRecords), operation.recordIDsToDelete, operationError ?? uploadError)
     }
     
     func add(_ operation: CKDatabaseOperation) {
