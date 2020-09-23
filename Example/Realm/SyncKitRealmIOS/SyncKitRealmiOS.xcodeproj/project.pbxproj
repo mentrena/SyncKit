@@ -35,6 +35,7 @@
 		6492367922C67F650074A142 /* CloudKitSynchronizer+MultiRealmResultsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6492367822C67F650074A142 /* CloudKitSynchronizer+MultiRealmResultsController.swift */; };
 		6492367B22C67F8A0074A142 /* CloudKitSynchronizer+Realm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6492367A22C67F8A0074A142 /* CloudKitSynchronizer+Realm.swift */; };
 		6492369222C6941B0074A142 /* RLMSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6492369122C6941B0074A142 /* RLMSupport.swift */; };
+		AD0F7E4F251BF11A009F20D3 /* ModifyRecordsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0F7E4E251BF11A009F20D3 /* ModifyRecordsOperation.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -69,6 +70,7 @@
 		6492367822C67F650074A142 /* CloudKitSynchronizer+MultiRealmResultsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "CloudKitSynchronizer+MultiRealmResultsController.swift"; path = "../../../../../SyncKit/Classes/Realm/CloudKitSynchronizer+MultiRealmResultsController.swift"; sourceTree = "<group>"; };
 		6492367A22C67F8A0074A142 /* CloudKitSynchronizer+Realm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "CloudKitSynchronizer+Realm.swift"; path = "../../../../../SyncKit/Classes/Realm/CloudKitSynchronizer+Realm.swift"; sourceTree = "<group>"; };
 		6492369122C6941B0074A142 /* RLMSupport.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RLMSupport.swift; path = ../../../../../SyncKit/Classes/Realm/RLMSupport.swift; sourceTree = "<group>"; };
+		AD0F7E4E251BF11A009F20D3 /* ModifyRecordsOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ModifyRecordsOperation.swift; path = ../../../../../SyncKit/Classes/QSSynchronizer/Operations/ModifyRecordsOperation.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -116,6 +118,7 @@
 				648D948922CD231B00C01529 /* CloudKitSynchronizerOperation.swift */,
 				648D948B22CD231B00C01529 /* FetchDatabaseChangesOperation.swift */,
 				648D948A22CD231B00C01529 /* FetchZoneChangesOperation.swift */,
+				AD0F7E4E251BF11A009F20D3 /* ModifyRecordsOperation.swift */,
 				648D947822CD231500C01529 /* BackupDetection.swift */,
 				648D946F22CD231400C01529 /* CloudKitDatabase.swift */,
 				648D947B22CD231500C01529 /* CloudKitSynchronizer.swift */,
@@ -232,6 +235,7 @@
 			files = (
 				648D948E22CD231B00C01529 /* FetchDatabaseChangesOperation.swift in Sources */,
 				648D948122CD231500C01529 /* CloudKitSynchronizer+Private.swift in Sources */,
+				AD0F7E4F251BF11A009F20D3 /* ModifyRecordsOperation.swift in Sources */,
 				6492367322C67DD40074A142 /* DefaultRealmSwiftAdapterProvider.swift in Sources */,
 				648D948D22CD231B00C01529 /* FetchZoneChangesOperation.swift in Sources */,
 				6492369222C6941B0074A142 /* RLMSupport.swift in Sources */,

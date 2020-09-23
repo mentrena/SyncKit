@@ -34,6 +34,7 @@
 		648D94C422CD233E00C01529 /* Record.swift in Sources */ = {isa = PBXBuildFile; fileRef = 648D94B922CD233E00C01529 /* Record.swift */; };
 		648D94C522CD233E00C01529 /* DefaultRealmProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 648D94BA22CD233E00C01529 /* DefaultRealmProvider.swift */; };
 		648D94C622CD233E00C01529 /* MultiRealmResultsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 648D94BB22CD233E00C01529 /* MultiRealmResultsController.swift */; };
+		AD0F7E52251BF197009F20D3 /* ModifyRecordsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0F7E51251BF197009F20D3 /* ModifyRecordsOperation.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -68,6 +69,7 @@
 		648D94BB22CD233E00C01529 /* MultiRealmResultsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MultiRealmResultsController.swift; path = ../../../../../SyncKit/Classes/Realm/MultiRealmResultsController.swift; sourceTree = "<group>"; };
 		6492365D22C66CEF0074A142 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Realm.framework; sourceTree = "<group>"; };
 		6492369A22C694610074A142 /* SyncKitRealmOSX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SyncKitRealmOSX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		AD0F7E51251BF197009F20D3 /* ModifyRecordsOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ModifyRecordsOperation.swift; path = ../../../../../SyncKit/Classes/QSSynchronizer/Operations/ModifyRecordsOperation.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -128,6 +130,7 @@
 				648D949322CD233000C01529 /* CloudKitSynchronizerOperation.swift */,
 				648D949122CD233000C01529 /* FetchDatabaseChangesOperation.swift */,
 				648D949222CD233000C01529 /* FetchZoneChangesOperation.swift */,
+				AD0F7E51251BF197009F20D3 /* ModifyRecordsOperation.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -230,6 +233,7 @@
 			files = (
 				648D94B022CD233700C01529 /* CloudKitSynchronizer+Private.swift in Sources */,
 				648D94C122CD233E00C01529 /* RLMSupport.swift in Sources */,
+				AD0F7E52251BF197009F20D3 /* ModifyRecordsOperation.swift in Sources */,
 				648D94C422CD233E00C01529 /* Record.swift in Sources */,
 				648D94AB22CD233700C01529 /* KeyValueStore.swift in Sources */,
 				648D94A922CD233700C01529 /* CloudKitSynchronizer+Subscriptions.swift in Sources */,

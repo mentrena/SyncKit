@@ -45,6 +45,7 @@
 		648D93DF22CBEF3700C01529 /* CloudKitSynchronizerOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 648D93DC22CBEF3700C01529 /* CloudKitSynchronizerOperation.swift */; };
 		648D93E022CBEF3700C01529 /* FetchZoneChangesOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 648D93DD22CBEF3700C01529 /* FetchZoneChangesOperation.swift */; };
 		64B3A3BA22B54AF000E4E942 /* QSManagedObjectContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64B3A3B922B54AEF00E4E942 /* QSManagedObjectContext.swift */; };
+		AD0F7E42251BDFA6009F20D3 /* ModifyRecordsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0F7E41251BDFA6009F20D3 /* ModifyRecordsOperation.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -90,6 +91,7 @@
 		648D93DC22CBEF3700C01529 /* CloudKitSynchronizerOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CloudKitSynchronizerOperation.swift; path = ../../../../../SyncKit/Classes/QSSynchronizer/Operations/CloudKitSynchronizerOperation.swift; sourceTree = "<group>"; };
 		648D93DD22CBEF3700C01529 /* FetchZoneChangesOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FetchZoneChangesOperation.swift; path = ../../../../../SyncKit/Classes/QSSynchronizer/Operations/FetchZoneChangesOperation.swift; sourceTree = "<group>"; };
 		64B3A3B922B54AEF00E4E942 /* QSManagedObjectContext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = QSManagedObjectContext.swift; path = ../../../../../SyncKit/Classes/CoreData/QSManagedObjectContext.swift; sourceTree = "<group>"; };
+		AD0F7E41251BDFA6009F20D3 /* ModifyRecordsOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ModifyRecordsOperation.swift; path = ../../../../../SyncKit/Classes/QSSynchronizer/Operations/ModifyRecordsOperation.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -177,6 +179,7 @@
 				648D93DC22CBEF3700C01529 /* CloudKitSynchronizerOperation.swift */,
 				648D93DB22CBEF3700C01529 /* FetchDatabaseChangesOperation.swift */,
 				648D93DD22CBEF3700C01529 /* FetchZoneChangesOperation.swift */,
+				AD0F7E41251BDFA6009F20D3 /* ModifyRecordsOperation.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -262,6 +265,7 @@
 			files = (
 				648D93D922CBEF3000C01529 /* CloudKitSynchronizer+Subscriptions.swift in Sources */,
 				648D93D022CBEF3000C01529 /* CloudKitSynchronizer+Private.swift in Sources */,
+				AD0F7E42251BDFA6009F20D3 /* ModifyRecordsOperation.swift in Sources */,
 				640C334F22A98F7F00A85508 /* CoreDataAdapter+Notifications.swift in Sources */,
 				648D93D822CBEF3000C01529 /* CloudKitSynchronizer.swift in Sources */,
 				648D93DA22CBEF3000C01529 /* SyncedEntityState.swift in Sources */,
