@@ -155,10 +155,9 @@ class MockCloudKitDatabase: CloudKitDatabaseAdapter {
         saveSubscriptionCalledBlock?(subscription)
         if subscription is CKDatabaseSubscription {
             completionHandler(CKDatabaseSubscription(subscriptionID: subscriptionIdReturnValue!), nil)
-        } else {
-            completionHandler(CKSubscription(zoneID: subscription.zoneID!,
-                                             subscriptionID: subscriptionIdReturnValue!,
-                                             options: subscription.subscriptionOptions),
+        } else if let sub = subscription as? CKRecordZoneSubscription {
+            completionHandler(CKRecordZoneSubscription(zoneID: sub.zoneID,
+                                                       subscriptionID: subscriptionIdReturnValue!),
                               nil)
         }
     }
