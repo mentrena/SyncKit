@@ -7,10 +7,18 @@ target 'SyncKitRealmSwiftExample' do
 	
   platform :ios, '10.0'
 
-  pod 'RealmSwift'
+  pod 'RealmSwift', '~> 5.4.3'
   pod 'SyncKit/RealmSwift', :path => '../../'
 
   target 'SyncKitRealmSwiftExampleTests' do
     inherit! :search_paths
   end
 end
+
+post_install do |installer|
+     installer.pods_project.targets.each do |target|
+           target.build_configurations.each do |config|
+                 config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'arm64'
+           end
+     end
+ end
