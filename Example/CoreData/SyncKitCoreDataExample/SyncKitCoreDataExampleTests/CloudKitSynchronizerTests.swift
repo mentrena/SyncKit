@@ -373,7 +373,9 @@ class CloudKitSynchronizerTests: XCTestCase {
     func testEraseLocal_deletesAdapterTracking() {
         let adapterExpectation = self.expectation(description: "deleteChangeTracking called on adapter")
         mockAdapter.deleteChangeTrackingCalledClosure = {
-            adapterExpectation.fulfill()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                adapterExpectation.fulfill()
+            }
         }
         synchronizer.eraseLocalMetadata()
         waitForExpectations(timeout: 1, handler: nil)
