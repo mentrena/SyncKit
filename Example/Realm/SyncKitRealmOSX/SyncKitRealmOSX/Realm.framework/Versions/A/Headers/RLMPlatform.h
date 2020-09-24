@@ -16,10 +16,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-#ifdef REALM_BUILDING_FOR_MACOS
 #if !__is_target_os(macosx)
 #error Attempting to use Realm's macOS framework in a non-macOS target.
-#endif
 #endif
 
 #ifdef REALM_BUILDING_FOR_MACCATALYST

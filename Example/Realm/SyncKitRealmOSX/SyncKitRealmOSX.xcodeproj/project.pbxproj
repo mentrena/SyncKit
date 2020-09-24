@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6435A45D251C8A3700A6167A /* ModifyRecordsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6435A45C251C8A3700A6167A /* ModifyRecordsOperation.swift */; };
 		648D949422CD233100C01529 /* FetchDatabaseChangesOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 648D949122CD233000C01529 /* FetchDatabaseChangesOperation.swift */; };
 		648D949522CD233100C01529 /* FetchZoneChangesOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 648D949222CD233000C01529 /* FetchZoneChangesOperation.swift */; };
 		648D949622CD233100C01529 /* CloudKitSynchronizerOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 648D949322CD233000C01529 /* CloudKitSynchronizerOperation.swift */; };
@@ -39,6 +40,7 @@
 /* Begin PBXFileReference section */
 		6433B37F22C001D200EAC16C /* SyncKitRealmOSX.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SyncKitRealmOSX.h; sourceTree = "<group>"; };
 		6433B38022C001D200EAC16C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6435A45C251C8A3700A6167A /* ModifyRecordsOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ModifyRecordsOperation.swift; path = ../../../../../SyncKit/Classes/QSSynchronizer/Operations/ModifyRecordsOperation.swift; sourceTree = "<group>"; };
 		648D949122CD233000C01529 /* FetchDatabaseChangesOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FetchDatabaseChangesOperation.swift; path = ../../../../../SyncKit/Classes/QSSynchronizer/Operations/FetchDatabaseChangesOperation.swift; sourceTree = "<group>"; };
 		648D949222CD233000C01529 /* FetchZoneChangesOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FetchZoneChangesOperation.swift; path = ../../../../../SyncKit/Classes/QSSynchronizer/Operations/FetchZoneChangesOperation.swift; sourceTree = "<group>"; };
 		648D949322CD233000C01529 /* CloudKitSynchronizerOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CloudKitSynchronizerOperation.swift; path = ../../../../../SyncKit/Classes/QSSynchronizer/Operations/CloudKitSynchronizerOperation.swift; sourceTree = "<group>"; };
@@ -115,6 +117,7 @@
 				648D94A222CD233700C01529 /* BackupDetection.swift */,
 				648D949B22CD233700C01529 /* CloudKitDatabase.swift */,
 				648D949722CD233700C01529 /* CloudKitSynchronizer.swift */,
+				6435A45C251C8A3700A6167A /* ModifyRecordsOperation.swift */,
 				648D94A322CD233700C01529 /* CloudKitSynchronizer+Private.swift */,
 				648D949F22CD233700C01529 /* CloudKitSynchronizer+Sharing.swift */,
 				648D949C22CD233700C01529 /* CloudKitSynchronizer+Subscriptions.swift */,
@@ -230,6 +233,7 @@
 			files = (
 				648D94B022CD233700C01529 /* CloudKitSynchronizer+Private.swift in Sources */,
 				648D94C122CD233E00C01529 /* RLMSupport.swift in Sources */,
+				6435A45D251C8A3700A6167A /* ModifyRecordsOperation.swift in Sources */,
 				648D94C422CD233E00C01529 /* Record.swift in Sources */,
 				648D94AB22CD233700C01529 /* KeyValueStore.swift in Sources */,
 				648D94A922CD233700C01529 /* CloudKitSynchronizer+Subscriptions.swift in Sources */,

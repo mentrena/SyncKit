@@ -195,7 +195,7 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
                 let token = object.observe({ [weak self] (change) in
                     
                     switch change {
-                    case .change(let properties):
+                    case .change(_, let properties):
                         
                         if object.realm!.isInWriteTransaction {
                             
@@ -312,7 +312,7 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
         let token = insertedObject.observe { [weak self] (change) in
             
             switch change {
-            case .change(let properties):
+            case .change(_, let properties):
                 
                 self?.updateTracking(objectIdentifier: identifier, entityName: entityName, inserted: false, deleted: false, changes: properties, realmProvider: provider)
             case .deleted:

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6435A463251C8A9100A6167A /* ModifyRecordsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6435A462251C8A9100A6167A /* ModifyRecordsOperation.swift */; };
 		648D944422CD22D200C01529 /* QSCloudKitSynchronizer+MultiRealmResultsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 648D943A22CD22D200C01529 /* QSCloudKitSynchronizer+MultiRealmResultsController.swift */; };
 		648D944522CD22D200C01529 /* DefaultRealmProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 648D943B22CD22D200C01529 /* DefaultRealmProvider.swift */; };
 		648D944622CD22D200C01529 /* DefaultRealmSwiftAdapterProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 648D943C22CD22D200C01529 /* DefaultRealmSwiftAdapterProvider.swift */; };
@@ -38,6 +39,7 @@
 /* Begin PBXFileReference section */
 		6433B37F22C001D200EAC16C /* SyncKitRealmOSX.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SyncKitRealmOSX.h; sourceTree = "<group>"; };
 		6433B38022C001D200EAC16C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6435A462251C8A9100A6167A /* ModifyRecordsOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ModifyRecordsOperation.swift; path = ../../../../../SyncKit/Classes/QSSynchronizer/Operations/ModifyRecordsOperation.swift; sourceTree = "<group>"; };
 		648D943A22CD22D200C01529 /* QSCloudKitSynchronizer+MultiRealmResultsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "QSCloudKitSynchronizer+MultiRealmResultsController.swift"; path = "../../../../../SyncKit/Classes/RealmSwift/QSCloudKitSynchronizer+MultiRealmResultsController.swift"; sourceTree = "<group>"; };
 		648D943B22CD22D200C01529 /* DefaultRealmProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DefaultRealmProvider.swift; path = ../../../../../SyncKit/Classes/RealmSwift/DefaultRealmProvider.swift; sourceTree = "<group>"; };
 		648D943C22CD22D200C01529 /* DefaultRealmSwiftAdapterProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DefaultRealmSwiftAdapterProvider.swift; path = ../../../../../SyncKit/Classes/RealmSwift/DefaultRealmSwiftAdapterProvider.swift; sourceTree = "<group>"; };
@@ -115,6 +117,7 @@
 				648D946822CD22E000C01529 /* CloudKitSynchronizerOperation.swift */,
 				648D946922CD22E000C01529 /* FetchDatabaseChangesOperation.swift */,
 				648D946A22CD22E000C01529 /* FetchZoneChangesOperation.swift */,
+				6435A462251C8A9100A6167A /* ModifyRecordsOperation.swift */,
 				648D944F22CD22DA00C01529 /* BackupDetection.swift */,
 				648D945222CD22DA00C01529 /* CloudKitDatabase.swift */,
 				648D944E22CD22D900C01529 /* CloudKitSynchronizer.swift */,
@@ -232,6 +235,7 @@
 				648D946D22CD22E000C01529 /* FetchZoneChangesOperation.swift in Sources */,
 				648D945C22CD22DA00C01529 /* BackupDetection.swift in Sources */,
 				648D946422CD22DA00C01529 /* CloudKitSynchronizer+Sync.swift in Sources */,
+				6435A463251C8A9100A6167A /* ModifyRecordsOperation.swift in Sources */,
 				648D944622CD22D200C01529 /* DefaultRealmSwiftAdapterProvider.swift in Sources */,
 				648D945D22CD22DA00C01529 /* SyncedEntityState.swift in Sources */,
 				648D944822CD22D200C01529 /* SyncedEntity.swift in Sources */,
