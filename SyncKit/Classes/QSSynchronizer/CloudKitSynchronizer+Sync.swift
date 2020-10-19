@@ -33,17 +33,17 @@ extension CloudKitSynchronizer {
             adapter.didFinishImport(with: error)
         }
         
-        if let error = error {
-            self.postNotification(.SynchronizerDidFailToSynchronize, userInfo: [CloudKitSynchronizer.errorKey: error])
-        } else {
-            self.postNotification(.SynchronizerDidSynchronize)
-        }
-        
         DispatchQueue.main.async {
             self.syncing = false
             self.cancelSync = false
             self.completion?(error)
             self.completion = nil
+            
+            if let error = error {
+                self.postNotification(.SynchronizerDidFailToSynchronize, userInfo: [CloudKitSynchronizer.errorKey: error])
+            } else {
+                self.postNotification(.SynchronizerDidSynchronize)
+            }
             
             debugPrint("QSCloudKitSynchronizer >> Finishing synchronization")
         }
