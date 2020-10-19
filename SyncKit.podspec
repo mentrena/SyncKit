@@ -43,13 +43,13 @@ end
 	
 s.subspec 'Realm' do |cs|
 	cs.dependency 'SyncKit/Core'
-	cs.dependency 'Realm', '~> 5.4.3'
+	cs.dependency 'Realm', '~> 10.0.0'
 	cs.source_files = 'SyncKit/Classes/Realm/*.swift'
 end
 
 s.subspec 'RealmSwift' do |cs|
 	cs.dependency 'SyncKit/Core'
-	cs.dependency 'RealmSwift', '~> 5.4.3'
+	cs.dependency 'RealmSwift', '~> 10.0.0'
 	cs.source_files = 'SyncKit/Classes/RealmSwift/*.swift'
 end
 

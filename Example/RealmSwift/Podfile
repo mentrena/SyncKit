@@ -7,7 +7,7 @@ target 'SyncKitRealmSwiftExample' do
 	
   platform :ios, '10.0'
 
-  pod 'RealmSwift', '~> 5.4.3'
+  pod 'RealmSwift'
   pod 'SyncKit/RealmSwift', :path => '../../'
 
   target 'SyncKitRealmSwiftExampleTests' do

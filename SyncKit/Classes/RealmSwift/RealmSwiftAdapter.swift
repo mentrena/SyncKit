@@ -146,7 +146,7 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
         
         targetRealmConfiguration.objectTypes?.forEach { objectType in
 
-            modelTypes[objectType.className()] = objectType
+            modelTypes[objectType.className()] = objectType as? Object.Type
         }
     }
     

@@ -81,18 +81,19 @@ extension RLMCollection {
 
 // MARK: - Sync-related
 
+#if REALM_ENABLE_SYNC
 extension RLMSyncManager {
     public static var shared: RLMSyncManager {
         return __shared()
     }
 }
 
-extension RLMSyncUser {
-    public static var current: RLMSyncUser? {
+extension RLMUser {
+    public static var current: RLMUser? {
         return __current()
     }
 
-    public static var all: [String: RLMSyncUser] {
+    public static var all: [String: RLMUser] {
         return __allUsers()
     }
 
@@ -105,7 +106,7 @@ extension RLMSyncUser {
         }
     }
 
-    public static func logIn(with credentials: RLMSyncCredentials,
+    public static func logIn(with credentials: RLMCredentials,
                              server authServerURL: URL,
                              timeout: TimeInterval = 30,
                              callbackQueue queue: DispatchQueue = DispatchQueue.main,
@@ -135,8 +136,4 @@ extension RLMSyncSession {
                                          block: block)
     }
 }
-
-extension RLMNotificationToken {
-    @available(*, unavailable, renamed: "invalidate()")
-    @nonobjc public func stop() { fatalError() }
-}
+#endif
