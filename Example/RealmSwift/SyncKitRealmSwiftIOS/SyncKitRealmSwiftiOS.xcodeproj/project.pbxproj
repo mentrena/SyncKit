@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -35,6 +35,9 @@
 		648D943522CD22AF00C01529 /* DefaultRealmProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 648D942B22CD22AF00C01529 /* DefaultRealmProvider.swift */; };
 		648D943622CD22AF00C01529 /* QSCloudKitSynchronizer+MultiRealmResultsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 648D942C22CD22AF00C01529 /* QSCloudKitSynchronizer+MultiRealmResultsController.swift */; };
 		648D943722CD22AF00C01529 /* SyncedEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 648D942D22CD22AF00C01529 /* SyncedEntity.swift */; };
+		64FC831D25402EB000143BE2 /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64FC831B25402EB000143BE2 /* RealmSwift.framework */; platformFilter = ios; };
+		64FC831F25402EB000143BE2 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64FC831C25402EB000143BE2 /* Realm.framework */; platformFilter = ios; };
+		64FD3693253F3F0800795917 /* Cartfile in Resources */ = {isa = PBXBuildFile; fileRef = 64FD3692253F3F0800795917 /* Cartfile */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -68,8 +71,11 @@
 		648D942B22CD22AF00C01529 /* DefaultRealmProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DefaultRealmProvider.swift; path = ../../../../../SyncKit/Classes/RealmSwift/DefaultRealmProvider.swift; sourceTree = "<group>"; };
 		648D942C22CD22AF00C01529 /* QSCloudKitSynchronizer+MultiRealmResultsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "QSCloudKitSynchronizer+MultiRealmResultsController.swift"; path = "../../../../../SyncKit/Classes/RealmSwift/QSCloudKitSynchronizer+MultiRealmResultsController.swift"; sourceTree = "<group>"; };
 		648D942D22CD22AF00C01529 /* SyncedEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SyncedEntity.swift; path = ../../../../../SyncKit/Classes/RealmSwift/SyncedEntity.swift; sourceTree = "<group>"; };
-		64A0B3B122C147EF002F0880 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Realm.framework; sourceTree = "<group>"; };
-		64A0B3B222C147F0002F0880 /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RealmSwift.framework; sourceTree = "<group>"; };
+		64FC831B25402EB000143BE2 /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealmSwift.framework; path = ../../../Carthage/Build/iOS/RealmSwift.framework; sourceTree = "<group>"; };
+		64FC831C25402EB000143BE2 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = ../../../Carthage/Build/iOS/Realm.framework; sourceTree = "<group>"; };
+		64FD3692253F3F0800795917 /* Cartfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
+		64FD3695253F40B500795917 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = SyncKit/Carthage/Build/iOS/Realm.framework; sourceTree = "<group>"; };
+		64FD3696253F40B500795917 /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealmSwift.framework; path = SyncKit/Carthage/Build/iOS/RealmSwift.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,6 +83,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				64FC831F25402EB000143BE2 /* Realm.framework in Frameworks */,
+				64FC831D25402EB000143BE2 /* RealmSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -88,6 +96,7 @@
 			children = (
 				640C330A22A2F15100A85508 /* SyncKit */,
 				640C330922A2F15100A85508 /* Products */,
+				64FD3694253F40B500795917 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -105,9 +114,8 @@
 				648D940322CD229200C01529 /* Realm */,
 				648D940222CD228C00C01529 /* Core */,
 				640C330B22A2F15100A85508 /* SyncKit.h */,
-				64A0B3B122C147EF002F0880 /* Realm.framework */,
-				64A0B3B222C147F0002F0880 /* RealmSwift.framework */,
 				640C330C22A2F15100A85508 /* Info.plist */,
+				64FD3692253F3F0800795917 /* Cartfile */,
 			);
 			path = SyncKit;
 			sourceTree = "<group>";
@@ -151,6 +159,17 @@
 				648D942D22CD22AF00C01529 /* SyncedEntity.swift */,
 			);
 			path = Realm;
+			sourceTree = "<group>";
+		};
+		64FD3694253F40B500795917 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				64FC831C25402EB000143BE2 /* Realm.framework */,
+				64FC831B25402EB000143BE2 /* RealmSwift.framework */,
+				64FD3695253F40B500795917 /* Realm.framework */,
+				64FD3696253F40B500795917 /* RealmSwift.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -222,6 +241,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				64FD3693253F3F0800795917 /* Cartfile in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -401,6 +421,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/SyncKit",
+					"$(PROJECT_DIR)/../../../Carthage/Build/iOS",
 				);
 				INFOPLIST_FILE = SyncKit/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -413,6 +434,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.mentrena.SyncKitRealmSwiftiOS;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -433,6 +455,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/SyncKit",
+					"$(PROJECT_DIR)/../../../Carthage/Build/iOS",
 				);
 				INFOPLIST_FILE = SyncKit/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -445,6 +468,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.mentrena.SyncKitRealmSwiftiOS;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

@@ -35,6 +35,7 @@
 		648D94C422CD233E00C01529 /* Record.swift in Sources */ = {isa = PBXBuildFile; fileRef = 648D94B922CD233E00C01529 /* Record.swift */; };
 		648D94C522CD233E00C01529 /* DefaultRealmProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 648D94BA22CD233E00C01529 /* DefaultRealmProvider.swift */; };
 		648D94C622CD233E00C01529 /* MultiRealmResultsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 648D94BB22CD233E00C01529 /* MultiRealmResultsController.swift */; };
+		64FC831425402E8200143BE2 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64FC831325402E8200143BE2 /* Realm.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -68,8 +69,9 @@
 		648D94B922CD233E00C01529 /* Record.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Record.swift; path = ../../../../../SyncKit/Classes/Realm/Record.swift; sourceTree = "<group>"; };
 		648D94BA22CD233E00C01529 /* DefaultRealmProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DefaultRealmProvider.swift; path = ../../../../../SyncKit/Classes/Realm/DefaultRealmProvider.swift; sourceTree = "<group>"; };
 		648D94BB22CD233E00C01529 /* MultiRealmResultsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MultiRealmResultsController.swift; path = ../../../../../SyncKit/Classes/Realm/MultiRealmResultsController.swift; sourceTree = "<group>"; };
-		6492365D22C66CEF0074A142 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Realm.framework; sourceTree = "<group>"; };
 		6492369A22C694610074A142 /* SyncKitRealmOSX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SyncKitRealmOSX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		64F46EA9253F43A100A73D81 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = SyncKitRealmOSX/Carthage/Build/Mac/Realm.framework; sourceTree = "<group>"; };
+		64FC831325402E8200143BE2 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = ../../../Carthage/Build/Mac/Realm.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,6 +79,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				64FC831425402E8200143BE2 /* Realm.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -88,6 +91,7 @@
 			children = (
 				6433B37E22C001D200EAC16C /* SyncKitRealmOSX */,
 				6433B37D22C001D200EAC16C /* Products */,
+				64F46EA8253F43A100A73D81 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -105,7 +109,6 @@
 				648D949022CD232900C01529 /* Realm */,
 				648D948F22CD232500C01529 /* Core */,
 				6433B37F22C001D200EAC16C /* SyncKitRealmOSX.h */,
-				6492365D22C66CEF0074A142 /* Realm.framework */,
 				6433B38022C001D200EAC16C /* Info.plist */,
 			);
 			path = SyncKitRealmOSX;
@@ -151,6 +154,15 @@
 				648D94B722CD233E00C01529 /* SyncedEntity.swift */,
 			);
 			path = Realm;
+			sourceTree = "<group>";
+		};
+		64F46EA8253F43A100A73D81 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				64FC831325402E8200143BE2 /* Realm.framework */,
+				64F46EA9253F43A100A73D81 /* Realm.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -401,6 +413,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/SyncKitRealmOSX",
+					"$(PROJECT_DIR)/../../../Carthage/Build/Mac",
 				);
 				FRAMEWORK_VERSION = A;
 				INFOPLIST_FILE = SyncKitRealmOSX/Info.plist;
@@ -434,6 +447,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/SyncKitRealmOSX",
+					"$(PROJECT_DIR)/../../../Carthage/Build/Mac",
 				);
 				FRAMEWORK_VERSION = A;
 				INFOPLIST_FILE = SyncKitRealmOSX/Info.plist;
