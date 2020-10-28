@@ -340,12 +340,13 @@ extension CloudKitSynchronizer {
     func setupZoneAndUploadRecords(adapter: ModelAdapter, completion: @escaping (Error?)->()) {
         setupRecordZoneIfNeeded(adapter: adapter) { (error) in
             
-            guard error == nil else { completion(error); return }
+            guard error == nil else {
+                completion(error)
+                return
+            }
             
             self.uploadRecords(adapter: adapter, completion: { (error) in
-                guard error == nil else { completion(error); return }
-                
-                completion(nil)
+                completion(error)
             })
         }
     }
@@ -396,8 +397,15 @@ extension CloudKitSynchronizer {
                 if let error = operationError {
                     if self.isLimitExceededError(error as NSError) {
                         self.reduceBatchSize()
+                        completion(error)
+                    } else if !conflicted.isEmpty {
+                        adapter.saveChanges(in: conflicted)
+                        adapter.persistImportedChanges { (persistError) in
+                            completion(error)
+                        }
+                    } else {
+                        completion(error)
                     }
-                    completion(error)
                 } else {
                     if recordCount >= requestedBatchSize {
                         self.uploadRecords(adapter: adapter, completion: completion)

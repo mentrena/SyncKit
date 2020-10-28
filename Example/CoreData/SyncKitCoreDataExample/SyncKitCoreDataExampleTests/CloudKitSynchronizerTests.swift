@@ -196,6 +196,48 @@ class CloudKitSynchronizerTests: XCTestCase {
         })
     }
     
+    func testSynchronize_serverRecordChanged_savesServerRecord() {
+        let expectation = self.expectation(description: "sync finished")
+        
+        let objects = objectArray(range: 1...2)
+        mockAdapter.objects = objects
+        mockAdapter.markForUpload(objects)
+        
+        let conflictedRecord = objects[0].record(with: recordZoneID)
+        conflictedRecord["number"] = 4
+        
+        mockDatabase.serverChangedRecords = [conflictedRecord]
+        
+        // Return a conflicted record only the first time the operation is sent
+        var modifyRecordsOperationCount = 0
+        mockDatabase.modifyRecordsOperationEnqueuedBlock = { _ in
+            modifyRecordsOperationCount += 1
+            if modifyRecordsOperationCount > 1 {
+                self.mockDatabase.serverChangedRecords = []
+                self.mockDatabase.modifyRecordsOperationEnqueuedBlock = nil
+            }
+        }
+        
+        synchronizer.synchronize { (error) in
+            expectation.fulfill()
+        }
+        
+        waitForExpectations(timeout: 1, handler: nil)
+        
+        XCTAssertEqual(mockAdapter.objects[0].number, 4)
+        XCTAssertEqual(mockAdapter.objects[1].number, 2)
+        XCTAssertTrue(mockAdapter.persistImportedChangesCalled)
+        XCTAssertEqual(mockAdapter.objects.count, 2)
+        XCTAssertEqual(modifyRecordsOperationCount, 2)
+        XCTAssertEqual(mockDatabase.receivedRecords.count, 3)
+        XCTAssertEqual(mockDatabase.receivedRecords[0].recordID, CKRecord.ID(recordName: "1", zoneID: recordZoneID))
+        XCTAssertEqual(mockDatabase.receivedRecords[0]["number"], 1)
+        XCTAssertEqual(mockDatabase.receivedRecords[1].recordID, CKRecord.ID(recordName: "2", zoneID: recordZoneID))
+        XCTAssertEqual(mockDatabase.receivedRecords[1]["number"], 2)
+        XCTAssertEqual(mockDatabase.receivedRecords[2].recordID, CKRecord.ID(recordName: "1", zoneID: recordZoneID))
+        XCTAssertEqual(mockDatabase.receivedRecords[2]["number"], 4)
+    }
+    
     func testSynchronize_recordZoneNotCreated_createsRecordZone() {
         let expectation = self.expectation(description: "sync finished")
         let objects = objectArray(range: 1...2)
