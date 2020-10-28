@@ -30,7 +30,7 @@ class MockCloudKitDatabase: CloudKitDatabaseAdapter {
     var fetchError: Error?
     var uploadError: Error?
     var filterUploadRecords: ((CKRecord) -> Bool) = { record in true }
-    var serverRecordChangedForIDs: [CKRecord.ID]?
+    var serverChangedRecords: [CKRecord]?
     var uploadLimit: Int = .max
     
     var modifyRecordsOperationEnqueuedBlock: ((CKModifyRecordsOperation)->())?
@@ -107,21 +107,25 @@ class MockCloudKitDatabase: CloudKitDatabaseAdapter {
         var operationError: CKError?
         var savedRecords = operation.recordsToSave
         
-        var conflicted: [CKRecord] = []
+        // Find records that should return serverRecordChanged error
         var perIDErrors: [CKRecord.ID: CKError]?
-        if let changed = serverRecordChangedForIDs {
-            conflicted = operation.recordsToSave?.filter({ changed.contains($0.recordID) }) ?? []
-            
-            if !conflicted.isEmpty {
-                let errors = conflicted.reduce(into: [CKRecord.ID: CKError]()) { (result, record) in
+        if let changed = serverChangedRecords {
+            let changedRecordIDs = changed.map{ $0.recordID }
+            let errors = (operation.recordsToSave ?? [])
+                .compactMap { record in
+                    return changed.first { $0.recordID == record.recordID }
+                }
+                .reduce(into: [CKRecord.ID: CKError]()) { (result, record) in
                     result[record.recordID] = CKError(.serverRecordChanged, userInfo: [CKRecordChangedErrorServerRecordKey: record])
                 }
+            if !errors.isEmpty {
                 operationError = CKError(.partialFailure, userInfo: [CKPartialErrorsByItemIDKey: errors])
                 perIDErrors = errors
             }
-            
-            savedRecords = savedRecords?.filter { !changed.contains($0.recordID) }
+            savedRecords = savedRecords?.filter { !changedRecordIDs.contains($0.recordID) }
         }
+        
+        // Complete operation
         
         operation.recordsToSave?.forEach({ (record) in
             operation.perRecordCompletionBlock?(record, perIDErrors?[record.recordID])

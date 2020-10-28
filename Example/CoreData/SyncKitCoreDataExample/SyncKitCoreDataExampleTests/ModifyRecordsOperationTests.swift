@@ -65,7 +65,7 @@ class ModifyRecordsOperationTests: XCTestCase {
                               record(name: "record3", zoneID: zoneID),
                               record(name: "record4", zoneID: zoneID)]
         
-        mockDatabase.serverRecordChangedForIDs = changedRecords.suffix(2).map { $0.recordID }
+        mockDatabase.serverChangedRecords = changedRecords.suffix(2)
         
         let expectation = self.expectation(description: "finished")
         
