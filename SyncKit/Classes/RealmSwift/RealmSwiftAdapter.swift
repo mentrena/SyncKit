@@ -19,16 +19,44 @@ func executeOnMainQueue(_ closure: () -> ()) {
     }
 }
 
-public protocol RealmSwiftAdapterDelegate {
+public protocol RealmSwiftAdapterDelegate: class {
     
     /**
-     *  Asks the delegate to resolve conflicts for a managed object. The delegate is expected to examine the change dictionary and optionally apply any of those changes to the managed object.
+     *  Asks the delegate to resolve conflicts for a managed object when using a custom mergePolicy.
+     *  The delegate is expected to examine the change dictionary and optionally apply any of those changes to the managed object.
      *
      *  @param adapter    The `QSRealmSwiftAdapter` that is providing the changes.
      *  @param changeDictionary Dictionary containing keys and values with changes for the managed object. Values can be [NSNull null] to represent a nil value.
      *  @param object           The `RLMObject` that has changed on iCloud.
      */
     func realmSwiftAdapter(_ adapter:RealmSwiftAdapter, gotChanges changes: [String: Any], object: Object)
+}
+
+public protocol RealmSwiftAdapterRecordProcessing: class {
+    
+    /**
+     *  Called by the adapter before copying a property from the Realm object to the CloudKit record to upload to CloudKit.
+     *  The method can then apply custom logic to encode the property in the record.
+     *
+     *  @param propertyname     The name of the property that is being processed
+     *  @param object   The `RLMObject` that is going to have its record uploaded.
+     *  @param record   The `CKRecord` that is being configured before being sent to CloudKit.
+     *
+     *  @return Boolean indicating whether the adapter should process property normally. Return false if property was already handled in this method.
+     */
+    func shouldProcessPropertyBeforeUpload(propertyName: String, object: Object, record: CKRecord) -> Bool
+    
+    /**
+     *  Called by the adapter before copying a property from the CloudKit record that was just downloaded to the Realm object.
+     *  The method can apply custom logic to save the property from the record to the object. An object implementing this method *should not* change the record itself.
+     *
+     *  @param propertyname     The name of the property that is being processed
+     *  @param object   The `RLMObject` that corresponds to the downloaded record.
+     *  @param record   The `CKRecord` that was downloaded from CloudKit.
+     *
+     *  @return Boolean indicating whether the adapter should process property normally. Return false if property was already handled in this method.
+     */
+    func shouldProcessPropertyInDownload(propertyName: String, object: Object, record: CKRecord) -> Bool
 }
 
 struct ChildRelationship {
@@ -79,7 +107,8 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
     public let targetRealmConfiguration: Realm.Configuration
     public let zoneID: CKRecordZone.ID
     public var mergePolicy: MergePolicy = .server
-    public var delegate: RealmSwiftAdapterDelegate?
+    public weak var delegate: RealmSwiftAdapterDelegate?
+    public weak var recordProcessingDelegate: RealmSwiftAdapterRecordProcessing?
     public var forceDataTypeInsteadOfAsset: Bool = false
     
     private lazy var tempFileManager: TempFileManager = {
@@ -534,6 +563,11 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
             return
         }
         
+        if let recordProcessingDelegate = recordProcessingDelegate,
+           !recordProcessingDelegate.shouldProcessPropertyInDownload(propertyName: key, object: object, record: record) {
+            return
+        }
+        
         let value = record[key]
         if let reference = value as? CKRecord.Reference {
             // Save relationship to be applied after all records have been downloaded and persisted
@@ -751,40 +785,44 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
         
         for property in object!.objectSchema.properties {
             
-            if property.type == PropertyType.object &&
-                (entityState == SyncedEntityState.new.rawValue || changedKeys.contains(property.name)) {
+            if (entityState == SyncedEntityState.new.rawValue || changedKeys.contains(property.name)) {
                 
-                if let target = object?.value(forKey: property.name) as? Object {
-                    
-                    let targetIdentifier = target.value(forKey: objectClass.primaryKey()!) as! String
-                    let referenceIdentifier = "\(property.objectClassName!).\(targetIdentifier)"
-                    let recordID = CKRecord.ID(recordName: referenceIdentifier, zoneID: zoneID)
-                    // if we set the parent we must make the action .deleteSelf, otherwise we get errors if we ever try to delete the parent record
-                    let action: CKRecord.Reference.Action = parentKey == property.name ? .deleteSelf : .none
-                    let recordReference = CKRecord.Reference(recordID: recordID, action: action)
-                    record[property.name] = recordReference;
-                    if parentKey == property.name {
-                        parent = target
-                    }
+                if let recordProcessingDelegate = recordProcessingDelegate,
+                   !recordProcessingDelegate.shouldProcessPropertyBeforeUpload(propertyName: property.name, object: object!, record: record) {
+                    continue
                 }
                 
-            } else if !property.isArray &&
-            property.type != PropertyType.linkingObjects &&
-            !(property.name == objectClass.primaryKey()!) &&
-                (entityState == SyncedEntityState.new.rawValue || changedKeys.contains(property.name)) {
-                
-                let value = object!.value(forKey: property.name)
-                if property.type == PropertyType.data,
-                    let data = value as? Data,
-                    forceDataTypeInsteadOfAsset == false  {
+                if property.type == PropertyType.object {
+                    if let target = object?.value(forKey: property.name) as? Object {
+                        
+                        let targetIdentifier = target.value(forKey: objectClass.primaryKey()!) as! String
+                        let referenceIdentifier = "\(property.objectClassName!).\(targetIdentifier)"
+                        let recordID = CKRecord.ID(recordName: referenceIdentifier, zoneID: zoneID)
+                        // if we set the parent we must make the action .deleteSelf, otherwise we get errors if we ever try to delete the parent record
+                        let action: CKRecord.Reference.Action = parentKey == property.name ? .deleteSelf : .none
+                        let recordReference = CKRecord.Reference(recordID: recordID, action: action)
+                        record[property.name] = recordReference;
+                        if parentKey == property.name {
+                            parent = target
+                        }
+                    }
+                } else if !property.isArray &&
+                            property.type != PropertyType.linkingObjects &&
+                            !(property.name == objectClass.primaryKey()!) {
                     
-                    let fileURL = self.tempFileManager.store(data: data)
-                    let asset = CKAsset(fileURL: fileURL)
-                    record[property.name] = asset
-                } else if value == nil {
-                    record[property.name] = nil
-                } else if let recordValue = value as? CKRecordValue {
-                    record[property.name] = recordValue
+                    let value = object!.value(forKey: property.name)
+                    if property.type == PropertyType.data,
+                        let data = value as? Data,
+                        forceDataTypeInsteadOfAsset == false  {
+                        
+                        let fileURL = self.tempFileManager.store(data: data)
+                        let asset = CKAsset(fileURL: fileURL)
+                        record[property.name] = asset
+                    } else if value == nil {
+                        record[property.name] = nil
+                    } else if let recordValue = value as? CKRecordValue {
+                        record[property.name] = recordValue
+                    }
                 }
             }
         }

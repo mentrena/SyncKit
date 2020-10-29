@@ -10,6 +10,7 @@
 		19CC7A3B59A2E7EF41F70148 /* Pods_SyncKitRealmExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F2BB8E457665F708BC3594F /* Pods_SyncKitRealmExample.framework */; };
 		640C33BA22AC48C700A85508 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 640C33B922AC48C700A85508 /* AppDelegate.swift */; };
 		640C33C422AC48C800A85508 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 640C33C322AC48C800A85508 /* Assets.xcassets */; };
+		6413ED022559B69000BDC1DB /* RecordProcessingDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6413ED012559B69000BDC1DB /* RecordProcessingDelegate.swift */; };
 		6433B3DE22C0051700EAC16C /* EmployeePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6433B3D822C0051700EAC16C /* EmployeePresenter.swift */; };
 		6433B3DF22C0051700EAC16C /* EmployeeCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6433B3D922C0051700EAC16C /* EmployeeCellViewModel.swift */; };
 		6433B3E022C0051700EAC16C /* EmployeeInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6433B3DA22C0051700EAC16C /* EmployeeInteractor.swift */; };
@@ -96,6 +97,7 @@
 		640C33C822AC48C800A85508 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		640C33D422AC499E00A85508 /* SyncKitRealmExampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SyncKitRealmExampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		640C33D822AC499E00A85508 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6413ED012559B69000BDC1DB /* RecordProcessingDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordProcessingDelegate.swift; sourceTree = "<group>"; };
 		6433B3D822C0051700EAC16C /* EmployeePresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EmployeePresenter.swift; path = ../../../../Common/Employee/EmployeePresenter.swift; sourceTree = "<group>"; };
 		6433B3D922C0051700EAC16C /* EmployeeCellViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EmployeeCellViewModel.swift; path = ../../../../Common/Employee/EmployeeCellViewModel.swift; sourceTree = "<group>"; };
 		6433B3DA22C0051700EAC16C /* EmployeeInteractor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EmployeeInteractor.swift; path = ../../../../Common/Employee/EmployeeInteractor.swift; sourceTree = "<group>"; };
@@ -223,6 +225,7 @@
 				6465959622B64C8E00DC9A17 /* QSCompany.1739C6A5-C07E-48A5-B83E-AB07694F23DF */,
 				64B3A3B322B3B1E200E4E942 /* TestUtilities.swift */,
 				649236D522C6A0A30074A142 /* SyncKitRealmSwiftTests.swift */,
+				6413ED012559B69000BDC1DB /* RecordProcessingDelegate.swift */,
 			);
 			path = SyncKitRealmExampleTests;
 			sourceTree = "<group>";
@@ -623,6 +626,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6413ED022559B69000BDC1DB /* RecordProcessingDelegate.swift in Sources */,
 				64B3A3B422B3B1E200E4E942 /* TestUtilities.swift in Sources */,
 				649236D622C6A0A30074A142 /* SyncKitRealmSwiftTests.swift in Sources */,
 			);

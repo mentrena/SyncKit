@@ -292,6 +292,12 @@ extension CoreDataAdapter {
             entityDescription.attributesByName.forEach({ (attributeName, attributeDescription) in
                 if attributeName != primaryKey &&
                     (entityState == .new || changedKeys.contains(attributeName)) {
+                    
+                    if let recordProcessingDelegate = recordProcessingDelegate,
+                       !recordProcessingDelegate.shouldProcessPropertyBeforeUpload(propertyName: attributeName, object: originalObject, record: record) {
+                        return
+                    }
+                    
                     let value = originalObject.value(forKey: attributeName)
                     if attributeDescription.attributeType == .binaryDataAttributeType && !self.forceDataTypeInsteadOfAsset,
                         let data = value as? Data {
@@ -318,6 +324,12 @@ extension CoreDataAdapter {
         let referencedEntities = referencedSyncedEntitiesByReferenceName(for: originalObject, context: context)
         referencedEntities.forEach { (relationshipName, entity) in
             if entityState == .new || changedKeys.contains(relationshipName) {
+                
+                if let recordProcessingDelegate = recordProcessingDelegate,
+                   !recordProcessingDelegate.shouldProcessPropertyBeforeUpload(propertyName: relationshipName, object: originalObject, record: record) {
+                    return
+                }
+                
                 let recordID = CKRecord.ID(recordName: entity.identifier!, zoneID: self.recordZoneID)
                 // if we set the parent we must make the action .deleteSelf, otherwise we get errors if we ever try to delete the parent record
                 let action: CKRecord.Reference.Action = parentKey == relationshipName ? .deleteSelf : .none
@@ -394,19 +406,19 @@ extension CoreDataAdapter {
             case .server:
                 object.entity.attributesByName.forEach { (attributeName, attributeDescription) in
                     if !shouldIgnore(key: attributeName) && !(record[attributeName] is CKRecord.Reference) && primaryKey != attributeName {
-                        assignAttributeValue(record[attributeName],
-                                             toManagedObject: object,
-                                             attributeName: attributeName,
-                                             attributeDescription: attributeDescription)
+                        assignAttributeInRecord(record,
+                                                toManagedObject: object,
+                                                attributeName: attributeName,
+                                                attributeDescription: attributeDescription)
                     }
                 }
             case .client:
                 object.entity.attributesByName.forEach { (attributeName, attributeDescription) in
                     if !shouldIgnore(key: attributeName) && !(record[attributeName] is CKRecord.Reference) && primaryKey != attributeName && !changedKeys.contains(attributeName) && state != .new {
-                        assignAttributeValue(record[attributeName],
-                                             toManagedObject: object,
-                                             attributeName: attributeName,
-                                             attributeDescription: attributeDescription)
+                        assignAttributeInRecord(record,
+                                                toManagedObject: object,
+                                                attributeName: attributeName,
+                                                attributeDescription: attributeDescription)
                     }
                 }
             case .custom:
@@ -432,16 +444,23 @@ extension CoreDataAdapter {
         } else {
             object.entity.attributesByName.forEach { (attributeName, attributeDescription) in
                 if !shouldIgnore(key: attributeName) && !(record[attributeName] is CKRecord.Reference) && primaryKey != attributeName {
-                    assignAttributeValue(record[attributeName],
-                                         toManagedObject: object,
-                                         attributeName: attributeName,
-                                         attributeDescription: attributeDescription)
+                    assignAttributeInRecord(record,
+                                            toManagedObject: object,
+                                            attributeName: attributeName,
+                                            attributeDescription: attributeDescription)
                 }
             }
         }
     }
     
-    func assignAttributeValue(_ value: Any?, toManagedObject object: NSManagedObject, attributeName: String, attributeDescription: NSAttributeDescription) {
+    func assignAttributeInRecord(_ record: CKRecord, toManagedObject object: NSManagedObject, attributeName: String, attributeDescription: NSAttributeDescription) {
+        
+        if let recordProcessingDelegate = recordProcessingDelegate,
+           !recordProcessingDelegate.shouldProcessPropertyInDownload(propertyName: attributeName, object: object, record: record) {
+            return
+        }
+        
+        let value = record[attributeName]
         if let value = value as? CKAsset {
             guard let url = value.fileURL,
             let data = try? Data(contentsOf: url) else { return }

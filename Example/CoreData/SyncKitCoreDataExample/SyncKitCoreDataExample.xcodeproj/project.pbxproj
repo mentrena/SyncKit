@@ -17,6 +17,7 @@
 		640C33E922AD8AA100A85508 /* FetchDatabaseChangesOperationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 640C33E822AD8AA100A85508 /* FetchDatabaseChangesOperationTests.swift */; };
 		640C33EB22AD913300A85508 /* Array+OrderInsensitiveCompare.swift in Sources */ = {isa = PBXBuildFile; fileRef = 640C33EA22AD913300A85508 /* Array+OrderInsensitiveCompare.swift */; };
 		640C33ED22AD92CF00A85508 /* TestError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 640C33EC22AD92CF00A85508 /* TestError.swift */; };
+		6413ECF62559B36600BDC1DB /* RecordProcessingDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6413ECF52559B36600BDC1DB /* RecordProcessingDelegate.swift */; };
 		6433B35D22BE489300EAC16C /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6433B35C22BE489300EAC16C /* CloudKit.framework */; };
 		6433B36E22BFC99500EAC16C /* CoreDataSharedCompanyInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6433B36D22BFC99500EAC16C /* CoreDataSharedCompanyInteractor.swift */; };
 		6433B37122BFC9CD00EAC16C /* CoreDataSharedCompanyWireframe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6433B37022BFC9CD00EAC16C /* CoreDataSharedCompanyWireframe.swift */; };
@@ -99,6 +100,7 @@
 		640C33E822AD8AA100A85508 /* FetchDatabaseChangesOperationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchDatabaseChangesOperationTests.swift; sourceTree = "<group>"; };
 		640C33EA22AD913300A85508 /* Array+OrderInsensitiveCompare.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+OrderInsensitiveCompare.swift"; sourceTree = "<group>"; };
 		640C33EC22AD92CF00A85508 /* TestError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestError.swift; sourceTree = "<group>"; };
+		6413ECF52559B36600BDC1DB /* RecordProcessingDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordProcessingDelegate.swift; sourceTree = "<group>"; };
 		6433B35B22BE470D00EAC16C /* SyncKitCoreDataExample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SyncKitCoreDataExample.entitlements; sourceTree = "<group>"; };
 		6433B35C22BE489300EAC16C /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		6433B36D22BFC99500EAC16C /* CoreDataSharedCompanyInteractor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataSharedCompanyInteractor.swift; sourceTree = "<group>"; };
@@ -240,6 +242,7 @@
 				64B3A3A922B0626200E4E942 /* CloudKitSynchronizerTests.swift */,
 				64B3A3B322B3B1E200E4E942 /* TestUtilities.swift */,
 				64B3A3B522B51F0100E4E942 /* CoreDataAdapterTests.swift */,
+				6413ECF52559B36600BDC1DB /* RecordProcessingDelegate.swift */,
 			);
 			path = SyncKitCoreDataExampleTests;
 			sourceTree = "<group>";
@@ -607,6 +610,7 @@
 				64B3A3AC22B1A17E00E4E942 /* MockModelAdapter.swift in Sources */,
 				64CFAF2C22CD26E4009CF1F1 /* QSCompany+CoreDataClass.swift in Sources */,
 				64B46BF622B9629A0017268F /* QSTestEntity+CoreDataProperties.swift in Sources */,
+				6413ECF62559B36600BDC1DB /* RecordProcessingDelegate.swift in Sources */,
 				64B3A38222AEF0A500E4E942 /* DefaultCoreDataAdapterDelegateTests.swift in Sources */,
 				64B3A3B422B3B1E200E4E942 /* TestUtilities.swift in Sources */,
 				64B3A3AE22B1A26500E4E942 /* QSObject.swift in Sources */,

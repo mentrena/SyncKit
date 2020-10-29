@@ -42,6 +42,33 @@ import CloudKit
     func coreDataAdapter(_ adapter: CoreDataAdapter, gotChanges changeDictionary: [String: Any], for object: NSManagedObject)
 }
 
+@objc public protocol CoreDataAdapterRecordProcessing: class {
+    
+    /**
+     *  Called by the adapter before copying a property from the Core Data object to the CloudKit record to upload to CloudKit.
+     *  The method can then apply custom logic to encode the property in the record.
+     *
+     *  @param propertyname     The name of the property that is being processed
+     *  @param object   The `NSManagedObject` that is going to have its record uploaded.
+     *  @param record   The `CKRecord` that is being configured before being sent to CloudKit.
+     *
+     *  @return Boolean indicating whether the adapter should process property normally. Return false if property was already handled in this method.
+     */
+    func shouldProcessPropertyBeforeUpload(propertyName: String, object: NSManagedObject, record: CKRecord) -> Bool
+    
+    /**
+     *  Called by the adapter before copying a property from the CloudKit record that was just downloaded to the Core Data object.
+     *  The method can apply custom logic to save the property from the record to the object. An object implementing this method *should not* change the record itself.
+     *
+     *  @param propertyname     The name of the property that is being processed
+     *  @param object   The `NSManagedObject` that corresponds to the downloaded record.
+     *  @param record   The `CKRecord` that was downloaded from CloudKit.
+     *
+     *  @return Boolean indicating whether the adapter should process property normally. Return false if property was already handled in this method.
+     */
+    func shouldProcessPropertyInDownload(propertyName: String, object: NSManagedObject, record: CKRecord) -> Bool
+}
+
 @objc public class CoreDataAdapter: NSObject {
     /**
      *  The `NSManagedObjectModel` used by the change manager to keep track of changes.
@@ -59,6 +86,7 @@ import CloudKit
     @objc public let targetContext: NSManagedObjectContext
     
     @objc public let delegate: CoreDataAdapterDelegate
+    @objc public weak var recordProcessingDelegate: CoreDataAdapterRecordProcessing?
     @objc public var conflictDelegate: CoreDataAdapterConflictResolutionDelegate?
     @objc public let recordZoneID: CKRecordZone.ID
     @objc public let stack: CoreDataStack
