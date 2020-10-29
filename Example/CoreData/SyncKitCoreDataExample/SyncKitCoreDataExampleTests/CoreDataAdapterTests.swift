@@ -652,6 +652,61 @@ extension CoreDataAdapterTests {
     }
 }
 
+// MARK: - Record Processing Delegate
+
+extension CoreDataAdapterTests {
+    func testRecordProcessingDelegateCalledOnUpload() {
+        insertCompany(name: "company1", identifier: "id1", context: targetCoreDataStack.managedObjectContext)
+        let adapter = createAdapter()
+        let delegate = RecordProcessingDelegate()
+        delegate.shouldProcessUploadClosure = { property, object, record in
+            if property == "name",
+               let object = object as? QSCompany,
+               let name = object.name,
+               let range = name.range(of: "company") {
+                record[property] = String(name[range.upperBound...])
+                return false
+            } else {
+                return true
+            }
+        }
+        adapter.recordProcessingDelegate = delegate
+        let didSync = expectation(description: "did sync")
+        var record: CKRecord?
+        self.fullySync(adapter: adapter) { (uploaded, _, _) in
+            record = uploaded.first
+            didSync.fulfill()
+        }
+        
+        waitForExpectations(timeout: 1, handler: nil)
+
+        XCTAssertEqual(record?["name"], "1")
+    }
+
+    func testRecordProcessingDelegateCalledOnDownload() {
+        let adapter = createAdapter()
+        let record = CKRecord(recordType: "QSCompany",
+                              recordID: CKRecord.ID(recordName: "QSCompany.com1",
+                                                    zoneID: recordZoneID))
+        record["name"] = "1"
+        let delegate = RecordProcessingDelegate()
+        delegate.shouldProcessDownloadClosure = { property, object, record in
+            if property == "name",
+               let object = object as? QSCompany {
+                object.name = "company" + (record["name"] ?? "")
+                return false
+            } else {
+                return true
+            }
+        }
+        adapter.recordProcessingDelegate = delegate
+        waitUntilSynced(adapter: adapter, downloaded: [record])
+        let objects = try? targetCoreDataStack.managedObjectContext.executeFetchRequest(entityName: "QSCompany") as? [QSCompany]
+        let company = objects?.first
+        XCTAssertEqual(company?.name, "company1")
+    }
+}
+
 extension CoreDataAdapterTests: CoreDataAdapterDelegate, CoreDataAdapterConflictResolutionDelegate {
     func coreDataAdapter(_ adapter: CoreDataAdapter, requestsContextSaveWithCompletion completion: (Error?) -> ()) {
         didCallRequestContextSave = true

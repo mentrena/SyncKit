@@ -1282,4 +1282,68 @@ class SyncKitRealmTests: XCTestCase, RealmAdapterDelegate {
         XCTAssertTrue(adapterToken == token);
         XCTAssertNil(UserDefaults.standard.object(forKey: "containerQSCloudKitFetchChangesServerTokenKey"))
     }
+    
+    // MARK: - Custom record processing
+    
+    func testRecordProcessingDelegateCalledOnUpload() {
+        let realm = realmWith(identifier: "t80")
+        let _ = insertCompany(values: ["identifier": "1", "name": "company1", "sortIndex": 1], realm: realm)
+        
+        let adapter = realmAdapter(targetConfiguration: realm.configuration, persistenceConfiguration: persistenceConfigurationWith(identifier: "p80"))
+        let delegate = RecordProcessingDelegate()
+        delegate.shouldProcessUploadClosure = { property, object, record in
+            if property == "name",
+               let object = object as? QSCompany,
+               let name = object.name,
+               let range = name.range(of: "company") {
+                record[property] = String(name[range.upperBound...])
+                return false
+            } else {
+                return true
+            }
+        }
+        adapter.recordProcessingDelegate = delegate
+        
+        let exp = expectation(description: "synced")
+        var record: CKRecord?
+        fullySync(adapter: adapter) { (uploaded, deleted, error) in
+            record = uploaded.first
+            exp.fulfill()
+        }
+        waitForExpectations(timeout: 1, handler: nil)
+        
+        XCTAssertEqual(record?["name"], "1")
+    }
+    
+    func testRecordProcessingDelegateCalledOnDownload() {
+        let realm = realmWith(identifier: "t81")
+        
+        let adapter = realmAdapter(targetConfiguration: realm.configuration, persistenceConfiguration: persistenceConfigurationWith(identifier: "p81"))
+        let delegate = RecordProcessingDelegate()
+        delegate.shouldProcessDownloadClosure = { property, object, record in
+            if property == "name",
+               let object = object as? QSCompany {
+                object.name = "company" + (record["name"] ?? "")
+                return false
+            } else {
+                return true
+            }
+        }
+        adapter.recordProcessingDelegate = delegate
+        
+        let objectRecord = CKRecord(recordType: "QSCompany", recordID: CKRecord.ID(recordName: "QSCompany.1"))
+        objectRecord["name"] = "1" as NSString
+        objectRecord["identifier"] = "1" as NSString
+        objectRecord["sortIndex"] = NSNumber(value: 1)
+        
+        let exp = expectation(description: "synced")
+        fullySync(adapter: adapter, downloaded: [objectRecord], deleted: []) { (uploaded, deleted, error) in
+            exp.fulfill()
+        }
+        waitForExpectations(timeout: 1, handler: nil)
+        
+        let companies = QSCompany.allObjects(in: realm)
+        
+        XCTAssertEqual(companies.firstObject()?.name, "company1")
+    }
 }

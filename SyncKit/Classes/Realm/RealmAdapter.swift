@@ -31,6 +31,33 @@ func executeOnMainQueue(_ closure: () -> ()) {
     func RealmAdapter(_ adapter: RealmAdapter, gotChanges changes: [String: Any], object: RLMObject)
 }
 
+@objc public protocol RealmAdapterRecordProcessing: class {
+    
+    /**
+     *  Called by the adapter before copying a property from the Realm object to the CloudKit record to upload to CloudKit.
+     *  The method can then apply custom logic to encode the property in the record.
+     *
+     *  @param propertyname     The name of the property that is being processed
+     *  @param object   The `RLMObject` that is going to have its record uploaded.
+     *  @param record   The `CKRecord` that is being configured before being sent to CloudKit.
+     *
+     *  @return Boolean indicating whether the adapter should process property normally. Return false if property was already handled in this method.
+     */
+    func shouldProcessPropertyBeforeUpload(propertyName: String, object: RLMObject, record: CKRecord) -> Bool
+    
+    /**
+     *  Called by the adapter before copying a property from the CloudKit record that was just downloaded to the Realm object.
+     *  The method can apply custom logic to save the property from the record to the object. An object implementing this method *should not* change the record itself.
+     *
+     *  @param propertyname     The name of the property that is being processed
+     *  @param object   The `RLMObject` that corresponds to the downloaded record.
+     *  @param record   The `CKRecord` that was downloaded from CloudKit.
+     *
+     *  @return Boolean indicating whether the adapter should process property normally. Return false if property was already handled in this method.
+     */
+    func shouldProcessPropertyInDownload(propertyName: String, object: RLMObject, record: CKRecord) -> Bool
+}
+
 struct ChildRelationship {
     
     let parentEntityName: String
@@ -80,6 +107,7 @@ struct ObjectUpdate {
     @objc public let zoneID: CKRecordZone.ID
     @objc public var mergePolicy: MergePolicy = .server
     @objc public var delegate: RealmAdapterDelegate?
+    @objc public weak var recordProcessingDelegate: RealmAdapterRecordProcessing?
     @objc public var forceDataTypeInsteadOfAsset: Bool = false
     
     private lazy var tempFileManager: TempFileManager = {
@@ -521,6 +549,11 @@ struct ObjectUpdate {
             return
         }
         
+        if let recordProcessingDelegate = recordProcessingDelegate,
+           !recordProcessingDelegate.shouldProcessPropertyInDownload(propertyName: key, object: object, record: record) {
+            return
+        }
+        
         let value = record[key]
         if let reference = value as? CKRecord.Reference {
             // Save relationship to be applied after all records have been downloaded and persisted
@@ -736,40 +769,45 @@ struct ObjectUpdate {
         
         for property in object!.objectSchema.properties {
             
-            if property.type == RLMPropertyType.object &&
-                (entityState == SyncedEntityState.new.rawValue || changedKeys.contains(property.name)) {
-                
-                if let target = object?.value(forKey: property.name) as? RLMObject {
-                    
-                    let targetIdentifier = target.value(forKey: objectClass.primaryKey()!) as! String
-                    let referenceIdentifier = "\(property.objectClassName!).\(targetIdentifier)"
-                    let recordID = CKRecord.ID(recordName: referenceIdentifier, zoneID: zoneID)
-                    // if we set the parent we must make the action .deleteSelf, otherwise we get errors if we ever try to delete the parent record
-                    let action: CKRecord.Reference.Action = parentKey == property.name ? .deleteSelf : .none
-                    let recordReference = CKRecord.Reference(recordID: recordID, action: action)
-                    record[property.name] = recordReference;
-                    if parentKey == property.name {
-                        parent = target
-                    }
+            if (entityState == SyncedEntityState.new.rawValue || changedKeys.contains(property.name)) {
+                if let recordProcessingDelegate = recordProcessingDelegate,
+                   !recordProcessingDelegate.shouldProcessPropertyBeforeUpload(propertyName: property.name, object: object!, record: record) {
+                    continue
                 }
                 
-            } else if !property.array &&
-            property.type != RLMPropertyType.linkingObjects &&
-            !(property.name == objectClass.primaryKey()!) &&
-                (entityState == SyncedEntityState.new.rawValue || changedKeys.contains(property.name)) {
-                
-                let value = object!.value(forKey: property.name)
-                if property.type == RLMPropertyType.data,
-                    let data = value as? Data,
-                    forceDataTypeInsteadOfAsset == false  {
+                if property.type == RLMPropertyType.object {
                     
-                    let fileURL = self.tempFileManager.store(data: data)
-                    let asset = CKAsset(fileURL: fileURL)
-                    record[property.name] = asset
-                } else if value == nil {
-                    record[property.name] = nil
-                } else if let recordValue = value as? CKRecordValue {
-                    record[property.name] = recordValue
+                    if let target = object?.value(forKey: property.name) as? RLMObject {
+                        
+                        let targetIdentifier = target.value(forKey: objectClass.primaryKey()!) as! String
+                        let referenceIdentifier = "\(property.objectClassName!).\(targetIdentifier)"
+                        let recordID = CKRecord.ID(recordName: referenceIdentifier, zoneID: zoneID)
+                        // if we set the parent we must make the action .deleteSelf, otherwise we get errors if we ever try to delete the parent record
+                        let action: CKRecord.Reference.Action = parentKey == property.name ? .deleteSelf : .none
+                        let recordReference = CKRecord.Reference(recordID: recordID, action: action)
+                        record[property.name] = recordReference;
+                        if parentKey == property.name {
+                            parent = target
+                        }
+                    }
+                    
+                } else if !property.array &&
+                property.type != RLMPropertyType.linkingObjects &&
+                !(property.name == objectClass.primaryKey()!) {
+                    
+                    let value = object!.value(forKey: property.name)
+                    if property.type == RLMPropertyType.data,
+                        let data = value as? Data,
+                        forceDataTypeInsteadOfAsset == false  {
+                        
+                        let fileURL = self.tempFileManager.store(data: data)
+                        let asset = CKAsset(fileURL: fileURL)
+                        record[property.name] = asset
+                    } else if value == nil {
+                        record[property.name] = nil
+                    } else if let recordValue = value as? CKRecordValue {
+                        record[property.name] = recordValue
+                    }
                 }
             }
         }
