@@ -65,6 +65,15 @@ extension CloudKitSynchronizer {
         }
     }
     
+    @objc public var contexts: [NSManagedObjectContext] {
+        if let provider = adapterProvider as? DefaultCoreDataAdapterProvider {
+            return [provider.managedObjectContext]
+        } else if let provider = adapterProvider as? DefaultCoreDataStackProvider {
+            return provider.coreDataStacks.compactMap { $0.value.managedObjectContext }
+        }
+        return []
+    }
+    
     public func multiFetchedResultsController(fetchRequest: NSFetchRequest<NSFetchRequestResult>) -> CoreDataMultiFetchedResultsController? {
         guard let provider = adapterProvider as? DefaultCoreDataStackProvider else {
             return nil

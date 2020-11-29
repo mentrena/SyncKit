@@ -26,8 +26,29 @@ import CloudKit
         self.fetchRequest = fetchRequest
         self.provider = stackProvider
         super.init()
-        stackProvider.delegate = self
+        configureNotifications()
+        
         updateFetchedResultsControllers()
+    }
+    
+    func configureNotifications() {
+        NotificationCenter.default.addObserver(forName: .CoreDataStackProviderDidAddAdapterNotification, object: provider, queue: nil) { [weak self] (notification) in
+            
+            guard let self = self,
+                  let userInfo = notification.userInfo as? [CKRecordZone.ID: CoreDataAdapter] else { return }
+            userInfo.forEach({ (zoneID, adapter) in
+                self.provider(self.provider, didAddAdapter: adapter, forZoneID: zoneID)
+            })
+        }
+        
+        NotificationCenter.default.addObserver(forName: .CoreDataStackProviderDidRemoveAdapterNotification, object: provider, queue: nil) { [weak self] (notification) in
+        
+            guard let self = self,
+                  let userInfo = notification.userInfo as? [CKRecordZone.ID: CoreDataAdapter] else { return }
+            userInfo.forEach({ (zoneID, adapter) in
+                self.provider(self.provider, didRemoveAdapterForZoneID: zoneID)
+            })
+        }
     }
     
     func updateFetchedResultsControllers() {
@@ -49,7 +70,7 @@ import CloudKit
     }
 }
 
-extension CoreDataMultiFetchedResultsController: DefaultCoreDataStackProviderDelegate {
+extension CoreDataMultiFetchedResultsController {
     public func provider(_ provider: DefaultCoreDataStackProvider, didAddAdapter adapter: CoreDataAdapter, forZoneID zoneID: CKRecordZone.ID) {
         let newController = createFetchedResultsController(for: adapter)
         fetchedResultsControllers.append(newController)
@@ -62,7 +83,7 @@ extension CoreDataMultiFetchedResultsController: DefaultCoreDataStackProviderDel
     
     public func provider(_ provider: DefaultCoreDataStackProvider, didRemoveAdapterForZoneID zoneID: CKRecordZone.ID) {
         if let removedController = controllersPerZoneID[zoneID],
-            let index = fetchedResultsControllers.firstIndex(of: removedController){
+            let index = fetchedResultsControllers.firstIndex(of: removedController) {
             
             fetchedResultsControllers.remove(at: index)
             controllersPerZoneID.removeValue(forKey: zoneID)

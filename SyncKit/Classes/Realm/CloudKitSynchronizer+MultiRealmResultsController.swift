@@ -17,4 +17,9 @@ extension CloudKitSynchronizer {
         }
         return nil
     }
+    
+    public var realms: [RLMRealm] {
+        let provider = adapterProvider as? DefaultRealmProvider
+        return provider?.realms.values.compactMap { try? RLMRealm(configuration: $0) } ?? []
+    }
 }
