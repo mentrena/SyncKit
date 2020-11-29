@@ -10,9 +10,14 @@ import Foundation
 import CloudKit
 import CoreData
 
-@objc public protocol DefaultCoreDataStackProviderDelegate: class {
-    func provider(_ provider: DefaultCoreDataStackProvider, didAddAdapter adapter: CoreDataAdapter, forZoneID zoneID: CKRecordZone.ID)
-    func provider(_ provider: DefaultCoreDataStackProvider, didRemoveAdapterForZoneID zoneID: CKRecordZone.ID)
+public extension Notification.Name {
+    static let CoreDataStackProviderDidAddAdapterNotification = Notification.Name("QSCoreDataStackProviderDidAddAdapter")
+    static let CoreDataStackProviderDidRemoveAdapterNotification = Notification.Name("QSCoreDataStackProviderDidRemoveAdapterNotification")
+}
+
+@objc public extension NSNotification {
+    static let CoreDataStackProviderDidAddAdapterNotification: NSString = "QSCoreDataStackProviderDidAddAdapterNotification"
+    static let CoreDataStackProviderDidRemoveAdapterNotification: NSString = "QSCoreDataStackProviderDidRemoveAdapterNotification"
 }
 
 @objc public class DefaultCoreDataStackProvider: NSObject {
@@ -21,9 +26,7 @@ import CoreData
     @objc public let storeType: String
     @objc public let model: NSManagedObjectModel
     @objc public let appGroup: String?
-    
-    @objc public weak var delegate: DefaultCoreDataStackProviderDelegate?
-    
+     
     @objc public private(set) var adapterDictionary: [CKRecordZone.ID: CoreDataAdapter]
     @objc public private(set) var coreDataStacks: [CKRecordZone.ID: CoreDataStack]
     @objc public private(set) var directoryURL: URL!
@@ -80,7 +83,7 @@ extension DefaultCoreDataStackProvider: AdapterProvider {
         
         let adapter = createAdapter(forCoreDataStackAt: stackURL, persistenceStackAt: persistenceURL, recordZoneID: zoneID)
         adapterDictionary[zoneID] = adapter
-        delegate?.provider(self, didAddAdapter: adapter, forZoneID: zoneID)
+        NotificationCenter.default.post(name: .CoreDataStackProviderDidAddAdapterNotification, object: self, userInfo: [zoneID: adapter])
         return adapter
     }
     
@@ -102,7 +105,7 @@ extension DefaultCoreDataStackProvider: AdapterProvider {
             
             synchronizer.removeModelAdapter(adapter)
             
-            delegate?.provider(self, didRemoveAdapterForZoneID: zoneID)
+            NotificationCenter.default.post(name: .CoreDataStackProviderDidRemoveAdapterNotification, object: self, userInfo: [zoneID: adapter])
         }
     }
 }
