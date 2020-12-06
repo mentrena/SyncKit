@@ -254,7 +254,7 @@ extension CoreDataAdapter {
             var pending = entities
             var includedEntityIDs = Set<String>()
             while recordsArray.count < limit && !pending.isEmpty {
-                var entity: QSSyncedEntity! = pending.last
+                var entity: QSSyncedEntity! = pending.removeLast()
                 while entity != nil && entity.entityState == state && !includedEntityIDs.contains(entity.identifier!) {
                     var parentEntity: QSSyncedEntity? = nil
                     if let index = pending.firstIndex(of: entity) {
