@@ -47,10 +47,6 @@ class RealmCompanyInteractor: CompanyInteractor {
         }) else { return }
         
         delete(realmCompany: com)
-        
-        try! realm.write {
-            realm.delete(com)
-        }
     }
     
     func delete(realmCompany: QSCompany) {
