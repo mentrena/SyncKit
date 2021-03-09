@@ -966,6 +966,10 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
                         }
                     }
                     
+                    if let record = syncedEntity.record {
+                        self.realmProvider.persistenceRealm.delete(record);
+                    }
+                    
                     self.realmProvider.persistenceRealm.delete(syncedEntity)
                 }
             }
@@ -1062,6 +1066,9 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
             for recordID in deletedRecordIDs {
                 
                 if let syncedEntity = self.realmProvider.persistenceRealm.object(ofType: SyncedEntity.self, forPrimaryKey: recordID.recordName) {
+                    if let record = syncedEntity.record {
+                        self.realmProvider.persistenceRealm.delete(record)
+                    }
                     self.realmProvider.persistenceRealm.delete(syncedEntity)
                 }
             }
