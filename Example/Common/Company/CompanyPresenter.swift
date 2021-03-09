@@ -187,7 +187,7 @@ extension DefaultCompanyPresenter: UICloudSharingControllerDelegate {
             let share = csc.share,
             let company = sharingCompany,
             let modelObject = interactor.modelObject(for: company) else { return }
-        synchronizer.saveShare(share, for: modelObject)
+        synchronizer.cloudSharingControllerDidChangeShare(share, for: modelObject)
         interactor.refreshObjects()
     }
     
@@ -195,7 +195,7 @@ extension DefaultCompanyPresenter: UICloudSharingControllerDelegate {
         guard let synchronizer = synchronizer,
             let company = sharingCompany,
             let modelObject = interactor.modelObject(for: company) else { return }
-        synchronizer.deleteShare(for: modelObject)
+        synchronizer.cloudSharingControllerDidDeleteShare(for: modelObject)
         interactor.refreshObjects()
     }
 }
