@@ -37,7 +37,7 @@ import CloudKit
      - share The `CKShare`.
      - object  The model object.
      */
-    @objc func saveShare(_ share: CKShare, for object: AnyObject) {
+    @objc func cloudSharingControllerDidChangeShare(_ share: CKShare, for object: AnyObject) {
         guard let modelAdapter = modelAdapter(for: object) else {
             return
         }
@@ -49,11 +49,32 @@ import CloudKit
      - Parameters:
      - object  The model object.
      */
-    @objc func deleteShare(for object: AnyObject) {
+    @objc func cloudSharingControllerDidDeleteShare(for object: AnyObject) {
         guard let modelAdapter = modelAdapter(for: object) else {
             return
         }
+        
         modelAdapter.deleteShare(for: object)
+        
+        /**
+         There is a bug on CloudKit. The record that was shared will be changed as a result of its share being deleted.
+         However, this change is not returned by CloudKit on the next CKFetchZoneChangesOperation, so our local record
+         becomes out of sync. To avoid that, we will fetch it here and update our local copy.
+         */
+        
+        guard let record = modelAdapter.record(for: object) else {
+            return
+        }
+
+        database.fetch(withRecordID: record.recordID) { (updated, error) in
+            if let updated = updated {
+                modelAdapter.prepareToImport()
+                modelAdapter.saveChanges(in: [updated])
+                modelAdapter.persistImportedChanges { (error) in
+                    modelAdapter.didFinishImport(with: error)
+                }
+            }
+        }
     }
     
     /**
@@ -88,17 +109,14 @@ import CloudKit
         
         addMetadata(to: [record, share])
         
-        let operation = CKModifyRecordsOperation(recordsToSave: [record, share], recordIDsToDelete: nil)
-        
-        operation.modifyRecordsCompletionBlock = { savedRecords, deletedRecordIDs, operationError in
-            
+        let operation = ModifyRecordsOperation(database: database, records: [record, share], recordIDsToDelete: nil) { (savedRecords, deleted, conflicted, operationError) in
             self.dispatchQueue.async {
                 
                 let uploadedShare = savedRecords?.first { $0 is CKShare} as? CKShare
                 
                 if let savedRecords = savedRecords,
-                    operationError == nil,
-                    let share = uploadedShare {
+                   operationError == nil,
+                   let share = uploadedShare {
                     
                     modelAdapter.prepareToImport()
                     let records = savedRecords.filter { $0 != share }
@@ -119,17 +137,33 @@ import CloudKit
                         }
                     })
                     
+                } else if let error = operationError {
+                    if self.isServerRecordChangedError(error as NSError),
+                       !conflicted.isEmpty {
+                        modelAdapter.prepareToImport()
+                        modelAdapter.saveChanges(in: conflicted)
+                        modelAdapter.persistImportedChanges { (error) in
+                            modelAdapter.didFinishImport(with: error)
+                            DispatchQueue.main.async {
+                                self.syncing = false
+                                self.share(object: object, publicPermission: publicPermission, participants: participants, completion: completion)
+                            }
+                        }
+                    } else {
+                        DispatchQueue.main.async {
+                            self.syncing = false
+                            completion?(uploadedShare, operationError)
+                        }
+                    }
                 } else {
-                    
                     DispatchQueue.main.async {
                         self.syncing = false
-                        completion?(uploadedShare, operationError)
+                        completion?(nil, operationError)
                     }
                 }
             }
         }
-        
-        database.add(operation)
+        runOperation(operation)
     }
     
     /**

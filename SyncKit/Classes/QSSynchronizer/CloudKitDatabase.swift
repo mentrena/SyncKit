@@ -13,6 +13,7 @@ import CloudKit
     func add(_ operation: CKDatabaseOperation)
     func save(zone: CKRecordZone, completionHandler: @escaping (CKRecordZone?, Error?) -> Void)
     func fetch(withRecordZoneID zoneID: CKRecordZone.ID, completionHandler: @escaping (CKRecordZone?, Error?) -> Void)
+    func fetch(withRecordID recordID: CKRecord.ID, completionHandler: @escaping (CKRecord?, Error?) -> Void)
     func delete(withRecordZoneID zoneID: CKRecordZone.ID, completionHandler: @escaping (CKRecordZone.ID?, Error?) -> Void)
     var databaseScope: CKDatabase.Scope { get }
     
@@ -41,6 +42,10 @@ import CloudKit
     
     public func fetch(withRecordZoneID zoneID: CKRecordZone.ID, completionHandler: @escaping (CKRecordZone?, Error?) -> Void) {
         database.fetch(withRecordZoneID: zoneID, completionHandler: completionHandler)
+    }
+    
+    public func fetch(withRecordID recordID: CKRecord.ID, completionHandler: @escaping (CKRecord?, Error?) -> Void) {
+        database.fetch(withRecordID: recordID, completionHandler: completionHandler)
     }
     
     public func delete(withRecordZoneID zoneID: CKRecordZone.ID, completionHandler: @escaping (CKRecordZone.ID?, Error?) -> Void) {
