@@ -951,6 +951,10 @@ struct ObjectUpdate {
                         }
                     }
                     
+                    if let record = syncedEntity.record {
+                        self.realmProvider.persistenceRealm.delete(record)
+                    }
+                    
                     self.realmProvider.persistenceRealm.delete(syncedEntity)
                 }
             }
@@ -1051,6 +1055,9 @@ struct ObjectUpdate {
             for recordID in deletedRecordIDs {
                 
                 if let syncedEntity = SyncedEntity.object(in: realmProvider.persistenceRealm, forPrimaryKey: recordID.recordName) {
+                    if let record = syncedEntity.record {
+                        self.realmProvider.persistenceRealm.delete(record)
+                    }
                     self.realmProvider.persistenceRealm.delete(syncedEntity)
                 }
             }
