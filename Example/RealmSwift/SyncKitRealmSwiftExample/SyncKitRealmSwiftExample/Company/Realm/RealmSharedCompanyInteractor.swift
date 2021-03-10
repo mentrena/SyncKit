@@ -14,9 +14,24 @@ class RealmSharedCompanyInteractor: CompanyInteractor {
 
     weak var delegate: CompanyInteractorDelegate?
     let resultsController: MultiRealmResultsController<QSCompany>
+    var token: MultiRealmObserver!
     
     init(resultsController: MultiRealmResultsController<QSCompany>) {
         self.resultsController = resultsController
+        
+        token = resultsController.observe { [weak self] (change) in
+            switch change {
+            case .error(_):
+                break
+            case .update(_, _, _, _):
+                self?.refreshObjects()
+                break
+            }
+        }
+        
+        resultsController.didChangeRealms = { [weak self] _ in
+            self?.refreshObjects()
+        }
     }
     
     func load() {
