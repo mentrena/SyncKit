@@ -81,12 +81,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let acceptSharesOperation = CKAcceptSharesOperation(shareMetadatas: [cloudKitShareMetadata])
         acceptSharesOperation.qualityOfService = .userInteractive
         acceptSharesOperation.acceptSharesCompletionBlock = { [weak self] error in
-            if let error = error {
-                let alertController = UIAlertController(title: "Error", message: "\(error.localizedDescription)", preferredStyle: .alert)
-                alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-                self?.window?.rootViewController?.present(alertController, animated: true, completion: nil)
-            } else {
-                self?.sharedSynchronizer.synchronize(completion: nil)
+            DispatchQueue.main.async {
+                if let error = error {
+                    let alertController = UIAlertController(title: "Error", message: "\(error.localizedDescription)", preferredStyle: .alert)
+                    alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                    self?.window?.rootViewController?.present(alertController, animated: true, completion: nil)
+                } else {
+                    self?.sharedSynchronizer.synchronize(completion: nil)
+                }
             }
         }
         container.add(acceptSharesOperation)
