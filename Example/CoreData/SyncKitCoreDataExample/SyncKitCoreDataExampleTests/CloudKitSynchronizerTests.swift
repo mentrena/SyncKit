@@ -206,15 +206,17 @@ class CloudKitSynchronizerTests: XCTestCase {
         let conflictedRecord = objects[0].record(with: recordZoneID)
         conflictedRecord["number"] = 4
         
-        mockDatabase.serverChangedRecords = [conflictedRecord]
-        
         // Return a conflicted record only the first time the operation is sent
         var modifyRecordsOperationCount = 0
         mockDatabase.modifyRecordsOperationEnqueuedBlock = { _ in
             modifyRecordsOperationCount += 1
-            if modifyRecordsOperationCount > 1 {
-                self.mockDatabase.serverChangedRecords = []
-                self.mockDatabase.modifyRecordsOperationEnqueuedBlock = nil
+        }
+        
+        mockDatabase.serverChangedRecordBlock = { record in
+            if modifyRecordsOperationCount < 2, record.recordID == conflictedRecord.recordID {
+                return conflictedRecord
+            } else {
+                return nil
             }
         }
         
@@ -720,5 +722,105 @@ class CloudKitSynchronizerTests: XCTestCase {
         
         XCTAssertTrue(uploadOperations > 1)
         XCTAssertEqual(mockDatabase.receivedRecords.count, objects.count)
+    }
+    
+    func testCloudSharingControllerDidChangeShare_callsSaveOnAdapter() {
+        let object = QSObject(identifier: "1", number: 1)
+        mockAdapter.objects = [object]
+        let record = object.record(with: recordZoneID)
+        
+        let share = CKShare(rootRecord: record)
+        
+        synchronizer.cloudSharingControllerDidChangeShare(share, for: object)
+        
+        let savedShare = mockAdapter.sharesByIdentifier[object.identifier]
+        XCTAssertEqual(share, savedShare)
+    }
+    
+    func testCloudSharingControllerDidDeleteShare_callsDeleteOnAdapter() {
+        let object = QSObject(identifier: "1", number: 1)
+        mockAdapter.objects = [object]
+        let record = object.record(with: recordZoneID)
+        let share = CKShare(rootRecord: record)
+        mockAdapter.sharesByIdentifier[object.identifier] = share
+        
+        let record2 = object.record(with: recordZoneID)
+        record2["changedRecord"] = "changed"
+        mockDatabase.fetchRecordResult = record2
+        
+        synchronizer.cloudSharingControllerDidDeleteShare(for: object)
+        
+        XCTAssertNil(mockAdapter.sharesByIdentifier[object.identifier])
+        XCTAssertEqual(mockDatabase.fetchCalledWithRecordID, record.recordID)
+        XCTAssertTrue(mockAdapter.saveChangesCalled)
+    }
+    
+    func testShareObject_notYetShared_uploadsShareAndRecord() {
+        let object = QSObject(identifier: "1", number: 1)
+        mockAdapter.objects = [object]
+        
+        let expectation = self.expectation(description: "did upload")
+        var uploadedRecords: [CKRecord] = []
+        mockDatabase.modifyRecordsOperationEnqueuedBlock = { operation in
+            uploadedRecords = operation.recordsToSave ?? []
+        }
+        
+        synchronizer.share(object: object, publicPermission: .readWrite, participants: []) { (_, _) in
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: 1, handler: nil)
+        
+        let objectRecord = object.record(with: recordZoneID)
+        
+        let uploadedRecord = uploadedRecords.first { (record) in
+            record.recordID == objectRecord.recordID
+        }
+        let uploadedShare = uploadedRecord?.share
+        
+        XCTAssertNotNil(uploadedRecord)
+        XCTAssertNotNil(uploadedShare)
+        XCTAssertEqual(mockAdapter.didUploadRecords, [uploadedRecord].compactMap{$0})
+        XCTAssertNotNil(mockAdapter.sharesByIdentifier[object.identifier])
+    }
+    
+    func testShareObject_serverRecordChanged_updatesLocalRecordAndRetries() {
+        let object = QSObject(identifier: "1", number: 1)
+        mockAdapter.objects = [object]
+        
+        let objectRecord = object.record(with: recordZoneID)
+        
+        let expectation = self.expectation(description: "did upload")
+        var uploadedRecords: [CKRecord] = []
+        
+        var operationCount = 0
+        mockDatabase.modifyRecordsOperationEnqueuedBlock = { operation in
+            uploadedRecords = operation.recordsToSave ?? []
+            operationCount += 1
+        }
+        
+        mockDatabase.serverChangedRecordBlock = { record in
+            if operationCount < 2 && record.recordID == objectRecord.recordID {
+                return record
+            } else {
+                return nil
+            }
+        }
+        
+        synchronizer.share(object: object, publicPermission: .readWrite, participants: []) { (_, _) in
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: 1, handler: nil)
+        
+        let uploadedRecord = uploadedRecords.first { (record) in
+            record.recordID == objectRecord.recordID
+        }
+        let uploadedShare = uploadedRecord?.share
+        
+        XCTAssertNotNil(uploadedRecord)
+        XCTAssertNotNil(uploadedShare)
+        XCTAssertEqual(mockAdapter.didUploadRecords, [uploadedRecord].compactMap{$0})
+        XCTAssertNotNil(mockAdapter.sharesByIdentifier[object.identifier])
+        XCTAssertTrue(mockAdapter.saveChangesCalled)
+        XCTAssertEqual(operationCount, 2)
     }
 }

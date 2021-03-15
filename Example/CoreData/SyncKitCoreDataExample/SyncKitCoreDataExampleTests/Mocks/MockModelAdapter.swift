@@ -151,15 +151,24 @@ class MockModelAdapter: NSObject, ModelAdapter {
     }
     
     func share(for object: AnyObject) -> CKShare? {
-        return nil
+        guard let object = object as? QSObject else {
+            return nil
+        }
+        return sharesByIdentifier[object.identifier]
     }
     
     func save(share: CKShare, for object: AnyObject) {
-        
+        guard let object = object as? QSObject else {
+            return
+        }
+        sharesByIdentifier[object.identifier] = share
     }
     
     func deleteShare(for object: AnyObject) {
-        
+        guard let object = object as? QSObject else {
+            return
+        }
+        sharesByIdentifier.removeValue(forKey: object.identifier)
     }
     
     var recordsToUpdateParentRelationshipForRootValue: [CKRecord]?

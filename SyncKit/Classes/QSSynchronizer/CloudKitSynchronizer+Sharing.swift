@@ -78,7 +78,7 @@ import CloudKit
     }
     
     /**
-     Creates and uploads a new `CKShare` for the given model object.
+     Returns a  `CKShare` for the given model object. If one does not exist, it creates and uploads a new
      - Parameters:
      - object The model object to share.
      - publicPermission  The permissions to be used for the new share.
@@ -97,6 +97,11 @@ import CloudKit
             let record = modelAdapter.record(for: object) else {
                 completion?(nil, CloudKitSynchronizer.SyncError.recordNotFound)
                 return
+        }
+        
+        if let share = modelAdapter.share(for: object) {
+            completion?(share, nil)
+            return
         }
         
         syncing = true

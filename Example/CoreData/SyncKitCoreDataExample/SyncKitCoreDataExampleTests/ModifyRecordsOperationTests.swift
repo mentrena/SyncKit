@@ -65,7 +65,13 @@ class ModifyRecordsOperationTests: XCTestCase {
                               record(name: "record3", zoneID: zoneID),
                               record(name: "record4", zoneID: zoneID)]
         
-        mockDatabase.serverChangedRecords = changedRecords.suffix(2)
+        mockDatabase.serverChangedRecordBlock = { record in
+            if changedRecords.suffix(2).contains(record) {
+                return record
+            } else {
+                return nil
+            }
+        }
         
         let expectation = self.expectation(description: "finished")
         
