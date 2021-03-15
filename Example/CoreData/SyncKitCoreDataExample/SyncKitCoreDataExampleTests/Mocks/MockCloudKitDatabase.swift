@@ -11,7 +11,6 @@ import SyncKit
 import CloudKit
 
 class MockCloudKitDatabase: CloudKitDatabaseAdapter {
-    
     var databaseScope: CKDatabase.Scope = .private
     
     
@@ -30,7 +29,7 @@ class MockCloudKitDatabase: CloudKitDatabaseAdapter {
     var fetchError: Error?
     var uploadError: Error?
     var filterUploadRecords: ((CKRecord) -> Bool) = { record in true }
-    var serverChangedRecords: [CKRecord]?
+    var serverChangedRecordBlock: ((CKRecord) -> (CKRecord?))?
     var uploadLimit: Int = .max
     
     var modifyRecordsOperationEnqueuedBlock: ((CKModifyRecordsOperation)->())?
@@ -108,27 +107,21 @@ class MockCloudKitDatabase: CloudKitDatabaseAdapter {
         var savedRecords = operation.recordsToSave
         
         // Find records that should return serverRecordChanged error
-        var perIDErrors: [CKRecord.ID: CKError]?
-        if let changed = serverChangedRecords {
-            let changedRecordIDs = changed.map{ $0.recordID }
-            let errors = (operation.recordsToSave ?? [])
-                .compactMap { record in
-                    return changed.first { $0.recordID == record.recordID }
-                }
-                .reduce(into: [CKRecord.ID: CKError]()) { (result, record) in
-                    result[record.recordID] = CKError(.serverRecordChanged, userInfo: [CKRecordChangedErrorServerRecordKey: record])
-                }
-            if !errors.isEmpty {
-                operationError = CKError(.partialFailure, userInfo: [CKPartialErrorsByItemIDKey: errors])
-                perIDErrors = errors
+        var perIDErrors: [CKRecord.ID: CKError] = [:]
+        operation.recordsToSave?.forEach({ (record) in
+            if let changedRecord = serverChangedRecordBlock?(record) {
+                perIDErrors[record.recordID] = CKError(.serverRecordChanged, userInfo: [CKRecordChangedErrorServerRecordKey: changedRecord])
             }
-            savedRecords = savedRecords?.filter { !changedRecordIDs.contains($0.recordID) }
+        })
+        savedRecords = savedRecords?.filter { perIDErrors[$0.recordID] == nil}
+        if !perIDErrors.isEmpty {
+            operationError = CKError(.partialFailure, userInfo: [CKPartialErrorsByItemIDKey: perIDErrors])
         }
         
         // Complete operation
         
         operation.recordsToSave?.forEach({ (record) in
-            operation.perRecordCompletionBlock?(record, perIDErrors?[record.recordID])
+            operation.perRecordCompletionBlock?(record, perIDErrors[record.recordID])
         })
         
         operation.modifyRecordsCompletionBlock?(savedRecords?.filter(filterUploadRecords), operation.recordIDsToDelete, operationError ?? uploadError)
@@ -183,5 +176,13 @@ class MockCloudKitDatabase: CloudKitDatabaseAdapter {
     func delete(withRecordZoneID zoneID: CKRecordZone.ID, completionHandler: @escaping (CKRecordZone.ID?, Error?) -> Void) {
         deleteRecordZoneCalledBlock?(zoneID)
         completionHandler(zoneID, nil)
+    }
+    
+    var fetchCalledWithRecordID: CKRecord.ID?
+    var fetchRecordResult: CKRecord?
+    var fetchRecordError: Error?
+    func fetch(withRecordID recordID: CKRecord.ID, completionHandler: @escaping (CKRecord?, Error?) -> Void) {
+        fetchCalledWithRecordID = recordID
+        completionHandler(fetchRecordResult, fetchRecordError)
     }
 }
