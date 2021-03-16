@@ -11,17 +11,38 @@ import CoreData
 import CloudKit
 
 @objc public protocol CoreDataMultiFetchedResultsControllerDelegate: NSFetchedResultsControllerDelegate {
+    
+    /// Called by the multi-controller when the list of internal controllers changed. E.g. a model adapter was added or removed, which will happen when a new record zone is shared with this user for example if the user accepts a share.
+    /// - Parameter controller: `CoreDataMultiFetchedResultsController`
     func multiFetchedResultsControllerDidChangeControllers(_ controller: CoreDataMultiFetchedResultsController)
 }
 
+
+/**
+ * A `CoreDataMultiFetchedResultsController` allows to fetch objects with a fetch request across multiple `NSManagedObjectContext` instances.
+ * It can be useful when getting results out of a shared synchronizer, since objects from different record zones will be kept in different Core Data contexts.
+ */
 @objc public class CoreDataMultiFetchedResultsController: NSObject {
+    
+    /// A delegate to be called when the internal controllers change as a result of new shared being accepted/removed.
     @objc public weak var delegate: CoreDataMultiFetchedResultsControllerDelegate?
+    
+    /// List of `NSFetchedResultsController` used to get the results.
     @objc public private(set) var fetchedResultsControllers: [NSFetchedResultsController<NSFetchRequestResult>]!
+    
+    /// Fetch request used to get the results.
     @objc public let fetchRequest: NSFetchRequest<NSFetchRequestResult>
+    
+    /// `DefaultCoreDataStackProvider` linked to this controller. This is the object that provides a new Core Data stack to the synchronizer when a new record zone is added to it –user accepted a share, for example.
     @objc public let provider: DefaultCoreDataStackProvider
     
     private var controllersPerZoneID = [CKRecordZone.ID: NSFetchedResultsController<NSFetchRequestResult>]()
 
+    
+    /// Createa a new controller with results from the contexts in the given stack provider.
+    /// - Parameters:
+    ///   - stackProvider: The Core Data stack provider that contains the contexts to get results from.
+    ///   - fetchRequest: Fetch request to use to with Core Data to get the objects.
     @objc public init(stackProvider: DefaultCoreDataStackProvider, fetchRequest: NSFetchRequest<NSFetchRequestResult>) {
         self.fetchRequest = fetchRequest
         self.provider = stackProvider
@@ -71,7 +92,7 @@ import CloudKit
 }
 
 extension CoreDataMultiFetchedResultsController {
-    public func provider(_ provider: DefaultCoreDataStackProvider, didAddAdapter adapter: CoreDataAdapter, forZoneID zoneID: CKRecordZone.ID) {
+    func provider(_ provider: DefaultCoreDataStackProvider, didAddAdapter adapter: CoreDataAdapter, forZoneID zoneID: CKRecordZone.ID) {
         let newController = createFetchedResultsController(for: adapter)
         fetchedResultsControllers.append(newController)
         controllersPerZoneID[zoneID] = newController
@@ -81,7 +102,7 @@ extension CoreDataMultiFetchedResultsController {
         }
     }
     
-    public func provider(_ provider: DefaultCoreDataStackProvider, didRemoveAdapterForZoneID zoneID: CKRecordZone.ID) {
+    func provider(_ provider: DefaultCoreDataStackProvider, didRemoveAdapterForZoneID zoneID: CKRecordZone.ID) {
         if let removedController = controllersPerZoneID[zoneID],
             let index = fetchedResultsControllers.firstIndex(of: removedController) {
             

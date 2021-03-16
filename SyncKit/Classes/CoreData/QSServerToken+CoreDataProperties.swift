@@ -12,10 +12,10 @@ import CoreData
 
 extension QSServerToken {
 
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<QSServerToken> {
+    @nonobjc class func fetchRequest() -> NSFetchRequest<QSServerToken> {
         return NSFetchRequest<QSServerToken>(entityName: "QSServerToken")
     }
 
-    @NSManaged public var token: NSData?
+    @NSManaged var token: NSData?
 
 }

@@ -9,7 +9,6 @@
 import Foundation
 import CoreData
 
-@objc(QSSyncedEntity)
-public class QSSyncedEntity: NSManagedObject {
+@objc(QSSyncedEntity) class QSSyncedEntity: NSManagedObject {
 
 }

@@ -9,6 +9,7 @@
 import Foundation
 import CoreData
 
+/// Encapsulates a Core Data stack. This predates `NSPersistentContainer` and it's basically the same.
 @objc public class CoreDataStack: NSObject {
     
     @objc public private(set) var managedObjectContext: NSManagedObjectContext!
@@ -21,6 +22,14 @@ import CoreData
     @objc public let model: NSManagedObjectModel
     @objc public let concurrencyType: NSManagedObjectContextConcurrencyType
     
+    
+    /// Create a new Core Data stack.
+    /// - Parameters:
+    ///   - storeType: Store type, such as NSSQLiteStoreType.
+    ///   - model: model to be used for the stack.
+    ///   - storeURL: `URL` for the store location. Optional.
+    ///   - concurrencyType: Default is `privateQueueConcurrencyType`
+    ///   - dispatchImmediately: Used for testing.
     @objc public init(storeType: String,
          model: NSManagedObjectModel,
          storeURL: URL?,
@@ -36,6 +45,8 @@ import CoreData
         loadStore()
     }
     
+    
+    /// Winds down the stack and deletes the store.
     @objc public func deleteStore() {
         managedObjectContext.performAndWait {
             self.managedObjectContext.reset()

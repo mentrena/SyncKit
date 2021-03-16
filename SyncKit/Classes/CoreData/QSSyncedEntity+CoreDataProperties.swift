@@ -12,20 +12,20 @@ import CoreData
 
 extension QSSyncedEntity {
 
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<QSSyncedEntity> {
+    @nonobjc class func fetchRequest() -> NSFetchRequest<QSSyncedEntity> {
         return NSFetchRequest<QSSyncedEntity>(entityName: "QSSyncedEntity")
     }
 
-    @NSManaged public var changedKeys: String?
-    @NSManaged public var entityType: String?
-    @NSManaged public var identifier: String?
-    @NSManaged public var originObjectID: String?
-    @NSManaged public var state: NSNumber?
-    @NSManaged public var updatedDate: NSDate?
-    @NSManaged public var pendingRelationships: NSSet?
-    @NSManaged public var record: QSRecord?
-    @NSManaged public var share: QSSyncedEntity?
-    @NSManaged public var shareForEntity: QSSyncedEntity?
+    @NSManaged var changedKeys: String?
+    @NSManaged var entityType: String?
+    @NSManaged var identifier: String?
+    @NSManaged var originObjectID: String?
+    @NSManaged var state: NSNumber?
+    @NSManaged var updatedDate: NSDate?
+    @NSManaged var pendingRelationships: NSSet?
+    @NSManaged var record: QSRecord?
+    @NSManaged var share: QSSyncedEntity?
+    @NSManaged var shareForEntity: QSSyncedEntity?
 
 }
 
@@ -33,16 +33,16 @@ extension QSSyncedEntity {
 extension QSSyncedEntity {
 
     @objc(addPendingRelationshipsObject:)
-    @NSManaged public func addToPendingRelationships(_ value: QSPendingRelationship)
+    @NSManaged func addToPendingRelationships(_ value: QSPendingRelationship)
 
     @objc(removePendingRelationshipsObject:)
-    @NSManaged public func removeFromPendingRelationships(_ value: QSPendingRelationship)
+    @NSManaged func removeFromPendingRelationships(_ value: QSPendingRelationship)
 
     @objc(addPendingRelationships:)
-    @NSManaged public func addToPendingRelationships(_ values: NSSet)
+    @NSManaged func addToPendingRelationships(_ values: NSSet)
 
     @objc(removePendingRelationships:)
-    @NSManaged public func removeFromPendingRelationships(_ values: NSSet)
+    @NSManaged func removeFromPendingRelationships(_ values: NSSet)
     
     var entityState: SyncedEntityState {
         set {

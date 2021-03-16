@@ -10,7 +10,7 @@ import Foundation
 import CoreData
 import CloudKit
 
-extension CoreDataAdapter: ModelAdapter {
+extension CoreDataAdapter {
 
     public func prepareToImport() {
         configureImportContext()

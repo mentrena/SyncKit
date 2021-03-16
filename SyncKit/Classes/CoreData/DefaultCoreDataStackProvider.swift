@@ -11,29 +11,56 @@ import CloudKit
 import CoreData
 
 public extension Notification.Name {
+    
+    /// Sent when a new Core Data adapter was created
     static let CoreDataStackProviderDidAddAdapterNotification = Notification.Name("QSCoreDataStackProviderDidAddAdapter")
+    /// Sent when a Core Data adapter was deleted
     static let CoreDataStackProviderDidRemoveAdapterNotification = Notification.Name("QSCoreDataStackProviderDidRemoveAdapterNotification")
 }
 
 @objc public extension NSNotification {
+    /// Sent when a new Core Data adapter was created
     static let CoreDataStackProviderDidAddAdapterNotification: NSString = "QSCoreDataStackProviderDidAddAdapterNotification"
+    /// Sent when a Core Data adapter was deleted
     static let CoreDataStackProviderDidRemoveAdapterNotification: NSString = "QSCoreDataStackProviderDidRemoveAdapterNotification"
 }
 
+/// Can create new Core Data stacks, corresponding to CloudKit record zones. Used by `CloudKitSynchronizer` to dynamically create stacks when new record zones are added to this user's database –e.g. if the user accepts a share.
 @objc public class DefaultCoreDataStackProvider: NSObject {
     
+    /// This provider's identifier.
     @objc public let identifier: String
+    
+    /// Core Data store type.
     @objc public let storeType: String
+    
+    /// Core Data model.
     @objc public let model: NSManagedObjectModel
+    
+    /// App group, if any.
     @objc public let appGroup: String?
      
+    
+    /// Current list of adapters maintained by this adapter provider.
     @objc public private(set) var adapterDictionary: [CKRecordZone.ID: CoreDataAdapter]
+    
+    /// Current list of Core Data stacks maintained by this adapter provider.
     @objc public private(set) var coreDataStacks: [CKRecordZone.ID: CoreDataStack]
+    
+    
+    /// URL of the folder where data by this provider is saved.
     @objc public private(set) var directoryURL: URL!
     
     private static let persistenceFileName = "QSPersistenceStore"
     private static let targetFileName = "QSTargetStore"
     
+    
+    /// Create a new Core Data stack provider
+    /// - Parameters:
+    ///   - identifier: Identifier for this provider. Once created, an identifier must remain the same for a given provider
+    ///   - storeType: Core Data store type.
+    ///   - model: Core Data model.
+    ///   - appGroup: Optional app group identifier.
     @objc public init(identifier: String, storeType: String, model: NSManagedObjectModel, appGroup: String? = nil) {
         self.identifier = identifier
         self.storeType = storeType

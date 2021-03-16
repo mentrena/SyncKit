@@ -7,11 +7,11 @@
 
 import Foundation
 
-public class CloudKitSynchronizerOperation: Operation {
-    override public var isAsynchronous: Bool { return true }
-    override public var isExecuting: Bool { return state == .executing }
-    override public var isFinished: Bool { return state == .finished }
-    @objc public var errorHandler: ((CloudKitSynchronizerOperation, Error) -> ())?
+class CloudKitSynchronizerOperation: Operation {
+    override var isAsynchronous: Bool { return true }
+    override var isExecuting: Bool { return state == .executing }
+    override var isFinished: Bool { return state == .finished }
+    @objc var errorHandler: ((CloudKitSynchronizerOperation, Error) -> ())?
     
     var state = State.ready {
         willSet {
@@ -31,7 +31,7 @@ public class CloudKitSynchronizerOperation: Operation {
         fileprivate var keyPath: String { return "is" + self.rawValue }
     }
     
-    override public func start() {
+    override func start() {
         if self.isCancelled {
             state = .finished
         } else {
@@ -40,11 +40,11 @@ public class CloudKitSynchronizerOperation: Operation {
         }
     }
     
-    override public func main() {
+    override func main() {
         state = self.isCancelled ? .finished : .executing
     }
     
-    public func finish(error: Error?) {
+    func finish(error: Error?) {
         if let error = error {
             errorHandler?(self, error)
         }

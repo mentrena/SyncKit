@@ -11,23 +11,16 @@ import CloudKit
 @available(iOS 10.0, macOS 10.12, watchOS 6.0, *)
 @objc public extension CloudKitSynchronizer {
     
-    /**
-     *  Returns identifier for a registered `CKSubscription` to track changes.
-     *
-     *  -Parameter zoneID CKRecordZoneID that is being tracked with the subscription.
-     *  - Returns: Identifier of an existing `CKSubscription` for the record zone, if there is one.
-     */
-    
+
+    /// Returns identifier for a registered `CKSubscription` to track changes.
+    /// - Parameter zoneID: `CKRecordZoneID` that is being tracked with the subscription.
+    /// - Returns: Identifier of an existing `CKSubscription` for the record zone, if there is one.
     @objc func subscriptionID(forRecordZoneID zoneID: CKRecordZone.ID) -> String? {
         return getStoredSubscriptionID(for: zoneID)
     }
     
-    /**
-     *  Returns identifier for a registered `CKSubscription` to track changes in the synchronizer's database.
-     *
-     *  - Returns: Identifier of an existing `CKSubscription` for this database, if there is one.
-     */
-    
+    /// Returns identifier for a registered `CKSubscription` to track changes in the synchronizer's database.
+    /// - Returns: Identifier of an existing `CKSubscription` for this database, if there is one.
     @objc func subscriptionIDForDatabaseSubscription() -> String? {
         return self.databaseSubscriptionID
     }
@@ -38,6 +31,9 @@ import CloudKit
      *  -Parameter completion Block that will be called after subscription is created, with an optional error.
      */
     
+    
+    /// Creates a new database subscription with CloudKit so the application can receive notifications when new changes happen. The application is responsible for registering for remote notifications and initiating synchronization when a notification is received. @see `CKSubscription`
+    /// - Parameter completion: Block that will be called after subscription is created, with an optional error.
     @objc func subscribeForChangesInDatabase(completion: ((Error?)->())?) {
         
         guard subscriptionIDForDatabaseSubscription() == nil else {
@@ -79,13 +75,10 @@ import CloudKit
         }
     }
     
-    /**
-     *  Creates a new subscription with CloudKit so the application can receive notifications when new changes happen. The application is responsible for registering for remote notifications and initiating synchronization when a notification is received. @see `CKSubscription`
-     *
-     *  -Paremeter zoneID   `CKRecordZoneID` to track for changes
-     *  -Parameter completion Block that will be called after subscription is created, with an optional error.
-     */
-    
+    /// Creates a new subscription with CloudKit so the application can receive notifications when new changes happen. The application is responsible for registering for remote notifications and initiating synchronization when a notification is received. @see `CKSubscription`
+    /// - Parameters:
+    ///   - zoneID: `CKRecordZoneID` to track for changes
+    ///   - completion: Block that will be called after subscription is created, with an optional error.
     @objc func subscribeForChanges(in zoneID: CKRecordZone.ID, completion: ((Error?)->())?) {
         
         guard subscriptionID(forRecordZoneID: zoneID) == nil else {
@@ -133,6 +126,9 @@ import CloudKit
      *  -Parameter completion Block that will be called after subscription is deleted, with an optional error.
      */
     
+    
+    /// Delete existing database subscription to stop receiving notifications.
+    /// - Parameter completion: Block that will be called after subscription is deleted, with an optional error.
     @objc func cancelSubscriptionForChangesInDatabase(completion: ((Error?)->())?) {
         
         if let subscriptionID = subscriptionIDForDatabaseSubscription() {
@@ -161,13 +157,10 @@ import CloudKit
         }
     }
     
-    /**
-     *  Delete existing subscription to stop receiving notifications.
-     *
-     *  -Parameter zoneID `CKRecordZoneID` to stop tracking for changes.
-     *  -Parameter completion Block that will be called after subscription is deleted, with an optional error.
-     */
-    
+    /// Delete existing subscription to stop receiving notifications.
+    /// - Parameters:
+    ///   - zoneID: `CKRecordZoneID` to stop tracking for changes.
+    ///   - completion: Block that will be called after subscription is deleted, with an optional error.
     @objc func cancelSubscriptionForChanges(in zoneID: CKRecordZone.ID, completion: ((Error?)->())?) {
         
         if let subscriptionID = subscriptionID(forRecordZoneID: zoneID) {

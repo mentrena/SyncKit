@@ -12,11 +12,11 @@ import CoreData
 
 extension QSRecord {
 
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<QSRecord> {
+    @nonobjc class func fetchRequest() -> NSFetchRequest<QSRecord> {
         return NSFetchRequest<QSRecord>(entityName: "QSRecord")
     }
 
-    @NSManaged public var encodedRecord: NSData?
-    @NSManaged public var forEntity: QSSyncedEntity?
+    @NSManaged var encodedRecord: NSData?
+    @NSManaged var forEntity: QSSyncedEntity?
 
 }
