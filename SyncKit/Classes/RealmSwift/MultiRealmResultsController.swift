@@ -113,9 +113,9 @@ public class MultiRealmResultsController<T: Object> {
                 case .update(_, let deletions, let insertions, let modifications):
                     self.listeners.forEach { (observer) in
                         observer.reference?.block(.update(realmCount: self.provider.realms.count,
-                                                          deletions: deletions.map { IndexPath(row: $0, section: index) },
-                                                          insertions: insertions.map { IndexPath(row: $0, section: index) },
-                                                          modifications: modifications.map { IndexPath(row: $0, section: index) }))
+                                                          deletions: deletions.map { IndexPath(item: $0, section: index) },
+                                                          insertions: insertions.map { IndexPath(item: $0, section: index) },
+                                                          modifications: modifications.map { IndexPath(item: $0, section: index) }))
                     }
                 case .error(let error):
                     self.listeners.forEach { (observer) in
