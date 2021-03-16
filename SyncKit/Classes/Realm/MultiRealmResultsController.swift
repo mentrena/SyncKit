@@ -115,9 +115,9 @@ public class MultiRealmResultsController<T: RLMObject> {
                 } else if let change = change {
                     self.listeners.forEach { (observer) in
                         observer.reference?.block(.update(realmCount: self.provider.realms.count,
-                                                          deletions: change.deletions.map { IndexPath(row: Int(truncating: $0), section: index) },
-                                                          insertions: change.insertions.map { IndexPath(row: Int(truncating: $0), section: index) },
-                                                          modifications: change.modifications.map { IndexPath(row: Int(truncating: $0), section: index) }))
+                                                          deletions: change.deletions.map { IndexPath(item: Int(truncating: $0), section: index) },
+                                                          insertions: change.insertions.map { IndexPath(item: Int(truncating: $0), section: index) },
+                                                          modifications: change.modifications.map { IndexPath(item: Int(truncating: $0), section: index) }))
                     }
                 }
             }
