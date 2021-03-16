@@ -9,7 +9,6 @@
 import Foundation
 import CoreData
 
-@objc(QSPendingRelationship)
-public class QSPendingRelationship: NSManagedObject {
+@objc(QSPendingRelationship) class QSPendingRelationship: NSManagedObject {
 
 }

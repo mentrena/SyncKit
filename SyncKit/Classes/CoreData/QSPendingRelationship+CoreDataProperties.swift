@@ -12,12 +12,12 @@ import CoreData
 
 extension QSPendingRelationship {
 
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<QSPendingRelationship> {
+    @nonobjc class func fetchRequest() -> NSFetchRequest<QSPendingRelationship> {
         return NSFetchRequest<QSPendingRelationship>(entityName: "QSPendingRelationship")
     }
 
-    @NSManaged public var relationshipName: String?
-    @NSManaged public var targetIdentifier: String?
-    @NSManaged public var forEntity: QSSyncedEntity?
+    @NSManaged var relationshipName: String?
+    @NSManaged var targetIdentifier: String?
+    @NSManaged var forEntity: QSSyncedEntity?
 
 }

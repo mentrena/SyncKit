@@ -731,7 +731,7 @@ class CloudKitSynchronizerTests: XCTestCase {
         
         let share = CKShare(rootRecord: record)
         
-        synchronizer.cloudSharingControllerDidChangeShare(share, for: object)
+        synchronizer.cloudSharingControllerDidSaveShare(share, for: object)
         
         let savedShare = mockAdapter.sharesByIdentifier[object.identifier]
         XCTAssertEqual(share, savedShare)
@@ -748,7 +748,7 @@ class CloudKitSynchronizerTests: XCTestCase {
         record2["changedRecord"] = "changed"
         mockDatabase.fetchRecordResult = record2
         
-        synchronizer.cloudSharingControllerDidDeleteShare(for: object)
+        synchronizer.cloudSharingControllerDidStopSharing(for: object)
         
         XCTAssertNil(mockAdapter.sharesByIdentifier[object.identifier])
         XCTAssertEqual(mockDatabase.fetchCalledWithRecordID, record.recordID)

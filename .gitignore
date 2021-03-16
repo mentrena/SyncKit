@@ -19,6 +19,8 @@ profile
 DerivedData
 *.hmap
 *.ipa
+updateVersion
+generateDocs
 
 # Bundler
 .bundle

@@ -7,9 +7,9 @@
 
 import Foundation
 
-public class BackupDetection: NSObject {
+class BackupDetection: NSObject {
     
-    @objc public enum DetectionResult: Int {
+    @objc enum DetectionResult: Int {
         case firstRun
         case restoredFromBackup
         case regularLaunch
@@ -31,7 +31,7 @@ public class BackupDetection: NSObject {
     }
    
     @objc
-    public static func runBackupDetection(completion: (DetectionResult, Error?) -> ()) {
+    static func runBackupDetection(completion: (DetectionResult, Error?) -> ()) {
         
         let result: DetectionResult
         if FileManager.default.fileExists(atPath: backupDetectionFilePath) {

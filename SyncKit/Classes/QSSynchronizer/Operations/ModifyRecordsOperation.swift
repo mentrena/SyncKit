@@ -8,14 +8,14 @@
 import Foundation
 import CloudKit
 
-public class ModifyRecordsOperation: CloudKitSynchronizerOperation {
+class ModifyRecordsOperation: CloudKitSynchronizerOperation {
     let database: CloudKitDatabaseAdapter
     let records: [CKRecord]?
     let recordIDsToDelete: [CKRecord.ID]?
     
     let completion: ([CKRecord]?, [CKRecord.ID]?, [CKRecord], Error?) -> ()
     
-    public init(database: CloudKitDatabaseAdapter, records: [CKRecord]?, recordIDsToDelete: [CKRecord.ID]?, completion: @escaping ([CKRecord]?, [CKRecord.ID]?, [CKRecord], Error?) -> ()) {
+    init(database: CloudKitDatabaseAdapter, records: [CKRecord]?, recordIDsToDelete: [CKRecord.ID]?, completion: @escaping ([CKRecord]?, [CKRecord.ID]?, [CKRecord], Error?) -> ()) {
         self.database = database
         self.records = records
         self.recordIDsToDelete = recordIDsToDelete
@@ -27,7 +27,7 @@ public class ModifyRecordsOperation: CloudKitSynchronizerOperation {
     let dispatchQueue = DispatchQueue(label: "modifyRecordsDispatchQueue")
     weak var internalOperation: CKModifyRecordsOperation?
         
-    override public func start() {
+    override func start() {
         let operation = CKModifyRecordsOperation(recordsToSave: records, recordIDsToDelete: recordIDsToDelete)
         
         operation.perRecordCompletionBlock = { record, error in
@@ -46,7 +46,7 @@ public class ModifyRecordsOperation: CloudKitSynchronizerOperation {
         database.add(operation)
     }
     
-    override public func cancel() {
+    override func cancel() {
         internalOperation?.cancel()
         super.cancel()
     }

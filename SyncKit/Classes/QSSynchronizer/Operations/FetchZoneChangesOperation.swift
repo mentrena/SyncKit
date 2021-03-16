@@ -8,16 +8,16 @@
 import Foundation
 import CloudKit
 
-public class FetchZoneChangesOperationZoneResult: NSObject {
+class FetchZoneChangesOperationZoneResult: NSObject {
     
-    public var downloadedRecords = [CKRecord]()
-    public var deletedRecordIDs = [CKRecord.ID]()
-    public var serverChangeToken: CKServerChangeToken?
-    public var error: Error?
-    public var moreComing: Bool = false
+    var downloadedRecords = [CKRecord]()
+    var deletedRecordIDs = [CKRecord.ID]()
+    var serverChangeToken: CKServerChangeToken?
+    var error: Error?
+    var moreComing: Bool = false
 }
 
-public class FetchZoneChangesOperation: CloudKitSynchronizerOperation {
+class FetchZoneChangesOperation: CloudKitSynchronizerOperation {
     
     let database: CloudKitDatabaseAdapter
     let zoneIDs: [CKRecordZone.ID]
@@ -32,7 +32,7 @@ public class FetchZoneChangesOperation: CloudKitSynchronizerOperation {
     let dispatchQueue = DispatchQueue(label: "fetchZoneChangesDispatchQueue")
     weak var internalOperation: CKFetchRecordZoneChangesOperation?
     
-    public init(database: CloudKitDatabaseAdapter,
+    init(database: CloudKitDatabaseAdapter,
                       zoneIDs: [CKRecordZone.ID],
                       zoneChangeTokens: [CKRecordZone.ID: CKServerChangeToken],
                       modelVersion: Int,
@@ -51,7 +51,7 @@ public class FetchZoneChangesOperation: CloudKitSynchronizerOperation {
         super.init()
     }
     
-    override public func start() {
+    override func start() {
         
         for zone in zoneIDs {
             zoneResults[zone] = FetchZoneChangesOperationZoneResult()
@@ -140,7 +140,7 @@ public class FetchZoneChangesOperation: CloudKitSynchronizerOperation {
         self.database.add(operation)
     }
     
-    override public func cancel() {
+    override func cancel() {
         internalOperation?.cancel()
         super.cancel()
     }

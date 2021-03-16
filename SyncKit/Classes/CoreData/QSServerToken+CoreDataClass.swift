@@ -9,7 +9,6 @@
 import Foundation
 import CoreData
 
-@objc(QSServerToken)
-public class QSServerToken: NSManagedObject {
+@objc(QSServerToken) class QSServerToken: NSManagedObject {
 
 }

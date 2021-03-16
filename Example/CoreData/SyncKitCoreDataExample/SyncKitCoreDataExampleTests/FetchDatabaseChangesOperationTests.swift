@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import SyncKit
+@testable import SyncKit
 import CloudKit
 import XCTest
 

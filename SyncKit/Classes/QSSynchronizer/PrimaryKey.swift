@@ -13,6 +13,7 @@ import Foundation
  */
 @objc public protocol PrimaryKey: class {
     
+    /// Name of the primary key property.
     static func primaryKey() -> String
 }
 
@@ -22,5 +23,6 @@ import Foundation
  */
 @objc public protocol ParentKey: class {
     
+    /// Name of the parent key property.
     static func parentKey() -> String
 }

@@ -8,7 +8,7 @@
 import Foundation
 import CloudKit
 
-public class FetchDatabaseChangesOperation: CloudKitSynchronizerOperation {
+class FetchDatabaseChangesOperation: CloudKitSynchronizerOperation {
     
     let database: CloudKitDatabaseAdapter
     let databaseToken: CKServerChangeToken?
@@ -18,14 +18,14 @@ public class FetchDatabaseChangesOperation: CloudKitSynchronizerOperation {
     var deletedZoneIDs = [CKRecordZone.ID]()
     weak var internalOperation: CKFetchDatabaseChangesOperation?
     
-    public init(database: CloudKitDatabaseAdapter, databaseToken: CKServerChangeToken?, completion: @escaping (CKServerChangeToken?, [CKRecordZone.ID], [CKRecordZone.ID]) -> ()) {
+    init(database: CloudKitDatabaseAdapter, databaseToken: CKServerChangeToken?, completion: @escaping (CKServerChangeToken?, [CKRecordZone.ID], [CKRecordZone.ID]) -> ()) {
         self.databaseToken = databaseToken
         self.database = database
         self.completion = completion
         super.init()
     }
     
-    override public func start() {
+    override func start() {
         super.start()
 
         let databaseChangesOperation = CKFetchDatabaseChangesOperation(previousServerChangeToken: databaseToken)
@@ -54,7 +54,7 @@ public class FetchDatabaseChangesOperation: CloudKitSynchronizerOperation {
         database.add(databaseChangesOperation)
     }
     
-    override public func cancel() {
+    override func cancel() {
         internalOperation?.cancel()
         super.cancel()
     }

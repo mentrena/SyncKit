@@ -7,7 +7,7 @@
 //
 
 import XCTest
-import SyncKit
+@testable import SyncKit
 import CoreData
 import CloudKit
 

@@ -8,7 +8,7 @@
 
 import Foundation
 import XCTest
-import SyncKit
+@testable import SyncKit
 
 class CloudKitSynchronizerOperationTests: XCTestCase {
     

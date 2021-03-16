@@ -9,9 +9,19 @@
 import Foundation
 import CoreData
 
+
+/// An object implementing `CoreDataAdapterDelegate` is responsible for saving the target managed object context at the request of the `QSCoreDataAdapter` in order to persist any downloaded changes.
 public class DefaultCoreDataAdapterDelegate: CoreDataAdapterDelegate {
+    
+    /// Shared instance, providing a default implementation.
     public static let shared = DefaultCoreDataAdapterDelegate()
     
+    
+    /// Creates a new instance of the default adapter delegate.
+    public init() { }
+}
+
+extension DefaultCoreDataAdapterDelegate {
     public func coreDataAdapter(_ adapter: CoreDataAdapter, requestsContextSaveWithCompletion completion: (Error?) -> ()) {
         var saveError: Error?
         adapter.targetContext.performAndWait {
@@ -45,6 +55,4 @@ public class DefaultCoreDataAdapterDelegate: CoreDataAdapterDelegate {
         }
         completion(saveError)
     }
-    
-    public init() { }
 }

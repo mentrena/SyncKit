@@ -11,6 +11,14 @@ import CloudKit
 
 extension CloudKitSynchronizer {
     
+    
+    /// Creates a new, default synchronizer for the user's private database
+    /// - Parameters:
+    ///   - containerName: CloudKit container name.
+    ///   - managedObjectContext: `NSManagedObject` that should be used for synchronization. Changes in it will be uploaded and downloaded to/from CloudKit.
+    ///   - suiteName: App suite, if this app is part of one. If provided, synchronizer's state will be saved in the app group.
+    ///   - recordZoneID: `CKRecordZoneID` to be used for synchronization. If not provided, default value will be `CKRecordZone.ID(zoneName: "QSCloudKitCustomZoneName", ownerName: CKCurrentUserDefaultName)`.
+    /// - Returns: A fully configured `CloudKitSynchronizer` for the private database.
     @objc public static func privateSynchronizer(containerName: String,
                                            managedObjectContext: NSManagedObjectContext,
                                            suiteName: String? = nil,
@@ -36,6 +44,13 @@ extension CloudKitSynchronizer {
         return synchronizer
     }
     
+    
+    /// Creates a new, default synchronizer for the user's shared database.
+    /// - Parameters:
+    ///   - containerName: CloudKit container name.
+    ///   - objectModel: `NSManagedObjectModel` that is used for synchronization.
+    ///   - suiteName: App suite, if this app is part of one. If provided, synchronizer's state will be saved in the app group.
+    /// - Returns: A fully configured `CloudKitSynchronizer` for the shared database.
     @objc public static func sharedSynchronizer(containerName: String,
                                           objectModel: NSManagedObjectModel,
                                           suiteName: String? = nil) -> CloudKitSynchronizer {
@@ -65,6 +80,8 @@ extension CloudKitSynchronizer {
         }
     }
     
+    
+    /// List of `NSManagedObjectContext` kept in sync by the synchronizer. Usually just the one you provided, for the default private synchronizer, but the shared synchronizer will have one Core Data context for each record zone shared with this user.
     @objc public var contexts: [NSManagedObjectContext] {
         if let provider = adapterProvider as? DefaultCoreDataAdapterProvider {
             return [provider.managedObjectContext]
@@ -74,6 +91,11 @@ extension CloudKitSynchronizer {
         return []
     }
     
+    
+    /// Creates a multiFetchedResultsController to simplify dealing with results from multiple `NSManagedObjectContext` instances.
+    /// - Parameter fetchRequest: Fetch request to be applied to managed contexts.
+    /// - Returns: Configured controller.
+    /// This controller can be particularly useful to retrieve data from a shared synchronizer, as it will potentially be coming from multiple `NSManagedObjectContext`s.
     public func multiFetchedResultsController(fetchRequest: NSFetchRequest<NSFetchRequestResult>) -> CoreDataMultiFetchedResultsController? {
         guard let provider = adapterProvider as? DefaultCoreDataStackProvider else {
             return nil

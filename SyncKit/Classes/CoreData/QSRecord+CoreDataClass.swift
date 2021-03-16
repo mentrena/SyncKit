@@ -9,7 +9,6 @@
 import Foundation
 import CoreData
 
-@objc(QSRecord)
-public class QSRecord: NSManagedObject {
+@objc(QSRecord) class QSRecord: NSManagedObject {
 
 }

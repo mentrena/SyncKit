@@ -9,39 +9,27 @@ import Foundation
 import CloudKit
 import CoreData
 
+
+/// Default implementation of the `AdapterProvider`. Creates a `CoreDataAdapter` for the the given `NSManagedObjectContext` and record zone ID.
 @objc public class DefaultCoreDataAdapterProvider: NSObject, AdapterProvider {
     
-    @objc public let zoneID: CKRecordZone.ID
-    @objc public let managedObjectContext: NSManagedObjectContext
-    @objc public let appGroup: String?
-    @objc public private(set) var adapter: CoreDataAdapter!
+    let zoneID: CKRecordZone.ID
+    let managedObjectContext: NSManagedObjectContext
+    let appGroup: String?
+    public private(set) var adapter: CoreDataAdapter!
     
+    
+    /// Create a new model adapter provider.
+    /// - Parameters:
+    ///   - managedObjectContext: `NSManagedObjectContext` to be used by the model adapter.
+    ///   - zoneID: `CKRecordZone.ID` to be used by the model adapter.
+    ///   - appGroup: Optional app group.
     @objc public init(managedObjectContext: NSManagedObjectContext, zoneID: CKRecordZone.ID, appGroup: String? = nil) {
         self.managedObjectContext = managedObjectContext
         self.zoneID = zoneID
         self.appGroup = appGroup
         super.init()
         adapter = createAdapter()
-    }
-    
-    public func cloudKitSynchronizer(_ synchronizer: CloudKitSynchronizer, modelAdapterForRecordZoneID recordZoneID: CKRecordZone.ID) -> ModelAdapter? {
-        
-        guard recordZoneID == zoneID else { return nil }
-        
-        return adapter
-    }
-    
-    public func cloudKitSynchronizer(_ synchronizer: CloudKitSynchronizer, zoneWasDeletedWithZoneID recordZoneID: CKRecordZone.ID) {
-        
-        let adapterHasSyncedBefore = adapter.serverChangeToken != nil
-        if recordZoneID == zoneID && adapterHasSyncedBefore {
-            
-            adapter.deleteChangeTracking()
-            synchronizer.removeModelAdapter(adapter)
-            
-            adapter = createAdapter()
-            synchronizer.addModelAdapter(adapter)
-        }
     }
     
     fileprivate func createAdapter() -> CoreDataAdapter {
@@ -65,7 +53,7 @@ import CoreData
      *  @return File path, in the shared container, where SyncKit will store its tracking database.
      */
     
-    public static func storeURL(appGroup: String?) -> URL {
+    static func storeURL(appGroup: String?) -> URL {
         return applicationStoresPath(appGroup: appGroup).appendingPathComponent(storeFileName())
     }
     
@@ -91,5 +79,27 @@ import CoreData
     
     private static func storeFileName() -> String {
         return "QSSyncStore"
+    }
+}
+
+extension DefaultCoreDataAdapterProvider {
+    public func cloudKitSynchronizer(_ synchronizer: CloudKitSynchronizer, modelAdapterForRecordZoneID recordZoneID: CKRecordZone.ID) -> ModelAdapter? {
+        
+        guard recordZoneID == zoneID else { return nil }
+        
+        return adapter
+    }
+    
+    public func cloudKitSynchronizer(_ synchronizer: CloudKitSynchronizer, zoneWasDeletedWithZoneID recordZoneID: CKRecordZone.ID) {
+        
+        let adapterHasSyncedBefore = adapter.serverChangeToken != nil
+        if recordZoneID == zoneID && adapterHasSyncedBefore {
+            
+            adapter.deleteChangeTracking()
+            synchronizer.removeModelAdapter(adapter)
+            
+            adapter = createAdapter()
+            synchronizer.addModelAdapter(adapter)
+        }
     }
 }

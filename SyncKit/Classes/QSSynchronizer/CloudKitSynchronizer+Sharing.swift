@@ -34,10 +34,12 @@ import CloudKit
     /**
      Saves the given `CKShare` locally for the given model object.
      - Parameters:
-     - share The `CKShare`.
-     - object  The model object.
+        - share The `CKShare`.
+        - object  The model object.
+     
+        This method should be called by your `UICloudSharingControllerDelegate`, when `cloudSharingControllerDidSaveShare` is called.
      */
-    @objc func cloudSharingControllerDidChangeShare(_ share: CKShare, for object: AnyObject) {
+    @objc func cloudSharingControllerDidSaveShare(_ share: CKShare, for object: AnyObject) {
         guard let modelAdapter = modelAdapter(for: object) else {
             return
         }
@@ -47,9 +49,10 @@ import CloudKit
     /**
      Deletes any `CKShare` locally stored  for the given model object.
      - Parameters:
-     - object  The model object.
+        - object  The model object.
+     This method should be called by your `UICloudSharingControllerDelegate`, when `cloudSharingControllerDidStopSharing` is called.
      */
-    @objc func cloudSharingControllerDidDeleteShare(for object: AnyObject) {
+    @objc func cloudSharingControllerDidStopSharing(for object: AnyObject) {
         guard let modelAdapter = modelAdapter(for: object) else {
             return
         }
@@ -80,10 +83,10 @@ import CloudKit
     /**
      Returns a  `CKShare` for the given model object. If one does not exist, it creates and uploads a new
      - Parameters:
-     - object The model object to share.
-     - publicPermission  The permissions to be used for the new share.
-     - participants: The participants to add to this share.
-     - completion: Closure that gets called with an optional error when the operation is completed.
+        - object The model object to share.
+        - publicPermission  The permissions to be used for the new share.
+        - participants: The participants to add to this share.
+        - completion: Closure that gets called with an optional error when the operation is completed.
      
      */
     @objc func share(object: AnyObject, publicPermission: CKShare.Participant.Permission, participants: [CKShare.Participant], completion: ((CKShare?, Error?) -> ())?) {
@@ -174,8 +177,8 @@ import CloudKit
     /**
      Removes the existing `CKShare` for an object and deletes it from CloudKit.
      - Parameters:
-     - object  The model object.
-     - completion Closure that gets called on completion.
+        - object  The model object.
+        - completion Closure that gets called on completion.
      */
     @objc func removeShare(for object: AnyObject, completion: ((Error?) -> ())?) {
         
@@ -232,10 +235,10 @@ import CloudKit
     }
     
     /**
-     Reuploads to CloudKit all `CKRecord`s for the given root model object and all of its children (see `QSParentKey`). This function can be used to ensure all objects in the hierarchy have their `parent` property correctly set, before sharing, if their records had been created before sharing was supported.
+     Reuploads to CloudKit all `CKRecord`s for the given root model object and all of its children (see `ParentKey`). This function can be used to ensure all objects in the hierarchy have their `parent` property correctly set, before sharing, if their records had been created before sharing was supported.
      - Parameters:
-     - root The root model object.
-     - completion Closure that gets called on completion.
+        - root The root model object.
+        - completion Closure that gets called on completion.
      */
     @objc func reuploadRecordsForChildrenOf(root: AnyObject, completion: @escaping ((Error?) -> ())) {
         
