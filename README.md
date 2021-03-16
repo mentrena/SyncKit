@@ -10,17 +10,7 @@ SyncKit automates the process of synchronizing Core Data or Realm models using C
 
 SyncKit uses introspection to work with any model. It sits next to your Core Data or Realm stack, making it easy to add synchronization to existing apps.
 
-## More info
-
-1. [Basic Info](https://github.com/mentrena/SyncKit/wiki)
-2. [Installation](https://github.com/mentrena/SyncKit/wiki/Installation)
-3. [Core Data](https://github.com/mentrena/SyncKit/wiki/Core-Data)
-    1. [Migrations](https://github.com/mentrena/SyncKit/wiki/Core-Data-migrations)
-4. [Realm](https://github.com/mentrena/SyncKit/wiki/Realm)
-5. [Sharing](https://github.com/mentrena/SyncKit/wiki/Sharing)
-6. [Architecture](https://github.com/mentrena/SyncKit/wiki/Architecture)
-7. [FAQ](https://github.com/mentrena/SyncKit/wiki/FAQ)
-    
+For installation instructions and more information check the [Docs](https://mentrena.github.io/SyncKit)
 
 ## Author
 
