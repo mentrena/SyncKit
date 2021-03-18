@@ -11,11 +11,11 @@ import CloudKit
 /// The merge policy to resolve change conflicts. Default value is `server`
 @objc public enum MergePolicy: Int {
     
-    // Downloaded changes have preference.
+    /// Downloaded changes have preference.
     case server
-    // Local changes have preference.
+    /// Local changes have preference.
     case client
-    // Delegate can resolve changes manually.
+    /// Delegate can resolve changes manually.
     case custom
 }
 
