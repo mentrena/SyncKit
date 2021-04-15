@@ -19,6 +19,16 @@ func executeOnMainQueue(_ closure: () -> ()) {
     }
 }
 
+extension Realm {
+    public func safeWrite(_ block: (() throws -> Void)) throws {
+        if isInWriteTransaction {
+            try block()
+        } else {
+            try write(block)
+        }
+    }
+}
+
 public protocol RealmSwiftAdapterDelegate: class {
     
     /**
@@ -367,9 +377,9 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
             isNewChange = true
             
             if let syncedEntity = syncedEntity {
-                realmProvider.persistenceRealm.beginWrite()
-                syncedEntity.state = SyncedEntityState.deleted.rawValue
-                try? realmProvider.persistenceRealm.commitWrite()
+                try? realmProvider.persistenceRealm.safeWrite {
+                    syncedEntity.state = SyncedEntityState.deleted.rawValue
+                }
             }
             
             if let token = objectNotificationTokens[objectIdentifier] {
@@ -380,7 +390,7 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
             
         } else if syncedEntity == nil {
             
-            createSyncedEntity(entityType: entityName, identifier: objectIdentifier, realm: realmProvider.persistenceRealm)
+            self.createSyncedEntity(entityType: entityName, identifier: objectIdentifier, realm: self.realmProvider.persistenceRealm)
             
             if inserted {
                 isNewChange = true
@@ -408,13 +418,13 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
                 }
             }
             
-            realmProvider.persistenceRealm.beginWrite()
-            syncedEntity.changedKeys = (changedKeys.allObjects as! [String]).joined(separator: ",")
-            if syncedEntity.state == SyncedEntityState.synced.rawValue && !syncedEntity.changedKeys!.isEmpty {
-                syncedEntity.state = SyncedEntityState.changed.rawValue
-                // If state was New then leave it as that
+            try? realmProvider.persistenceRealm.safeWrite {
+                syncedEntity.changedKeys = (changedKeys.allObjects as! [String]).joined(separator: ",")
+                if syncedEntity.state == SyncedEntityState.synced.rawValue && !syncedEntity.changedKeys!.isEmpty {
+                    syncedEntity.state = SyncedEntityState.changed.rawValue
+                    // If state was New then leave it as that
+                }
             }
-            try? realmProvider.persistenceRealm.commitWrite()
         }
         
         if !hasChanges && isNewChange {
@@ -433,9 +443,9 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
         
         let syncedEntity = SyncedEntity(entityType: entityType, identifier: "\(entityType).\(identifier)", state: SyncedEntityState.new.rawValue)
         
-        realm.beginWrite()
-        realm.add(syncedEntity)
-        try? realm.commitWrite()
+        try? realm.safeWrite {
+            realm.add(syncedEntity)
+        }
         
         return syncedEntity
     }

@@ -19,6 +19,16 @@ func executeOnMainQueue(_ closure: () -> ()) {
     }
 }
 
+extension RLMRealm {
+    public func safeWrite(_ block: (() -> Void)) throws {
+        if inWriteTransaction {
+            block()
+        } else {
+            try transaction(block)
+        }
+    }
+}
+
 @objc public protocol RealmAdapterDelegate {
     
     /**
@@ -353,9 +363,9 @@ struct ObjectUpdate {
             isNewChange = true
             
             if let syncedEntity = syncedEntity {
-                realmProvider.persistenceRealm.beginWriteTransaction()
-                syncedEntity.state = SyncedEntityState.deleted.rawValue
-                try? realmProvider.persistenceRealm.commitWriteTransaction()
+                try? realmProvider.persistenceRealm.safeWrite {
+                    syncedEntity.state = SyncedEntityState.deleted.rawValue
+                }
             }
             
             if let token = objectNotificationTokens[objectIdentifier] {
@@ -394,13 +404,13 @@ struct ObjectUpdate {
                 }
             }
             
-            realmProvider.persistenceRealm.beginWriteTransaction()
-            syncedEntity.changedKeys = (changedKeys.allObjects as! [String]).joined(separator: ",")
-            if syncedEntity.state == SyncedEntityState.synced.rawValue && !syncedEntity.changedKeys!.isEmpty {
-                syncedEntity.state = SyncedEntityState.changed.rawValue
-                // If state was New then leave it as that
+            try? realmProvider.persistenceRealm.safeWrite {
+                syncedEntity.changedKeys = (changedKeys.allObjects as! [String]).joined(separator: ",")
+                if syncedEntity.state == SyncedEntityState.synced.rawValue && !syncedEntity.changedKeys!.isEmpty {
+                    syncedEntity.state = SyncedEntityState.changed.rawValue
+                    // If state was New then leave it as that
+                }
             }
-            try? realmProvider.persistenceRealm.commitWriteTransaction()
         }
         
         if !hasChanges && isNewChange {
@@ -419,9 +429,9 @@ struct ObjectUpdate {
         
         let syncedEntity = SyncedEntity(entityType: entityType, identifier: "\(entityType).\(identifier)", state: SyncedEntityState.new.rawValue)
         
-        realm.beginWriteTransaction()
-        realm.add(syncedEntity)
-        try? realm.commitWriteTransaction()
+        try? realm.safeWrite {
+            realm.add(syncedEntity)
+        }
         
         return syncedEntity
     }
