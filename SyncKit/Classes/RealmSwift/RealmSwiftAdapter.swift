@@ -210,16 +210,16 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
                     for index in insertions {
                         
                         let object = results[index]
-                        let identifier = getIdentifier(for: object, primaryKey: primaryKey)
+                        let identifier = self?.getIdentifier(for: object, primaryKey: primaryKey)
                         /* This can be called during a transaction, and it's illegal to add a notification block during a transaction,
                          * so we keep all the insertions in a list to be processed as soon as the realm finishes the current transaction
                          */
                         if object.realm!.isInWriteTransaction {
                             
-                            self?.pendingTrackingUpdates.append(ObjectUpdate(object: object, identifier: identifier, entityType: schema.className, updateType: .insertion, changes: nil))
+                            self?.pendingTrackingUpdates.append(ObjectUpdate(object: object, identifier: identifier!, entityType: schema.className, updateType: .insertion, changes: nil))
                         } else {
                             
-                            self?.updateTracking(insertedObject: object, identifier: identifier, entityName: schema.className, provider: self!.realmProvider)
+                            self?.updateTracking(insertedObject: object, identifier: identifier!, entityName: schema.className, provider: self!.realmProvider)
                         }
                     }
                 default: break
@@ -230,7 +230,7 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
             // Register for object updates
             for object in results {
                 
-                let identifier = getIdentifier(for: object, primaryKey: primaryKey)
+                let identifier = self.getIdentifier(for: object, primaryKey: primaryKey)
                 let token = object.observe({ [weak self] (change) in
                     
                     switch change {
