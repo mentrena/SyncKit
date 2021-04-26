@@ -229,8 +229,15 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
             
             // Register for object updates
             for object in results {
+                var identifier: String = ""
+                let objectId = object.value(forKey: primaryKey)
                 
-                let identifier = object.value(forKey: primaryKey) as! String
+                if let id = objectId as? Int {
+                    identifier = String(id)
+                } else {
+                    identifier = objectId as! String
+                }
+                
                 let token = object.observe({ [weak self] (change) in
                     
                     switch change {
