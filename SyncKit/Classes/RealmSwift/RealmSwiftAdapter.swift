@@ -210,7 +210,7 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
                     for index in insertions {
                         
                         let object = results[index]
-                        let identifier = object.value(forKey: primaryKey) as! String
+                        let identifier = getIdentifier(for: object, primaryKey: primaryKey)
                         /* This can be called during a transaction, and it's illegal to add a notification block during a transaction,
                          * so we keep all the insertions in a list to be processed as soon as the realm finishes the current transaction
                          */
@@ -229,15 +229,8 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
             
             // Register for object updates
             for object in results {
-                var identifier: String = ""
-                let objectId = object.value(forKey: primaryKey)
                 
-                if let id = objectId as? Int {
-                    identifier = String(id)
-                } else {
-                    identifier = objectId as! String
-                }
-                
+                let identifier = getIdentifier(for: object, primaryKey: primaryKey)
                 let token = object.observe({ [weak self] (change) in
                     
                     switch change {
@@ -485,8 +478,20 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
         
         let objectClass = realmObjectClass(name: object.objectSchema.className)
         let primaryKey = objectClass.primaryKey()!
-        let identifier = object.objectSchema.className + "." + (object.value(forKey: primaryKey) as! String)
+        let identifier = object.objectSchema.className + "." + getIdentifier(for: object, primaryKey: primaryKey)
         return getSyncedEntity(objectIdentifier: identifier, realm: realm)
+    }
+    
+    func getIdentifier(for object: Object, primaryKey: String) -> String {
+        var identifier: String = ""
+        let objectId = object.value(forKey: primaryKey)
+        
+        if let id = objectId as? Int {
+            identifier = String(id)
+        } else {
+            identifier = objectId as! String
+        }
+        return identifier
     }
     
     func getSyncedEntity(objectIdentifier: String, realm: Realm) -> SyncedEntity? {
