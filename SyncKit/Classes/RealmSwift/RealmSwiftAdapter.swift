@@ -191,6 +191,7 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
             let primaryKey = objectClass.primaryKey()!
             let results = realmProvider.targetRealm.objects(objectClass)
             
+            debugPrint("Registering for collection notifications...")
             // Register for collection notifications
             let token = results.observe({ [weak self] (collectionChange) in
                 
@@ -217,6 +218,7 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
             })
             collectionNotificationTokens.append(token)
             
+            debugPrint("Registering for object updates...")
             // Register for object updates
             for object in results {
                 
@@ -248,7 +250,7 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
                 })
                 
                 if needsInitialSetup {
-                    
+                    debugPrint("Needs initial setup...creating synced entity...")
                     createSyncedEntity(entityType: schema.className, identifier: identifier, realm: realmProvider.persistenceRealm)
                 }
                 
@@ -424,7 +426,7 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
     }
     
     func commitTargetWriteTransactionWithoutNotifying() {
-        
+        debugPrint("Performing commit write in target Realm...")
         try? realmProvider.targetRealm.commitWrite(withoutNotifying: Array(objectNotificationTokens.values))
     }
     
@@ -441,7 +443,7 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
     }
     
     func createSyncedEntity(record: CKRecord, realmProvider: RealmProvider) -> SyncedEntity {
-        
+        debugPrint("Creating synced entity from CKRecord...")
         let syncedEntity = SyncedEntity(entityType: record.recordType, identifier: record.recordID.recordName, state: SyncedEntityState.synced.rawValue)
         
         realmProvider.persistenceRealm.add(syncedEntity)
@@ -463,10 +465,13 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
     }
     
     func getObjectIdentifier(for syncedEntity: SyncedEntity) -> String {
-        
+
+        debugPrint("Getting object identifier for the synced entity with entity type \(syncedEntity.entityType) and identifier \(syncedEntity.identifier)")
         let range = syncedEntity.identifier.range(of: syncedEntity.entityType)!
         let index = syncedEntity.identifier.index(range.upperBound, offsetBy: 1)
-        return String(syncedEntity.identifier[index...])
+        let objectIdentifier = String(syncedEntity.identifier[index...])
+        debugPrint("Object identifier is: \(objectIdentifier)")
+        return objectIdentifier
     }
     
     func syncedEntity(for object: Object, realm: Realm) -> SyncedEntity? {
@@ -627,7 +632,7 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
     }
     
     func applyPendingRelationships(realmProvider: RealmProvider) {
-        
+        debugPrint("Applying pending relationships...")
         let pendingRelationships = realmProvider.persistenceRealm.objects(PendingRelationship.self)
         
         if pendingRelationships.count == 0 {
@@ -678,6 +683,7 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
         
         try? realmProvider.persistenceRealm.commitWrite()
         commitTargetWriteTransactionWithoutNotifying()
+        debugPrint("Finished applying pending relationships")
     }
     
     func save(record: CKRecord, for syncedEntity: SyncedEntity) {
@@ -784,6 +790,7 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
     
     func recordToUpload(syncedEntity: SyncedEntity, realmProvider: RealmProvider, parentSyncedEntity: inout SyncedEntity?) -> CKRecord {
         
+        debugPrint("Getting the record to upload...")
         let record = getRecord(for: syncedEntity) ?? CKRecord(recordType: syncedEntity.entityType, recordID: CKRecord.ID(recordName: syncedEntity.identifier, zoneID: zoneID))
         
         let objectClass = realmObjectClass(name: syncedEntity.entityType)
@@ -950,7 +957,7 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
     }
     
     public func deleteRecords(with recordIDs: [CKRecord.ID]) {
-        
+        debugPrint("Deleting records with record ids \(recordIDs)")
         guard recordIDs.count != 0,
             realmProvider != nil else {
             return
