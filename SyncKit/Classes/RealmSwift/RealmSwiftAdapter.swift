@@ -462,26 +462,35 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
         let primaryKey = objectClass.primaryKey()!
         let objectIdentifier = getObjectIdentifier(for: syncedEntity)
         let object = objectClass.init()
-        let primaryKeyType = object.objectSchema[primaryKey]?.type
-        if PropertyType.int == primaryKeyType {
-            object.setValue(Int(objectIdentifier), forKey: primaryKey)
-        } else {
-            object.setValue(objectIdentifier, forKey: primaryKey)
-        }
+        object.setValue(objectIdentifier, forKey: primaryKey)
         realmProvider.targetRealm.add(object)
         
         return syncedEntity;
 
     }
     
-    func getObjectIdentifier(for syncedEntity: SyncedEntity) -> String {
+    func getObjectIdentifier(for syncedEntity: SyncedEntity) -> Any? {
 
         debugPrint("Getting object identifier for the synced entity with entity type \(syncedEntity.entityType) and identifier \(syncedEntity.identifier)")
         let range = syncedEntity.identifier.range(of: syncedEntity.entityType)!
         let index = syncedEntity.identifier.index(range.upperBound, offsetBy: 1)
         let objectIdentifier = String(syncedEntity.identifier[index...])
         debugPrint("Object identifier is: \(objectIdentifier)")
-        return objectIdentifier
+        
+        let objectClass = realmObjectClass(name: syncedEntity.entityType)
+        let primaryKey = objectClass.primaryKey()!
+        let object = objectClass.init()
+        let primaryKeyType = object.objectSchema[primaryKey]?.type
+        debugPrint("Primary key type: \(String(describing: primaryKeyType))")
+                
+        return PropertyType.int == primaryKeyType ? Int(objectIdentifier) : objectIdentifier
+    }
+    
+    func getStringObjectIdentifier(_ objectIdentifier: Any?) -> String {
+        if let identifier = objectIdentifier as? Int {
+            return String(identifier)
+        }
+        return objectIdentifier as! String
     }
     
     func syncedEntity(for object: Object, realm: Realm) -> SyncedEntity? {
@@ -986,13 +995,14 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
                         
                         let objectClass = realmObjectClass(name: syncedEntity.entityType)
                         let objectIdentifier = getObjectIdentifier(for: syncedEntity)
+                        let stringObjectIdentifier = getStringObjectIdentifier(objectIdentifier)
                         let object = self.realmProvider.targetRealm.object(ofType: objectClass, forPrimaryKey: objectIdentifier)
                         
                         if let object = object {
                             
-                            if let token = objectNotificationTokens[objectIdentifier] {
+                            if let token = objectNotificationTokens[stringObjectIdentifier] {
                                 DispatchQueue.main.async {
-                                    self.objectNotificationTokens.removeValue(forKey: objectIdentifier)
+                                    self.objectNotificationTokens.removeValue(forKey: stringObjectIdentifier)
                                     token.invalidate()
                                 }
                             }
