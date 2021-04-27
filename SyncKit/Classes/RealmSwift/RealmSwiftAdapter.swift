@@ -450,7 +450,12 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
         let primaryKey = objectClass.primaryKey()!
         let objectIdentifier = getObjectIdentifier(for: syncedEntity)
         let object = objectClass.init()
-        object.setValue(objectIdentifier, forKey: primaryKey)
+        let primaryKeyType = object.objectSchema[primaryKey]?.type
+        if PropertyType.int == primaryKeyType {
+            object.setValue(Int(objectIdentifier), forKey: primaryKey)
+        } else {
+            object.setValue(objectIdentifier, forKey: primaryKey)
+        }
         realmProvider.targetRealm.add(object)
         
         return syncedEntity;
