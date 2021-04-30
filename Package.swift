@@ -14,7 +14,7 @@ let package = Package(
         .library(name: "SyncKit/Realm", targets: ["SyncKit/Realm"]),
         .library(name: "SyncKit/RealmSwift", targets: ["SyncKit/RealmSwift"])],
     dependencies: [
-        .package(url: "https://github.com/realm/realm-cocoa", from: "10.1.0")
+        .package(url: "https://github.com/realm/realm-cocoa", from: "10.5.2")
     ],
     targets: [
         .target(
