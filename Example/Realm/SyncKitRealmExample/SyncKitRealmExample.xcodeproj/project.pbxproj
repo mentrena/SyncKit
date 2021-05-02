@@ -50,6 +50,8 @@
 		64B3A3A822B0346200E4E942 /* serverChangeToken.AQAAAWPa1DUC in Resources */ = {isa = PBXBuildFile; fileRef = 64B3A3A722B0346100E4E942 /* serverChangeToken.AQAAAWPa1DUC */; };
 		64B3A3B422B3B1E200E4E942 /* TestUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64B3A3B322B3B1E200E4E942 /* TestUtilities.swift */; };
 		64B3A75422C9306900591271 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6492372522C7C8C20074A142 /* CloudKit.framework */; };
+		64CF6A5D263F3BE6006451AA /* QSIntKeyObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64CF6A5C263F3BE6006451AA /* QSIntKeyObject.swift */; };
+		64CF6A5F263F44ED006451AA /* QSObjectIdKeyObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64CF6A5E263F44ED006451AA /* QSObjectIdKeyObject.swift */; };
 		F87A536A38E8F8D38C1D8A0E /* Pods_SyncKitRealmExampleTodayExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB70DC3ECC832031164BB42B /* Pods_SyncKitRealmExampleTodayExtension.framework */; };
 /* End PBXBuildFile section */
 
@@ -136,6 +138,8 @@
 		6492372522C7C8C20074A142 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		64B3A3A722B0346100E4E942 /* serverChangeToken.AQAAAWPa1DUC */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = serverChangeToken.AQAAAWPa1DUC; sourceTree = "<group>"; };
 		64B3A3B322B3B1E200E4E942 /* TestUtilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestUtilities.swift; sourceTree = "<group>"; };
+		64CF6A5C263F3BE6006451AA /* QSIntKeyObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QSIntKeyObject.swift; sourceTree = "<group>"; };
+		64CF6A5E263F44ED006451AA /* QSObjectIdKeyObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QSObjectIdKeyObject.swift; sourceTree = "<group>"; };
 		68F2C8DEE5F663F0D990E29A /* Pods-SyncKitRealmExampleTodayExtension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SyncKitRealmExampleTodayExtension.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-SyncKitRealmExampleTodayExtension/Pods-SyncKitRealmExampleTodayExtension.debug.xcconfig"; sourceTree = "<group>"; };
 		86509FC40620D38F84CB2393 /* Pods-SyncKitRealmExampleTodayExtension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SyncKitRealmExampleTodayExtension.release.xcconfig"; path = "../Pods/Target Support Files/Pods-SyncKitRealmExampleTodayExtension/Pods-SyncKitRealmExampleTodayExtension.release.xcconfig"; sourceTree = "<group>"; };
 		8C0CE2F9E8E67AAF8DA58C60 /* Pods_SyncKitRealmExampleTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SyncKitRealmExampleTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -226,6 +230,8 @@
 				64B3A3B322B3B1E200E4E942 /* TestUtilities.swift */,
 				649236D522C6A0A30074A142 /* SyncKitRealmSwiftTests.swift */,
 				6413ED012559B69000BDC1DB /* RecordProcessingDelegate.swift */,
+				64CF6A5C263F3BE6006451AA /* QSIntKeyObject.swift */,
+				64CF6A5E263F44ED006451AA /* QSObjectIdKeyObject.swift */,
 			);
 			path = SyncKitRealmExampleTests;
 			sourceTree = "<group>";
@@ -628,6 +634,8 @@
 			files = (
 				6413ED022559B69000BDC1DB /* RecordProcessingDelegate.swift in Sources */,
 				64B3A3B422B3B1E200E4E942 /* TestUtilities.swift in Sources */,
+				64CF6A5F263F44ED006451AA /* QSObjectIdKeyObject.swift in Sources */,
+				64CF6A5D263F3BE6006451AA /* QSIntKeyObject.swift in Sources */,
 				649236D622C6A0A30074A142 /* SyncKitRealmSwiftTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

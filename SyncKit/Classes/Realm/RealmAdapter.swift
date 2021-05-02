@@ -203,22 +203,23 @@ struct ObjectUpdate {
             // Register for collection notifications
             let token = results.addNotificationBlock { [weak self] (results, changes, error) in
 
-                guard let insertions = changes?.insertions,
+                guard let self = self,
+                      let insertions = changes?.insertions,
                     let results = results else { return }
 
                 for index in insertions {
-                    guard let object = results[index.uintValue] as? RLMObject,
-                        let identifier = object.value(forKey: primaryKey) as? String else { continue }
+                    guard let object = results[index.uintValue] as? RLMObject else { continue }
                     
+                    let identifier = self.getStringIdentifier(for: object, usingPrimaryKey: primaryKey)
                     /* This can be called during a transaction, and it's illegal to add a notification block during a transaction,
                      * so we keep all the insertions in a list to be processed as soon as the realm finishes the current transaction
                      */
                     if object.realm!.inWriteTransaction {
                         
-                        self?.pendingTrackingUpdates.append(ObjectUpdate(object: object, identifier: identifier, entityType: schema.className, updateType: .insertion, changes: nil))
+                        self.pendingTrackingUpdates.append(ObjectUpdate(object: object, identifier: identifier, entityType: schema.className, updateType: .insertion, changes: nil))
                     } else {
                         
-                        self?.updateTracking(insertedObject: object, identifier: identifier, entityName: schema.className, provider: self!.realmProvider)
+                        self.updateTracking(insertedObject: object, identifier: identifier, entityName: schema.className, provider: self.realmProvider)
                     }
                 }
             }
@@ -227,7 +228,7 @@ struct ObjectUpdate {
             // Register for object updates
             for object in results {
                 
-                let identifier = object.value(forKey: primaryKey) as! String
+                let identifier = self.getStringIdentifier(for: object, usingPrimaryKey: primaryKey)
                 let token = object.addNotificationBlock { [weak self] (deleted, changes, error) in
                     if deleted {
                         if object.realm!.inWriteTransaction {
@@ -453,11 +454,27 @@ struct ObjectUpdate {
 
     }
     
-    func getObjectIdentifier(for syncedEntity: SyncedEntity) -> String {
+    func getObjectIdentifier(for syncedEntity: SyncedEntity) -> Any {
         
         let range = syncedEntity.identifier.range(of: syncedEntity.entityType)!
         let index = syncedEntity.identifier.index(range.upperBound, offsetBy: 1)
-        return String(syncedEntity.identifier[index...])
+        let objectIdentifier = String(syncedEntity.identifier[index...])
+        
+        guard let objectSchema = realmProvider.targetRealm.schema.schema(forClassName: syncedEntity.entityType),
+              let keyType = objectSchema.primaryKeyProperty?.type else {
+            return objectIdentifier
+        }
+        
+        switch keyType {
+        case .int:
+            return Int(objectIdentifier)!
+        case .objectId:
+            return try! RLMObjectId(string: objectIdentifier)
+        case .string:
+            return objectIdentifier
+        default:
+            return objectIdentifier
+        }
     }
     
     func syncedEntity(for object: RLMObject, realm: RLMRealm) -> SyncedEntity? {
@@ -466,6 +483,16 @@ struct ObjectUpdate {
         let primaryKey = objectClass.primaryKey()!
         let identifier = object.objectSchema.className + "." + (object.value(forKey: primaryKey) as! String)
         return getSyncedEntity(objectIdentifier: identifier, realm: realm)
+    }
+    
+    func getStringIdentifier(for object: RLMObject, usingPrimaryKey key: String) -> String {
+
+        let objectId = object.value(forKey: key)
+        if let value = objectId as? CustomStringConvertible {
+            return String(describing: value)
+        } else {
+            return objectId as! String
+        }
     }
     
     func getSyncedEntity(objectIdentifier: String, realm: RLMRealm) -> SyncedEntity? {
@@ -950,10 +977,11 @@ struct ObjectUpdate {
                         let object = objectClass.object(in: realmProvider.targetRealm, forPrimaryKey: objectIdentifier)
                         
                         if let object = object {
-                            
-                            if let token = objectNotificationTokens[objectIdentifier] {
+                            let primaryKey = objectClass.primaryKey()!
+                            let stringIdentifier = getStringIdentifier(for: object, usingPrimaryKey: primaryKey)
+                            if let token = objectNotificationTokens[stringIdentifier] {
                                 DispatchQueue.main.async {
-                                    self.objectNotificationTokens.removeValue(forKey: objectIdentifier)
+                                    self.objectNotificationTokens.removeValue(forKey: stringIdentifier)
                                     token.invalidate()
                                 }
                             }
