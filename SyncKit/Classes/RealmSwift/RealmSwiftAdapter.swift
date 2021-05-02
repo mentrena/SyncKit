@@ -210,7 +210,7 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
                     for index in insertions {
                         
                         let object = results[index]
-                        let identifier = self?.getIdentifier(for: object, primaryKey: primaryKey)
+                        let identifier = self?.getStringIdentifier(for: object, usingPrimaryKey: primaryKey)
                         /* This can be called during a transaction, and it's illegal to add a notification block during a transaction,
                          * so we keep all the insertions in a list to be processed as soon as the realm finishes the current transaction
                          */
@@ -230,7 +230,7 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
             // Register for object updates
             for object in results {
                 
-                let identifier = self.getIdentifier(for: object, primaryKey: primaryKey)
+                let identifier = self.getStringIdentifier(for: object, usingPrimaryKey: primaryKey)
                 let token = object.observe({ [weak self] (change) in
                     
                     switch change {
@@ -472,40 +472,41 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
         let range = syncedEntity.identifier.range(of: syncedEntity.entityType)!
         let index = syncedEntity.identifier.index(range.upperBound, offsetBy: 1)
         let objectIdentifier = String(syncedEntity.identifier[index...])
-        
         let objectClass = realmObjectClass(name: syncedEntity.entityType)
-        let primaryKey = objectClass.primaryKey()!
-        let object = objectClass.init()
-        let primaryKeyType = object.objectSchema[primaryKey]?.type
-                
-        return PropertyType.int == primaryKeyType ? Int(objectIdentifier) : objectIdentifier
-    }
-    
-    func getStringObjectIdentifier(_ objectIdentifier: Any?) -> String {
-        if let identifier = objectIdentifier as? Int {
-            return String(identifier)
+        
+        guard let objectSchema = objectClass.sharedSchema(),
+              let keyType = objectSchema.primaryKeyProperty?.type else {
+            return objectIdentifier
         }
-        return objectIdentifier as! String
+        
+        switch keyType {
+        case .int:
+            return Int(objectIdentifier)
+        case .objectId:
+            return try! ObjectId(string: objectIdentifier)
+        case .string:
+            return objectIdentifier
+        default:
+            return objectIdentifier
+        }
     }
     
     func syncedEntity(for object: Object, realm: Realm) -> SyncedEntity? {
         
         let objectClass = realmObjectClass(name: object.objectSchema.className)
         let primaryKey = objectClass.primaryKey()!
-        let identifier = object.objectSchema.className + "." + getIdentifier(for: object, primaryKey: primaryKey)
+        let identifier = object.objectSchema.className + "." + getStringIdentifier(for: object, usingPrimaryKey: primaryKey)
         return getSyncedEntity(objectIdentifier: identifier, realm: realm)
     }
     
-    func getIdentifier(for object: Object, primaryKey: String) -> String {
-        var identifier: String = ""
-        let objectId = object.value(forKey: primaryKey)
-        
-        if let id = objectId as? Int {
-            identifier = String(id)
+    func getStringIdentifier(for object: Object, usingPrimaryKey key: String) -> String {
+
+        let objectId = object.value(forKey: key)
+        if let value = objectId as? CustomStringConvertible {
+            return String(describing: value)
         } else {
-            identifier = objectId as! String
+            return objectId as! String
         }
-        return identifier
     }
     
     func getSyncedEntity(objectIdentifier: String, realm: Realm) -> SyncedEntity? {
@@ -989,14 +990,15 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
                         
                         let objectClass = realmObjectClass(name: syncedEntity.entityType)
                         let objectIdentifier = getObjectIdentifier(for: syncedEntity)
-                        let stringObjectIdentifier = getStringObjectIdentifier(objectIdentifier)
                         let object = self.realmProvider.targetRealm.object(ofType: objectClass, forPrimaryKey: objectIdentifier)
                         
                         if let object = object {
                             
-                            if let token = objectNotificationTokens[stringObjectIdentifier] {
+                            let primaryKey = objectClass.primaryKey()!
+                            let stringIdentifier = getStringIdentifier(for: object, usingPrimaryKey: primaryKey)
+                            if let token = objectNotificationTokens[stringIdentifier] {
                                 DispatchQueue.main.async {
-                                    self.objectNotificationTokens.removeValue(forKey: stringObjectIdentifier)
+                                    self.objectNotificationTokens.removeValue(forKey: stringIdentifier)
                                     token.invalidate()
                                 }
                             }
