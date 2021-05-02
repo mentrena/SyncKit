@@ -33,11 +33,21 @@ class SyncKitRealmSwiftTests: XCTestCase, RealmSwiftAdapterDelegate {
         customMergePolicyBlock?(adapter, changes, object)
     }
     
-    func realmWith(identifier: String) -> Realm {
+    func realmWith(identifier: String, keyType: PropertyType = .string) -> Realm {
         
         var configuration = Realm.Configuration()
         configuration.inMemoryIdentifier = identifier
-        configuration.objectTypes = [QSCompany.self, QSEmployee.self]
+        switch keyType {
+        case .string:
+            configuration.objectTypes = [QSCompany.self, QSEmployee.self]
+        case .int:
+            configuration.objectTypes = [QSIntKeyObject.self]
+        case .objectId:
+            configuration.objectTypes = [QSObjectIdKeyObject.self]
+        default:
+            break
+        }
+        
         return try! Realm(configuration: configuration)
     }
     
@@ -1397,5 +1407,191 @@ class SyncKitRealmSwiftTests: XCTestCase, RealmSwiftAdapterDelegate {
         let companies = realm.objects(QSCompany.self)
         
         XCTAssertEqual(companies.first?.name, "company1")
+    }
+    
+    // MARK: - Int primary key
+    
+    func testSync_objectWithIntPrimaryKey_canSync() {
+        let realm = realmWith(identifier: "t100", keyType: .int)
+        
+        let object = QSIntKeyObject()
+        object.name = "object 1"
+        object.identifier = 1
+        
+        realm.beginWrite()
+        realm.add(object)
+        try! realm.commitWrite()
+        
+        let adapter = realmAdapter(targetConfiguration: realm.configuration, persistenceConfiguration: persistenceConfigurationWith(identifier: "p100"))
+        
+        let exp = expectation(description: "synced")
+        var uploadedRecord: CKRecord? = nil
+        fullySync(adapter: adapter) { uploaded, _, error in
+            uploadedRecord = uploaded.first
+            exp.fulfill()
+        }
+        
+        waitForExpectations(timeout: 1, handler: nil)
+        
+        XCTAssertEqual(uploadedRecord?["name"], "object 1")
+        XCTAssertEqual(uploadedRecord?.recordID.recordName, "QSIntKeyObject.1")
+    }
+    
+    func testSaveChangesInRecord_newObjectWithIntPrimaryKey_insertsObject() {
+        
+        let realm = realmWith(identifier: "t101", keyType: .int)
+        let adapter = realmAdapter(targetConfiguration: realm.configuration, persistenceConfiguration: persistenceConfigurationWith(identifier: "p101"))
+        
+        let objectRecord = CKRecord(recordType: "QSIntKeyObject", recordID: CKRecord.ID(recordName: "QSIntKeyObject.2"))
+        objectRecord["name"] = "new object" as NSString
+        
+        let exp = expectation(description: "merged changes")
+        
+        adapter.prepareToImport()
+        adapter.saveChanges(in: [objectRecord])
+        adapter.persistImportedChanges { (_) in
+            exp.fulfill()
+        }
+        adapter.didFinishImport(with: nil)
+        
+        waitForExpectations(timeout: 1, handler: nil)
+        
+        let objects = realm.objects(QSIntKeyObject.self)
+        XCTAssertTrue(objects.count == 1)
+        let object = objects.first!
+        XCTAssertTrue(object.name == "new object")
+        XCTAssertTrue(object.identifier == 2)
+    }
+    
+    func testSaveChangesInRecord_existingObjectWithIntPrimaryKey_updatesObject() {
+        
+        let realm = realmWith(identifier: "t102", keyType: .int)
+        let object = QSIntKeyObject()
+        object.name = "object 1"
+        object.identifier = 3
+        
+        realm.beginWrite()
+        realm.add(object)
+        try! realm.commitWrite()
+        
+        let adapter = realmAdapter(targetConfiguration: realm.configuration, persistenceConfiguration: persistenceConfigurationWith(identifier: "p102"))
+        
+        let exp = expectation(description: "synced")
+        var objectRecord: CKRecord?
+        
+        fullySync(adapter: adapter) { (uploaded, _, _) in
+            objectRecord = uploaded.first
+            exp.fulfill()
+        }
+        waitForExpectations(timeout: 1, handler: nil)
+        
+        objectRecord!["name"] = "name 2" as NSString
+        
+        let exp2 = expectation(description: "merged changes")
+        
+        adapter.prepareToImport()
+        adapter.saveChanges(in: [objectRecord!])
+        adapter.persistImportedChanges { (_) in
+            exp2.fulfill()
+        }
+        adapter.didFinishImport(with: nil)
+        
+        waitForExpectations(timeout: 1, handler: nil)
+        
+        XCTAssertTrue(object.name == "name 2")
+        XCTAssertEqual(object.identifier, 3)
+    }
+    
+    // MARK: - ObjectId primary key
+    
+    func testSync_objectWithObjectIdPrimaryKey_canSync() {
+        let realm = realmWith(identifier: "t103", keyType: .objectId)
+        
+        let object = QSObjectIdKeyObject()
+        object.name = "object 1"
+        object.identifier = try! ObjectId(string: "608efbc93ad7a4c09f8fdaa5")
+        
+        realm.beginWrite()
+        realm.add(object)
+        try! realm.commitWrite()
+        
+        let adapter = realmAdapter(targetConfiguration: realm.configuration, persistenceConfiguration: persistenceConfigurationWith(identifier: "p103"))
+        
+        let exp = expectation(description: "synced")
+        var uploadedRecord: CKRecord? = nil
+        fullySync(adapter: adapter) { uploaded, _, error in
+            uploadedRecord = uploaded.first
+            exp.fulfill()
+        }
+        
+        waitForExpectations(timeout: 1, handler: nil)
+        
+        XCTAssertEqual(uploadedRecord?["name"], "object 1")
+        XCTAssertEqual(uploadedRecord?.recordID.recordName, "QSObjectIdKeyObject.608efbc93ad7a4c09f8fdaa5")
+    }
+    
+    func testSaveChangesInRecord_newObjectWithObjectIdPrimaryKey_insertsObject() {
+        
+        let realm = realmWith(identifier: "t104", keyType: .objectId)
+        let adapter = realmAdapter(targetConfiguration: realm.configuration, persistenceConfiguration: persistenceConfigurationWith(identifier: "p104"))
+        
+        let objectRecord = CKRecord(recordType: "QSObjectIdKeyObject", recordID: CKRecord.ID(recordName: "QSObjectIdKeyObject.608efbc93ad7a4c09f8fdaa5"))
+        objectRecord["name"] = "new object" as NSString
+        
+        let exp = expectation(description: "merged changes")
+        
+        adapter.prepareToImport()
+        adapter.saveChanges(in: [objectRecord])
+        adapter.persistImportedChanges { (_) in
+            exp.fulfill()
+        }
+        adapter.didFinishImport(with: nil)
+        
+        waitForExpectations(timeout: 1, handler: nil)
+        
+        let objects = realm.objects(QSObjectIdKeyObject.self)
+        XCTAssertTrue(objects.count == 1)
+        let object = objects.first!
+        let id = try! ObjectId(string: "608efbc93ad7a4c09f8fdaa5")
+        XCTAssertTrue(object.name == "new object")
+        XCTAssertTrue(object.identifier == id)
+    }
+    
+    func testSaveChangesInRecord_existingObjectWithObjectIdPrimaryKey_updatesObject() {
+        
+        let realm = realmWith(identifier: "t105", keyType: .objectId)
+        let object = QSObjectIdKeyObject()
+        object.name = "object 1"
+        object.identifier = try! ObjectId(string: "608efbc93ad7a4c09f8fdaa5")
+        
+        realm.beginWrite()
+        realm.add(object)
+        try! realm.commitWrite()
+        
+        let adapter = realmAdapter(targetConfiguration: realm.configuration, persistenceConfiguration: persistenceConfigurationWith(identifier: "p105"))
+        
+        let exp = expectation(description: "synced")
+        var objectRecord: CKRecord?
+        
+        fullySync(adapter: adapter) { (uploaded, _, _) in
+            objectRecord = uploaded.first
+            exp.fulfill()
+        }
+        waitForExpectations(timeout: 1, handler: nil)
+        
+        objectRecord!["name"] = "name 2" as NSString
+        
+        let exp2 = expectation(description: "merged changes")
+        
+        adapter.prepareToImport()
+        adapter.saveChanges(in: [objectRecord!])
+        adapter.persistImportedChanges { (_) in
+            exp2.fulfill()
+        }
+        adapter.didFinishImport(with: nil)
+        
+        waitForExpectations(timeout: 1, handler: nil)
+        
+        XCTAssertTrue(object.name == "name 2")
     }
 }
