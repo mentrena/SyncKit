@@ -203,23 +203,23 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
             
             // Register for collection notifications
             let token = results.observe({ [weak self] (collectionChange) in
-                
+                guard let self = self else { return }
                 switch collectionChange {
                 case .update(_, _, let insertions, _):
                     
                     for index in insertions {
                         
                         let object = results[index]
-                        let identifier = self?.getStringIdentifier(for: object, usingPrimaryKey: primaryKey)
+                        let identifier = self.getStringIdentifier(for: object, usingPrimaryKey: primaryKey)
                         /* This can be called during a transaction, and it's illegal to add a notification block during a transaction,
                          * so we keep all the insertions in a list to be processed as soon as the realm finishes the current transaction
                          */
                         if object.realm!.isInWriteTransaction {
                             
-                            self?.pendingTrackingUpdates.append(ObjectUpdate(object: object, identifier: identifier!, entityType: schema.className, updateType: .insertion, changes: nil))
+                            self.pendingTrackingUpdates.append(ObjectUpdate(object: object, identifier: identifier, entityType: schema.className, updateType: .insertion, changes: nil))
                         } else {
                             
-                            self?.updateTracking(insertedObject: object, identifier: identifier!, entityName: schema.className, provider: self!.realmProvider)
+                            self.updateTracking(insertedObject: object, identifier: identifier, entityName: schema.className, provider: self.realmProvider)
                         }
                     }
                 default: break
@@ -467,7 +467,7 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
 
     }
     
-    func getObjectIdentifier(for syncedEntity: SyncedEntity) -> Any? {
+    func getObjectIdentifier(for syncedEntity: SyncedEntity) -> Any {
 
         let range = syncedEntity.identifier.range(of: syncedEntity.entityType)!
         let index = syncedEntity.identifier.index(range.upperBound, offsetBy: 1)
@@ -481,7 +481,7 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
         
         switch keyType {
         case .int:
-            return Int(objectIdentifier)
+            return Int(objectIdentifier)!
         case .objectId:
             return try! ObjectId(string: objectIdentifier)
         case .string:
