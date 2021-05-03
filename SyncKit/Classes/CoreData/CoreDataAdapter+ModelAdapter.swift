@@ -33,7 +33,7 @@ extension CoreDataAdapter {
                 dict[entity.identifier] = entity
             }
             
-            var queryByEntityType = [String: [String: QueryData]]()
+            var queryByEntityType = [String: [PrimaryKeyValue: QueryData]]()
             for record in records {
                 var syncedEntity: QSSyncedEntity! = entitiesById[record.recordID.recordName]
                 if syncedEntity == nil {
@@ -48,7 +48,7 @@ extension CoreDataAdapter {
                 
                 guard syncedEntity.entityState != .deleted && !syncedEntity.isShare,
                     let entityType = syncedEntity.entityType,
-                    let originObjectID = syncedEntity.originObjectID else {
+                    let originObjectID = self.getObjectIdentifier(for: syncedEntity) else {
                     continue
                 }
                 
@@ -58,7 +58,7 @@ extension CoreDataAdapter {
                                       changedKeys: syncedEntity.changedKeysArray,
                                       state: syncedEntity.entityState)
                 if queryByEntityType[entityType] == nil {
-                    queryByEntityType[entityType] = [String: QueryData]()
+                    queryByEntityType[entityType] = [PrimaryKeyValue: QueryData]()
                 }
                 queryByEntityType[entityType]?[originObjectID] = query
             }
@@ -86,7 +86,7 @@ extension CoreDataAdapter {
                 guard let syncedEntity = entitiesById[record.recordID.recordName],
                     let entityType = syncedEntity.entityType else { continue }
                 
-                if let originObjectID = syncedEntity.originObjectID,
+                if let originObjectID = self.getObjectIdentifier(for: syncedEntity),
                     let queries = queryByEntityType[entityType],
                     let query = queries[originObjectID],
                     let relationshipsToSave = query.toSaveRelationshipNames {

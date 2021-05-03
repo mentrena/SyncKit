@@ -80,8 +80,8 @@ extension CoreDataAdapter {
         }
     }
     
-    func threadSafePrimaryKeyValue(for object: NSManagedObject) -> String {
-        var identifier: String! = nil
+    func threadSafePrimaryKeyValue(for object: NSManagedObject) -> PrimaryKeyValue {
+        var identifier: PrimaryKeyValue! = nil
         object.managedObjectContext!.performAndWait {
             identifier = self.uniqueIdentifier(for: object)
         }
@@ -92,21 +92,41 @@ extension CoreDataAdapter {
 //MARK: - Object Identifiers
 extension CoreDataAdapter {
     func identifierFieldName(forEntity entityName: String) -> String {
-        return entityPrimaryKeys[entityName]!;
+        return entityPrimaryKeys[entityName]!.name;
     }
     
-    func uniqueIdentifier(for object: NSManagedObject) -> String? {
-        guard let entityName = object.entity.name else { return nil }
+    func uniqueIdentifier(for object: NSManagedObject) -> PrimaryKeyValue? {
+        guard let entityName = object.entity.name,
+              let value = object.value(forKey: identifierFieldName(forEntity: entityName)) else {
+            return nil
+        }
             
-        let key = identifierFieldName(forEntity: entityName)
-        return object.value(forKey: key) as? String
+        return PrimaryKeyValue(value: value)
     }
     
-    func uniqueIdentifier(forObjectFrom record: CKRecord) -> String {
+    func getObjectIdentifier(for syncedEntity: QSSyncedEntity) -> PrimaryKeyValue? {
+        guard let identifier = syncedEntity.originObjectID,
+              let entityType = syncedEntity.entityType,
+              let attributeType = entityPrimaryKeys[entityType]?.type else {
+            return nil
+        }
+        return PrimaryKeyValue(stringValue: identifier, attributeType: attributeType)
+    }
+    
+    func getObjectIdentifier(stringObjectId: String, entityType: String) -> PrimaryKeyValue? {
+        guard let attributeType = entityPrimaryKeys[entityType]?.type else {
+            return nil
+        }
+        return PrimaryKeyValue(stringValue: stringObjectId, attributeType: attributeType)
+    }
+    
+    func uniqueIdentifier(forObjectFrom record: CKRecord) -> PrimaryKeyValue? {
         let entityType = record.recordType
         let name = record.recordID.recordName
         let index = name.index(name.startIndex, offsetBy: entityType.count + 1)
-        return String(name[index...])
+        let stringId = String(name[index...])
+        guard let attributeType = entityPrimaryKeys[entityType]?.type else { return nil }
+        return PrimaryKeyValue(stringValue: stringId, attributeType: attributeType)
     }
 }
 
@@ -143,20 +163,20 @@ extension CoreDataAdapter {
         syncedEntity.updatedDate = NSDate()
         syncedEntity.entityState = .inserted
         
-        var objectID: String!
+        var objectID: PrimaryKeyValue!
         targetImportContext.performAndWait {
             let object = self.insertManagedObject(entityName: entityName)
             objectID = self.uniqueIdentifier(forObjectFrom: record)
-            object.setValue(objectID, forKey: self.identifierFieldName(forEntity: entityName))
+            object.setValue(objectID.value, forKey: self.identifierFieldName(forEntity: entityName))
         }
         
-        syncedEntity.originObjectID = objectID
+        syncedEntity.originObjectID = objectID.description
         return syncedEntity
     }
     
-    func syncedEntity(withOriginIdentifier identifier: String) -> QSSyncedEntity? {
+    func syncedEntity(withOriginIdentifier identifier: PrimaryKeyValue) -> QSSyncedEntity? {
         let fetched = try? self.privateContext.executeFetchRequest(entityName: "QSSyncedEntity",
-                                                                   predicate: NSPredicate(format: "originObjectID == %@", identifier),
+                                                                   predicate: NSPredicate(format: "originObjectID == %@", identifier.value),
                                                                    fetchLimit: 1) as? [QSSyncedEntity]
         return fetched?.first
     }
@@ -179,14 +199,14 @@ extension CoreDataAdapter {
     }
     
     func delete(syncedEntities: [QSSyncedEntity]) {
-        var identifiersByType = [String: [String]]()
+        var identifiersByType = [String: [PrimaryKeyValue]]()
         for syncedEntity in syncedEntities {
             
-            if let originObjectID = syncedEntity.originObjectID,
+            if let originObjectID = getObjectIdentifier(for: syncedEntity),
                 let entityType = syncedEntity.entityType,
                 entityType != "CKShare" && syncedEntity.entityState != .deleted {
                 if identifiersByType[entityType] == nil {
-                    identifiersByType[entityType] = [String]()
+                    identifiersByType[entityType] = [PrimaryKeyValue]()
                 }
                 identifiersByType[entityType]?.append(originObjectID)
             }
@@ -279,7 +299,7 @@ extension CoreDataAdapter {
         
         var originalObject: NSManagedObject!
         var entityDescription: NSEntityDescription!
-        let objectID = entity.originObjectID!
+        let objectID = self.getObjectIdentifier(for: entity)!
         let entityState = entity.entityState
         let entityType = entity.entityType!
         let changedKeys = entity.changedKeysArray
@@ -352,7 +372,7 @@ extension CoreDataAdapter {
     }
     
     func referencedSyncedEntitiesByReferenceName(for object: NSManagedObject, context: NSManagedObjectContext) -> [String: QSSyncedEntity] {
-        var objectIDsByRelationshipName: [String: String]!
+        var objectIDsByRelationshipName: [String: PrimaryKeyValue]!
         context.performAndWait {
             objectIDsByRelationshipName = self.referencedObjectIdentifiersByRelationshipName(for: object)
         }
@@ -366,8 +386,8 @@ extension CoreDataAdapter {
         return entitiesByName
     }
     
-    func referencedObjectIdentifiersByRelationshipName(for object: NSManagedObject) -> [String: String] {
-        var objectIDs = [String: String]()
+    func referencedObjectIdentifiersByRelationshipName(for object: NSManagedObject) -> [String: PrimaryKeyValue] {
+        var objectIDs = [String: PrimaryKeyValue]()
         object.entity.relationshipsByName.forEach { (name, relationshipDescription) in
             if !relationshipDescription.isToMany,
                 let referencedObject = object.value(forKey: name) as? NSManagedObject {
@@ -387,16 +407,16 @@ extension CoreDataAdapter {
         return managedObject
     }
     
-    func managedObjects(entityName: String, identifiers: [String], context: NSManagedObjectContext) -> [NSManagedObject] {
+    func managedObjects(entityName: String, identifiers: [PrimaryKeyValue], context: NSManagedObjectContext) -> [NSManagedObject] {
         let identifierKey = identifierFieldName(forEntity: entityName)
         return try! context.executeFetchRequest(entityName: entityName,
-                                                predicate: NSPredicate(format: "%K IN %@", identifierKey, identifiers)) as! [NSManagedObject]
+                                                predicate: NSPredicate(format: "%K IN %@", identifierKey, identifiers.map { $0.value })) as! [NSManagedObject]
     }
     
-    func managedObject(entityName: String, identifier: String, context: NSManagedObjectContext) -> NSManagedObject? {
+    func managedObject(entityName: String, identifier: PrimaryKeyValue, context: NSManagedObjectContext) -> NSManagedObject? {
         let identifierKey = identifierFieldName(forEntity: entityName)
         return try? context.executeFetchRequest(entityName: entityName,
-                                                predicate: NSPredicate(format: "%K == %@", identifierKey, identifier)).first as? NSManagedObject
+                                                predicate: NSPredicate(format: "%K == %@", identifierKey, identifier.value)).first as? NSManagedObject
     }
     
     func applyAttributeChanges(record: CKRecord, to object: NSManagedObject, state: SyncedEntityState, changedKeys: [String]) {
@@ -502,10 +522,10 @@ extension CoreDataAdapter {
         let relationships = childrenRelationships[entity.entityType!] ?? []
         for relationship in relationships {
             // get child objects using parentkey
-            let objectID = entity.originObjectID!
+            let objectID = self.getObjectIdentifier(for: entity)!
             let entityType = entity.entityType!
             var originalObject: NSManagedObject!
-            var childrenIdentifiers = [String]()
+            var childrenIdentifiers = [PrimaryKeyValue]()
             targetContext.performAndWait {
                 originalObject = self.managedObject(entityName: entityType, identifier: objectID, context: self.targetContext)
                 let childrenObjects = self.children(of: originalObject, relationship: relationship)
@@ -592,11 +612,13 @@ extension CoreDataAdapter {
                                                        fetchLimit: 1,
                                                        resultType: .dictionaryResultType,
                                                        propertiesToFetch: ["originObjectID", "entityType"]).first,
-            let dictionary = result as? [String: String] else {
-                return nil
+              let dictionary = result as? [String: String],
+              let stringId = dictionary["originObjectID"],
+              let entityType = dictionary["entityType"] else {
+            return nil
         }
         
-        return RelationshipTarget(originObjectID: dictionary["originObjectID"], entityType: dictionary["entityType"])
+        return RelationshipTarget(originObjectID: self.getObjectIdentifier(stringObjectId: stringId, entityType: entityType), entityType: entityType)
     }
     
     func pendingRelationshipTargetIdentifiers(for entity: QSSyncedEntity) -> [String: RelationshipTarget] {
@@ -621,7 +643,7 @@ extension CoreDataAdapter {
         self.savePrivateContext()
         
         let entities = entitiesWithPendingRelationships()
-        var queriesByEntityType = [String: [String: QueryData]]()
+        var queriesByEntityType = [String: [PrimaryKeyValue: QueryData]]()
         for entity in entities {
             
             guard entity.entityState != .deleted else { continue }
@@ -635,16 +657,17 @@ extension CoreDataAdapter {
             
             // If there was something to connect, other than the share
             if pendingCount > 0 {
-                let query = QueryData(identifier: entity.originObjectID!,
+                let key = getObjectIdentifier(for: entity)!
+                let query = QueryData(identifier: key,
                                       record: nil,
                                       entityType: entity.entityType!,
                                       changedKeys: entity.changedKeysArray,
                                       state: entity.entityState,
                                       targetRelationshipsDictionary: pendingRelationshipTargetIdentifiers(for: entity))
                 if queriesByEntityType[entity.entityType!] == nil {
-                    queriesByEntityType[entity.entityType!] = [String: QueryData]()
+                    queriesByEntityType[entity.entityType!] = [PrimaryKeyValue: QueryData]()
                 }
-                queriesByEntityType[entity.entityType!]![entity.originObjectID!] = query
+                queriesByEntityType[entity.entityType!]![key] = query
             }
             
             (entity.pendingRelationships as? Set<QSPendingRelationship>)?.forEach {
@@ -660,7 +683,7 @@ extension CoreDataAdapter {
         }
     }
     
-    func targetApply(pendingRelationships: [String: [String: QueryData]], context: NSManagedObjectContext) {
+    func targetApply(pendingRelationships: [String: [PrimaryKeyValue: QueryData]], context: NSManagedObjectContext) {
         debugPrint("Target apply pending relationships")
         
         pendingRelationships.forEach { (entityType, queries) in
