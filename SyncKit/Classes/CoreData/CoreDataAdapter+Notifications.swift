@@ -14,7 +14,7 @@ extension CoreDataAdapter {
         if let object = notification.object as? NSManagedObjectContext,
             object == targetContext && !isMergingImportedChanges {
             let updated = Array(targetContext.updatedObjects)
-            var identifiersAndChanges = [String: [String]]()
+            var identifiersAndChanges = [PrimaryKeyValue: [String]]()
             for object in updated {
                 var changedValueKeys = [String]()
                 for key in object.changedValues().keys {
@@ -31,7 +31,7 @@ extension CoreDataAdapter {
                 }
             }
             
-            let deletedIDs: [String] = targetContext.deletedObjects.compactMap {
+            let deletedIDs: [PrimaryKeyValue] = targetContext.deletedObjects.compactMap {
                 if self.uniqueIdentifier(for: $0) == nil,
                     let entityName = $0.entity.name {
                     // Properties become nil when objects are deleted as a result of using an undo manager
@@ -39,7 +39,8 @@ extension CoreDataAdapter {
                     // entity for deletion
                     let identifierFieldName = self.identifierFieldName(forEntity: entityName)
                     let committedValues = $0.committedValues(forKeys: [identifierFieldName])
-                    return committedValues[identifierFieldName] as? String
+                    guard let value = committedValues[identifierFieldName] else { return nil }
+                    return PrimaryKeyValue(value: value)
                 } else {
                     return uniqueIdentifier(for: $0)
                 }
@@ -81,7 +82,7 @@ extension CoreDataAdapter {
             let updated = notification.userInfo?[NSUpdatedObjectsKey] as? Set<NSManagedObject>
             let deleted = notification.userInfo?[NSDeletedObjectsKey] as? Set<NSManagedObject>
             
-            var insertedIdentifiersAndEntityNames = [String: String]()
+            var insertedIdentifiersAndEntityNames = [PrimaryKeyValue: String]()
             inserted?.forEach {
                 if let entityName = $0.entity.name,
                     let identifier = uniqueIdentifier(for: $0) {
@@ -98,7 +99,7 @@ extension CoreDataAdapter {
                 insertedIdentifiersAndEntityNames.forEach({ (identifier, entityName) in
                     let entity = self.syncedEntity(withOriginIdentifier: identifier)
                     if entity == nil {
-                        self.createSyncedEntity(identifier: identifier, entityName: entityName)
+                        self.createSyncedEntity(identifier: identifier.description, entityName: entityName)
                     }
                 })
                 

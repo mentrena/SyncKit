@@ -41,7 +41,7 @@ import CloudKit
 
 
 /// An implementation of this protocol can be provided for custom `CKRecord` generation.
-@objc public protocol CoreDataAdapterRecordProcessing: class {
+@objc public protocol CoreDataAdapterRecordProcessing: AnyObject {
     
     /// Called by the adapter before copying a property from the Core Data object to the CloudKit record to upload to CloudKit. The method can then apply custom logic to encode the property in the record.
     /// - Parameters:
@@ -123,12 +123,12 @@ import CloudKit
     // MARK: - Private
     
     struct RelationshipTarget {
-        let originObjectID: String?
+        let originObjectID: PrimaryKeyValue?
         let entityType: String?
     }
     
     class QueryData {
-        let identifier: String
+        let identifier: PrimaryKeyValue
         let record: CKRecord?
         let entityType: String
         let changedKeys: [String]
@@ -136,7 +136,7 @@ import CloudKit
         var targetRelationshipsDictionary: [String: RelationshipTarget]?
         var toSaveRelationshipNames: [String]?
         
-        init(identifier: String, record: CKRecord?, entityType: String, changedKeys: [String], state: SyncedEntityState, targetRelationshipsDictionary: [String: RelationshipTarget]? = nil, toSaveRelationshipNames: [String]? = nil) {
+        init(identifier: PrimaryKeyValue, record: CKRecord?, entityType: String, changedKeys: [String], state: SyncedEntityState, targetRelationshipsDictionary: [String: RelationshipTarget]? = nil, toSaveRelationshipNames: [String]? = nil) {
             self.identifier = identifier
             self.record = record
             self.entityType = entityType
@@ -153,11 +153,16 @@ import CloudKit
         let childParentKey: String
     }
     
+    struct PropertyDescription {
+        let name: String
+        let type: NSAttributeType
+    }
+    
     var privateContext: NSManagedObjectContext!
     var targetImportContext: NSManagedObjectContext!
     let stack: CoreDataStack
     var isMergingImportedChanges = false
-    var entityPrimaryKeys = [String: String]()
+    var entityPrimaryKeys = [String: PropertyDescription]()
     lazy var tempFileManager: TempFileManager = {
         TempFileManager(identifier: "\(self.recordZoneID.ownerName).\(self.recordZoneID.zoneName)")
     }()
@@ -174,7 +179,8 @@ extension CoreDataAdapter {
                 let entityClass: AnyClass? = NSClassFromString(entityDescription.managedObjectClassName)
                 if let primaryKeyClass = entityClass as? PrimaryKey.Type,
                     let entityName = entityDescription.name {
-                    entityPrimaryKeys[entityName] = primaryKeyClass.primaryKey()
+                    let key = primaryKeyClass.primaryKey()
+                    entityPrimaryKeys[entityName] = PropertyDescription(name: key, type: entityDescription.attributesByName[key]!.attributeType)
                 } else {
                     assert(false, "PrimaryKey protocol not implemented for class: \(String(describing: entityClass))")
                 }
@@ -232,14 +238,15 @@ extension CoreDataAdapter {
                 let primaryKey = self.identifierFieldName(forEntity: entityName)
                 let objectIDs = try? self.targetContext.executeFetchRequest(entityName: entityName,
                                                                             resultType: .dictionaryResultType,
-                                                                            propertiesToFetch: [primaryKey]) as? [[String: String]]
+                                                                            propertiesToFetch: [primaryKey]) as? [[String: Any]]
                 
-                let identifiers = objectIDs?.compactMap({
-                    $0[primaryKey]
+                let identifiers = objectIDs?.compactMap({ keyDict -> PrimaryKeyValue? in
+                    guard let id = keyDict[primaryKey] else { return nil }
+                    return PrimaryKeyValue(value: id)
                 })
                 self.privateContext?.performAndWait {
                     identifiers?.forEach {
-                        self.createSyncedEntity(identifier: $0, entityName: entityName)
+                        self.createSyncedEntity(identifier: $0.description, entityName: entityName)
                     }
                     self.savePrivateContext()
                 }

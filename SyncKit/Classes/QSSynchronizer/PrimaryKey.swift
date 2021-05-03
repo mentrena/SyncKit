@@ -11,7 +11,7 @@ import Foundation
  *   The name of the property that acts as primary key for objects of this class. Primary key values are expected to remain the same
  *  for the lifetime of the object, and they are expected to be unique.
  */
-@objc public protocol PrimaryKey: class {
+@objc public protocol PrimaryKey: AnyObject {
     
     /// Name of the primary key property.
     static func primaryKey() -> String
@@ -21,7 +21,7 @@ import Foundation
  *  The name of the property that references this object's parent, if there's one. Used to create a hierarchy
  *  of objects for CloudKit sharing.
  */
-@objc public protocol ParentKey: class {
+@objc public protocol ParentKey: AnyObject {
     
     /// Name of the parent key property.
     static func parentKey() -> String

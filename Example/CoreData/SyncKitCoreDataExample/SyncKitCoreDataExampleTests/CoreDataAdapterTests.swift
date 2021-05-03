@@ -823,3 +823,112 @@ extension CoreDataAdapterTests {
         }
     }
 }
+
+// MARK: - Int property as primary key
+extension CoreDataAdapterTests {
+    func testSync_objectWithIntPrimaryKey_canSync() {
+        targetCoreDataStack = coreDataStack(modelName: "IntPrimaryKeyModel")
+        insert(entityType: "IntTestEntity",
+               properties: ["identifier": 5,
+                            "name": "object 5"],
+               context: targetCoreDataStack.managedObjectContext)
+        
+        let adapter = createAdapter()
+        let records = waitUntilSynced(adapter: adapter).updated
+        XCTAssertEqual(records.count, 1)
+        XCTAssertEqual(records.first?["name"], "object 5")
+        XCTAssertEqual(records.first?.recordID.recordName, "IntTestEntity.5")
+    }
+    
+    func testSaveChangesInRecord_newObjectWithIntPrimaryKey_insertsObject() {
+        targetCoreDataStack = coreDataStack(modelName: "IntPrimaryKeyModel")
+        let adapter = createAdapter()
+
+        let record = CKRecord(recordType: "IntTestEntity",
+                              recordID: CKRecord.ID(recordName: "IntTestEntity.12",
+                                                    zoneID: recordZoneID))
+        record["name"] = "new object"
+
+        waitUntilSynced(adapter: adapter, downloaded: [record])
+        let objects = try? targetCoreDataStack.managedObjectContext.executeFetchRequest(entityName: "IntTestEntity") as? [IntTestEntity]
+        let object = objects?.first
+        XCTAssertNotNil(object)
+        XCTAssertEqual(object?.name, "new object")
+        XCTAssertEqual(object?.identifier, 12)
+    }
+    
+    func testSaveChangesInRecord_existingObjectWithIntPrimaryKey_updatesObject() {
+        targetCoreDataStack = coreDataStack(modelName: "IntPrimaryKeyModel")
+        let object = insert(entityType: "IntTestEntity",
+                            properties: ["identifier": 5,
+                                         "name": "name"],
+                            context: targetCoreDataStack.managedObjectContext) as! IntTestEntity
+        
+        let adapter = createAdapter()
+        
+        let uploadedRecord = waitUntilSynced(adapter: adapter).updated.first!
+        
+        uploadedRecord["name"] = "name 2"
+        
+        waitUntilSynced(adapter: adapter, downloaded: [uploadedRecord])
+        
+        targetCoreDataStack.managedObjectContext.refresh(object, mergeChanges: false)
+        XCTAssertEqual(object.name, "name 2")
+    }
+}
+
+// MARK: - UUID property as primary key
+extension CoreDataAdapterTests {
+    func testSync_objectWithUUIDPrimaryKey_canSync() {
+        targetCoreDataStack = coreDataStack(modelName: "UUIDPrimaryKeyModel")
+        let id = UUID()
+        insert(entityType: "UUIDTestEntity",
+               properties: ["identifier": id,
+                            "name": "object 5"],
+               context: targetCoreDataStack.managedObjectContext)
+        
+        let adapter = createAdapter()
+        let records = waitUntilSynced(adapter: adapter).updated
+        XCTAssertEqual(records.count, 1)
+        XCTAssertEqual(records.first?["name"], "object 5")
+        XCTAssertEqual(records.first?.recordID.recordName, "UUIDTestEntity.\(id.uuidString)")
+    }
+    
+    func testSaveChangesInRecord_newObjectWithUUIDPrimaryKey_insertsObject() {
+        targetCoreDataStack = coreDataStack(modelName: "UUIDPrimaryKeyModel")
+        let adapter = createAdapter()
+
+        let id = UUID()
+        let record = CKRecord(recordType: "UUIDTestEntity",
+                              recordID: CKRecord.ID(recordName: "UUIDTestEntity.\(id.uuidString)",
+                                                    zoneID: recordZoneID))
+        record["name"] = "new object"
+
+        waitUntilSynced(adapter: adapter, downloaded: [record])
+        let objects = try? targetCoreDataStack.managedObjectContext.executeFetchRequest(entityName: "UUIDTestEntity") as? [UUIDTestEntity]
+        let object = objects?.first
+        XCTAssertNotNil(object)
+        XCTAssertEqual(object?.name, "new object")
+        XCTAssertEqual(object?.identifier, id)
+    }
+
+    func testSaveChangesInRecord_existingObjectWithUUIDPrimaryKey_updatesObject() {
+        targetCoreDataStack = coreDataStack(modelName: "UUIDPrimaryKeyModel")
+        let id = UUID()
+        let object = insert(entityType: "UUIDTestEntity",
+                            properties: ["identifier": id,
+                                         "name": "name"],
+                            context: targetCoreDataStack.managedObjectContext) as! UUIDTestEntity
+
+        let adapter = createAdapter()
+
+        let uploadedRecord = waitUntilSynced(adapter: adapter).updated.first!
+
+        uploadedRecord["name"] = "name 2"
+
+        waitUntilSynced(adapter: adapter, downloaded: [uploadedRecord])
+
+        targetCoreDataStack.managedObjectContext.refresh(object, mergeChanges: false)
+        XCTAssertEqual(object.name, "name 2")
+    }
+}
