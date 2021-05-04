@@ -675,7 +675,7 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
             }
             
             let targetObjectClass = realmObjectClass(name: className)
-            let targetObject = realmProvider.targetRealm.object(ofType: targetObjectClass, forPrimaryKey: relationship.targetIdentifier)
+            let targetObject = realmProvider.targetRealm.object(ofType: targetObjectClass, forPrimaryKey: getTargetObjectIdentifier(targetObjectClass, relationship.targetIdentifier))
             
             guard let target = targetObject else {
                 continue
@@ -688,6 +688,17 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
         try? realmProvider.persistenceRealm.commitWrite()
         commitTargetWriteTransactionWithoutNotifying()
         debugPrint("Finished applying pending relationships")
+    }
+    
+    func getTargetObjectIdentifier(_ objectClass: Object.Type, _ objectIdentifier: Any?) -> Any {
+        let primaryKey = objectClass.primaryKey()!
+        let object = objectClass.init()
+        let primaryKeyType = object.objectSchema[primaryKey]?.type
+        let identifier = objectIdentifier as! String
+        if PropertyType.int == primaryKeyType {
+            return Int(identifier)!
+        }
+        return identifier
     }
     
     func save(record: CKRecord, for syncedEntity: SyncedEntity) {
@@ -822,7 +833,7 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
                 if property.type == PropertyType.object {
                     if let target = object?.value(forKey: property.name) as? Object {
                         
-                        let targetIdentifier = target.value(forKey: objectClass.primaryKey()!) as! String
+                        let targetIdentifier = getIdentifier(for: target, primaryKey: objectClass.primaryKey()!)
                         let referenceIdentifier = "\(property.objectClassName!).\(targetIdentifier)"
                         let recordID = CKRecord.ID(recordName: referenceIdentifier, zoneID: zoneID)
                         // if we set the parent we must make the action .deleteSelf, otherwise we get errors if we ever try to delete the parent record
