@@ -675,7 +675,7 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
             }
             
             let targetObjectClass = realmObjectClass(name: className)
-            let targetObjectIdentifier = getTargetObjectIdentifier(for: targetObjectClass, objectIdentifier: relationship.targetIdentifier)
+            let targetObjectIdentifier = getObjectIdentifier(for: targetObjectClass, identifier: relationship.targetIdentifier)
             let targetObject = realmProvider.targetRealm.object(ofType: targetObjectClass, forPrimaryKey: targetObjectIdentifier)
             
             guard let target = targetObject else {
@@ -691,11 +691,10 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
         debugPrint("Finished applying pending relationships")
     }
     
-    func getTargetObjectIdentifier(for objectClass: Object.Type, objectIdentifier: Any?) -> Any {
+    func getObjectIdentifier(for objectClass: Object.Type, identifier: String) -> Any {
         let primaryKey = objectClass.primaryKey()!
         let object = objectClass.init()
         let primaryKeyType = object.objectSchema[primaryKey]?.type
-        let identifier = objectIdentifier as! String
         if PropertyType.int == primaryKeyType {
             return Int(identifier)!
         }
