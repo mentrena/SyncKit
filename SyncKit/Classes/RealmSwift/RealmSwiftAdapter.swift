@@ -675,7 +675,8 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
             }
             
             let targetObjectClass = realmObjectClass(name: className)
-            let targetObject = realmProvider.targetRealm.object(ofType: targetObjectClass, forPrimaryKey: getTargetObjectIdentifier(targetObjectClass, relationship.targetIdentifier))
+            let targetObjectIdentifier = getTargetObjectIdentifier(for: targetObjectClass, objectIdentifier: relationship.targetIdentifier)
+            let targetObject = realmProvider.targetRealm.object(ofType: targetObjectClass, forPrimaryKey: targetObjectIdentifier)
             
             guard let target = targetObject else {
                 continue
@@ -690,7 +691,7 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
         debugPrint("Finished applying pending relationships")
     }
     
-    func getTargetObjectIdentifier(_ objectClass: Object.Type, _ objectIdentifier: Any?) -> Any {
+    func getTargetObjectIdentifier(for objectClass: Object.Type, objectIdentifier: Any?) -> Any {
         let primaryKey = objectClass.primaryKey()!
         let object = objectClass.init()
         let primaryKeyType = object.objectSchema[primaryKey]?.type
@@ -971,7 +972,6 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
     }
     
     public func deleteRecords(with recordIDs: [CKRecord.ID]) {
-        debugPrint("Deleting records with record ids \(recordIDs)")
         guard recordIDs.count != 0,
             realmProvider != nil else {
             return
