@@ -43,8 +43,8 @@
 		6492365A22C406540074A142 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6492365922C406540074A142 /* CloudKit.framework */; };
 		64B3A3A822B0346200E4E942 /* serverChangeToken.AQAAAWPa1DUC in Resources */ = {isa = PBXBuildFile; fileRef = 64B3A3A722B0346100E4E942 /* serverChangeToken.AQAAAWPa1DUC */; };
 		64B3A3B422B3B1E200E4E942 /* TestUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64B3A3B322B3B1E200E4E942 /* TestUtilities.swift */; };
-		64CF6A59263F22EB006451AA /* QSIntKeyObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64CF6A58263F22EB006451AA /* QSIntKeyObject.swift */; };
-		64CF6A5B263F31BF006451AA /* QSObjectIdKeyObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64CF6A5A263F31BF006451AA /* QSObjectIdKeyObject.swift */; };
+		64CF6A59263F22EB006451AA /* IntPrimaryKeyObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64CF6A58263F22EB006451AA /* IntPrimaryKeyObjects.swift */; };
+		64CF6A5B263F31BF006451AA /* ObjectIdKeyObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64CF6A5A263F31BF006451AA /* ObjectIdKeyObjects.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -101,8 +101,8 @@
 		6492365922C406540074A142 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		64B3A3A722B0346100E4E942 /* serverChangeToken.AQAAAWPa1DUC */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = serverChangeToken.AQAAAWPa1DUC; sourceTree = "<group>"; };
 		64B3A3B322B3B1E200E4E942 /* TestUtilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestUtilities.swift; sourceTree = "<group>"; };
-		64CF6A58263F22EB006451AA /* QSIntKeyObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QSIntKeyObject.swift; sourceTree = "<group>"; };
-		64CF6A5A263F31BF006451AA /* QSObjectIdKeyObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QSObjectIdKeyObject.swift; sourceTree = "<group>"; };
+		64CF6A58263F22EB006451AA /* IntPrimaryKeyObjects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntPrimaryKeyObjects.swift; sourceTree = "<group>"; };
+		64CF6A5A263F31BF006451AA /* ObjectIdKeyObjects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectIdKeyObjects.swift; sourceTree = "<group>"; };
 		77B18CD36C08F968589DB831 /* Pods_SyncKitRealmSwiftExampleTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SyncKitRealmSwiftExampleTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		884263D9F4B4798C54B50C85 /* Pods-SyncKitRealmSwiftExampleTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SyncKitRealmSwiftExampleTests.release.xcconfig"; path = "../Pods/Target Support Files/Pods-SyncKitRealmSwiftExampleTests/Pods-SyncKitRealmSwiftExampleTests.release.xcconfig"; sourceTree = "<group>"; };
 		9138DEA549B0FDC946BD0398 /* Pods-SyncKitCoreDataExampleTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SyncKitCoreDataExampleTests.release.xcconfig"; path = "../Pods/Target Support Files/Pods-SyncKitCoreDataExampleTests/Pods-SyncKitCoreDataExampleTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -180,8 +180,8 @@
 				64B3A3B322B3B1E200E4E942 /* TestUtilities.swift */,
 				6492364122C3F8970074A142 /* SyncKitRealmSwiftTests.swift */,
 				6413ECE92559AB7100BDC1DB /* RecordProcessingDelegate.swift */,
-				64CF6A58263F22EB006451AA /* QSIntKeyObject.swift */,
-				64CF6A5A263F31BF006451AA /* QSObjectIdKeyObject.swift */,
+				64CF6A58263F22EB006451AA /* IntPrimaryKeyObjects.swift */,
+				64CF6A5A263F31BF006451AA /* ObjectIdKeyObjects.swift */,
 			);
 			path = SyncKitRealmSwiftExampleTests;
 			sourceTree = "<group>";
@@ -501,8 +501,8 @@
 			files = (
 				6413ECEA2559AB7100BDC1DB /* RecordProcessingDelegate.swift in Sources */,
 				6492364222C3F8980074A142 /* SyncKitRealmSwiftTests.swift in Sources */,
-				64CF6A5B263F31BF006451AA /* QSObjectIdKeyObject.swift in Sources */,
-				64CF6A59263F22EB006451AA /* QSIntKeyObject.swift in Sources */,
+				64CF6A5B263F31BF006451AA /* ObjectIdKeyObjects.swift in Sources */,
+				64CF6A59263F22EB006451AA /* IntPrimaryKeyObjects.swift in Sources */,
 				64B3A3B422B3B1E200E4E942 /* TestUtilities.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
