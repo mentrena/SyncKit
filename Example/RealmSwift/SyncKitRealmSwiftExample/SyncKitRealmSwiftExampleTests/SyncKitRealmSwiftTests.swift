@@ -240,7 +240,7 @@ class SyncKitRealmSwiftTests: XCTestCase, RealmSwiftAdapterDelegate {
         cases.forEach { tc in
             let realm = realmWith(identifier: "t1_\(tc.name)", keyType: tc.keyType)
             
-            insertObject(values: ["identifier": tc.values["identifier"]!, "name": "company1", "sortIndex": 1],
+            insertObject(values: ["identifier": tc.companyIdentifier, "name": "company1", "sortIndex": 1],
                          realm: realm,
                          objectType: tc.companyType)
             
@@ -261,7 +261,7 @@ class SyncKitRealmSwiftTests: XCTestCase, RealmSwiftAdapterDelegate {
         let cases = TestCase.defaultCases
         cases.forEach { tc in
             let realm = realmWith(identifier: "t2_\(tc.name)", keyType: tc.keyType)
-            let company = insertObject(values: ["identifier": tc.values["identifier"]!, "name": "company1", "sortIndex": 1], realm: realm, objectType: tc.companyType)
+            let company = insertObject(values: ["identifier": tc.companyIdentifier, "name": "company1", "sortIndex": 1], realm: realm, objectType: tc.companyType)
             let adapter = realmAdapter(targetConfiguration: realm.configuration, persistenceConfiguration: persistenceConfigurationWith(identifier: "p2_\(tc.name)"))
             
             let exp = expectation(description: "synced")
@@ -290,8 +290,8 @@ class SyncKitRealmSwiftTests: XCTestCase, RealmSwiftAdapterDelegate {
         let cases = TestCase.defaultCases
         cases.forEach { tc in
             let realm = realmWith(identifier: "t3_\(tc.name)", keyType: tc.keyType)
-            let company = insertObject(values: ["identifier": tc.values["c_id"]!, "name": "company1", "sortIndex": 1], realm: realm, objectType: tc.companyType)
-            insertObject(values:  ["identifier": tc.values["e_id"]!, "company": company, "name": "employee1"], realm: realm, objectType: tc.employeeType)
+            let company = insertObject(values: ["identifier": tc.companyIdentifier, "name": "company1", "sortIndex": 1], realm: realm, objectType: tc.companyType)
+            insertObject(values:  ["identifier": tc.employeeIdentifier, "company": company, "name": "employee1"], realm: realm, objectType: tc.employeeType)
             let adapter = realmAdapter(targetConfiguration: realm.configuration, persistenceConfiguration: persistenceConfigurationWith(identifier: "p3_\(tc.name)"))
             
             let exp = expectation(description: "synced")
@@ -319,7 +319,7 @@ class SyncKitRealmSwiftTests: XCTestCase, RealmSwiftAdapterDelegate {
     func testRecordsMarkedForDeletion_deletedObject_returnsRecordID() {
         let cases = TestCase.defaultCases
         cases.forEach { tc in
-            let companyId = tc.values["c_id"]!
+            let companyId = tc.companyIdentifier
             let realm = realmWith(identifier: "t4_\(tc.name)", keyType: tc.keyType)
             let company = insertObject(values: ["identifier": companyId, "name": "company1", "sortIndex": 1], realm: realm, objectType: tc.companyType)
             let adapter = realmAdapter(targetConfiguration: realm.configuration, persistenceConfiguration: persistenceConfigurationWith(identifier: "p4_\(tc.name)"))
@@ -348,7 +348,7 @@ class SyncKitRealmSwiftTests: XCTestCase, RealmSwiftAdapterDelegate {
     func testDeleteRecordWithID_deletesCorrespondingObject() {
         let cases = TestCase.defaultCases
         cases.forEach { tc in
-            let companyId = tc.values["c_id"]!
+            let companyId = tc.companyIdentifier
             let realm = realmWith(identifier: "t5_\(tc.name)", keyType: tc.keyType)
             insertObject(values: ["identifier": companyId, "name": "company1", "sortIndex": 1], realm: realm, objectType: tc.companyType)
             let adapter = realmAdapter(targetConfiguration: realm.configuration, persistenceConfiguration: persistenceConfigurationWith(identifier: "p5_\(tc.name)"))
@@ -376,7 +376,7 @@ class SyncKitRealmSwiftTests: XCTestCase, RealmSwiftAdapterDelegate {
     func testSaveChangesInRecord_existingObject_updatesObject() {
         let cases = TestCase.defaultCases
         cases.forEach { tc in
-            let companyId = tc.values["c_id"]!
+            let companyId = tc.companyIdentifier
             let realm = realmWith(identifier: "t6_\(tc.name)", keyType: tc.keyType)
             let company = insertObject(values: ["identifier": companyId, "name": "company1", "sortIndex": 1], realm: realm, objectType: tc.companyType)
             let adapter = realmAdapter(targetConfiguration: realm.configuration, persistenceConfiguration: persistenceConfigurationWith(identifier: "p6_\(tc.name)"))
@@ -410,7 +410,7 @@ class SyncKitRealmSwiftTests: XCTestCase, RealmSwiftAdapterDelegate {
     func testSaveChangesInRecord_newObject_insertsObject() {
         let cases = TestCase.defaultCases
         cases.forEach { tc in
-            let companyId = tc.values["c_id"]
+            let companyId = tc.companyIdentifier
             let stringIdentifier = (companyId as! CustomStringConvertible).description
             let realm = realmWith(identifier: "t7_\(tc.name)", keyType: tc.keyType)
             let adapter = realmAdapter(targetConfiguration: realm.configuration, persistenceConfiguration: persistenceConfigurationWith(identifier: "p7_\(tc.name)"))
@@ -443,7 +443,7 @@ class SyncKitRealmSwiftTests: XCTestCase, RealmSwiftAdapterDelegate {
     func testSaveChangesInRecord_missingProperty_setsPropertyToNil() {
         let cases = TestCase.defaultCases
         cases.forEach { tc in
-            let companyId = tc.values["c_id"]!
+            let companyId = tc.companyIdentifier
             let realm = realmWith(identifier: "t8_\(tc.name)", keyType: tc.keyType)
             let company = insertObject(values: ["identifier": companyId, "name": "company1", "sortIndex": 1], realm: realm, objectType: tc.companyType)
             let adapter = realmAdapter(targetConfiguration: realm.configuration, persistenceConfiguration: persistenceConfigurationWith(identifier: "p8_\(tc.name)"))
@@ -477,10 +477,10 @@ class SyncKitRealmSwiftTests: XCTestCase, RealmSwiftAdapterDelegate {
     func testSaveChangesInRecord_missingRelationshipProperty_setsPropertyToNil() {
         let cases = TestCase.defaultCases
         cases.forEach { tc in
-            let companyId = tc.values["c_id"]!
+            let companyId = tc.companyIdentifier
             let realm = realmWith(identifier: "t9_\(tc.name)", keyType: tc.keyType)
             let company = insertObject(values: ["identifier": companyId, "name": "company1", "sortIndex": 1], realm: realm, objectType: tc.companyType)
-            let employee = insertObject(values: ["identifier": tc.values["e_id"]!, "name": "employee", "company": company], realm: realm, objectType: tc.employeeType)
+            let employee = insertObject(values: ["identifier": tc.employeeIdentifier, "name": "employee", "company": company], realm: realm, objectType: tc.employeeType)
             let adapter = realmAdapter(targetConfiguration: realm.configuration, persistenceConfiguration: persistenceConfigurationWith(identifier: "p9_\(tc.name)"))
             
             let exp = expectation(description: "synced")
@@ -516,10 +516,10 @@ class SyncKitRealmSwiftTests: XCTestCase, RealmSwiftAdapterDelegate {
     func testSaveChangesInRecord_missingToManyRelationshipProperty_doesNothing() {
         let cases = TestCase.defaultCases
         cases.forEach { tc in
-            let companyId = tc.values["c_id"]!
+            let companyId = tc.companyIdentifier
             let realm = realmWith(identifier: "t10_\(tc.name)", keyType: tc.keyType)
             let company = insertObject(values: ["identifier": companyId, "name": "company1", "sortIndex": 1], realm: realm, objectType: tc.companyType)
-            insertObject(values: ["identifier": tc.values["e_id"]!, "name": "employee", "company": company], realm: realm, objectType: tc.employeeType)
+            insertObject(values: ["identifier": tc.employeeIdentifier, "name": "employee", "company": company], realm: realm, objectType: tc.employeeType)
             let adapter = realmAdapter(targetConfiguration: realm.configuration, persistenceConfiguration: persistenceConfigurationWith(identifier: "p10_\(tc.name)"))
             
             let exp = expectation(description: "synced")
@@ -1254,130 +1254,127 @@ class SyncKitRealmSwiftTests: XCTestCase, RealmSwiftAdapterDelegate {
     // MARK: - Sharing
     
     func testRecordForObjectWithIdentifier_existingObject_returnsRecord() {
-        
-        let realm = realmWith(identifier: "t51")
-        let company = insertCompany(values: ["identifier": NSUUID().uuidString, "name": "company1", "sortIndex": 1], realm: realm)
-        let adapter = realmAdapter(targetConfiguration: realm.configuration,
-                                               persistenceConfiguration: persistenceConfigurationWith(identifier: "p51"))
-        let record = adapter.record(for: company)
-        XCTAssertNotNil(record)
-        XCTAssertTrue(record!.recordID.recordName.hasPrefix("QSCompany"))
+        let cases = TestCase.defaultCases
+        cases.forEach { tc in
+            let (realm, adapter, company, _) = defaultTestObjects(testCase: tc, name: "50")
+            let record = adapter.record(for: company!)
+            XCTAssertNotNil(record)
+            XCTAssertTrue(record!.recordID.recordName.hasPrefix("QSCompany"))
+        }
     }
     
     func testShareForObjectWithIdentifier_noShare_returnsNil() {
-        
-        let realm = realmWith(identifier: "t52")
-        let company = insertCompany(values: ["identifier": NSUUID().uuidString, "name": "company1", "sortIndex": 1], realm: realm)
-        let adapter = realmAdapter(targetConfiguration: realm.configuration,
-                                               persistenceConfiguration: persistenceConfigurationWith(identifier: "p52"))
-        let share = adapter.share(for: company)
-        XCTAssertNil(share)
+        let cases = TestCase.defaultCases
+        cases.forEach { tc in
+            let (realm, adapter, company, _) = defaultTestObjects(testCase: tc, name: "51")
+            let share = adapter.share(for: company!)
+            XCTAssertNil(share)
+        }
     }
 
     func testShareForObjectWithIdentifier_saveShareCalled_returnsShare() {
         
-        let realm = realmWith(identifier: "t53")
-        let company = insertCompany(values: ["identifier": NSUUID().uuidString, "name": "company1", "sortIndex": 1], realm: realm)
-        let adapter = realmAdapter(targetConfiguration: realm.configuration,
-                                               persistenceConfiguration: persistenceConfigurationWith(identifier: "p53"))
-        let record = adapter.record(for: company)
-        let share = CKShare(rootRecord: record!)
-        
-        adapter.save(share: share, for: company)
-        adapter.save(share: share, for: company)
-        
-        let share2 = adapter.share(for: company)
-        XCTAssertNotNil(share2)
+        let cases = TestCase.defaultCases
+        cases.forEach { tc in
+            let (realm, adapter, company, _) = defaultTestObjects(testCase: tc, name: "52")
+            let record = adapter.record(for: company!)
+            let share = CKShare(rootRecord: record!)
+            
+            adapter.save(share: share, for: company!)
+            adapter.save(share: share, for: company!)
+            
+            let share2 = adapter.share(for: company!)
+            XCTAssertNotNil(share2)
+        }
     }
 
     func testShareForObjectWithIdentifier_shareDeleted_returnsNil() {
         
-        let realm = realmWith(identifier: "t54")
-        let company = insertCompany(values: ["identifier": NSUUID().uuidString, "name": "company1", "sortIndex": 1], realm: realm)
-        let adapter = realmAdapter(targetConfiguration: realm.configuration,
-                                               persistenceConfiguration: persistenceConfigurationWith(identifier: "p54"))
-        let record = adapter.record(for: company)
-        let share = CKShare(rootRecord: record!)
-        
-        adapter.save(share: share, for: company)
-        
-        XCTAssertNotNil(adapter.share(for: company))
-        
-        adapter.deleteShare(for: company)
-        
-        XCTAssertNil(adapter.share(for: company))
+        let cases = TestCase.defaultCases
+        cases.forEach { tc in
+            let (realm, adapter, company, _) = defaultTestObjects(testCase: tc, name: "53")
+            
+            let record = adapter.record(for: company!)
+            let share = CKShare(rootRecord: record!)
+            
+            adapter.save(share: share, for: company!)
+            
+            XCTAssertNotNil(adapter.share(for: company!))
+            
+            adapter.deleteShare(for: company!)
+            
+            XCTAssertNil(adapter.share(for: company!))
+        }
     }
 
     func testSaveChangesInRecords_includesShare_savesObjectAndShare() {
         
-        let realm = realmWith(identifier: "t55")
-        let adapter = realmAdapter(targetConfiguration: realm.configuration,
-                                               persistenceConfiguration: persistenceConfigurationWith(identifier: "p55"))
-        
-        let companyRecord = CKRecord(recordType: "QSCompany", recordID: CKRecord.ID(recordName: "QSCompany.com1"))
-        companyRecord["name"] = "new company" as NSString
-        
-        let shareRecord = CKShare(rootRecord: companyRecord, shareID: CKRecord.ID(recordName: "QSShare.forCompany"))
-        
-        let expectation = self.expectation(description: "synced")
-        fullySync(adapter: adapter, downloaded: [companyRecord, shareRecord], deleted: []) { (_, _, _) in
-            expectation.fulfill()
+        let cases = TestCase.defaultCases
+        cases.forEach { tc in
+            let (realm, adapter, _, _) = defaultTestObjects(testCase: tc, name: "54", insertCompany: false, insertEmployee: false)
+            let companyRecord = CKRecord(recordType: String(describing: tc.companyType), recordID: CKRecord.ID(recordName: "\(String(describing: tc.companyType)).\((tc.companyIdentifier as! CustomStringConvertible).description)"))
+            companyRecord["name"] = "new company" as NSString
+            
+            let shareRecord = CKShare(rootRecord: companyRecord, shareID: CKRecord.ID(recordName: "QSShare.forCompany"))
+            
+            let expectation = self.expectation(description: "synced")
+            fullySync(adapter: adapter, downloaded: [companyRecord, shareRecord], deleted: []) { (_, _, _) in
+                expectation.fulfill()
+            }
+            
+            waitForExpectations(timeout: 1, handler: nil)
+            
+            let company = realm.objects(tc.companyType).first
+            let share = adapter.share(for: company!)
+            
+            XCTAssertNotNil(company)
+            XCTAssertNotNil(share)
+            XCTAssertEqual(company?.value(forKey: "name") as? String, "new company")
+            XCTAssertTrue(share?.recordID.recordName == "QSShare.forCompany")
         }
-        
-        waitForExpectations(timeout: 1, handler: nil)
-        
-        let company = realm.objects(QSCompany.self).first
-        let share = adapter.share(for: company!)
-        
-        XCTAssertNotNil(company)
-        XCTAssertNotNil(share)
-        XCTAssertTrue(company?.name == "new company")
-        XCTAssertTrue(share?.recordID.recordName == "QSShare.forCompany")
     }
 
     func testDeleteRecordsWithIDs_containsShare_deletesShare() {
-        
-        let realm = realmWith(identifier: "t56")
-        let company = insertCompany(values: ["identifier": NSUUID().uuidString, "name": "company1", "sortIndex": 1], realm: realm)
-        let adapter = realmAdapter(targetConfiguration: realm.configuration,
-                                               persistenceConfiguration: persistenceConfigurationWith(identifier: "p56"))
-        
-        let record = adapter.record(for: company)
-        let shareID = CKRecord.ID(recordName: "CKShare.identifier", zoneID: record!.recordID.zoneID)
-        let share = CKShare(rootRecord: record!, shareID: shareID)
-        
-        adapter.save(share: share, for: company)
-        
-        let savedShare = adapter.share(for: company)
-        XCTAssertNotNil(savedShare)
-        
-        let expectation = self.expectation(description: "synced")
-        fullySync(adapter: adapter, downloaded: [], deleted: [shareID]) { (_, _, _) in
-            expectation.fulfill()
+        let cases = TestCase.defaultCases
+        cases.forEach { tc in
+            let (realm, adapter, company, _) = defaultTestObjects(testCase: tc, name: "55")
+            
+            let record = adapter.record(for: company!)
+            let shareID = CKRecord.ID(recordName: "CKShare.identifier", zoneID: record!.recordID.zoneID)
+            let share = CKShare(rootRecord: record!, shareID: shareID)
+            
+            adapter.save(share: share, for: company!)
+            
+            let savedShare = adapter.share(for: company!)
+            XCTAssertNotNil(savedShare)
+            
+            let expectation = self.expectation(description: "synced")
+            fullySync(adapter: adapter, downloaded: [], deleted: [shareID]) { (_, _, _) in
+                expectation.fulfill()
+            }
+            
+            waitForExpectations(timeout: 1, handler: nil)
+            
+            let updatedShare = adapter.share(for: company!)
+            XCTAssertNil(updatedShare)
         }
-        
-        waitForExpectations(timeout: 1, handler: nil)
-        
-        let updatedShare = adapter.share(for: company)
-        XCTAssertNil(updatedShare)
     }
     
     func testRecordsToUpload_includesAnyParentRecordsInBatch() {
-        let realm = realmWith(identifier: "t57")
-        let company = insertCompany(values: ["identifier": "com1", "name": "company1", "sortIndex": 1], realm: realm)
-        insertEmployee(values: ["identifier": "emp1", "name": "employee1", "sortIndex": NSNumber(value: 1), "company": company], realm: realm)
-        let adapter = realmAdapter(targetConfiguration: realm.configuration,
-                                   persistenceConfiguration: persistenceConfigurationWith(identifier: "p57"))
-        
-        adapter.prepareToImport()
-        let records = adapter.recordsToUpload(limit: 1)
-        adapter.didFinishImport(with: nil)
-        
-        XCTAssertEqual(records.count, 2);
-        let companyRecord = records.first { $0.recordID.recordName.contains("com1") }
-        let employeeRecord = records.first { $0.recordID.recordName.contains("emp1") }
-        XCTAssertNotNil(companyRecord)
-        XCTAssertNotNil(employeeRecord)
+        let cases = TestCase.defaultCases
+        cases.forEach { tc in
+            let (realm, adapter, company, employee) = defaultTestObjects(testCase: tc, name: "56")
+            
+            adapter.prepareToImport()
+            let records = adapter.recordsToUpload(limit: 1)
+            adapter.didFinishImport(with: nil)
+            
+            XCTAssertEqual(records.count, 2);
+            let companyRecord = records.first { $0.recordID.recordName.contains("Company") }
+            let employeeRecord = records.first { $0.recordID.recordName.contains("Employee") }
+            XCTAssertNotNil(companyRecord)
+            XCTAssertNotNil(employeeRecord)
+        }
     }
     
     func testRecordsToUpdateParentRelationshipsForRoot_returnsRecords() {
@@ -1557,212 +1554,4 @@ class SyncKitRealmSwiftTests: XCTestCase, RealmSwiftAdapterDelegate {
         
         XCTAssertEqual(companies.first?.name, "company1")
     }
-    
-    // MARK: - Int primary key
-    
-//    func testRecordsToUploadWithLimit_intKey_initialSync_returnsRecord() {
-//        let realm = realmWith(identifier: "t1_int", keyType: .int)
-//
-//        let object: QSCompany_Int = insertObject(values: ["name": "object 1", "identifier": 1], realm: realm)
-//
-//        let adapter = realmAdapter(targetConfiguration: realm.configuration, persistenceConfiguration: persistenceConfigurationWith(identifier: "p1_int"))
-//
-//        let exp = expectation(description: "synced")
-//        var uploadedRecord: CKRecord? = nil
-//        fullySync(adapter: adapter) { uploaded, _, error in
-//            uploadedRecord = uploaded.first
-//            exp.fulfill()
-//        }
-//
-//        waitForExpectations(timeout: 1, handler: nil)
-//
-//        XCTAssertEqual(uploadedRecord?["name"], "object 1")
-//        XCTAssertEqual(uploadedRecord?.recordID.recordName, "QSIntKeyObject.1")
-//    }
-//
-//    func testRecordsToUpload_intKey_changedObject_returnsRecordWithChanges() {
-//
-//        let realm = realmWith(identifier: "t2_int", keyType: .int)
-//        let object: QSCompany_Int = insertObject(values: ["name": "object 1", "identifier": 1], realm: realm)
-//
-//        let adapter = realmAdapter(targetConfiguration: realm.configuration, persistenceConfiguration: persistenceConfigurationWith(identifier: "p2_int"))
-//
-//        let exp = expectation(description: "synced")
-//        fullySync(adapter: adapter) { (uploaded, deleted, error) in
-//            exp.fulfill()
-//        }
-//        waitForExpectations(timeout: 1, handler: nil)
-//
-//        realm.beginWrite()
-//        object.name = "name 2"
-//        try! realm.commitWrite()
-//
-//        waitForHasChangesNotification(from: adapter)
-//
-//        adapter.prepareToImport()
-//        let records = adapter.recordsToUpload(limit: 10)
-//        adapter.didFinishImport(with: nil)
-//
-//        XCTAssertTrue(records.count > 0)
-//        let record = records.first!
-//        XCTAssertTrue(record["name"] as? String == "name 2")
-//    }
-    
-//    func testSaveChangesInRecord_newObjectWithIntPrimaryKey_insertsObject() {
-//
-//        let realm = realmWith(identifier: "t101", keyType: .int)
-//        let adapter = realmAdapter(targetConfiguration: realm.configuration, persistenceConfiguration: persistenceConfigurationWith(identifier: "p101"))
-//
-//        let objectRecord = CKRecord(recordType: "QSIntKeyObject", recordID: CKRecord.ID(recordName: "QSIntKeyObject.2"))
-//        objectRecord["name"] = "new object" as NSString
-//
-//        let exp = expectation(description: "merged changes")
-//
-//        adapter.prepareToImport()
-//        adapter.saveChanges(in: [objectRecord])
-//        adapter.persistImportedChanges { (_) in
-//            exp.fulfill()
-//        }
-//        adapter.didFinishImport(with: nil)
-//
-//        waitForExpectations(timeout: 1, handler: nil)
-//
-//        let objects = realm.objects(QSIntKeyObject.self)
-//        XCTAssertTrue(objects.count == 1)
-//        let object = objects.first!
-//        XCTAssertTrue(object.name == "new object")
-//        XCTAssertTrue(object.identifier == 2)
-//    }
-//
-//    func testSaveChangesInRecord_existingObjectWithIntPrimaryKey_updatesObject() {
-//
-//        let realm = realmWith(identifier: "t102", keyType: .int)
-//        let object = QSIntKeyObject()
-//        object.name = "object 1"
-//        object.identifier = 3
-//
-//        realm.beginWrite()
-//        realm.add(object)
-//        try! realm.commitWrite()
-//
-//        let adapter = realmAdapter(targetConfiguration: realm.configuration, persistenceConfiguration: persistenceConfigurationWith(identifier: "p102"))
-//
-//        let exp = expectation(description: "synced")
-//        var objectRecord: CKRecord?
-//
-//        fullySync(adapter: adapter) { (uploaded, _, _) in
-//            objectRecord = uploaded.first
-//            exp.fulfill()
-//        }
-//        waitForExpectations(timeout: 1, handler: nil)
-//
-//        objectRecord!["name"] = "name 2" as NSString
-//
-//        let exp2 = expectation(description: "merged changes")
-//
-//        adapter.prepareToImport()
-//        adapter.saveChanges(in: [objectRecord!])
-//        adapter.persistImportedChanges { (_) in
-//            exp2.fulfill()
-//        }
-//        adapter.didFinishImport(with: nil)
-//
-//        waitForExpectations(timeout: 1, handler: nil)
-//
-//        XCTAssertTrue(object.name == "name 2")
-//        XCTAssertEqual(object.identifier, 3)
-//    }
-    
-    // MARK: - ObjectId primary key
-    
-//    func testSync_objectWithObjectIdPrimaryKey_canSync() {
-//        let realm = realmWith(identifier: "t103", keyType: .objectId)
-//
-//        let object = QSObjectIdKeyObject()
-//        object.name = "object 1"
-//        object.identifier = try! ObjectId(string: "608efbc93ad7a4c09f8fdaa5")
-//
-//        realm.beginWrite()
-//        realm.add(object)
-//        try! realm.commitWrite()
-//
-//        let adapter = realmAdapter(targetConfiguration: realm.configuration, persistenceConfiguration: persistenceConfigurationWith(identifier: "p103"))
-//
-//        let exp = expectation(description: "synced")
-//        var uploadedRecord: CKRecord? = nil
-//        fullySync(adapter: adapter) { uploaded, _, error in
-//            uploadedRecord = uploaded.first
-//            exp.fulfill()
-//        }
-//
-//        waitForExpectations(timeout: 1, handler: nil)
-//
-//        XCTAssertEqual(uploadedRecord?["name"], "object 1")
-//        XCTAssertEqual(uploadedRecord?.recordID.recordName, "QSObjectIdKeyObject.608efbc93ad7a4c09f8fdaa5")
-//    }
-//
-//    func testSaveChangesInRecord_newObjectWithObjectIdPrimaryKey_insertsObject() {
-//
-//        let realm = realmWith(identifier: "t104", keyType: .objectId)
-//        let adapter = realmAdapter(targetConfiguration: realm.configuration, persistenceConfiguration: persistenceConfigurationWith(identifier: "p104"))
-//
-//        let objectRecord = CKRecord(recordType: "QSObjectIdKeyObject", recordID: CKRecord.ID(recordName: "QSObjectIdKeyObject.608efbc93ad7a4c09f8fdaa5"))
-//        objectRecord["name"] = "new object" as NSString
-//
-//        let exp = expectation(description: "merged changes")
-//
-//        adapter.prepareToImport()
-//        adapter.saveChanges(in: [objectRecord])
-//        adapter.persistImportedChanges { (_) in
-//            exp.fulfill()
-//        }
-//        adapter.didFinishImport(with: nil)
-//
-//        waitForExpectations(timeout: 1, handler: nil)
-//
-//        let objects = realm.objects(QSObjectIdKeyObject.self)
-//        XCTAssertTrue(objects.count == 1)
-//        let object = objects.first!
-//        let id = try! ObjectId(string: "608efbc93ad7a4c09f8fdaa5")
-//        XCTAssertTrue(object.name == "new object")
-//        XCTAssertTrue(object.identifier == id)
-//    }
-//
-//    func testSaveChangesInRecord_existingObjectWithObjectIdPrimaryKey_updatesObject() {
-//
-//        let realm = realmWith(identifier: "t105", keyType: .objectId)
-//        let object = QSObjectIdKeyObject()
-//        object.name = "object 1"
-//        object.identifier = try! ObjectId(string: "608efbc93ad7a4c09f8fdaa5")
-//
-//        realm.beginWrite()
-//        realm.add(object)
-//        try! realm.commitWrite()
-//
-//        let adapter = realmAdapter(targetConfiguration: realm.configuration, persistenceConfiguration: persistenceConfigurationWith(identifier: "p105"))
-//
-//        let exp = expectation(description: "synced")
-//        var objectRecord: CKRecord?
-//
-//        fullySync(adapter: adapter) { (uploaded, _, _) in
-//            objectRecord = uploaded.first
-//            exp.fulfill()
-//        }
-//        waitForExpectations(timeout: 1, handler: nil)
-//
-//        objectRecord!["name"] = "name 2" as NSString
-//
-//        let exp2 = expectation(description: "merged changes")
-//
-//        adapter.prepareToImport()
-//        adapter.saveChanges(in: [objectRecord!])
-//        adapter.persistImportedChanges { (_) in
-//            exp2.fulfill()
-//        }
-//        adapter.didFinishImport(with: nil)
-//
-//        waitForExpectations(timeout: 1, handler: nil)
-//
-//        XCTAssertTrue(object.name == "name 2")
-//    }
 }
