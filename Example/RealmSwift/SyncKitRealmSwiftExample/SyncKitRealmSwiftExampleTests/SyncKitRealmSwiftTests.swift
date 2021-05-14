@@ -606,14 +606,14 @@ class SyncKitRealmSwiftTests: XCTestCase, RealmSwiftAdapterDelegate {
             let companyRecord = CKRecord(recordType: String(describing: tc.companyType),
                                          recordID: CKRecord.ID(recordName: "\(String(describing: tc.companyType)).\(companyId)"))
             companyRecord["name"] = "new company" as NSString
-            companyRecord["identifier"] = "1" as NSString
+            companyRecord["identifier"] = tc.companyIdentifier as? CKRecordValue
             companyRecord["sortIndex"] = NSNumber(value: 1)
             
             let employeeId = (tc.employeeIdentifier as! CustomStringConvertible).description
             let employeeRecord = CKRecord(recordType: String(describing: tc.employeeType),
                                           recordID: CKRecord.ID(recordName: "\(String(describing: tc.employeeType)).\(employeeId)"))
             employeeRecord["name"] = "new employee" as NSString
-            employeeRecord["identifier"] = "2" as NSString
+            employeeRecord["identifier"] = tc.employeeIdentifier as? CKRecordValue
             employeeRecord["sortIndex"] = NSNumber(value: 1)
             employeeRecord["company"] = CKRecord.Reference(recordID: companyRecord.recordID, action: .none)
             

@@ -1,8 +1,8 @@
 //
-//  IntTestEntity+CoreDataClass.swift
+//  QSEmployee_Int+CoreDataClass.swift
 //  SyncKitCoreDataExampleTests
 //
-//  Created by Manuel Entrena on 03/05/2021.
+//  Created by Manuel Entrena on 12/05/2021.
 //  Copyright © 2021 Manuel Entrena. All rights reserved.
 //
 //
@@ -11,8 +11,8 @@ import Foundation
 import CoreData
 import SyncKit
 
-@objc(IntTestEntity)
-public class IntTestEntity: NSManagedObject, PrimaryKey {
+@objc(QSEmployee_Int)
+public class QSEmployee_Int: NSManagedObject, PrimaryKey {
     public static func primaryKey() -> String {
         return "identifier"
     }

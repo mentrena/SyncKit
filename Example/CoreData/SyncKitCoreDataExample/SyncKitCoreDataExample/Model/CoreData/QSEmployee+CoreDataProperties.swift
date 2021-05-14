@@ -18,7 +18,7 @@ extension QSEmployee {
 
     @NSManaged public var identifier: String?
     @NSManaged public var name: String?
-    @NSManaged public var photo: NSData?
+    @NSManaged public var photo: Data?
     @NSManaged public var sortIndex: NSNumber?
     @NSManaged public var company: QSCompany?
 

@@ -176,7 +176,7 @@ extension CoreDataAdapter {
     
     func syncedEntity(withOriginIdentifier identifier: PrimaryKeyValue) -> QSSyncedEntity? {
         let fetched = try? self.privateContext.executeFetchRequest(entityName: "QSSyncedEntity",
-                                                                   predicate: NSPredicate(format: "originObjectID == %@", identifier.value),
+                                                                   predicate: NSPredicate(format: "originObjectID == %@", identifier.description),
                                                                    fetchLimit: 1) as? [QSSyncedEntity]
         return fetched?.first
     }

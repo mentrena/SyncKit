@@ -13,6 +13,7 @@ class QSCompany: RLMObject, PrimaryKey {
     
     @objc dynamic var name: String? = ""
     @objc dynamic var identifier = ""
+    @objc dynamic var sortIndex = 0
     
     var employees: RLMResults<QSEmployee> {
         return QSEmployee.objects(in: realm!, with: NSPredicate(format: "company == %@", self)) as! RLMResults<QSEmployee>

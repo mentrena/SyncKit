@@ -41,6 +41,14 @@
 		64369248232EB25A004393B1 /* QSTestEntity2+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64369246232EB25A004393B1 /* QSTestEntity2+CoreDataClass.swift */; };
 		645DC02F250A23890034F93A /* ModifyRecordsOperationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 645DC02E250A23890034F93A /* ModifyRecordsOperationTests.swift */; };
 		6465959722B64C8E00DC9A17 /* QSCompany.1739C6A5-C07E-48A5-B83E-AB07694F23DF in Resources */ = {isa = PBXBuildFile; fileRef = 6465959622B64C8E00DC9A17 /* QSCompany.1739C6A5-C07E-48A5-B83E-AB07694F23DF */; };
+		64A452D8264C2A2300133F64 /* QSCompany_UUID+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64A452D4264C2A2300133F64 /* QSCompany_UUID+CoreDataClass.swift */; };
+		64A452D9264C2A2300133F64 /* QSCompany_UUID+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64A452D5264C2A2300133F64 /* QSCompany_UUID+CoreDataProperties.swift */; };
+		64A452DA264C2A2300133F64 /* QSEmployee_UUID+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64A452D6264C2A2300133F64 /* QSEmployee_UUID+CoreDataClass.swift */; };
+		64A452DB264C2A2300133F64 /* QSEmployee_UUID+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64A452D7264C2A2300133F64 /* QSEmployee_UUID+CoreDataProperties.swift */; };
+		64A452E0264C2B1F00133F64 /* QSEmployee_Int+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64A452DC264C2B1F00133F64 /* QSEmployee_Int+CoreDataClass.swift */; };
+		64A452E1264C2B1F00133F64 /* QSEmployee_Int+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64A452DD264C2B1F00133F64 /* QSEmployee_Int+CoreDataProperties.swift */; };
+		64A452E2264C2B1F00133F64 /* QSCompany_Int+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64A452DE264C2B1F00133F64 /* QSCompany_Int+CoreDataClass.swift */; };
+		64A452E3264C2B1F00133F64 /* QSCompany_Int+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64A452DF264C2B1F00133F64 /* QSCompany_Int+CoreDataProperties.swift */; };
 		64B3A38222AEF0A500E4E942 /* DefaultCoreDataAdapterDelegateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64B3A38122AEF0A500E4E942 /* DefaultCoreDataAdapterDelegateTests.swift */; };
 		64B3A38422AEF0D800E4E942 /* MockManagedObjectContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64B3A38322AEF0D800E4E942 /* MockManagedObjectContext.swift */; };
 		64B3A38822B01C1700E4E942 /* DefaultCoreDataStackProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64B3A38722B01C1700E4E942 /* DefaultCoreDataStackProviderTests.swift */; };
@@ -63,11 +71,7 @@
 		64B46C2222BCEAEF0017268F /* CoreDataEmployeeInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64B46C2122BCEAEF0017268F /* CoreDataEmployeeInteractor.swift */; };
 		64B46C2422BCEB0B0017268F /* CoreDataEmployeeWireframe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64B46C2322BCEB0B0017268F /* CoreDataEmployeeWireframe.swift */; };
 		64C77BE72640338C00A6BC3D /* IntPrimaryKeyModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 64C77BE52640338C00A6BC3D /* IntPrimaryKeyModel.xcdatamodeld */; };
-		64C77BEA2640346600A6BC3D /* IntTestEntity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64C77BE82640346600A6BC3D /* IntTestEntity+CoreDataClass.swift */; };
-		64C77BEB2640346600A6BC3D /* IntTestEntity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64C77BE92640346600A6BC3D /* IntTestEntity+CoreDataProperties.swift */; };
 		64C77BEF2640442200A6BC3D /* UUIDPrimaryKeyModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 64C77BED2640442200A6BC3D /* UUIDPrimaryKeyModel.xcdatamodeld */; };
-		64C77BF22640445A00A6BC3D /* UUIDTestEntity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64C77BF02640445A00A6BC3D /* UUIDTestEntity+CoreDataClass.swift */; };
-		64C77BF32640445A00A6BC3D /* UUIDTestEntity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64C77BF12640445A00A6BC3D /* UUIDTestEntity+CoreDataProperties.swift */; };
 		64CFAF2822CD26C7009CF1F1 /* QSEmployee+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64CFAF2422CD26C6009CF1F1 /* QSEmployee+CoreDataClass.swift */; };
 		64CFAF2922CD26C7009CF1F1 /* QSEmployee+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64CFAF2522CD26C7009CF1F1 /* QSEmployee+CoreDataProperties.swift */; };
 		64CFAF2A22CD26C7009CF1F1 /* QSCompany+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64CFAF2622CD26C7009CF1F1 /* QSCompany+CoreDataProperties.swift */; };
@@ -131,6 +135,14 @@
 		64369246232EB25A004393B1 /* QSTestEntity2+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "QSTestEntity2+CoreDataClass.swift"; sourceTree = "<group>"; };
 		645DC02E250A23890034F93A /* ModifyRecordsOperationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModifyRecordsOperationTests.swift; sourceTree = "<group>"; };
 		6465959622B64C8E00DC9A17 /* QSCompany.1739C6A5-C07E-48A5-B83E-AB07694F23DF */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "QSCompany.1739C6A5-C07E-48A5-B83E-AB07694F23DF"; sourceTree = "<group>"; };
+		64A452D4264C2A2300133F64 /* QSCompany_UUID+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "QSCompany_UUID+CoreDataClass.swift"; sourceTree = "<group>"; };
+		64A452D5264C2A2300133F64 /* QSCompany_UUID+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "QSCompany_UUID+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		64A452D6264C2A2300133F64 /* QSEmployee_UUID+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "QSEmployee_UUID+CoreDataClass.swift"; sourceTree = "<group>"; };
+		64A452D7264C2A2300133F64 /* QSEmployee_UUID+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "QSEmployee_UUID+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		64A452DC264C2B1F00133F64 /* QSEmployee_Int+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "QSEmployee_Int+CoreDataClass.swift"; sourceTree = "<group>"; };
+		64A452DD264C2B1F00133F64 /* QSEmployee_Int+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "QSEmployee_Int+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		64A452DE264C2B1F00133F64 /* QSCompany_Int+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "QSCompany_Int+CoreDataClass.swift"; sourceTree = "<group>"; };
+		64A452DF264C2B1F00133F64 /* QSCompany_Int+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "QSCompany_Int+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		64B3A38122AEF0A500E4E942 /* DefaultCoreDataAdapterDelegateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultCoreDataAdapterDelegateTests.swift; sourceTree = "<group>"; };
 		64B3A38322AEF0D800E4E942 /* MockManagedObjectContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockManagedObjectContext.swift; sourceTree = "<group>"; };
 		64B3A38722B01C1700E4E942 /* DefaultCoreDataStackProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultCoreDataStackProviderTests.swift; sourceTree = "<group>"; };
@@ -152,11 +164,7 @@
 		64B46C2122BCEAEF0017268F /* CoreDataEmployeeInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataEmployeeInteractor.swift; sourceTree = "<group>"; };
 		64B46C2322BCEB0B0017268F /* CoreDataEmployeeWireframe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataEmployeeWireframe.swift; sourceTree = "<group>"; };
 		64C77BE62640338C00A6BC3D /* IntPrimaryKeyModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = IntPrimaryKeyModel.xcdatamodel; sourceTree = "<group>"; };
-		64C77BE82640346600A6BC3D /* IntTestEntity+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IntTestEntity+CoreDataClass.swift"; sourceTree = "<group>"; };
-		64C77BE92640346600A6BC3D /* IntTestEntity+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IntTestEntity+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		64C77BEE2640442200A6BC3D /* UUIDPrimaryKeyModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = UUIDPrimaryKeyModel.xcdatamodel; sourceTree = "<group>"; };
-		64C77BF02640445A00A6BC3D /* UUIDTestEntity+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UUIDTestEntity+CoreDataClass.swift"; sourceTree = "<group>"; };
-		64C77BF12640445A00A6BC3D /* UUIDTestEntity+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UUIDTestEntity+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		64CFAF2422CD26C6009CF1F1 /* QSEmployee+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "QSEmployee+CoreDataClass.swift"; sourceTree = "<group>"; };
 		64CFAF2522CD26C7009CF1F1 /* QSEmployee+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "QSEmployee+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		64CFAF2622CD26C7009CF1F1 /* QSCompany+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "QSCompany+CoreDataProperties.swift"; sourceTree = "<group>"; };
@@ -368,8 +376,10 @@
 		64C77BE42640337C00A6BC3D /* IntPrimaryKey */ = {
 			isa = PBXGroup;
 			children = (
-				64C77BE82640346600A6BC3D /* IntTestEntity+CoreDataClass.swift */,
-				64C77BE92640346600A6BC3D /* IntTestEntity+CoreDataProperties.swift */,
+				64A452DC264C2B1F00133F64 /* QSEmployee_Int+CoreDataClass.swift */,
+				64A452DD264C2B1F00133F64 /* QSEmployee_Int+CoreDataProperties.swift */,
+				64A452DE264C2B1F00133F64 /* QSCompany_Int+CoreDataClass.swift */,
+				64A452DF264C2B1F00133F64 /* QSCompany_Int+CoreDataProperties.swift */,
 				64C77BE52640338C00A6BC3D /* IntPrimaryKeyModel.xcdatamodeld */,
 			);
 			path = IntPrimaryKey;
@@ -378,8 +388,10 @@
 		64C77BEC2640441400A6BC3D /* UUIDPrimaryKey */ = {
 			isa = PBXGroup;
 			children = (
-				64C77BF02640445A00A6BC3D /* UUIDTestEntity+CoreDataClass.swift */,
-				64C77BF12640445A00A6BC3D /* UUIDTestEntity+CoreDataProperties.swift */,
+				64A452D4264C2A2300133F64 /* QSCompany_UUID+CoreDataClass.swift */,
+				64A452D5264C2A2300133F64 /* QSCompany_UUID+CoreDataProperties.swift */,
+				64A452D6264C2A2300133F64 /* QSEmployee_UUID+CoreDataClass.swift */,
+				64A452D7264C2A2300133F64 /* QSEmployee_UUID+CoreDataProperties.swift */,
 				64C77BED2640442200A6BC3D /* UUIDPrimaryKeyModel.xcdatamodeld */,
 			);
 			path = UUIDPrimaryKey;
@@ -620,16 +632,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				64A452DB264C2A2300133F64 /* QSEmployee_UUID+CoreDataProperties.swift in Sources */,
 				640C33EB22AD913300A85508 /* Array+OrderInsensitiveCompare.swift in Sources */,
 				640C33ED22AD92CF00A85508 /* TestError.swift in Sources */,
+				64A452E1264C2B1F00133F64 /* QSEmployee_Int+CoreDataProperties.swift in Sources */,
 				645DC02F250A23890034F93A /* ModifyRecordsOperationTests.swift in Sources */,
 				64B3A3B222B1AA3600E4E942 /* MockAdapterProvider.swift in Sources */,
 				64FB131F22AD9CBC000928D2 /* FetchZoneChangesOperationTests.swift in Sources */,
 				64B3A3AA22B0626200E4E942 /* CloudKitSynchronizerTests.swift in Sources */,
 				64C77BE72640338C00A6BC3D /* IntPrimaryKeyModel.xcdatamodeld in Sources */,
 				640C33E222AD837000A85508 /* QSCloudKitSynchronizerOperationTests.swift in Sources */,
-				64C77BF22640445A00A6BC3D /* UUIDTestEntity+CoreDataClass.swift in Sources */,
-				64C77BEA2640346600A6BC3D /* IntTestEntity+CoreDataClass.swift in Sources */,
 				64B46BF522B9629A0017268F /* QSTestEntity+CoreDataClass.swift in Sources */,
 				64CFAF2D22CD26E4009CF1F1 /* QSCompany+CoreDataProperties.swift in Sources */,
 				64369247232EB25A004393B1 /* QSTestEntity2+CoreDataProperties.swift in Sources */,
@@ -639,18 +651,22 @@
 				64B3A3A522B0293800E4E942 /* QSExample.xcdatamodeld in Sources */,
 				64B3A38822B01C1700E4E942 /* DefaultCoreDataStackProviderTests.swift in Sources */,
 				64CFAF2F22CD26E4009CF1F1 /* QSEmployee+CoreDataProperties.swift in Sources */,
-				64C77BEB2640346600A6BC3D /* IntTestEntity+CoreDataProperties.swift in Sources */,
+				64A452D9264C2A2300133F64 /* QSCompany_UUID+CoreDataProperties.swift in Sources */,
+				64A452E0264C2B1F00133F64 /* QSEmployee_Int+CoreDataClass.swift in Sources */,
 				64369248232EB25A004393B1 /* QSTestEntity2+CoreDataClass.swift in Sources */,
+				64A452E2264C2B1F00133F64 /* QSCompany_Int+CoreDataClass.swift in Sources */,
 				64B46BE922B95D570017268F /* QSNamesTransformer.swift in Sources */,
+				64A452D8264C2A2300133F64 /* QSCompany_UUID+CoreDataClass.swift in Sources */,
 				64B3A3B022B1A91500E4E942 /* MockKeyValueStore.swift in Sources */,
 				640C33E922AD8AA100A85508 /* FetchDatabaseChangesOperationTests.swift in Sources */,
 				640C33E722AD8A2100A85508 /* MockCloudKitDatabase.swift in Sources */,
-				64C77BF32640445A00A6BC3D /* UUIDTestEntity+CoreDataProperties.swift in Sources */,
 				64B3A3AC22B1A17E00E4E942 /* MockModelAdapter.swift in Sources */,
 				64CFAF2C22CD26E4009CF1F1 /* QSCompany+CoreDataClass.swift in Sources */,
 				64C77BEF2640442200A6BC3D /* UUIDPrimaryKeyModel.xcdatamodeld in Sources */,
+				64A452E3264C2B1F00133F64 /* QSCompany_Int+CoreDataProperties.swift in Sources */,
 				64B46BF622B9629A0017268F /* QSTestEntity+CoreDataProperties.swift in Sources */,
 				6413ECF62559B36600BDC1DB /* RecordProcessingDelegate.swift in Sources */,
+				64A452DA264C2A2300133F64 /* QSEmployee_UUID+CoreDataClass.swift in Sources */,
 				64B3A38222AEF0A500E4E942 /* DefaultCoreDataAdapterDelegateTests.swift in Sources */,
 				64B3A3B422B3B1E200E4E942 /* TestUtilities.swift in Sources */,
 				64B3A3AE22B1A26500E4E942 /* QSObject.swift in Sources */,
