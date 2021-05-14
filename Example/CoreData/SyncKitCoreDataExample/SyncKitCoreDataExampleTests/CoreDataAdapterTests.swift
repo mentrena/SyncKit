@@ -38,242 +38,328 @@ class CoreDataAdapterTests: XCTestCase {
         super.tearDown()
     }
     
-    func testPersistImportedChanges_callsDelegate() {
-        insertCompany(name: "1", identifier: "1", context: targetCoreDataStack.managedObjectContext)
-        let adapter = createAdapter()
-        let expectation = self.expectation(description: "synced")
-        
-        fullySync(adapter: adapter) { (_, _, _) in
-            expectation.fulfill()
+    func setUpCoreData(testCase: TestCase) {
+        targetCoreDataStack = createStack(keyType: testCase.keyType)
+        persistenceCoreDataStack = coreDataStack(model: CoreDataAdapter.persistenceModel, concurrencyType: .privateQueueConcurrencyType)
+    }
+    
+    func createStack(keyType: NSAttributeType) -> CoreDataStack? {
+        switch keyType {
+        case .integer16AttributeType, .integer32AttributeType, .integer64AttributeType:
+            return coreDataStack(modelName: "IntPrimaryKeyModel")
+        case .UUIDAttributeType:
+            return coreDataStack(modelName: "UUIDPrimaryKeyModel")
+        case .stringAttributeType:
+            return coreDataStack(modelName: "QSExample")
+        default:
+            return nil
         }
-        waitForExpectations(timeout: 1, handler: nil)
-        XCTAssertTrue(didCallImportChanges)
-        XCTAssertTrue(didCallRequestContextSave)
+    }
+    
+    func testPersistImportedChanges_callsDelegate() {
+        TestCase.defaultCases.forEach { tc in
+            didCallImportChanges = false
+            didCallRequestContextSave = false
+            setUpCoreData(testCase: tc)
+            insertCompany(testCase: tc)
+            let adapter = createAdapter()
+            let expectation = self.expectation(description: "synced")
+            
+            fullySync(adapter: adapter) { (_, _, _) in
+                expectation.fulfill()
+            }
+            waitForExpectations(timeout: 1, handler: nil)
+            XCTAssertTrue(didCallImportChanges)
+            XCTAssertTrue(didCallRequestContextSave)
+        }
     }
     
     func testRecordsToUploadWithLimit_initialSync_returnsRecord() {
-        insertCompany(name: "name", identifier: "id1", context: targetCoreDataStack.managedObjectContext)
-        let adapter = createAdapter()
-        adapter.prepareToImport()
-        let records = adapter.recordsToUpload(limit: 10)
-        adapter.didFinishImport(with: nil)
-        XCTAssertEqual(records.count, 1)
-        let record = records.first
-        XCTAssertEqual(record?["name"], "name")
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            insertCompany(testCase: tc)
+            let adapter = createAdapter()
+            adapter.prepareToImport()
+            let records = adapter.recordsToUpload(limit: 10)
+            adapter.didFinishImport(with: nil)
+            XCTAssertEqual(records.count, 1)
+            let record = records.first
+            XCTAssertEqual(record?["name"], "name 1")
+        }
     }
     
     func testRecordsToUpload_changedObject_returnsRecordWithChanges() {
-        let company = insertCompany(name: "name", identifier: "id1", context: targetCoreDataStack.managedObjectContext)
-        let adapter = createAdapter()
-        waitUntilSynced(adapter: adapter)
-        
-        company.name = "name 2"
-        try! targetCoreDataStack.managedObjectContext.save()
-        
-        adapter.prepareToImport()
-        let records = adapter.recordsToUpload(limit: 10)
-        adapter.didFinishImport(with: nil)
-        
-        XCTAssertEqual(records.first?["name"], "name 2")
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            let company = insertCompany(testCase: tc)
+            let adapter = createAdapter()
+            waitUntilSynced(adapter: adapter)
+            
+            company.setValue("name 2", forKey: "name")
+            try! targetCoreDataStack.managedObjectContext.save()
+            
+            adapter.prepareToImport()
+            let records = adapter.recordsToUpload(limit: 10)
+            adapter.didFinishImport(with: nil)
+            
+            XCTAssertEqual(records.first?["name"], "name 2")
+        }
     }
     
     func testRecordsToUpload_onlyIncludesToOneRelationships() {
-        let company = insertCompany(name: "name", identifier: "id1", context: targetCoreDataStack.managedObjectContext)
-        insertEmployee(name: "employee 1", identifier: "em1",company: company, context: targetCoreDataStack.managedObjectContext)
-        let adapter = createAdapter()
-        let results = waitUntilSynced(adapter: adapter)
-        let companyRecord = results.updated.first { $0.recordID.recordName.hasPrefix("QSCompany") }
-        let employeeRecord = results.updated.first { $0.recordID.recordName.hasPrefix("QSEmployee") }
-        XCTAssertNotNil(companyRecord)
-        XCTAssertNil(companyRecord?["employees"])
-        XCTAssertNotNil(employeeRecord?["company"])
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            let company = insertCompany(testCase: tc)
+            insertEmployee(testCase: tc, company: company)
+            let adapter = createAdapter()
+            let results = waitUntilSynced(adapter: adapter)
+            let companyRecord = results.updated.first { $0.recordID.recordName.hasPrefix("QSCompany") }
+            let employeeRecord = results.updated.first { $0.recordID.recordName.hasPrefix("QSEmployee") }
+            XCTAssertNotNil(companyRecord)
+            XCTAssertNil(companyRecord?["employees"])
+            XCTAssertNotNil(employeeRecord?["company"])
+        }
     }
     
     func testRecordsMarkedForDeletion_deletedObject_returnsRecordID() {
-        let company = insertCompany(name: "name", identifier: "id1", context: targetCoreDataStack.managedObjectContext)
-        let adapter = createAdapter()
-        waitUntilSynced(adapter: adapter)
-        
-        targetCoreDataStack.managedObjectContext.performAndWait {
-            self.targetCoreDataStack.managedObjectContext.delete(company)
-            try! self.targetCoreDataStack.managedObjectContext.save()
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            let company = insertCompany(testCase: tc)
+            
+            let adapter = createAdapter()
+            waitUntilSynced(adapter: adapter)
+            
+            targetCoreDataStack.managedObjectContext.performAndWait {
+                self.targetCoreDataStack.managedObjectContext.delete(company)
+                try! self.targetCoreDataStack.managedObjectContext.save()
+            }
+            
+            adapter.prepareToImport()
+            let records = adapter.recordIDsMarkedForDeletion(limit: 10)
+            adapter.didFinishImport(with: nil)
+            
+            XCTAssertTrue(records.first!.recordName.contains(tc.companyIdentifierString))
         }
-        
-        adapter.prepareToImport()
-        let records = adapter.recordIDsMarkedForDeletion(limit: 10)
-        adapter.didFinishImport(with: nil)
-        
-        XCTAssertTrue(records.first!.recordName.contains("id1"))
     }
     
     func testDeleteRecordWithID_deletesCorrespondingObject() {
-        insertCompany(name: "name", identifier: "id1", context: targetCoreDataStack.managedObjectContext)
-        let adapter = createAdapter()
-        let uploadedRecord = waitUntilSynced(adapter: adapter).updated.first
-        waitUntilSynced(adapter: adapter, deleted: [uploadedRecord!.recordID])
-        let objects = try! targetCoreDataStack.managedObjectContext.executeFetchRequest(entityName: "QSCompany") as! [QSCompany]
-        XCTAssertEqual(objects.count, 0)
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            insertCompany(testCase: tc)
+            let adapter = createAdapter()
+            let uploadedRecord = waitUntilSynced(adapter: adapter).updated.first
+            waitUntilSynced(adapter: adapter, deleted: [uploadedRecord!.recordID])
+            let objects = try! targetCoreDataStack.managedObjectContext.executeFetchRequest(entityName: tc.companyEntityType) as! [NSManagedObject]
+            XCTAssertEqual(objects.count, 0)
+        }
     }
     
     func testSaveChangesInRecord_existingObject_updatesObject() {
-        let company = insertCompany()
-        let adapter = createAdapter()
-        let uploadedRecord = waitUntilSynced(adapter: adapter).updated.first!
-        uploadedRecord["name"] = "name 2"
-        waitUntilSynced(adapter: adapter, downloaded: [uploadedRecord])
-        targetCoreDataStack.managedObjectContext.refresh(company, mergeChanges: false)
-        XCTAssertEqual(company.name, "name 2")
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            let company = insertCompany(testCase: tc)
+            let adapter = createAdapter()
+            let uploadedRecord = waitUntilSynced(adapter: adapter).updated.first!
+            uploadedRecord["name"] = "name 2"
+            waitUntilSynced(adapter: adapter, downloaded: [uploadedRecord])
+            targetCoreDataStack.managedObjectContext.refresh(company, mergeChanges: false)
+            XCTAssertEqual(company.value(forKey: "name") as? String, "name 2")
+        }
     }
     
     func testSaveChangesInRecord_newObject_insertsObject() {
-        let adapter = createAdapter()
-        let record = CKRecord(recordType: "QSCompany",
-                              recordID: CKRecord.ID(recordName: "QSCompany.com1",
-                                                    zoneID: recordZoneID))
-        record["name"] = "new company"
-        waitUntilSynced(adapter: adapter, downloaded: [record])
-        let objects = try? targetCoreDataStack.managedObjectContext.executeFetchRequest(entityName: "QSCompany") as? [QSCompany]
-        let company = objects?.first
-        XCTAssertNotNil(company)
-        XCTAssertEqual(company?.name, "new company")
-        XCTAssertNotNil(company?.identifier, "com1")
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            let adapter = createAdapter()
+            let record = CKRecord(recordType: tc.companyEntityType,
+                                  recordID: CKRecord.ID(recordName: "\(tc.companyEntityType).\(tc.companyIdentifierString)",
+                                                        zoneID: recordZoneID))
+            record["name"] = "new company"
+            waitUntilSynced(adapter: adapter, downloaded: [record])
+            let objects = try? targetCoreDataStack.managedObjectContext.executeFetchRequest(entityName: tc.companyEntityType) as? [NSManagedObject]
+            let company = objects?.first
+            XCTAssertNotNil(company)
+            XCTAssertEqual(company?.value(forKey: "name") as? String, "new company")
+            switch tc.keyType {
+            case .integer16AttributeType, .integer32AttributeType, .integer64AttributeType:
+                XCTAssertEqual(company?.value(forKey: "identifier") as? Int, tc.companyIdentifier as? Int)
+            case .UUIDAttributeType:
+                XCTAssertEqual(company?.value(forKey: "identifier") as? UUID, tc.companyIdentifier as? UUID)
+            case .stringAttributeType:
+                XCTAssertEqual(company?.value(forKey: "identifier") as? String, tc.companyIdentifier as? String)
+            default: break
+            }
+        }
     }
     
     func testSaveChangesInRecord_missingProperty_setsPropertyToNil() {
-        let company = insertCompany()
-        let adapter = createAdapter()
-        let record = waitUntilSynced(adapter: adapter).updated.first!
-        record["name"] = nil
-        waitUntilSynced(adapter: adapter, downloaded: [record])
-        targetCoreDataStack.managedObjectContext.refresh(company, mergeChanges: false)
-        XCTAssertNil(company.name)
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            let company = insertCompany(testCase: tc)
+            let adapter = createAdapter()
+            let record = waitUntilSynced(adapter: adapter).updated.first!
+            record["name"] = nil
+            waitUntilSynced(adapter: adapter, downloaded: [record])
+            targetCoreDataStack.managedObjectContext.refresh(company, mergeChanges: false)
+            XCTAssertNil(company.value(forKey:"name"))
+        }
     }
     
     func testSaveChangesInRecord_missingRelationshipProperty_setsPropertyToNil() {
-        let company = insertCompany()
-        let employee = insertEmployee(company: company)
-        let adapter = createAdapter()
-        let employeeRecord = waitUntilSynced(adapter: adapter).updated.first { $0.recordID.recordName.contains("QSEmployee") }!
-        employeeRecord["company"] = nil
-        waitUntilSynced(adapter: adapter, downloaded: [employeeRecord])
-        targetCoreDataStack.managedObjectContext.refresh(employee, mergeChanges: false)
-        XCTAssertNil(employee.company)
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            let company = insertCompany(testCase: tc)
+            let employee = insertEmployee(testCase: tc, company: company)
+            let adapter = createAdapter()
+            let employeeRecord = waitUntilSynced(adapter: adapter).updated.first { $0.recordID.recordName.contains("QSEmployee") }!
+            employeeRecord["company"] = nil
+            waitUntilSynced(adapter: adapter, downloaded: [employeeRecord])
+            targetCoreDataStack.managedObjectContext.refresh(employee, mergeChanges: false)
+            XCTAssertNil(employee.value(forKey:"company"))
+        }
     }
     
     func testSaveChangesInRecord_missingToManyRelationshipProperty_doesNothing() {
-        let company = insertCompany()
-        insertEmployee(company: company)
-        let adapter = createAdapter()
-        let companyRecord = waitUntilSynced(adapter: adapter).updated.first { $0.recordID.recordName.contains("QSCompany") }!
-        companyRecord["employees"] = nil
-        waitUntilSynced(adapter: adapter, downloaded: [companyRecord])
-        targetCoreDataStack.managedObjectContext.refresh(company, mergeChanges: false)
-        XCTAssertTrue(company.employees!.count > 0)
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            let company = insertCompany(testCase: tc)
+            insertEmployee(testCase: tc, company: company)
+            let adapter = createAdapter()
+            let companyRecord = waitUntilSynced(adapter: adapter).updated.first { $0.recordID.recordName.contains("QSCompany") }!
+            companyRecord["employees"] = nil
+            waitUntilSynced(adapter: adapter, downloaded: [companyRecord])
+            targetCoreDataStack.managedObjectContext.refresh(company, mergeChanges: false)
+            XCTAssertTrue(company.employees!.count > 0)
+        }
+        
     }
     
     func testSync_multipleObjects_preservesRelationships() {
-        let adapter = createAdapter()
-        let companyRecord = CKRecord(recordType: "QSCompany", recordID: CKRecord.ID(recordName: "QSCompany.com1", zoneID: recordZoneID))
-        companyRecord["name"] = "new company"
-        let employeeRecord = CKRecord(recordType: "QSEmployee", recordID: CKRecord.ID(recordName: "QSEmployee.em1", zoneID: recordZoneID))
-        employeeRecord["name"] = "new employee"
-        employeeRecord["company"] = CKRecord.Reference(recordID: companyRecord.recordID, action: .none)
-        
-        waitUntilSynced(adapter: adapter, downloaded: [employeeRecord, companyRecord])
-        
-        let objects = try? targetCoreDataStack.managedObjectContext.executeFetchRequest(entityName: "QSCompany") as? [QSCompany]
-        XCTAssertEqual(objects?.count, 1)
-        let company = objects?.first
-        XCTAssertEqual(company?.name, "new company")
-        XCTAssertEqual(company?.employees?.count, 1)
-        let employee = company?.employees?.anyObject() as? QSEmployee
-        XCTAssertEqual(employee?.name, "new employee")
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            let adapter = createAdapter()
+            let companyRecord = CKRecord(recordType: tc.companyEntityType, recordID: CKRecord.ID(recordName: "\(tc.companyEntityType).\(tc.companyIdentifierString)", zoneID: recordZoneID))
+            companyRecord["name"] = "new company"
+            let employeeRecord = CKRecord(recordType: tc.employeeEntityType, recordID: CKRecord.ID(recordName: "\(tc.employeeEntityType).\(tc.employeeIdentifierString)", zoneID: recordZoneID))
+            employeeRecord["name"] = "new employee"
+            employeeRecord["company"] = CKRecord.Reference(recordID: companyRecord.recordID, action: .none)
+            
+            waitUntilSynced(adapter: adapter, downloaded: [employeeRecord, companyRecord])
+            
+            let objects = try? targetCoreDataStack.managedObjectContext.executeFetchRequest(entityName: tc.companyEntityType) as? [Company]
+            XCTAssertEqual(objects?.count, 1)
+            let company = objects?.first
+            XCTAssertEqual(company?.name, "new company")
+            XCTAssertEqual(company?.employees?.count, 1)
+            let employee = company?.employees?.anyObject() as? Employee
+            XCTAssertEqual(employee?.name, "new employee")
+        }
     }
     
     func testHasRecordID_missingObject_returnsNO() {
-        insertCompany()
-        let adapter = createAdapter()
-        waitUntilSynced(adapter: adapter)
-        XCTAssertFalse(adapter.hasRecordID(CKRecord.ID(recordName: "missing", zoneID: recordZoneID)))
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            insertCompany(testCase: tc)
+            let adapter = createAdapter()
+            waitUntilSynced(adapter: adapter)
+            XCTAssertFalse(adapter.hasRecordID(CKRecord.ID(recordName: "missing", zoneID: recordZoneID)))
+        }
     }
     
     func testHasRecordID_existingObject_returnsYES() {
-        insertCompany()
-        let adapter = createAdapter()
-        let record = waitUntilSynced(adapter: adapter).updated.first
-        XCTAssertTrue(adapter.hasRecordID(record!.recordID))
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            insertCompany(testCase: tc)
+            let adapter = createAdapter()
+            let record = waitUntilSynced(adapter: adapter).updated.first
+            XCTAssertTrue(adapter.hasRecordID(record!.recordID))
+        }
     }
     
     func testHasChanges_noChanges_returnsNO() {
-        insertCompany()
-        let adapter = createAdapter()
-        waitUntilSynced(adapter: adapter)
-        XCTAssertFalse(adapter.hasChanges)
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            insertCompany(testCase: tc)
+            let adapter = createAdapter()
+            waitUntilSynced(adapter: adapter)
+            XCTAssertFalse(adapter.hasChanges)
+        }
     }
     
     func testHasChanges_objectChanged_returnsYES() {
-        let company = insertCompany()
-        let adapter = createAdapter()
-        waitUntilSynced(adapter: adapter)
-        
-        company.name = "name 2"
-        try! targetCoreDataStack.managedObjectContext.save()
-        
-        XCTAssertTrue(adapter.hasChanges)
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            let company = insertCompany(testCase: tc)
+            let adapter = createAdapter()
+            waitUntilSynced(adapter: adapter)
+            
+            company.name = "name 2"
+            try! targetCoreDataStack.managedObjectContext.save()
+            
+            XCTAssertTrue(adapter.hasChanges)
+        }
     }
     
     func testHasChanges_afterSuccessfulSync_returnsNO() {
-        let company = insertCompany()
-        let adapter = createAdapter()
-        company.name = "name 2"
-        try! targetCoreDataStack.managedObjectContext.save()
-        waitUntilSynced(adapter: adapter)
-        XCTAssertFalse(adapter.hasChanges)
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            let company = insertCompany(testCase: tc)
+            let adapter = createAdapter()
+            company.name = "name 2"
+            try! targetCoreDataStack.managedObjectContext.save()
+            waitUntilSynced(adapter: adapter)
+            XCTAssertFalse(adapter.hasChanges)
+        }
     }
     
     func testDeleteChangeTracking_deletesStore() {
-        let adapter = createAdapter()
-        adapter.deleteChangeTracking()
-        XCTAssertNil(persistenceCoreDataStack.managedObjectContext)
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            let adapter = createAdapter()
+            adapter.deleteChangeTracking()
+            XCTAssertNil(persistenceCoreDataStack.managedObjectContext)
+        }
     }
     
     func testRecordsToUpload_partialUploadSuccess_stillReturnsPendingRecords() {
-        insertCompany(name: "name 1", identifier: "com1")
-        insertCompany(name: "name 2", identifier: "com2")
-        let adapter = createAdapter()
-        
-        let expectation = self.expectation(description: "synced")
-        adapter.prepareToImport()
-        let recordsToUpload = adapter.recordsToUpload(limit: 10)
-        adapter.didUpload(savedRecords: [recordsToUpload.first!])
-        adapter.persistImportedChanges { (_) in
-            adapter.didFinishImport(with: nil)
-            expectation.fulfill()
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            insertCompany(testCase: tc, identifier: tc.companyIdentifier)
+            insertCompany(testCase: tc, identifier: tc.companyIdentifier2)
+            let adapter = createAdapter()
+            
+            let expectation = self.expectation(description: "synced")
+            adapter.prepareToImport()
+            let recordsToUpload = adapter.recordsToUpload(limit: 10)
+            adapter.didUpload(savedRecords: [recordsToUpload.first!])
+            adapter.persistImportedChanges { (_) in
+                adapter.didFinishImport(with: nil)
+                expectation.fulfill()
+            }
+            waitForExpectations(timeout: 1, handler: nil)
+            let recordsToUploadAfterSync = adapter.recordsToUpload(limit: 10)
+            XCTAssertEqual(recordsToUpload.count, 2)
+            XCTAssertEqual(recordsToUploadAfterSync.count, 1)
         }
-        waitForExpectations(timeout: 1, handler: nil)
-        let recordsToUploadAfterSync = adapter.recordsToUpload(limit: 10)
-        XCTAssertEqual(recordsToUpload.count, 2)
-        XCTAssertEqual(recordsToUploadAfterSync.count, 1)
     }
     
     func testRecordsToUpload_doesNotIncludeObjectsWithOnlyToManyRelationshipChanges() {
-        let company = insertCompany()
-        let emp1 = insertEmployee(name: "employee1",
-                                  identifier: "em1",
-                                  company: company)
-        let emp2 = insertEmployee(name: "employee2",
-                                  identifier: "em2",
-                                  company: company)
-        let adapter = createAdapter()
-        waitUntilSynced(adapter: adapter)
-        company.employees = NSSet(array: [emp1, emp2])
-        emp1.name = "employee 1-2"
-        try! targetCoreDataStack.managedObjectContext.save()
-        let uploaded = waitUntilSynced(adapter: adapter).updated
-        let companyRecord = uploaded.first { $0.recordID.recordName.contains("QSCompany") }
-        let employeeRecord = uploaded.first { $0.recordID.recordName.contains("QSEmployee") }
-        XCTAssertNil(companyRecord)
-        XCTAssertNotNil(employeeRecord)
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            let company = insertCompany(testCase: tc)
+            let emp1 = insertEmployee(testCase: tc, company: company)
+            let emp2 = insertEmployee(testCase: tc, name: "employee2", identifier: tc.employeeIdentifier2, company: company)
+            let adapter = createAdapter()
+            waitUntilSynced(adapter: adapter)
+            company.employees = NSSet(array: [emp1, emp2])
+            emp1.name = "employee 1-2"
+            try! targetCoreDataStack.managedObjectContext.save()
+            let uploaded = waitUntilSynced(adapter: adapter).updated
+            let companyRecord = uploaded.first { $0.recordID.recordName.contains("QSCompany") }
+            let employeeRecord = uploaded.first { $0.recordID.recordName.contains("QSEmployee") }
+            XCTAssertNil(companyRecord)
+            XCTAssertNotNil(employeeRecord)
+        }
     }
     
     func testRecordsToUpload_whenRecordWasDownloadedForObject_usesCorrectRecordVersion() {
@@ -298,269 +384,342 @@ class CoreDataAdapterTests: XCTestCase {
 // MARK: - CKAsset
 extension CoreDataAdapterTests {
     func testRecordToUpload_dataProperty_uploadedAsAsset() {
-        let employee = insertEmployee(company: nil)
-        employee.photo = Data() as NSData
-        try! targetCoreDataStack.managedObjectContext.save()
-        let adapter = createAdapter()
-        let record = waitUntilSynced(adapter: adapter).updated.first
-        let asset = record?["photo"] as? CKAsset
-        XCTAssertNotNil(asset?.fileURL)
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            let employee = insertEmployee(testCase: tc, company: nil)
+            employee.photo = Data()
+            try! targetCoreDataStack.managedObjectContext.save()
+            let adapter = createAdapter()
+            let record = waitUntilSynced(adapter: adapter).updated.first
+            let asset = record?["photo"] as? CKAsset
+            XCTAssertNotNil(asset?.fileURL)
+        }
     }
     
     func testRecordToUpload_dataProperty_forceDataType_uploadedAsData() {
-        let employee = insertEmployee(company: nil)
-        employee.photo = Data() as NSData
-        try! targetCoreDataStack.managedObjectContext.save()
-        let adapter = createAdapter()
-        adapter.forceDataTypeInsteadOfAsset = true
-        let record = waitUntilSynced(adapter: adapter).updated.first
-        let asset = record?["photo"] as? Data
-        XCTAssertNotNil(asset)
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            let employee = insertEmployee(testCase: tc, company: nil)
+            employee.photo = Data()
+            try! targetCoreDataStack.managedObjectContext.save()
+            let adapter = createAdapter()
+            adapter.forceDataTypeInsteadOfAsset = true
+            let record = waitUntilSynced(adapter: adapter).updated.first
+            let asset = record?["photo"] as? Data
+            XCTAssertNotNil(asset)
+        }
     }
     
     func testRecordToUpload_dataPropertyNil_nilsProperty() {
-        let employee = insertEmployee(company: nil)
-        employee.photo = Data() as NSData
-        try! targetCoreDataStack.managedObjectContext.save()
-        let adapter = createAdapter()
-        waitUntilSynced(adapter: adapter)
-        employee.photo = nil
-        try! targetCoreDataStack.managedObjectContext.save()
-        let record = waitUntilSynced(adapter: adapter).updated.first
-        let asset = record?["photo"] as? CKAsset
-        XCTAssertNotNil(record)
-        XCTAssertNil(asset)
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            let employee = insertEmployee(testCase: tc, company: nil)
+            employee.photo = Data()
+            try! targetCoreDataStack.managedObjectContext.save()
+            let adapter = createAdapter()
+            waitUntilSynced(adapter: adapter)
+            employee.photo = nil
+            try! targetCoreDataStack.managedObjectContext.save()
+            let record = waitUntilSynced(adapter: adapter).updated.first
+            let asset = record?["photo"] as? CKAsset
+            XCTAssertNotNil(record)
+            XCTAssertNil(asset)
+        }
     }
     
     func testSaveChangesInRecord_assetProperty_updatesData() {
-        let employee = insertEmployee(company: nil)
-        try! targetCoreDataStack.managedObjectContext.save()
-        let adapter = createAdapter()
-        let record = waitUntilSynced(adapter: adapter).updated.first!
-        let data = NSData(bytes: [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00], length: 8)
-        let fileURL = FileManager.default.temporaryDirectory.appendingPathComponent("test")
-        data.write(to: fileURL, atomically: true)
-        let asset = CKAsset(fileURL: fileURL)
-        record["photo"] = asset
-        waitUntilSynced(adapter: adapter, downloaded: [record])
-        try! FileManager.default.removeItem(at: fileURL)
-        targetCoreDataStack.managedObjectContext.refresh(employee, mergeChanges: false)
-        XCTAssertNotNil(employee.photo)
-        XCTAssertEqual(employee.photo?.length, 8)
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            let employee = insertEmployee(testCase: tc, company: nil)
+            try! targetCoreDataStack.managedObjectContext.save()
+            let adapter = createAdapter()
+            let record = waitUntilSynced(adapter: adapter).updated.first!
+            let data = NSData(bytes: [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00], length: 8)
+            let fileURL = FileManager.default.temporaryDirectory.appendingPathComponent("test")
+            data.write(to: fileURL, atomically: true)
+            let asset = CKAsset(fileURL: fileURL)
+            record["photo"] = asset
+            waitUntilSynced(adapter: adapter, downloaded: [record])
+            try! FileManager.default.removeItem(at: fileURL)
+            targetCoreDataStack.managedObjectContext.refresh(employee, mergeChanges: false)
+            XCTAssertNotNil(employee.photo)
+            XCTAssertEqual(employee.photo?.count, 8)
+        }
     }
     
     func testSaveChangesInRecord_assetPropertyNil_nilsData() {
-        let employee = insertEmployee(company: nil)
-        employee.photo = Data() as NSData
-        try! targetCoreDataStack.managedObjectContext.save()
-        let adapter = createAdapter()
-        let record = waitUntilSynced(adapter: adapter).updated.first!
-        record["photo"] = nil
-        waitUntilSynced(adapter: adapter, downloaded: [record])
-        targetCoreDataStack.managedObjectContext.refresh(employee, mergeChanges: false)
-        XCTAssertNil(employee.photo)
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            let employee = insertEmployee(testCase: tc, company: nil)
+            employee.photo = Data()
+            try! targetCoreDataStack.managedObjectContext.save()
+            let adapter = createAdapter()
+            let record = waitUntilSynced(adapter: adapter).updated.first!
+            record["photo"] = nil
+            waitUntilSynced(adapter: adapter, downloaded: [record])
+            targetCoreDataStack.managedObjectContext.refresh(employee, mergeChanges: false)
+            XCTAssertNil(employee.photo)
+        }
     }
 }
 
 // MARK: - Unique identifiers
 extension CoreDataAdapterTests {
     func testSaveChangesInRecord_existingUniqueObject_updatesObject() {
-        let company = insertCompany()
-        let adapter = createAdapter()
-        let record = waitUntilSynced(adapter: adapter).updated.first!
-        record["name"] = "name 2"
-        waitUntilSynced(adapter: adapter, downloaded: [record])
-        targetCoreDataStack.managedObjectContext.refresh(company, mergeChanges: false)
-        XCTAssertEqual(company.name, "name 2")
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            let company = insertCompany(testCase: tc)
+            let adapter = createAdapter()
+            let record = waitUntilSynced(adapter: adapter).updated.first!
+            record["name"] = "name 2"
+            waitUntilSynced(adapter: adapter, downloaded: [record])
+            targetCoreDataStack.managedObjectContext.refresh(company, mergeChanges: false)
+            XCTAssertEqual(company.name, "name 2")
+        }
     }
     
     func testRecordsToUpload_uniqueObjectsWithSameID_mapsObjectsToSameRecord() {
-        let target2 = coreDataStack(modelName: "QSExample")
-        let persistence2 = coreDataStack(model: CoreDataAdapter.persistenceModel, concurrencyType: .privateQueueConcurrencyType)
-        // Use same identifiers
-        let company = insertCompany(name: "name 1", identifier: "com1")
-        insertCompany(name: "name 2", identifier: company.identifier!, context: target2.managedObjectContext)
-        let adapter = createAdapter()
-        let adapter2 = createAdapter(persistenceStack: persistence2, targetContext: target2.managedObjectContext)
-        let records = waitUntilSynced(adapter: adapter).updated
-        let records2 = waitUntilSynced(adapter: adapter2).updated
-        XCTAssertEqual(records.count, 1)
-        XCTAssertEqual(records2.count, 1)
-        XCTAssertEqual(records.first?.recordID.recordName, records2.first?.recordID.recordName)
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            let target2 = createStack(keyType: tc.keyType)!
+            let persistence2 = coreDataStack(model: CoreDataAdapter.persistenceModel, concurrencyType: .privateQueueConcurrencyType)
+            insertCompany(testCase: tc, name: "name 1", identifier: tc.companyIdentifier)
+            insertCompany(testCase: tc, name: "name 2", identifier: tc.companyIdentifier, context: target2.managedObjectContext)
+            let adapter = createAdapter()
+            let adapter2 = createAdapter(persistenceStack: persistence2, targetContext: target2.managedObjectContext)
+            let records = waitUntilSynced(adapter: adapter).updated
+            let records2 = waitUntilSynced(adapter: adapter2).updated
+            XCTAssertEqual(records.count, 1)
+            XCTAssertEqual(records2.count, 1)
+            XCTAssertEqual(records.first?.recordID.recordName, records2.first?.recordID.recordName)
+        }
     }
     
     func testSync_uniqueObjectsWithSameID_updatesObjectCorrectly() {
-        let target2 = coreDataStack(modelName: "QSExample")
-        let persistence2 = coreDataStack(model: CoreDataAdapter.persistenceModel, concurrencyType: .privateQueueConcurrencyType)
-        // Use same identifiers
-        let company = insertCompany(name: "name 1", identifier: "com1")
-        let company2 = insertCompany(name: "name 2", identifier: company.identifier!, context: target2.managedObjectContext)
-        let adapter = createAdapter()
-        let adapter2 = createAdapter(persistenceStack: persistence2, targetContext: target2.managedObjectContext)
-        let records = waitUntilSynced(adapter: adapter).updated
-        waitUntilSynced(adapter: adapter2, downloaded: records)
-        target2.managedObjectContext.refresh(company2, mergeChanges: false)
-        XCTAssertEqual(company2.name, "name 1")
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            let target2 = createStack(keyType: tc.keyType)!
+            let persistence2 = coreDataStack(model: CoreDataAdapter.persistenceModel, concurrencyType: .privateQueueConcurrencyType)
+            // Use same identifiers
+            let company = insertCompany(testCase: tc, name: "name 1", identifier: tc.companyIdentifier)
+            let company2 = insertCompany(testCase: tc, name: "name 2", identifier: company._identifier, context: target2.managedObjectContext)
+            let adapter = createAdapter()
+            let adapter2 = createAdapter(persistenceStack: persistence2, targetContext: target2.managedObjectContext)
+            let records = waitUntilSynced(adapter: adapter).updated
+            waitUntilSynced(adapter: adapter2, downloaded: records)
+            target2.managedObjectContext.refresh(company2, mergeChanges: false)
+            XCTAssertEqual(company2.name, "name 1")
+        }
     }
     
     func testRecordsToUpload_doesNotIncludePrimaryKey() {
-        insertCompany()
-        let adapter = createAdapter()
-        let record = waitUntilSynced(adapter: adapter).updated.first!
-        XCTAssertNotNil(record["name"])
-        XCTAssertNil(record["identifier"])
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            insertCompany(testCase: tc)
+            let adapter = createAdapter()
+            let record = waitUntilSynced(adapter: adapter).updated.first!
+            XCTAssertNotNil(record["name"])
+            XCTAssertNil(record["identifier"])
+        }
     }
     
     func testSaveChangesInRecords_ignoresPrimaryKeyField() {
-        let company = insertCompany(name: "name 1", identifier: "com1")
-        let adapter = createAdapter()
-        let record = waitUntilSynced(adapter: adapter).updated.first!
-        record["identifier"] = "fake identifier"
-        record["name"] = "name 2"
-        waitUntilSynced(adapter: adapter, downloaded: [record])
-        targetCoreDataStack.managedObjectContext.refresh(company, mergeChanges: false)
-        XCTAssertEqual(company.name, "name 2")
-        XCTAssertEqual(company.identifier, "com1")
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            let company = insertCompany(testCase: tc, name: "name 1")
+            let adapter = createAdapter()
+            let record = waitUntilSynced(adapter: adapter).updated.first!
+            record["identifier"] = "fake identifier"
+            record["name"] = "name 2"
+            waitUntilSynced(adapter: adapter, downloaded: [record])
+            targetCoreDataStack.managedObjectContext.refresh(company, mergeChanges: false)
+            XCTAssertEqual(company.name, "name 2")
+            switch tc.keyType {
+            case .integer16AttributeType, .integer32AttributeType, .integer64AttributeType:
+                XCTAssertEqual(company._identifier as! Int64, Int64(tc.companyIdentifier as! Int))
+            case .UUIDAttributeType:
+                XCTAssertEqual(company._identifier as! UUID, tc.companyIdentifier as! UUID)
+            case .stringAttributeType:
+                XCTAssertEqual(company._identifier as! String, tc.companyIdentifier as! String)
+            default: break
+            }
+        }
     }
 }
 
 // MARK: - Merge policies
 extension CoreDataAdapterTests {
     func testSync_serverMergePolicy_prioritizesDownloadedChanges() {
-        let target2 = coreDataStack(modelName: "QSExample")
-        let persistence2 = coreDataStack(model: CoreDataAdapter.persistenceModel, concurrencyType: .privateQueueConcurrencyType)
-        let company = insertCompany(name: "name 1", identifier: "com1", context: targetCoreDataStack.managedObjectContext)
-        let company2 = insertCompany(name: "name 2", identifier: company.identifier!, context: target2.managedObjectContext)
-        let adapter = createAdapter()
-        let adapter2 = createAdapter(persistenceStack: persistence2, targetContext: target2.managedObjectContext)
-        let records = waitUntilSynced(adapter: adapter).updated
-        waitUntilSynced(adapter: adapter2, downloaded: records)
-        target2.managedObjectContext.refresh(company2, mergeChanges: false)
-        XCTAssertEqual(company2.name, "name 1")
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            let target2 = createStack(keyType: tc.keyType)!
+            let persistence2 = coreDataStack(model: CoreDataAdapter.persistenceModel, concurrencyType: .privateQueueConcurrencyType)
+            let company = insertCompany(testCase: tc, name: "name 1", identifier: tc.companyIdentifier, context: targetCoreDataStack.managedObjectContext)
+            let company2 = insertCompany(testCase: tc, name: "name 2", identifier: tc.companyIdentifier, context: target2.managedObjectContext)
+            let adapter = createAdapter()
+            let adapter2 = createAdapter(persistenceStack: persistence2, targetContext: target2.managedObjectContext)
+            let records = waitUntilSynced(adapter: adapter).updated
+            waitUntilSynced(adapter: adapter2, downloaded: records)
+            target2.managedObjectContext.refresh(company2, mergeChanges: false)
+            XCTAssertEqual(company2.name, "name 1")
+        }
     }
     
     func testSync_clientMergePolicy_prioritizesLocalChanges() {
-        let target2 = coreDataStack(modelName: "QSExample")
-        let persistence2 = coreDataStack(model: CoreDataAdapter.persistenceModel, concurrencyType: .privateQueueConcurrencyType)
-        let company = insertCompany(name: "name 1", identifier: "com1", context: targetCoreDataStack.managedObjectContext)
-        let company2 = insertCompany(name: "name 2", identifier: company.identifier!, context: target2.managedObjectContext)
-        let adapter = createAdapter()
-        let adapter2 = createAdapter(persistenceStack: persistence2, targetContext: target2.managedObjectContext)
-        adapter2.mergePolicy = .client
-        let records = waitUntilSynced(adapter: adapter).updated
-        waitUntilSynced(adapter: adapter2, downloaded: records)
-        target2.managedObjectContext.refresh(company2, mergeChanges: false)
-        XCTAssertEqual(company2.name, "name 2")
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            let target2 = createStack(keyType: tc.keyType)!
+            let persistence2 = coreDataStack(model: CoreDataAdapter.persistenceModel, concurrencyType: .privateQueueConcurrencyType)
+            let company = insertCompany(testCase: tc, name: "name 1", identifier: tc.companyIdentifier, context: targetCoreDataStack.managedObjectContext)
+            let company2 = insertCompany(testCase: tc, name: "name 2", identifier: tc.companyIdentifier, context: target2.managedObjectContext)
+            let adapter = createAdapter()
+            let adapter2 = createAdapter(persistenceStack: persistence2, targetContext: target2.managedObjectContext)
+            adapter2.mergePolicy = .client
+            let records = waitUntilSynced(adapter: adapter).updated
+            waitUntilSynced(adapter: adapter2, downloaded: records)
+            target2.managedObjectContext.refresh(company2, mergeChanges: false)
+            XCTAssertEqual(company2.name, "name 2")
+        }
     }
     
     func testSync_customMergePolicy_callsDelegateForResolution() {
-        let target2 = coreDataStack(modelName: "QSExample")
-        let persistence2 = coreDataStack(model: CoreDataAdapter.persistenceModel, concurrencyType: .privateQueueConcurrencyType)
-        let company = insertCompany(name: "name 1", identifier: "com1", context: targetCoreDataStack.managedObjectContext)
-        let company2 = insertCompany(name: "name 2", identifier: company.identifier!, context: target2.managedObjectContext)
-        let adapter = createAdapter()
-        let adapter2 = createAdapter(persistenceStack: persistence2, targetContext: target2.managedObjectContext)
-        adapter2.conflictDelegate = self
-        adapter2.mergePolicy = .custom
-        var calledCustomMergePolicyMethod = false
-        customMergePolicyBlock = { adapter, object, changes in
-            calledCustomMergePolicyMethod = true
-            if adapter === adapter2,
-                let object = object as? QSCompany,
-                changes["name"] != nil {
-                object.setValue("name 3", forKey: "name")
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            let target2 = createStack(keyType: tc.keyType)!
+            let persistence2 = coreDataStack(model: CoreDataAdapter.persistenceModel, concurrencyType: .privateQueueConcurrencyType)
+            insertCompany(testCase: tc, name: "name 1", identifier: tc.companyIdentifier, context: targetCoreDataStack.managedObjectContext)
+            let company2 = insertCompany(testCase: tc, name: "name 2", identifier: tc.companyIdentifier, context: target2.managedObjectContext)
+            let adapter = createAdapter()
+            let adapter2 = createAdapter(persistenceStack: persistence2, targetContext: target2.managedObjectContext)
+            adapter2.conflictDelegate = self
+            adapter2.mergePolicy = .custom
+            var calledCustomMergePolicyMethod = false
+            customMergePolicyBlock = { adapter, object, changes in
+                calledCustomMergePolicyMethod = true
+                if adapter === adapter2,
+                    let object = object as? Company,
+                    changes["name"] != nil {
+                    object.setValue("name 3", forKey: "name")
+                }
             }
+            let records = waitUntilSynced(adapter: adapter).updated
+            waitUntilSynced(adapter: adapter2, downloaded: records)
+            target2.managedObjectContext.refresh(company2, mergeChanges: false)
+            XCTAssertEqual(company2.name, "name 3")
+            XCTAssertTrue(calledCustomMergePolicyMethod)
         }
-        let records = waitUntilSynced(adapter: adapter).updated
-        waitUntilSynced(adapter: adapter2, downloaded: records)
-        target2.managedObjectContext.refresh(company2, mergeChanges: false)
-        XCTAssertEqual(company2.name, "name 3")
-        XCTAssertTrue(calledCustomMergePolicyMethod)
     }
 }
 
 // MARK: - Other
 extension CoreDataAdapterTests {
     func testRecordZoneID_returnsZoneID() {
-        let adapter = createAdapter()
-        XCTAssertEqual(adapter.recordZoneID.ownerName, "owner")
-        XCTAssertEqual(adapter.recordZoneID.zoneName, "zone")
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            let adapter = createAdapter()
+            XCTAssertEqual(adapter.recordZoneID.ownerName, "owner")
+            XCTAssertEqual(adapter.recordZoneID.zoneName, "zone")
+        }
     }
     
     func testServerChangeToken_noToken_returnsNil() {
-        let adapter = createAdapter()
-        XCTAssertNil(adapter.serverChangeToken)
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            let adapter = createAdapter()
+            XCTAssertNil(adapter.serverChangeToken)
+        }
     }
     
     func testServerChangeToken_savedToken_returnsToken() {
-        let adapter = createAdapter()
-        let token = CKServerChangeToken.stub()
-        adapter.saveToken(token)
-        let token2 = adapter.serverChangeToken
-        XCTAssertEqual(token, token2)
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            let adapter = createAdapter()
+            let token = CKServerChangeToken.stub()
+            adapter.saveToken(token)
+            let token2 = adapter.serverChangeToken
+            XCTAssertEqual(token, token2)
+        }
     }
 }
 
 // MARK: - Sharing
 extension CoreDataAdapterTests {
     func testRecordForObjectWithIdentifier_existingObject_returnsRecord() {
-        let company = insertCompany()
-        let adapter = createAdapter()
-        let record = adapter.record(for: company)
-        XCTAssertNotNil(record)
-        XCTAssertTrue(record!.recordID.recordName.contains("QSCompany"))
-        XCTAssertTrue(record!.recordID.recordName.contains(company.identifier!))
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            let company = insertCompany(testCase: tc)
+            let adapter = createAdapter()
+            let record = adapter.record(for: company)
+            XCTAssertNotNil(record)
+            XCTAssertTrue(record!.recordID.recordName.contains("QSCompany"))
+            XCTAssertTrue(record!.recordID.recordName.contains(tc.companyIdentifierString))
+        }
     }
     
     func testShareForObjectWithIdentifier_noShare_returnsNil() {
-        let company = insertCompany()
-        let adapter = createAdapter()
-        let share = adapter.share(for: company)
-        XCTAssertNil(share)
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            let company = insertCompany(testCase: tc)
+            let adapter = createAdapter()
+            let share = adapter.share(for: company)
+            XCTAssertNil(share)
+        }
     }
     
     func testShareForObjectWithIdentifier_saveShareCalled_returnsShare() {
-        let company = insertCompany()
-        let adapter = createAdapter()
-        let record = adapter.record(for: company)!
-        let share = CKShare(rootRecord: record)
-        adapter.save(share: share, for: company)
-        let share2 = adapter.share(for: company)
-        XCTAssertNotNil(share2)
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            let company = insertCompany(testCase: tc)
+            let adapter = createAdapter()
+            let record = adapter.record(for: company)!
+            let share = CKShare(rootRecord: record)
+            adapter.save(share: share, for: company)
+            let share2 = adapter.share(for: company)
+            XCTAssertNotNil(share2)
+        }
     }
     
     func testShareForObjectWithIdentifier_shareDeleted_returnsNil() {
-        let company = insertCompany()
-        let adapter = createAdapter()
-        let record = adapter.record(for: company)!
-        let share = CKShare(rootRecord: record)
-        adapter.save(share: share, for: company)
-        adapter.deleteShare(for: company)
-        XCTAssertNil(adapter.share(for: company))
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            let company = insertCompany(testCase: tc)
+            let adapter = createAdapter()
+            let record = adapter.record(for: company)!
+            let share = CKShare(rootRecord: record)
+            adapter.save(share: share, for: company)
+            adapter.deleteShare(for: company)
+            XCTAssertNil(adapter.share(for: company))
+        }
     }
     
     func testSaveChangesInRecords_includesShare_savesObjectAndShare() {
-        let adapter = createAdapter()
-        let companyRecord = CKRecord(recordType: "QSCompany", recordID: CKRecord.ID(recordName: "QSCompany.com1"))
-        companyRecord["name"] = "new company"
-        let shareRecord = CKShare(rootRecord: companyRecord, shareID: CKRecord.ID(recordName: "QSShare.forCompany"))
-        waitUntilSynced(adapter: adapter, downloaded: [companyRecord, shareRecord])
-        let company = (try! targetCoreDataStack.managedObjectContext.executeFetchRequest(entityName: "QSCompany") as! [QSCompany]).first!
-        let share = adapter.share(for: company)
-        XCTAssertNotNil(company)
-        XCTAssertNotNil(share)
-        XCTAssertEqual(company.name, "new company")
-        XCTAssertEqual(share?.recordID.recordName, "QSShare.forCompany")
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            let adapter = createAdapter()
+            let companyRecord = CKRecord(recordType: tc.companyEntityType, recordID: CKRecord.ID(recordName: "\(tc.companyEntityType).\(tc.companyIdentifierString)"))
+            companyRecord["name"] = "new company"
+            let shareRecord = CKShare(rootRecord: companyRecord, shareID: CKRecord.ID(recordName: "QSShare.forCompany"))
+            waitUntilSynced(adapter: adapter, downloaded: [companyRecord, shareRecord])
+            let company = (try! targetCoreDataStack.managedObjectContext.executeFetchRequest(entityName: tc.companyEntityType) as! [Company]).first!
+            let share = adapter.share(for: company)
+            XCTAssertNotNil(company)
+            XCTAssertNotNil(share)
+            XCTAssertEqual(company.name, "new company")
+            XCTAssertEqual(share?.recordID.recordName, "QSShare.forCompany")
+        }
     }
     
     func testDeleteRecordsWithIDs_containsShare_deletesShare() {
-        let company = insertCompany()
-        let adapter = createAdapter()
-        let record = adapter.record(for: company)!
-        let share = CKShare(rootRecord: record, shareID: CKRecord.ID(recordName: "CKShare.identifier", zoneID: recordZoneID))
-        adapter.save(share: share, for: company)
-        waitUntilSynced(adapter: adapter, deleted: [share.recordID])
-        XCTAssertNil(adapter.share(for: company))
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            let company = insertCompany(testCase: tc)
+            let adapter = createAdapter()
+            let record = adapter.record(for: company)!
+            let share = CKShare(rootRecord: record, shareID: CKRecord.ID(recordName: "CKShare.identifier", zoneID: recordZoneID))
+            adapter.save(share: share, for: company)
+            waitUntilSynced(adapter: adapter, deleted: [share.recordID])
+            XCTAssertNil(adapter.share(for: company))
+        }
     }
     
     func testRecordsToUpdateParentRelationshipsForRoot_returnsRecords() {
@@ -656,54 +815,61 @@ extension CoreDataAdapterTests {
 
 extension CoreDataAdapterTests {
     func testRecordProcessingDelegateCalledOnUpload() {
-        insertCompany(name: "company1", identifier: "id1", context: targetCoreDataStack.managedObjectContext)
-        let adapter = createAdapter()
-        let delegate = RecordProcessingDelegate()
-        delegate.shouldProcessUploadClosure = { property, object, record in
-            if property == "name",
-               let object = object as? QSCompany,
-               let name = object.name,
-               let range = name.range(of: "company") {
-                record[property] = String(name[range.upperBound...])
-                return false
-            } else {
-                return true
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            insertCompany(testCase: tc, name: "company1")
+            let adapter = createAdapter()
+            let delegate = RecordProcessingDelegate()
+            
+            delegate.shouldProcessUploadClosure = { property, object, record in
+                if property == "name",
+                   let object = object as? Company,
+                   let name = object.name,
+                   let range = name.range(of: "company") {
+                    record[property] = String(name[range.upperBound...])
+                    return false
+                } else {
+                    return true
+                }
             }
-        }
-        adapter.recordProcessingDelegate = delegate
-        let didSync = expectation(description: "did sync")
-        var record: CKRecord?
-        self.fullySync(adapter: adapter) { (uploaded, _, _) in
-            record = uploaded.first
-            didSync.fulfill()
-        }
-        
-        waitForExpectations(timeout: 1, handler: nil)
+            adapter.recordProcessingDelegate = delegate
+            let didSync = expectation(description: "did sync")
+            var record: CKRecord?
+            self.fullySync(adapter: adapter) { (uploaded, _, _) in
+                record = uploaded.first
+                didSync.fulfill()
+            }
+            
+            waitForExpectations(timeout: 1, handler: nil)
 
-        XCTAssertEqual(record?["name"], "1")
+            XCTAssertEqual(record?["name"], "1")
+        }
     }
 
     func testRecordProcessingDelegateCalledOnDownload() {
-        let adapter = createAdapter()
-        let record = CKRecord(recordType: "QSCompany",
-                              recordID: CKRecord.ID(recordName: "QSCompany.com1",
-                                                    zoneID: recordZoneID))
-        record["name"] = "1"
-        let delegate = RecordProcessingDelegate()
-        delegate.shouldProcessDownloadClosure = { property, object, record in
-            if property == "name",
-               let object = object as? QSCompany {
-                object.name = "company" + (record["name"] ?? "")
-                return false
-            } else {
-                return true
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            let adapter = createAdapter()
+            let record = CKRecord(recordType: tc.companyEntityType,
+                                  recordID: CKRecord.ID(recordName: "\(tc.companyEntityType).\(tc.companyIdentifierString)",
+                                                        zoneID: recordZoneID))
+            record["name"] = "1"
+            let delegate = RecordProcessingDelegate()
+            delegate.shouldProcessDownloadClosure = { property, object, record in
+                if property == "name",
+                   let object = object as? Company {
+                    object.name = "company" + (record["name"] ?? "")
+                    return false
+                } else {
+                    return true
+                }
             }
+            adapter.recordProcessingDelegate = delegate
+            waitUntilSynced(adapter: adapter, downloaded: [record])
+            let objects = try? targetCoreDataStack.managedObjectContext.executeFetchRequest(entityName: tc.companyEntityType) as? [Company]
+            let company = objects?.first
+            XCTAssertEqual(company?.name, "company1")
         }
-        adapter.recordProcessingDelegate = delegate
-        waitUntilSynced(adapter: adapter, downloaded: [record])
-        let objects = try? targetCoreDataStack.managedObjectContext.executeFetchRequest(entityName: "QSCompany") as? [QSCompany]
-        let company = objects?.first
-        XCTAssertEqual(company?.name, "company1")
     }
 }
 
@@ -789,6 +955,24 @@ extension CoreDataAdapterTests {
     }
     
     @discardableResult
+    func insertCompany(testCase: TestCase, name: String = "name 1", identifier: Any? = nil, context: NSManagedObjectContext? = nil) -> Company {
+        return insert(entityType: testCase.companyEntityType,
+                      properties: ["name": name, "identifier": identifier ?? testCase.companyIdentifier, "sortIndex": 0],
+                      context: context ?? targetCoreDataStack.managedObjectContext) as! Company
+    }
+    
+    @discardableResult
+    func insertEmployee(testCase: TestCase, name: String = "employee 1", identifier: Any? = nil, company: NSManagedObject?, context: NSManagedObjectContext? = nil) -> Employee {
+        var properties = ["name": name, "identifier": identifier ?? testCase.employeeIdentifier, "sortIndex": 0]
+        if let company = company {
+            properties["company"] = company
+        }
+        return insert(entityType: testCase.employeeEntityType,
+                      properties: properties,
+                      context: context ?? targetCoreDataStack.managedObjectContext) as! Employee
+    }
+    
+    @discardableResult
     func waitUntilSynced(adapter: ModelAdapter, downloaded: [CKRecord] = [], deleted: [CKRecord.ID] = []) -> (updated: [CKRecord], deleted: [CKRecord.ID]) {
         let expectation = self.expectation(description: "synced")
         var updatedRecordsResult: [CKRecord]!
@@ -821,114 +1005,5 @@ extension CoreDataAdapterTests {
             adapter.didFinishImport(with: error)
             completion?(toUpload, toDelete, error)
         }
-    }
-}
-
-// MARK: - Int property as primary key
-extension CoreDataAdapterTests {
-    func testSync_objectWithIntPrimaryKey_canSync() {
-        targetCoreDataStack = coreDataStack(modelName: "IntPrimaryKeyModel")
-        insert(entityType: "IntTestEntity",
-               properties: ["identifier": 5,
-                            "name": "object 5"],
-               context: targetCoreDataStack.managedObjectContext)
-        
-        let adapter = createAdapter()
-        let records = waitUntilSynced(adapter: adapter).updated
-        XCTAssertEqual(records.count, 1)
-        XCTAssertEqual(records.first?["name"], "object 5")
-        XCTAssertEqual(records.first?.recordID.recordName, "IntTestEntity.5")
-    }
-    
-    func testSaveChangesInRecord_newObjectWithIntPrimaryKey_insertsObject() {
-        targetCoreDataStack = coreDataStack(modelName: "IntPrimaryKeyModel")
-        let adapter = createAdapter()
-
-        let record = CKRecord(recordType: "IntTestEntity",
-                              recordID: CKRecord.ID(recordName: "IntTestEntity.12",
-                                                    zoneID: recordZoneID))
-        record["name"] = "new object"
-
-        waitUntilSynced(adapter: adapter, downloaded: [record])
-        let objects = try? targetCoreDataStack.managedObjectContext.executeFetchRequest(entityName: "IntTestEntity") as? [IntTestEntity]
-        let object = objects?.first
-        XCTAssertNotNil(object)
-        XCTAssertEqual(object?.name, "new object")
-        XCTAssertEqual(object?.identifier, 12)
-    }
-    
-    func testSaveChangesInRecord_existingObjectWithIntPrimaryKey_updatesObject() {
-        targetCoreDataStack = coreDataStack(modelName: "IntPrimaryKeyModel")
-        let object = insert(entityType: "IntTestEntity",
-                            properties: ["identifier": 5,
-                                         "name": "name"],
-                            context: targetCoreDataStack.managedObjectContext) as! IntTestEntity
-        
-        let adapter = createAdapter()
-        
-        let uploadedRecord = waitUntilSynced(adapter: adapter).updated.first!
-        
-        uploadedRecord["name"] = "name 2"
-        
-        waitUntilSynced(adapter: adapter, downloaded: [uploadedRecord])
-        
-        targetCoreDataStack.managedObjectContext.refresh(object, mergeChanges: false)
-        XCTAssertEqual(object.name, "name 2")
-    }
-}
-
-// MARK: - UUID property as primary key
-extension CoreDataAdapterTests {
-    func testSync_objectWithUUIDPrimaryKey_canSync() {
-        targetCoreDataStack = coreDataStack(modelName: "UUIDPrimaryKeyModel")
-        let id = UUID()
-        insert(entityType: "UUIDTestEntity",
-               properties: ["identifier": id,
-                            "name": "object 5"],
-               context: targetCoreDataStack.managedObjectContext)
-        
-        let adapter = createAdapter()
-        let records = waitUntilSynced(adapter: adapter).updated
-        XCTAssertEqual(records.count, 1)
-        XCTAssertEqual(records.first?["name"], "object 5")
-        XCTAssertEqual(records.first?.recordID.recordName, "UUIDTestEntity.\(id.uuidString)")
-    }
-    
-    func testSaveChangesInRecord_newObjectWithUUIDPrimaryKey_insertsObject() {
-        targetCoreDataStack = coreDataStack(modelName: "UUIDPrimaryKeyModel")
-        let adapter = createAdapter()
-
-        let id = UUID()
-        let record = CKRecord(recordType: "UUIDTestEntity",
-                              recordID: CKRecord.ID(recordName: "UUIDTestEntity.\(id.uuidString)",
-                                                    zoneID: recordZoneID))
-        record["name"] = "new object"
-
-        waitUntilSynced(adapter: adapter, downloaded: [record])
-        let objects = try? targetCoreDataStack.managedObjectContext.executeFetchRequest(entityName: "UUIDTestEntity") as? [UUIDTestEntity]
-        let object = objects?.first
-        XCTAssertNotNil(object)
-        XCTAssertEqual(object?.name, "new object")
-        XCTAssertEqual(object?.identifier, id)
-    }
-
-    func testSaveChangesInRecord_existingObjectWithUUIDPrimaryKey_updatesObject() {
-        targetCoreDataStack = coreDataStack(modelName: "UUIDPrimaryKeyModel")
-        let id = UUID()
-        let object = insert(entityType: "UUIDTestEntity",
-                            properties: ["identifier": id,
-                                         "name": "name"],
-                            context: targetCoreDataStack.managedObjectContext) as! UUIDTestEntity
-
-        let adapter = createAdapter()
-
-        let uploadedRecord = waitUntilSynced(adapter: adapter).updated.first!
-
-        uploadedRecord["name"] = "name 2"
-
-        waitUntilSynced(adapter: adapter, downloaded: [uploadedRecord])
-
-        targetCoreDataStack.managedObjectContext.refresh(object, mergeChanges: false)
-        XCTAssertEqual(object.name, "name 2")
     }
 }

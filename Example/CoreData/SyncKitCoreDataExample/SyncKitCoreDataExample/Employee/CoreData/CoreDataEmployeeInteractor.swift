@@ -70,7 +70,7 @@ class CoreDataEmployeeInteractor: NSObject, EmployeeInteractor {
     func update(employee: Employee, name: String?, photo: Data?) {
         guard let employee = fetchEmployee(with: employee) else { return }
         employee.name = name
-        employee.photo = photo as NSData?
+        employee.photo = photo
         try? managedObjectContext.save()
     }
 }

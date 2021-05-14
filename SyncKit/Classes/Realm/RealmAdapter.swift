@@ -477,11 +477,30 @@ struct ObjectUpdate {
         }
     }
     
+    func getObjectIdentifier(stringObjectId: String, entityType: String) -> Any? {
+        guard let schema = realmProvider.targetRealm.schema.schema(forClassName: entityType),
+              let keyType = schema.primaryKeyProperty?.type else {
+            return nil
+        }
+        
+        switch keyType {
+        case .int:
+            return Int(stringObjectId)!
+        case .objectId:
+            return try! RLMObjectId(string: stringObjectId)
+        case .string:
+            return stringObjectId
+        default:
+            return stringObjectId
+        }
+    }
+
+    
     func syncedEntity(for object: RLMObject, realm: RLMRealm) -> SyncedEntity? {
         
         let objectClass = realmObjectClass(name: object.objectSchema.className)
         let primaryKey = objectClass.primaryKey()!
-        let identifier = object.objectSchema.className + "." + (object.value(forKey: primaryKey) as! String)
+        let identifier = object.objectSchema.className + "." + getStringIdentifier(for: object, usingPrimaryKey: primaryKey)
         return getSyncedEntity(objectIdentifier: identifier, realm: realm)
     }
     
@@ -670,7 +689,8 @@ struct ObjectUpdate {
             }
             
             let targetObjectClass = realmObjectClass(name: className)
-            let targetObject = targetObjectClass.object(in: realmProvider.targetRealm, forPrimaryKey: relationship.targetIdentifier)
+            let targetObjectIdentifier = getObjectIdentifier(stringObjectId: relationship.targetIdentifier, entityType: className)
+            let targetObject = targetObjectClass.object(in: realmProvider.targetRealm, forPrimaryKey: targetObjectIdentifier)
             
             guard let target = targetObject else {
                 continue
@@ -791,6 +811,7 @@ struct ObjectUpdate {
         let record = getRecord(for: syncedEntity) ?? CKRecord(recordType: syncedEntity.entityType, recordID: CKRecord.ID(recordName: syncedEntity.identifier, zoneID: zoneID))
         
         let objectClass = realmObjectClass(name: syncedEntity.entityType)
+        let primaryKey = objectClass.primaryKey()!
         let objectIdentifier = getObjectIdentifier(for: syncedEntity)
         let object = objectClass.object(in: realmProvider.targetRealm, forPrimaryKey: objectIdentifier)
         let entityState = syncedEntity.state
@@ -816,7 +837,7 @@ struct ObjectUpdate {
                     
                     if let target = object?.value(forKey: property.name) as? RLMObject {
                         
-                        let targetIdentifier = target.value(forKey: objectClass.primaryKey()!) as! String
+                        let targetIdentifier = self.getStringIdentifier(for: target, usingPrimaryKey: primaryKey)
                         let referenceIdentifier = "\(property.objectClassName!).\(targetIdentifier)"
                         let recordID = CKRecord.ID(recordName: referenceIdentifier, zoneID: zoneID)
                         // if we set the parent we must make the action .deleteSelf, otherwise we get errors if we ever try to delete the parent record

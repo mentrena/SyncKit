@@ -14,6 +14,7 @@ class QSEmployee: RLMObject, PrimaryKey, ParentKey {
     @objc dynamic var name: String? = ""
     @objc dynamic var identifier = ""
     @objc dynamic var photo: Data? = nil
+    @objc dynamic var sortIndex = 0
     
     @objc dynamic var company: QSCompany?
     
