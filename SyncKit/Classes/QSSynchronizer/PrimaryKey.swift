@@ -10,6 +10,7 @@ import Foundation
 /**
  *   The name of the property that acts as primary key for objects of this class. Primary key values are expected to remain the same
  *  for the lifetime of the object, and they are expected to be unique.
+ *  Valid types are String, Int and UUID for Core Data, and String, Int and ObjectId for Realm.
  */
 @objc public protocol PrimaryKey: AnyObject {
     
