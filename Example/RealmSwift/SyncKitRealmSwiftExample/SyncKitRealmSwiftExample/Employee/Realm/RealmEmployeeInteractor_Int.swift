@@ -9,13 +9,13 @@
 import Foundation
 import RealmSwift
 
-class RealmEmployeeInteractor: EmployeeInteractor {
+class RealmEmployeeInteractor_Int: EmployeeInteractor {
     
     let realm: Realm
     let company: Company
-    let modelCompany: QSCompany!
+    let modelCompany: QSCompany_Int!
 
-    var employees: Results<QSEmployee>!
+    var employees: Results<QSEmployee_Int>!
     var notificationToken: NotificationToken!
     
     weak var delegate: EmployeeInteractorDelegate?
@@ -23,11 +23,16 @@ class RealmEmployeeInteractor: EmployeeInteractor {
     init(realm: Realm, company: Company) {
         self.realm = realm
         self.company = company
-        modelCompany = realm.object(ofType: QSCompany.self, forPrimaryKey: company.identifier)
+        let id: Int
+        switch company.identifier {
+        case .string(let value): id = Int(value)!
+        case .int(let value): id = value
+        }
+        modelCompany = realm.object(ofType: QSCompany_Int.self, forPrimaryKey: id)
     }
     
     func load() {
-        employees = realm.objects(QSEmployee.self).filter("company == %@", modelCompany!).sorted(byKeyPath: "name")
+        employees = realm.objects(QSEmployee_Int.self).filter("company == %@", modelCompany!).sorted(byKeyPath: "name")
         self.update(employees: Array(self.employees))
         notificationToken = employees.observe({ [weak self](changes) in
             guard let self = self else { return }
@@ -36,10 +41,10 @@ class RealmEmployeeInteractor: EmployeeInteractor {
     }
     
     func insertEmployee(name: String) {
-        let employee = QSEmployee()
+        let employee = QSEmployee_Int()
         employee.name = name
         employee.company = modelCompany
-        employee.identifier = NSUUID().uuidString
+        employee.identifier = Identifier.generateInt()
         
         realm.beginWrite()
         realm.add(employee)
@@ -47,7 +52,7 @@ class RealmEmployeeInteractor: EmployeeInteractor {
     }
     
     func delete(employee: Employee) {
-        guard case .string(let id) = employee.identifier else { return }
+        guard case .int(let id) = employee.identifier else { return }
         guard let emp = employees.first(where: {
             $0.identifier == id
         }) else { return }
@@ -57,7 +62,7 @@ class RealmEmployeeInteractor: EmployeeInteractor {
     }
     
     func update(employee: Employee, name: String?, photo: Data?) {
-        guard case .string(let id) = employee.identifier else { return }
+        guard case .int(let id) = employee.identifier else { return }
         guard let emp = employees.first(where: {
             $0.identifier == id
         }) else { return }
@@ -68,10 +73,10 @@ class RealmEmployeeInteractor: EmployeeInteractor {
         }
     }
     
-    func update(employees: [QSEmployee]?) {
+    func update(employees: [QSEmployee_Int]?) {
         let translatedEmployees = employees?.map {
             Employee(name: $0.name,
-                     identifier: .string(value: $0.identifier),
+                     identifier: .int(value: $0.identifier),
                      photo: $0.photo as Data?)
             } ?? []
         delegate?.didUpdateEmployees(translatedEmployees)

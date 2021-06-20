@@ -10,6 +10,6 @@ import Foundation
 
 struct Employee {
     let name: String?
-    let identifier: String
+    let identifier: Identifier
     let photo: Data?
 }

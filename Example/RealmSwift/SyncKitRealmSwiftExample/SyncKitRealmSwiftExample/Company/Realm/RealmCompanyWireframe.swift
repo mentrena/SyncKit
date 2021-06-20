@@ -27,7 +27,11 @@ class RealmCompanyWireframe: CompanyWireframe {
     
     func show() {
         let viewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "Company") as! CompanyViewController
+        #if USE_INT_KEY
+        let interactor = RealmCompanyInteractor_Int(realm: realm, shareController: synchronizer)
+        #else
         let interactor = RealmCompanyInteractor(realm: realm, shareController: synchronizer)
+        #endif
         let presenter = DefaultCompanyPresenter(view: viewController,
                                                 interactor: interactor,
                                                 wireframe: self,

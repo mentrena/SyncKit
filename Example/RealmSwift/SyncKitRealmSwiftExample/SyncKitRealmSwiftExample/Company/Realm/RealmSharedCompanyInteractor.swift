@@ -47,9 +47,11 @@ class RealmSharedCompanyInteractor: CompanyInteractor {
     }
     
     func modelObject(for company: Company) -> AnyObject? {
+        guard case .string(let id) = company.identifier else { return nil }
+        
         for results in resultsController.results {
             for object in results {
-                if object.identifier == company.identifier {
+                if object.identifier == id {
                     return object
                 }
             }
@@ -65,7 +67,7 @@ class RealmSharedCompanyInteractor: CompanyInteractor {
         let translatedCompanies = companySections.map { companies in
             companies.map {
                 Company(name: $0.name,
-                        identifier: $0.identifier,
+                        identifier: .string(value: $0.identifier),
                         isSharing: false,
                         isShared: true)
             }
