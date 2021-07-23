@@ -18,6 +18,7 @@ class CloudKitSynchronizerTests: XCTestCase {
     var recordZoneID: CKRecordZone.ID!
     var mockKeyValueStore: MockKeyValueStore!
     var mockAdapterProvider: MockAdapterProvider!
+    var mockSynchronizerDelegate: MockCloudKitSynchronizerDelegate!
     
     override func setUp() {
         super.setUp()
@@ -29,12 +30,14 @@ class CloudKitSynchronizerTests: XCTestCase {
         mockAdapter.recordZoneIDValue = recordZoneID
         mockAdapterProvider = MockAdapterProvider()
         mockAdapterProvider.modelAdapterValue = mockAdapter
+        mockSynchronizerDelegate = MockCloudKitSynchronizerDelegate()
         
         synchronizer = CloudKitSynchronizer(identifier: "testID",
                                             containerIdentifier: "any",
                                             database: mockDatabase,
                                             adapterProvider: mockAdapterProvider,
                                             keyValueStore: mockKeyValueStore)
+        synchronizer.delegate = mockSynchronizerDelegate
         synchronizer.addModelAdapter(mockAdapter)
     }
     
@@ -822,5 +825,65 @@ class CloudKitSynchronizerTests: XCTestCase {
         XCTAssertNotNil(mockAdapter.sharesByIdentifier[object.identifier])
         XCTAssertTrue(mockAdapter.saveChangesCalled)
         XCTAssertEqual(operationCount, 2)
+    }
+    
+    func testSynchronize_callsDelegateMethods() {
+        let expectation = self.expectation(description: "sync finished")
+        let objects = objectArray(range: 1...4)
+        mockAdapter.objects = objects
+        mockAdapter.markForUpload([objects.first!])
+        mockAdapter.markForDeletion([objects.last!])
+        
+        let newObject = QSObject(identifier: "5", number: 5)
+        mockDatabase.readyToFetchRecords = [newObject.record(with: recordZoneID)]
+        
+        synchronizer.synchronize { (_) in
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: 1, handler: nil)
+        
+        XCTAssertTrue(mockSynchronizerDelegate.synchronizerWillStartSyncingCalled)
+        XCTAssertTrue(mockSynchronizerDelegate.synchronizerWillCheckForChangesCalled)
+        XCTAssertTrue(mockSynchronizerDelegate.synchronizerWillFetchChangesCalled)
+        XCTAssertTrue(mockSynchronizerDelegate.synchronizerDidFetchChangesCalled)
+        XCTAssertTrue(mockSynchronizerDelegate.synchronizerWillUploadChangesCalled)
+        XCTAssertTrue(mockSynchronizerDelegate.synchronizerDidSyncCalled)
+    }
+    
+    func testSynchronize_newRecordZoneAdded_callsDelegate() {
+        let expectation = self.expectation(description: "sync finished")
+        let objects = objectArray(range: 1...2)
+        mockAdapter.objects = objects
+        
+        let object = QSObject(identifier: "3", number: 3)
+        mockDatabase.readyToFetchRecords = [object.record(with: recordZoneID)]
+        
+        synchronizer.removeModelAdapter(mockAdapter)
+        
+        XCTAssertTrue(synchronizer.modelAdapters.count == 0)
+        
+        synchronizer.synchronize { (_) in
+            expectation.fulfill()
+        }
+        
+        waitForExpectations(timeout: 1, handler: nil)
+        
+        XCTAssertTrue(mockSynchronizerDelegate.synchronizerDidAddAdapter[recordZoneID] === mockAdapterProvider.modelAdapterValue)
+    }
+    
+    func testSynchronize_recordZoneWasDeleted_callsDelegate() {
+        let expectation = self.expectation(description: "sync finished")
+        let objects = objectArray(range: 1...2)
+        mockAdapter.objects = objects
+        
+        mockDatabase.deletedRecordZoneIDs = [recordZoneID]
+        
+        synchronizer.synchronize { (_) in
+            expectation.fulfill()
+        }
+        
+        waitForExpectations(timeout: 1, handler: nil)
+        
+        XCTAssertTrue(mockSynchronizerDelegate.synchronizerZoneIDWasDeleted.contains(recordZoneID))
     }
 }

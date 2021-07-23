@@ -54,6 +54,18 @@ public extension Notification.Name {
     func cloudKitSynchronizer(_ synchronizer: CloudKitSynchronizer, zoneWasDeletedWithZoneID zoneID: CKRecordZone.ID)
 }
 
+@objc public protocol CloudKitSynchronizerDelegate: AnyObject {
+    func synchronizerWillStartSyncing(_ synchronizer: CloudKitSynchronizer)
+    func synchronizerWillCheckForChanges(_ synchronizer: CloudKitSynchronizer)
+    func synchronizerWillFetchChanges(_ synchronizer: CloudKitSynchronizer, in recordZone: CKRecordZone.ID)
+    func synchronizerDidFetchChanges(_ synchronizer: CloudKitSynchronizer, in recordZone: CKRecordZone.ID)
+    func synchronizerWillUploadChanges(_ synchronizer: CloudKitSynchronizer, to recordZone: CKRecordZone.ID)
+    func synchronizerDidSync(_ synchronizer: CloudKitSynchronizer)
+    func synchronizerDidfailToSync(_ synchronizer: CloudKitSynchronizer, error: Error)
+    func synchronizer(_ synchronizer: CloudKitSynchronizer, didAddAdapter adapter: ModelAdapter, forRecordZoneID zoneID: CKRecordZone.ID)
+    func synchronizer(_ synchronizer: CloudKitSynchronizer, zoneIDWasDeleted zoneID: CKRecordZone.ID)
+}
+
 /**
  A `CloudKitSynchronizer` object takes care of making all the required calls to CloudKit to keep your model synchronized, using the provided
  `ModelAdapter` to interact with it.
@@ -129,6 +141,8 @@ public class CloudKitSynchronizer: NSObject {
     /// Whether the synchronizer will only download data or also upload any local changes.
     @objc public var syncMode: SynchronizeMode = .sync
     
+    @objc public var delegate: CloudKitSynchronizerDelegate?
+    
     internal let dispatchQueue = DispatchQueue(label: "QSCloudKitSynchronizer")
     internal let operationQueue = OperationQueue()
     internal var modelAdapterDictionary = [CKRecordZone.ID: ModelAdapter]()
@@ -138,6 +152,7 @@ public class CloudKitSynchronizer: NSObject {
     internal var completion: ((Error?) -> ())?
     internal weak var currentOperation: Operation?
     internal var uploadRetries = 0
+    internal var didNotifyUpload = Set<CKRecordZone.ID>()
     
     
     /// Default number of records to send in an upload operation.

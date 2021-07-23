@@ -39,6 +39,7 @@
 		6433B3F922C0058300EAC16C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6433B3F722C0058300EAC16C /* LaunchScreen.storyboard */; };
 		64369247232EB25A004393B1 /* QSTestEntity2+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64369245232EB25A004393B1 /* QSTestEntity2+CoreDataProperties.swift */; };
 		64369248232EB25A004393B1 /* QSTestEntity2+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64369246232EB25A004393B1 /* QSTestEntity2+CoreDataClass.swift */; };
+		644164AF26B0383500ED033B /* MockCloudKitSynchronizerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 644164AE26B0383500ED033B /* MockCloudKitSynchronizerDelegate.swift */; };
 		645DC02F250A23890034F93A /* ModifyRecordsOperationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 645DC02E250A23890034F93A /* ModifyRecordsOperationTests.swift */; };
 		6465959722B64C8E00DC9A17 /* QSCompany.1739C6A5-C07E-48A5-B83E-AB07694F23DF in Resources */ = {isa = PBXBuildFile; fileRef = 6465959622B64C8E00DC9A17 /* QSCompany.1739C6A5-C07E-48A5-B83E-AB07694F23DF */; };
 		64A452D8264C2A2300133F64 /* QSCompany_UUID+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64A452D4264C2A2300133F64 /* QSCompany_UUID+CoreDataClass.swift */; };
@@ -134,6 +135,7 @@
 		6433B3F722C0058300EAC16C /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = ../../../Common/Views/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		64369245232EB25A004393B1 /* QSTestEntity2+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "QSTestEntity2+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		64369246232EB25A004393B1 /* QSTestEntity2+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "QSTestEntity2+CoreDataClass.swift"; sourceTree = "<group>"; };
+		644164AE26B0383500ED033B /* MockCloudKitSynchronizerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockCloudKitSynchronizerDelegate.swift; sourceTree = "<group>"; };
 		645DC02E250A23890034F93A /* ModifyRecordsOperationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModifyRecordsOperationTests.swift; sourceTree = "<group>"; };
 		6465959622B64C8E00DC9A17 /* QSCompany.1739C6A5-C07E-48A5-B83E-AB07694F23DF */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "QSCompany.1739C6A5-C07E-48A5-B83E-AB07694F23DF"; sourceTree = "<group>"; };
 		64A452D4264C2A2300133F64 /* QSCompany_UUID+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "QSCompany_UUID+CoreDataClass.swift"; sourceTree = "<group>"; };
@@ -280,6 +282,7 @@
 				64B3A3AD22B1A26500E4E942 /* QSObject.swift */,
 				64B3A3AF22B1A91500E4E942 /* MockKeyValueStore.swift */,
 				64B3A3B122B1AA3600E4E942 /* MockAdapterProvider.swift */,
+				644164AE26B0383500ED033B /* MockCloudKitSynchronizerDelegate.swift */,
 			);
 			path = Mocks;
 			sourceTree = "<group>";
@@ -651,6 +654,7 @@
 				64369247232EB25A004393B1 /* QSTestEntity2+CoreDataProperties.swift in Sources */,
 				64B3A38422AEF0D800E4E942 /* MockManagedObjectContext.swift in Sources */,
 				64B3A3B622B51F0100E4E942 /* CoreDataAdapterTests.swift in Sources */,
+				644164AF26B0383500ED033B /* MockCloudKitSynchronizerDelegate.swift in Sources */,
 				64CFAF2E22CD26E4009CF1F1 /* QSEmployee+CoreDataClass.swift in Sources */,
 				64B3A3A522B0293800E4E942 /* QSExample.xcdatamodeld in Sources */,
 				64B3A38822B01C1700E4E942 /* DefaultCoreDataStackProviderTests.swift in Sources */,
