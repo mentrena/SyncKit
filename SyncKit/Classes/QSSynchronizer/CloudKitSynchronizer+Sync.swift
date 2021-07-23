@@ -13,8 +13,10 @@ extension CloudKitSynchronizer {
     func performSynchronization() {
         dispatchQueue.async {
             self.postNotification(.SynchronizerWillSynchronize)
+            self.delegate?.synchronizerWillStartSyncing(self)
             self.serverChangeToken = self.storedDatabaseToken
             self.uploadRetries = 0
+            self.didNotifyUpload = Set<CKRecordZone.ID>()
             
             self.modelAdapters.forEach {
                 $0.prepareToImport()
@@ -41,8 +43,10 @@ extension CloudKitSynchronizer {
             
             if let error = error {
                 self.postNotification(.SynchronizerDidFailToSynchronize, userInfo: [CloudKitSynchronizer.errorKey: error])
+                self.delegate?.synchronizerDidfailToSync(self, error: error)
             } else {
                 self.postNotification(.SynchronizerDidSynchronize)
+                self.delegate?.synchronizerDidSync(self)
             }
             
             debugPrint("QSCloudKitSynchronizer >> Finishing synchronization")
@@ -71,6 +75,7 @@ extension CloudKitSynchronizer {
     func notifyProviderForDeletedZoneIDs(_ zoneIDs: [CKRecordZone.ID]) {
         zoneIDs.forEach {
             self.adapterProvider.cloudKitSynchronizer(self, zoneWasDeletedWithZoneID: $0)
+            self.delegate?.synchronizer(self, zoneIDWasDeleted: $0)
         }
     }
     
@@ -85,6 +90,7 @@ extension CloudKitSynchronizer {
                 if let newModelAdapter = adapterProvider.cloudKitSynchronizer(self, modelAdapterForRecordZoneID: zoneID) {
                     modelAdapter = newModelAdapter
                     modelAdapterDictionary[zoneID] = newModelAdapter
+                    delegate?.synchronizer(self, didAddAdapter: newModelAdapter, forRecordZoneID: zoneID)
                     newModelAdapter.prepareToImport()
                 }
             }
@@ -182,6 +188,7 @@ extension CloudKitSynchronizer {
         }
         
         postNotification(.SynchronizerWillFetchChanges)
+        delegate?.synchronizerWillCheckForChanges(self)
         fetchDatabaseChanges() { token, error in
             guard error == nil else {
                 self.finishSynchronization(error: error)
@@ -212,6 +219,10 @@ extension CloudKitSynchronizer {
                     return
                 }
                 
+                zoneIDsToFetch.forEach {
+                    self.delegate?.synchronizerWillFetchChanges(self, in: $0)
+                }
+                
                 self.fetchZoneChanges(zoneIDsToFetch) { error in
                     guard error == nil else {
                         self.finishSynchronization(error: error)
@@ -229,6 +240,7 @@ extension CloudKitSynchronizer {
     }
     
     func fetchZoneChanges(_ zoneIDs: [CKRecordZone.ID], completion: @escaping (Error?)->()) {
+        
         let operation = FetchZoneChangesOperation(database: database, zoneIDs: zoneIDs, zoneChangeTokens: activeZoneTokens, modelVersion: compatibilityVersion, ignoreDeviceIdentifier: deviceIdentifier, desiredKeys: nil) { (zoneResults) in
             
             self.dispatchQueue.async {
@@ -255,6 +267,8 @@ extension CloudKitSynchronizer {
                         adapter?.deleteRecords(with: result.deletedRecordIDs)
                         if result.moreComing {
                             pendingZones.append(zoneID)
+                        } else {
+                            self.delegate?.synchronizerDidFetchChanges(self, in: zoneID)
                         }
                     }
                 }
@@ -266,6 +280,7 @@ extension CloudKitSynchronizer {
                 }
             }
         }
+        
         runOperation(operation)
     }
     
@@ -381,6 +396,12 @@ extension CloudKitSynchronizer {
         let recordCount = records.count
         let requestedBatchSize = batchSize
         guard recordCount > 0 else { completion(nil); return }
+        
+        if !didNotifyUpload.contains(adapter.recordZoneID) {
+            didNotifyUpload.insert(adapter.recordZoneID)
+            delegate?.synchronizerWillUploadChanges(self, to: adapter.recordZoneID)
+        }
+        
         
         //Add metadata: device UUID and model version
         addMetadata(to: records)
