@@ -1,0 +1,33 @@
+PODS:
+  - Realm (10.8.0):
+    - Realm/Headers (= 10.8.0)
+  - Realm/Headers (10.8.0)
+  - RealmSwift (10.8.0):
+    - Realm (= 10.8.0)
+  - SyncKit/Core (1.2.0)
+  - SyncKit/RealmSwift (1.2.0):
+    - Realm (~> 10.5)
+    - RealmSwift (~> 10.5)
+    - SyncKit/Core
+
+DEPENDENCIES:
+  - RealmSwift
+  - SyncKit/RealmSwift (from `../../`)
+
+SPEC REPOS:
+  trunk:
+    - Realm
+    - RealmSwift
+
+EXTERNAL SOURCES:
+  SyncKit:
+    :path: "../../"
+
+SPEC CHECKSUMS:
+  Realm: ad3c5cd762e5a5bc02080fc55aa04a0e43f98575
+  RealmSwift: 316e450478fb01e06ece4438dda42f407c5f51d2
+  SyncKit: e6689096a52892a52900f9e12107f95fed82adb2
+
+PODFILE CHECKSUM: 8a9b1d6bab3f4c216d116fba4fb411212aa43843
+
+COCOAPODS: 1.10.1

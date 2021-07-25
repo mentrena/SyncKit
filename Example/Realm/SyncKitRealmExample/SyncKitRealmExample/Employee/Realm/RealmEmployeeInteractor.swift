@@ -23,7 +23,7 @@ class RealmEmployeeInteractor: EmployeeInteractor {
     init(realm: RLMRealm, company: Company) {
         self.realm = realm
         self.company = company
-        modelCompany = QSCompany.object(in: realm, forPrimaryKey: company.identifier)
+        modelCompany = QSCompany.object(in: realm, forPrimaryKey: company.identifier.stringValue)
     }
     
     func load() {
@@ -48,7 +48,7 @@ class RealmEmployeeInteractor: EmployeeInteractor {
     
     func delete(employee: Employee) {
         guard let emp = employees.first(where: {
-            ($0 as? QSEmployee)?.identifier == employee.identifier
+            ($0 as? QSEmployee)?.identifier == employee.identifier.stringValue
         }) as? QSEmployee else { return }
         
         realm.beginWriteTransaction()
@@ -58,7 +58,7 @@ class RealmEmployeeInteractor: EmployeeInteractor {
     
     func update(employee: Employee, name: String?, photo: Data?) {
         guard let emp = employees.first(where: {
-            ($0 as? QSEmployee)?.identifier == employee.identifier
+            ($0 as? QSEmployee)?.identifier == employee.identifier.stringValue
         }) as? QSEmployee else { return }
         
         realm.beginWriteTransaction()
@@ -71,7 +71,7 @@ class RealmEmployeeInteractor: EmployeeInteractor {
         let translatedEmployees = employees?.map { object -> Employee in
             let emp = object as! QSEmployee
             return Employee(name: emp.name,
-                            identifier: emp.identifier,
+                            identifier: Identifier.string(value: emp.identifier),
                             photo: emp.photo as Data?)
             } ?? []
         delegate?.didUpdateEmployees(translatedEmployees)

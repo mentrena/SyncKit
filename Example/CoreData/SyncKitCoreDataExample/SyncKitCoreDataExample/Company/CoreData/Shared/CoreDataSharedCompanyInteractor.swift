@@ -24,7 +24,7 @@ class CoreDataSharedCompanyInteractor: NSObject {
         let translatedCompanies = companies?.map {
             $0.map {
                 Company(name: $0.name,
-                        identifier: $0.identifier!,
+                        identifier: Identifier.string(value: $0.identifier!),
                         isSharing: false,
                         isShared: true)
             }
@@ -48,7 +48,7 @@ extension CoreDataSharedCompanyInteractor: CompanyInteractor {
     
     func modelObject(for company: Company) -> AnyObject? {
         return fetchedResultsController.fetchedResultsControllers.flatMap { $0.fetchedObjects as? [QSCompany] ?? [] }.first {
-            $0.identifier == company.identifier
+            $0.identifier == company.identifier.stringValue
         }
     }
     

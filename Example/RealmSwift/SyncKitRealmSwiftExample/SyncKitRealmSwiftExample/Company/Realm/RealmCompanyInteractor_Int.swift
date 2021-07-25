@@ -9,12 +9,12 @@
 import Foundation
 import RealmSwift
 
-class RealmCompanyInteractor: CompanyInteractor {
+class RealmCompanyInteractor_Int: CompanyInteractor {
     
     let realm: Realm
     weak var delegate: CompanyInteractorDelegate?
     let shareController: ShareController?
-    private var results: Results<QSCompany>!
+    private var results: Results<QSCompany_Int>!
     private var notificationToken: NotificationToken!
     
     init(realm: Realm, shareController: ShareController?) {
@@ -23,7 +23,7 @@ class RealmCompanyInteractor: CompanyInteractor {
     }
     
     func load() {
-        results = realm.objects(QSCompany.self).sorted(byKeyPath: "name")
+        results = realm.objects(QSCompany_Int.self).sorted(byKeyPath: "name")
         update(companies: Array(results))
         notificationToken = results.observe({ [weak self](change) in
             guard let self = self else { return }
@@ -32,9 +32,9 @@ class RealmCompanyInteractor: CompanyInteractor {
     }
     
     func insertCompany(name: String) {
-        let company = QSCompany()
+        let company = QSCompany_Int()
         company.name = name
-        company.identifier = NSUUID().uuidString
+        company.identifier = Identifier.generateInt()
         
         realm.beginWrite()
         realm.add(company)
@@ -42,7 +42,7 @@ class RealmCompanyInteractor: CompanyInteractor {
     }
     
     func delete(company: Company) {
-        guard case .string(let id) = company.identifier else { return }
+        guard case .int(let id) = company.identifier else { return }
         
         guard let com = results?.first(where: {
             $0.identifier == id
@@ -51,7 +51,7 @@ class RealmCompanyInteractor: CompanyInteractor {
         delete(realmCompany: com)
     }
     
-    func delete(realmCompany: QSCompany) {
+    func delete(realmCompany: QSCompany_Int) {
         try! realm.write {
             for emp in realmCompany.employees {
                 realm.delete(emp)
@@ -67,7 +67,7 @@ class RealmCompanyInteractor: CompanyInteractor {
     }
     
     func modelObject(for company: Company) -> AnyObject? {
-        guard case .string(let id) = company.identifier else { return nil }
+        guard case .int(let id) = company.identifier else { return nil }
         return results?.first(where: {
             $0.identifier == id
         })
@@ -77,10 +77,10 @@ class RealmCompanyInteractor: CompanyInteractor {
         update(companies: Array(results))
     }
     
-    func update(companies: [QSCompany]?) {
+    func update(companies: [QSCompany_Int]?) {
         let translatedCompanies = companies?.map {
             Company(name: $0.name,
-                    identifier: .string(value: $0.identifier!),
+                    identifier: .int(value: $0.identifier!),
                     isSharing: self.shareController?.isObjectShared(object: $0) ?? false,
                     isShared: false)
             } ?? []
