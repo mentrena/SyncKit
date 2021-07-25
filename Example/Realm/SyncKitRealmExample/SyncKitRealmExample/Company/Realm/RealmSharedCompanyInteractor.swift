@@ -50,7 +50,7 @@ class RealmSharedCompanyInteractor: CompanyInteractor {
         for results in resultsController.results {
             for object in results {
                 let modelObject = object as! QSCompany
-                if modelObject.identifier == company.identifier {
+                if modelObject.identifier == company.identifier.stringValue {
                     return modelObject
                 }
             }
@@ -67,7 +67,7 @@ class RealmSharedCompanyInteractor: CompanyInteractor {
             companies.map { object -> Company in
                 let com = object as! QSCompany
                 return Company(name: com.name,
-                               identifier: com.identifier,
+                               identifier: Identifier.string(value: com.identifier),
                                isSharing: false,
                                isShared: true)
             }

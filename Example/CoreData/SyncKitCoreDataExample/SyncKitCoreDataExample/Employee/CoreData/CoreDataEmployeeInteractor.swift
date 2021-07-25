@@ -21,7 +21,7 @@ class CoreDataEmployeeInteractor: NSObject, EmployeeInteractor {
         self.company = company
         let fetchRequest = NSFetchRequest<QSEmployee>(entityName: "QSEmployee")
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
-        let predicate = NSPredicate(format: "company.identifier == %@", company.identifier)
+        let predicate = NSPredicate(format: "company.identifier == %@", company.identifier.stringValue!)
         fetchRequest.predicate = predicate
         fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
                                                               managedObjectContext: managedObjectContext,
@@ -37,7 +37,7 @@ class CoreDataEmployeeInteractor: NSObject, EmployeeInteractor {
     }
     
     func insertEmployee(name: String) {
-        guard let parent = try? managedObjectContext.executeFetchRequest(entityName: "QSCompany", predicate: NSPredicate(format: "identifier == %@", company.identifier)).first as? QSCompany else {
+        guard let parent = try? managedObjectContext.executeFetchRequest(entityName: "QSCompany", predicate: NSPredicate(format: "identifier == %@", company.identifier.stringValue!)).first as? QSCompany else {
             return
         }
         let employee = NSEntityDescription.insertNewObject(forEntityName: "QSEmployee", into: managedObjectContext) as! QSEmployee
@@ -49,14 +49,14 @@ class CoreDataEmployeeInteractor: NSObject, EmployeeInteractor {
     
     func update(employees: [QSEmployee]?) {
         let translatedEmployees = employees?.map {
-            Employee(name: $0.name, identifier: $0.identifier!, photo: $0.photo as Data?)
+            Employee(name: $0.name, identifier: Identifier.string(value: $0.identifier!), photo: $0.photo as Data?)
             } ?? []
         delegate?.didUpdateEmployees(translatedEmployees)
     }
     
     func fetchEmployee(with employee: Employee) -> QSEmployee? {
         return fetchedResultsController.fetchedObjects?.first(where: { (emp) -> Bool in
-            emp.identifier == employee.identifier
+            emp.identifier == employee.identifier.stringValue
         })
     }
     

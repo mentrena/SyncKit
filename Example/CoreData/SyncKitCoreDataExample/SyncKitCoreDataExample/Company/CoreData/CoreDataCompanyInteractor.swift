@@ -45,7 +45,7 @@ class CoreDataCompanyInteractor: NSObject, CompanyInteractor {
     func update(companies: [QSCompany]?) {
         let translatedCompanies = companies?.map {
             Company(name: $0.name,
-                    identifier: $0.identifier!,
+                    identifier: Identifier.string(value: $0.identifier!),
                     isSharing: self.shareController?.isObjectShared(object: $0) ?? false,
                     isShared: false)
             } ?? []
@@ -54,7 +54,7 @@ class CoreDataCompanyInteractor: NSObject, CompanyInteractor {
     
     func delete(company: Company) {
         guard let com = fetchedResultsController.fetchedObjects?.first(where: {
-            $0.identifier == company.identifier
+            $0.identifier == company.identifier.stringValue
         }) else { return }
         managedObjectContext.delete(com)
         try? managedObjectContext.save()
@@ -62,7 +62,7 @@ class CoreDataCompanyInteractor: NSObject, CompanyInteractor {
     
     func fetchCompany(with company: Company) -> QSCompany? {
         return fetchedResultsController.fetchedObjects?.first(where: { (com) -> Bool in
-            com.identifier == company.identifier
+            com.identifier == company.identifier.stringValue
         })
     }
     

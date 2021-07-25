@@ -10,7 +10,7 @@ import Foundation
 
 struct Company {
     let name: String?
-    let identifier: String
+    let identifier: Identifier
     let isSharing: Bool
     let isShared: Bool
 }

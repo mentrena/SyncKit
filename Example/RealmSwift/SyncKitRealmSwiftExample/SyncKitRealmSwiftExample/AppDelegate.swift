@@ -103,7 +103,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
         
+        #if USE_INT_KEY
+        configuration.objectTypes = [QSCompany_Int.self, QSEmployee_Int.self]
+        #else
         configuration.objectTypes = [QSCompany.self, QSEmployee.self]
+        #endif
         return configuration
     }()
 }
@@ -128,8 +132,14 @@ extension AppDelegate: SettingsManagerDelegate {
         }
         
         let removeData = UIAlertAction(title: "No", style: .destructive) { (_) in
+            #if USE_INT_KEY
+            let interactor = RealmCompanyInteractor_Int(realm: self.realm,
+                                                        shareController: nil)
+            #else
             let interactor = RealmCompanyInteractor(realm: self.realm,
                                                     shareController: nil)
+            #endif
+            
             interactor.load()
             interactor.deleteAll()
             self.createNewSynchronizer()

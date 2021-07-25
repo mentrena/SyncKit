@@ -43,7 +43,7 @@ class RealmCompanyInteractor: CompanyInteractor {
     
     func delete(company: Company) {
         guard let com = results?.first(where: {
-            ($0 as? QSCompany)?.identifier == company.identifier
+            ($0 as? QSCompany)?.identifier == company.identifier.stringValue
         }) as? QSCompany else { return }
         
         delete(realmCompany: com)
@@ -68,7 +68,7 @@ class RealmCompanyInteractor: CompanyInteractor {
     
     func modelObject(for company: Company) -> AnyObject? {
         return results?.first(where: {
-            ($0 as? QSCompany)?.identifier == company.identifier
+            ($0 as? QSCompany)?.identifier == company.identifier.stringValue
         })
     }
     
@@ -79,7 +79,7 @@ class RealmCompanyInteractor: CompanyInteractor {
     func update(companies: RLMResults<QSCompany>?) {
         let translatedCompanies = companies?.map {
             Company(name: $0.name,
-                    identifier: $0.identifier!,
+                    identifier: Identifier.string(value: $0.identifier!),
                     isSharing: self.shareController?.isObjectShared(object: $0) ?? false,
                     isShared: false)
             } ?? []
