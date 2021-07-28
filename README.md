@@ -1,6 +1,6 @@
 # SyncKit
 
-[![CI Status](http://img.shields.io/travis/mentrena/SyncKit.svg?style=flat)](https://travis-ci.org/mentrena/SyncKit)
+![GitHub branch checks state](https://img.shields.io/github/checks-status/mentrena/synckit/master)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![Version](https://img.shields.io/cocoapods/v/SyncKit.svg?style=flat)](http://cocoapods.org/pods/SyncKit)
 [![License](https://img.shields.io/cocoapods/l/SyncKit.svg?style=flat)](http://cocoapods.org/pods/SyncKit)
