@@ -1,0 +1,27 @@
+name: Test
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Pods Core Data
+      run: pod install --repo-update --project-directory=Example/CoreData/
+    - name: Pods Realm
+      run: pod install --repo-update --project-directory=Example/Realm/
+    - name: Pods RealmSwift
+      run: pod install --repo-update --project-directory=Example/RealmSwift/
+    - name: Test Core Data
+      run: set -o pipefail && xcodebuild test -workspace Example/CoreData/SyncKitCoreData.xcworkspace -scheme SyncKitCoreDataExample -sdk iphonesimulator14.4 -destination 'platform=iOS Simulator,name=iPhone 11,OS=14.4' ONLY_ACTIVE_ARCH=YES | xcpretty
+    - name: Test Realm
+      run: set -o pipefail && xcodebuild test -workspace Example/Realm/SyncKitRealm.xcworkspace -scheme SyncKitRealmExample -sdk iphonesimulator14.4 -destination 'platform=iOS Simulator,name=iPhone 11,OS=14.4' ONLY_ACTIVE_ARCH=YES | xcpretty
+    - name: Test Realm Swift
+      run: set -o pipefail && xcodebuild test -workspace Example/RealmSwift/SyncKitRealmSwift.xcworkspace -scheme SyncKitRealmSwiftExample -sdk iphonesimulator14.4 -destination 'platform=iOS Simulator,name=iPhone 11,OS=14.4' ONLY_ACTIVE_ARCH=YES | xcpretty
