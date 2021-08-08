@@ -188,6 +188,14 @@ extension CoreDataAdapter {
         return fetched?.first
     }
     
+    @available(iOS 15.0, OSX 12, *)
+    func syncedEntityForRecordZoneShare() -> QSSyncedEntity? {
+        let fetched = try? self.privateContext.executeFetchRequest(entityName: "QSSyncedEntity",
+                                                                   predicate: NSPredicate(format: "identifier == %@", CKRecordNameZoneWideShare),
+                                                                   fetchLimit: 1) as? [QSSyncedEntity]
+        return fetched?.first
+    }
+    
     func fetchEntities(state: SyncedEntityState) -> [QSSyncedEntity] {
         return try! privateContext.executeFetchRequest(entityName: "QSSyncedEntity", predicate: NSPredicate(format: "state == %lud", state.rawValue)) as! [QSSyncedEntity]
     }
@@ -247,8 +255,15 @@ extension CoreDataAdapter {
     }
     
     func storedShare(for entity: QSSyncedEntity) -> CKShare? {
+        guard let share = entity.share else {
+            return nil
+        }
+        return storedShare(inShareEntity: share)
+    }
+    
+    func storedShare(inShareEntity entity: QSSyncedEntity) -> CKShare? {
         var share: CKShare?
-        if let shareData = entity.share?.record?.encodedRecord {
+        if let shareData = entity.record?.encodedRecord {
             share = QSCoder.shared.decode(from: shareData as Data)
         }
         return share
@@ -264,6 +279,22 @@ extension CoreDataAdapter {
         } else {
             qsRecord = entity.share?.record
         }
+        qsRecord.encodedRecord = QSCoder.shared.encode(share) as NSData
+    }
+    
+    @available(iOS 15.0, OSX 12, *)
+    func saveShareForRecordZoneEntity(share: CKShare) {
+        var entity = syncedEntityForRecordZoneShare()
+        var qsRecord: QSRecord!
+        if entity == nil {
+            entity = createSyncedEntity(share: share)
+            qsRecord = QSRecord(entity: NSEntityDescription.entity(forEntityName: "QSRecord", in: privateContext)!,
+                                insertInto: privateContext)
+            entity?.record = qsRecord
+        } else {
+            qsRecord = entity?.record
+        }
+
         qsRecord.encodedRecord = QSCoder.shared.encode(share) as NSData
     }
     

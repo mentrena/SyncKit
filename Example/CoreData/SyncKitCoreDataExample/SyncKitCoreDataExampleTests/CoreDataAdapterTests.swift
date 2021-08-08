@@ -739,6 +739,65 @@ extension CoreDataAdapterTests {
         XCTAssertNotNil(empRecord)
         XCTAssertNotNil(emp2Record)
     }
+    
+    @available(iOS 15, OSX 12, *)
+    func testShareForRecordZone_noShare_returnsNil() {
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            let adapter = createAdapter()
+            let share = adapter.shareForRecordZone()
+            XCTAssertNil(share)
+        }
+    }
+    
+    @available(iOS 15, OSX 12, *)
+    func testShareForRecordZone_saveShareCalled_returnsShare() {
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            let adapter = createAdapter()
+            let share = CKShare(recordZoneID: recordZoneID)
+            adapter.saveShareForRecordZone(share: share)
+            let share2 = adapter.shareForRecordZone()
+            XCTAssertNotNil(share2)
+        }
+    }
+    
+    @available(iOS 15, OSX 12, *)
+    func testShareForRecordZone_shareDeleted_returnsNil() {
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            let adapter = createAdapter()
+            let share = CKShare(recordZoneID: recordZoneID)
+            adapter.saveShareForRecordZone(share: share)
+            adapter.deleteShareForRecordZone()
+            XCTAssertNil(adapter.shareForRecordZone())
+        }
+    }
+    
+    @available(iOS 15, OSX 12, *)
+    func testSaveChangesInRecords_includesShareForRecordZone_savesShare() {
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            let adapter = createAdapter()
+            let shareRecord = CKShare(recordZoneID: recordZoneID)
+            waitUntilSynced(adapter: adapter, downloaded: [shareRecord])
+            let share = adapter.shareForRecordZone()
+            XCTAssertNotNil(share)
+            XCTAssertEqual(share?.recordID.recordName, CKRecordNameZoneWideShare)
+        }
+    }
+    
+    @available(iOS 15, OSX 12, *)
+    func testDeleteRecordsWithIDs_containsShareForRecordZone_deletesShare() {
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            let adapter = createAdapter()
+            let share = CKShare(recordZoneID: recordZoneID)
+            adapter.saveShareForRecordZone(share: share)
+            waitUntilSynced(adapter: adapter, deleted: [share.recordID])
+            XCTAssertNil(adapter.shareForRecordZone())
+        }
+    }
 }
 
 // MARK: - Transformable

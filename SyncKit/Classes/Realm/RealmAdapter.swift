@@ -504,6 +504,12 @@ struct ObjectUpdate {
         return getSyncedEntity(objectIdentifier: identifier, realm: realm)
     }
     
+    @available(iOS 15, OSX 12, *)
+    func syncedEntityForRecordZoneShare(realm: RLMRealm) -> SyncedEntity? {
+        return getSyncedEntity(objectIdentifier: CKRecordNameZoneWideShare, realm: realm)
+    }
+
+    
     func getStringIdentifier(for object: RLMObject, usingPrimaryKey key: String) -> String {
 
         let objectId = object.value(forKey: key)
@@ -752,10 +758,31 @@ struct ObjectUpdate {
         
         qsRecord?.encodedRecord = encodedRecord(share, onlySystemFields: false)
     }
+    @available(iOS 15, OSX 12, *)
+    func saveShareForRecordZone(share: CKShare, realmProvider: RealmProvider) {
+        var entity = syncedEntityForRecordZoneShare(realm: realmProvider.persistenceRealm)
+        var qsRecord: Record!
+        if entity == nil {
+            entity = createSyncedEntity(for: share, realmProvider: realmProvider)
+            qsRecord = Record()
+            realmProvider.persistenceRealm.add(qsRecord)
+            entity?.record = qsRecord
+        } else {
+            qsRecord = entity?.record
+        }
+        qsRecord.encodedRecord = encodedRecord(share, onlySystemFields: false)
+
+    }
     
     func getShare(for entity: SyncedEntity) -> CKShare? {
-        
-        if let recordData = entity.share?.record?.encodedRecord {
+        guard let share = entity.share else {
+            return nil
+        }
+        return getStoredShare(inShareEntity: share)
+    }
+
+    func getStoredShare(inShareEntity entity: SyncedEntity) -> CKShare? {
+        if let recordData = entity.record?.encodedRecord {
             let unarchiver = NSKeyedUnarchiver(forReadingWith: recordData)
             let share = CKShare(coder: unarchiver)
             unarchiver.finishDecoding()
@@ -764,6 +791,7 @@ struct ObjectUpdate {
             return nil
         }
     }
+
     
     func createSyncedEntity(for share: CKShare, realmProvider: RealmProvider) -> SyncedEntity {
         
@@ -1300,4 +1328,58 @@ struct ObjectUpdate {
         
         return records ?? []
     }
+    
+    @available(iOS 15.0, OSX 12, *)
+    public func shareForRecordZone() -> CKShare? {
+        guard realmProvider != nil else {
+            return nil
+        }
+        
+        var share: CKShare?
+        
+        executeOnMainQueue {
+            if let syncedEntity = syncedEntityForRecordZoneShare(realm: self.realmProvider.persistenceRealm) {
+                share = getStoredShare(inShareEntity: syncedEntity)
+            }
+        }
+        
+        return share
+    }
+    
+    /// Store CKShare for the record zone.
+    /// - Parameters:
+    ///   - share: `CKShare` object to save.
+    @available(iOS 15.0, OSX 12, *)
+    public func saveShareForRecordZone(share: CKShare) {
+        guard realmProvider != nil else {
+            return
+        }
+        
+        executeOnMainQueue {
+            self.realmProvider.persistenceRealm.beginWriteTransaction()
+            self.saveShareForRecordZone(share: share, realmProvider: self.realmProvider)
+            try? self.realmProvider.persistenceRealm.commitWriteTransaction()
+        }
+    }
+    
+    /// Delete existing `CKShare` for adapter's record zone.
+    @available(iOS 15.0, OSX 12, *)
+    public func deleteShareForRecordZone() {
+        guard realmProvider != nil else {
+            return
+        }
+        
+        executeOnMainQueue {
+            if let syncedEntity = syncedEntityForRecordZoneShare(realm: self.realmProvider.persistenceRealm) {
+                
+                self.realmProvider.persistenceRealm.beginWriteTransaction()
+                if let record = syncedEntity.record {
+                    self.realmProvider.persistenceRealm.delete(record)
+                }
+                self.realmProvider.persistenceRealm.delete(syncedEntity)
+                try? self.realmProvider.persistenceRealm.commitWriteTransaction()
+            }
+        }
+    }
+
 }

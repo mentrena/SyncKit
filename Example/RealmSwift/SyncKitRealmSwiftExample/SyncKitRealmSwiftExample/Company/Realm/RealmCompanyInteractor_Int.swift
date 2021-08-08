@@ -80,7 +80,7 @@ class RealmCompanyInteractor_Int: CompanyInteractor {
     func update(companies: [QSCompany_Int]?) {
         let translatedCompanies = companies?.map {
             Company(name: $0.name,
-                    identifier: .int(value: $0.identifier!),
+                    identifier: .int(value: $0.identifier),
                     isSharing: self.shareController?.isObjectShared(object: $0) ?? false,
                     isShared: false)
             } ?? []

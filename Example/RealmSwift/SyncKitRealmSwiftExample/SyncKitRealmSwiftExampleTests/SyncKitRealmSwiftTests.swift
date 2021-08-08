@@ -1281,7 +1281,6 @@ class SyncKitRealmSwiftTests: XCTestCase, RealmSwiftAdapterDelegate {
             let share = CKShare(rootRecord: record!)
             
             adapter.save(share: share, for: company!)
-            adapter.save(share: share, for: company!)
             
             let share2 = adapter.share(for: company!)
             XCTAssertNotNil(share2)
@@ -1395,6 +1394,100 @@ class SyncKitRealmSwiftTests: XCTestCase, RealmSwiftAdapterDelegate {
             XCTAssertTrue(record.recordID.recordName.contains("com1") ||
                 record.recordID.recordName.contains("emp1") ||
                 record.recordID.recordName.contains("emp2"))
+        }
+    }
+    
+    @available(iOS 15, OSX 12, *)
+    func testShareForRecordZone_noShare_returnsNil() {
+        let cases = TestCase.defaultCases
+        cases.forEach { tc in
+            let (_, adapter, _, _) = defaultTestObjects(testCase: tc, name: "61")
+            let share = adapter.shareForRecordZone()
+            XCTAssertNil(share)
+        }
+    }
+    
+    @available(iOS 15, OSX 12, *)
+    func testShareForRecordZone_saveShareCalled_returnsShare() {
+        
+        let cases = TestCase.defaultCases
+        cases.forEach { tc in
+            let (_, adapter, _, _) = defaultTestObjects(testCase: tc, name: "62")
+            
+            let share = CKShare(recordZoneID: adapter.recordZoneID)
+            
+            adapter.saveShareForRecordZone(share: share)
+            
+            let share2 = adapter.shareForRecordZone()
+            XCTAssertNotNil(share2)
+        }
+    }
+    
+    @available(iOS 15, OSX 12, *)
+    func testShareForRecordZone_shareDeleted_returnsNil() {
+        
+        let cases = TestCase.defaultCases
+        cases.forEach { tc in
+            let (_, adapter, _, _) = defaultTestObjects(testCase: tc, name: "63")
+            
+            
+            let share = CKShare(recordZoneID: adapter.recordZoneID)
+            
+            adapter.saveShareForRecordZone(share: share)
+            
+            XCTAssertNotNil(adapter.shareForRecordZone())
+            
+            adapter.deleteShareForRecordZone()
+            
+            XCTAssertNil(adapter.shareForRecordZone())
+        }
+    }
+    
+    @available(iOS 15, OSX 12, *)
+    func testSaveChangesInRecords_includesShareForRecordZone_savesShare() {
+        
+        let cases = TestCase.defaultCases
+        cases.forEach { tc in
+            let (_, adapter, _, _) = defaultTestObjects(testCase: tc, name: "64", insertCompany: false, insertEmployee: false)
+
+            let shareRecord = CKShare(recordZoneID: adapter.recordZoneID)
+            
+            let expectation = self.expectation(description: "synced")
+            fullySync(adapter: adapter, downloaded: [shareRecord], deleted: []) { (_, _, _) in
+                expectation.fulfill()
+            }
+            
+            waitForExpectations(timeout: 1, handler: nil)
+            
+            let share = adapter.shareForRecordZone()
+            
+            XCTAssertNotNil(share)
+            XCTAssertTrue(share?.recordID.recordName == CKRecordNameZoneWideShare)
+        }
+    }
+    
+    @available(iOS 15, OSX 12, *)
+    func testDeleteRecordsWithIDs_containsShareForRecordZone_deletesShare() {
+        let cases = TestCase.defaultCases
+        cases.forEach { tc in
+            let (_, adapter, _, _) = defaultTestObjects(testCase: tc, name: "65")
+            
+            let share = CKShare(recordZoneID: adapter.recordZoneID)
+            
+            adapter.saveShareForRecordZone(share: share)
+            
+            let savedShare = adapter.shareForRecordZone()
+            XCTAssertNotNil(savedShare)
+            
+            let expectation = self.expectation(description: "synced")
+            fullySync(adapter: adapter, downloaded: [], deleted: [share.recordID]) { (_, _, _) in
+                expectation.fulfill()
+            }
+            
+            waitForExpectations(timeout: 1, handler: nil)
+            
+            let updatedShare = adapter.shareForRecordZone()
+            XCTAssertNil(updatedShare)
         }
     }
     

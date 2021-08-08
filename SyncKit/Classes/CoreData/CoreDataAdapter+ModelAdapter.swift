@@ -317,6 +317,42 @@ extension CoreDataAdapter {
         }
     }
     
+    @available(iOS 15.0, OSX 12, *)
+    public func shareForRecordZone() -> CKShare? {
+        var record: CKShare?
+        privateContext.performAndWait {
+            if let share = syncedEntityForRecordZoneShare() {
+                record = self.storedShare(inShareEntity: share)
+            }
+        }
+        return record
+    }
+    
+    /// Store CKShare for the record zone.
+    /// - Parameters:
+    ///   - share: `CKShare` object to save.
+    @available(iOS 15.0, OSX 12, *)
+    public func saveShareForRecordZone(share: CKShare) {
+        privateContext.performAndWait {
+            self.saveShareForRecordZoneEntity(share: share)
+            self.savePrivateContext()
+        }
+    }
+    
+    /// Delete existing `CKShare` for adapter's record zone.
+    @available(iOS 15.0, OSX 12, *)
+    public func deleteShareForRecordZone() {
+        privateContext.performAndWait {
+            if let share = syncedEntityForRecordZoneShare() {
+                if let record = share.record {
+                    self.privateContext.delete(record)
+                }
+                self.privateContext.delete(share)
+                self.savePrivateContext()
+            }
+        }
+    }
+    
     public func recordsToUpdateParentRelationshipsForRoot(_ object: AnyObject) -> [CKRecord] {
         guard let object = object as? IdentifiableManagedObject,
             privateContext != nil else { return [] }
