@@ -27,3 +27,13 @@ import Foundation
     /// Name of the parent key property.
     static func parentKey() -> String
 }
+
+/**
+ *  Can be adopted by classes to use CloudKit encryption for some fields
+ */
+@available(iOS 15, OSX 12, *)
+@objc public protocol EncryptedObject: AnyObject {
+    
+    /// Name of the fields that should use encryption
+    static func encryptedFields() -> [String]
+}

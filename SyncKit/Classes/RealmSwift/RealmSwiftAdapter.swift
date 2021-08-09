@@ -132,6 +132,7 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
     var pendingTrackingUpdates = [ObjectUpdate]()
     var childRelationships = [String: Array<ChildRelationship>]()
     var modelTypes = [String: Object.Type]()
+    var entityEncryptedFields = [String: Set<String>]()
     public private(set) var hasChanges = false
     
     /* Should be initialized on main queue */
@@ -145,6 +146,7 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
         
         executeOnMainQueue {
             setupTypeNamesLookup()
+            setupEncryptedFields()
             setup()
             setupChildrenRelationshipsLookup()
         }
@@ -186,6 +188,16 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
         targetRealmConfiguration.objectTypes?.forEach { objectType in
 
             modelTypes[objectType.className()] = objectType as? Object.Type
+        }
+    }
+    
+    func setupEncryptedFields() {
+        if #available(iOS 15, OSX 12, *) {
+            targetRealmConfiguration.objectTypes?.forEach { objectType in
+                if let encryptedEntity = objectType as? EncryptedObject.Type {
+                    entityEncryptedFields[objectType.className()] = Set(encryptedEntity.encryptedFields())
+                }
+            }
         }
     }
     
@@ -629,24 +641,31 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
             return
         }
         
-        let value = record[key]
-        if let reference = value as? CKRecord.Reference {
-            // Save relationship to be applied after all records have been downloaded and persisted
-            // to ensure target of the relationship has already been created
-            let recordName = reference.recordID.recordName
-            let separatorRange = recordName.range(of: ".")!
-            let objectIdentifier = String(recordName[separatorRange.upperBound...])
-            savePendingRelationship(name: key, syncedEntity: syncedEntity, targetIdentifier: objectIdentifier, realm: realmProvider.persistenceRealm)
-        } else if let asset = value as? CKAsset {
-            if let fileURL = asset.fileURL,
-                let data =  NSData(contentsOf: fileURL) {
-                object.setValue(data, forKey: key)
+        if let encrypted = entityEncryptedFields[syncedEntity.entityType],
+           encrypted.contains(key) {
+            if #available(iOS 15, OSX 12, *) {
+                object.setValue(record.encryptedValues[key], forKey: key)
             }
-        } else if value != nil || object.objectSchema[key]?.isOptional == true {
-            // If property is not a relationship or value is nil and property is optional.
-            // If value is nil and property is non-optional, it is ignored. This is something that could happen
-            // when extending an object model with a new non-optional property, when an old record is applied to the object.
-            object.setValue(value, forKey: key)
+        } else {
+            let value = record[key]
+            if let reference = value as? CKRecord.Reference {
+                // Save relationship to be applied after all records have been downloaded and persisted
+                // to ensure target of the relationship has already been created
+                let recordName = reference.recordID.recordName
+                let separatorRange = recordName.range(of: ".")!
+                let objectIdentifier = String(recordName[separatorRange.upperBound...])
+                savePendingRelationship(name: key, syncedEntity: syncedEntity, targetIdentifier: objectIdentifier, realm: realmProvider.persistenceRealm)
+            } else if let asset = value as? CKAsset {
+                if let fileURL = asset.fileURL,
+                    let data =  NSData(contentsOf: fileURL) {
+                    object.setValue(data, forKey: key)
+                }
+            } else if value != nil || object.objectSchema[key]?.isOptional == true {
+                // If property is not a relationship or value is nil and property is optional.
+                // If value is nil and property is non-optional, it is ignored. This is something that could happen
+                // when extending an object model with a new non-optional property, when an old record is applied to the object.
+                object.setValue(value, forKey: key)
+            }
         }
     }
     
@@ -867,6 +886,8 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
             parentKey = type(of: childObject).parentKey()
         }
         
+        let encryptedFields = entityEncryptedFields[syncedEntity.entityType]
+        
         var parent: Object? = nil
         
         for property in object!.objectSchema.properties {
@@ -896,18 +917,25 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
                             property.type != PropertyType.linkingObjects &&
                             !(property.name == objectClass.primaryKey()!) {
                     
-                    let value = object!.value(forKey: property.name)
-                    if property.type == PropertyType.data,
-                        let data = value as? Data,
-                        forceDataTypeInsteadOfAsset == false  {
-                        
-                        let fileURL = self.tempFileManager.store(data: data)
-                        let asset = CKAsset(fileURL: fileURL)
-                        record[property.name] = asset
-                    } else if value == nil {
-                        record[property.name] = nil
-                    } else if let recordValue = value as? CKRecordValue {
-                        record[property.name] = recordValue
+                    if let encrypted = encryptedFields,
+                       encrypted.contains(property.name) {
+                        if #available(iOS 15, OSX 12, *) {
+                            record.encryptedValues[property.name] = object!.value(forKey: property.name) as? CKRecordValue
+                        }
+                    } else {
+                        let value = object!.value(forKey: property.name)
+                        if property.type == PropertyType.data,
+                            let data = value as? Data,
+                            forceDataTypeInsteadOfAsset == false  {
+                            
+                            let fileURL = self.tempFileManager.store(data: data)
+                            let asset = CKAsset(fileURL: fileURL)
+                            record[property.name] = asset
+                        } else if value == nil {
+                            record[property.name] = nil
+                        } else if let recordValue = value as? CKRecordValue {
+                            record[property.name] = recordValue
+                        }
                     }
                 }
             }

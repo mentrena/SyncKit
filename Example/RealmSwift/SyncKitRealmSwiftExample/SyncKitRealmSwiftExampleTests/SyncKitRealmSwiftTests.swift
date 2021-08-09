@@ -159,6 +159,20 @@ class SyncKitRealmSwiftTests: XCTestCase, RealmSwiftAdapterDelegate {
         }
     }
     
+    @discardableResult
+    func waitUntilSynced(adapter: ModelAdapter, downloaded: [CKRecord] = [], deleted: [CKRecord.ID] = []) -> (updated: [CKRecord], deleted: [CKRecord.ID]) {
+        let expectation = self.expectation(description: "synced")
+        var updatedRecordsResult: [CKRecord]!
+        var deletedRecordIDsResult: [CKRecord.ID]!
+        fullySync(adapter: adapter, downloaded: downloaded, deleted: deleted) { (updatedRecords, deletedRecordIDs, _) in
+            updatedRecordsResult = updatedRecords
+            deletedRecordIDsResult = deletedRecordIDs
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: 1, handler: nil)
+        return (updatedRecordsResult ?? [], deletedRecordIDsResult ?? [])
+    }
+    
     struct TestCase {
         let keyType: PropertyType
         let values: [String: Any]!
@@ -1646,5 +1660,59 @@ class SyncKitRealmSwiftTests: XCTestCase, RealmSwiftAdapterDelegate {
         let companies = realm.objects(QSCompany.self)
         
         XCTAssertEqual(companies.first?.name, "company1")
+    }
+}
+
+// MARK: - Encrypted fields
+@available(iOS 15, OSX 12, *)
+extension SyncKitRealmSwiftTests {
+    
+    func testRecordsToUpload_encryptedFields_areEncryptedInRecord() {
+        var configuration = Realm.Configuration()
+        configuration.inMemoryIdentifier = "t100"
+        configuration.objectTypes = [EntityWithEncryptedFields.self]
+        let realm = try! Realm(configuration: configuration)
+        
+        insertObject(values: ["identifier": "1", "name": "company1", "secret": "mySecret"],
+                     realm: realm,
+                     objectType: EntityWithEncryptedFields.self)
+        
+        let adapter = realmAdapter(targetConfiguration: realm.configuration,
+                                   persistenceConfiguration: persistenceConfigurationWith(identifier: "p100"))
+        
+        adapter.prepareToImport()
+        let records = adapter.recordsToUpload(limit: 10)
+        adapter.didFinishImport(with: nil)
+        
+        XCTAssertTrue(records.count > 0)
+        if let record = records.first {
+            XCTAssertEqual(record["name"] as? String, "company1")
+            XCTAssertNil(record["secret"])
+            XCTAssertEqual(record.encryptedValues["secret"], "mySecret")
+        }
+    }
+    
+    func testSaveChangesInRecord_encryptedFields_changesAreSaved() {
+        var configuration = Realm.Configuration()
+        configuration.inMemoryIdentifier = "t101"
+        configuration.objectTypes = [EntityWithEncryptedFields.self]
+        let realm = try! Realm(configuration: configuration)
+        
+        let adapter = realmAdapter(targetConfiguration: realm.configuration,
+                                   persistenceConfiguration: persistenceConfigurationWith(identifier: "p101"))
+        
+        let record = CKRecord(recordType: "EntityWithEncryptedFields", recordID: CKRecord.ID(recordName: "EntityWithEncryptedFields.myID", zoneID: adapter.recordZoneID))
+        record["name"] = "name"
+        record.encryptedValues["secret"] = "mySecret"
+        
+        waitUntilSynced(adapter: adapter, downloaded: [record], deleted: [])
+        
+        let object = realm.objects(EntityWithEncryptedFields.self).first
+        XCTAssertNotNil(object)
+        if let object = object {
+            XCTAssertEqual(object.name, "name")
+            XCTAssertEqual(object.identifier, "myID")
+            XCTAssertEqual(object.secret, "mySecret")
+        }
     }
 }

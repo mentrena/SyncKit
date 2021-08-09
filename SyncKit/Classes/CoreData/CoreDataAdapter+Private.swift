@@ -339,6 +339,7 @@ extension CoreDataAdapter {
             originalObject = self.managedObject(entityName: entityType, identifier: objectID, context: context)
             entityDescription = NSEntityDescription.entity(forEntityName: entityType, in: context)
             let primaryKey = self.identifierFieldName(forEntity: entityType)
+            let encryptedFields = self.entityEncryptedFields[entityType]
             // Add attributes
             entityDescription.attributesByName.forEach({ (attributeName, attributeDescription) in
                 if attributeName != primaryKey &&
@@ -359,6 +360,12 @@ extension CoreDataAdapter {
                         let value = value,
                         let transformed = self.transformedValue(value, valueTransformerName: attributeDescription.valueTransformerName) as? CKRecordValueProtocol{
                         record[attributeName] = transformed
+                    } else if let encrypted = encryptedFields,
+                              encrypted.contains(attributeName) {
+                        if #available(iOS 15, OSX 12, *) {
+                            record.encryptedValues[attributeName] = value as? CKRecordValueProtocol
+                        }
+                        // Else not possible, since the EncryptedObject protocol is only declared for CloudKit versions that support encryption
                     } else {
                         record[attributeName] = value as? CKRecordValueProtocol
                     }
@@ -511,18 +518,28 @@ extension CoreDataAdapter {
             return
         }
         
-        let value = record[attributeName]
-        if let value = value as? CKAsset {
-            guard let url = value.fileURL,
-            let data = try? Data(contentsOf: url) else { return }
-            object.setValue(data, forKey: attributeName)
-        } else if let value = value,
-            attributeDescription.attributeType == .transformableAttributeType {
-            object.setValue(reverseTransformedValue(value,
-                                                    valueTransformerName: attributeDescription.valueTransformerName),
-                            forKey: attributeName)
+        let encryptedFields = entityEncryptedFields[object.entity.name!]
+        
+        if let encrypted = encryptedFields,
+           encrypted.contains(attributeName) {
+            if #available(iOS 15, OSX 12, *) {
+                object.setValue(record.encryptedValues[attributeName], forKey: attributeName)
+            }
+            // Else not possible, since the EncryptedObject protocol is only declared for CloudKit versions that support encryption
         } else {
-            object.setValue(value, forKey: attributeName)
+            let value = record[attributeName]
+            if let value = value as? CKAsset {
+                guard let url = value.fileURL,
+                      let data = try? Data(contentsOf: url) else { return }
+                object.setValue(data, forKey: attributeName)
+            } else if let value = value,
+                      attributeDescription.attributeType == .transformableAttributeType {
+                object.setValue(reverseTransformedValue(value,
+                                                        valueTransformerName: attributeDescription.valueTransformerName),
+                                forKey: attributeName)
+            } else {
+                object.setValue(value, forKey: attributeName)
+            }
         }
     }
     

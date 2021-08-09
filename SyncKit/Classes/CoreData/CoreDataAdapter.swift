@@ -117,6 +117,7 @@ import CloudKit
                                                object: targetContext)
         setupPrimaryKeysLookup()
         setupChildrenRelationshipsLookup()
+        setupEncryptedFields()
         performInitialSetupIfNeeded()
     }
     
@@ -163,6 +164,7 @@ import CloudKit
     let stack: CoreDataStack
     var isMergingImportedChanges = false
     var entityPrimaryKeys = [String: PropertyDescription]()
+    var entityEncryptedFields = [String: Set<String>]()
     lazy var tempFileManager: TempFileManager = {
         TempFileManager(identifier: "\(self.recordZoneID.ownerName).\(self.recordZoneID.zoneName)")
     }()
@@ -204,6 +206,24 @@ extension CoreDataAdapter {
                         childrenRelationships[parentName] = [ChildRelationship]()
                     }
                     childrenRelationships[parentName]?.append(relationship)
+                }
+            }
+        }
+    }
+    
+    private func setupEncryptedFields() {
+        if #available(iOS 15, OSX 12, *) {
+            targetContext.performAndWait {
+                guard let entities = self.targetContext.persistentStoreCoordinator?.managedObjectModel.entities else { return }
+                for entityDescription in entities {
+                    let entityClass: AnyClass? = NSClassFromString(entityDescription.managedObjectClassName)
+                    if let primaryKeyClass = entityClass as? EncryptedObject.Type,
+                       let entityName = entityDescription.name {
+                        let fields = primaryKeyClass.encryptedFields()
+                        if !fields.isEmpty {
+                            entityEncryptedFields[entityName] = Set(fields)
+                        }
+                    }
                 }
             }
         }

@@ -932,6 +932,57 @@ extension CoreDataAdapterTests {
     }
 }
 
+// MARK: - Field encryption
+
+@available(iOS 15, OSX 12, *)
+extension CoreDataAdapterTests {
+    func testRecordsToUpload_encryptedFields_areEncryptedInRecord() {
+        
+        targetCoreDataStack = coreDataStack(modelName: "EncryptedModel")
+        persistenceCoreDataStack = coreDataStack(model: CoreDataAdapter.persistenceModel, concurrencyType: .privateQueueConcurrencyType)
+        
+        let objectID = UUID().uuidString
+        insert(entityType: "EntityWithEncryptedFields", properties: ["name": "name", "identifier": objectID, "secret": "mySecret"], context: targetCoreDataStack.managedObjectContext)
+        
+        let adapter = createAdapter(persistenceStack: persistenceCoreDataStack, targetContext: targetCoreDataStack.managedObjectContext)
+        
+        let (records, _) = waitUntilSynced(adapter: adapter)
+        
+        let record = records.first
+        XCTAssertNotNil(record)
+        if let record = record {
+            XCTAssertEqual(record["name"], "name")
+            XCTAssertEqual(record.recordID.recordName, "EntityWithEncryptedFields.\(objectID)")
+            XCTAssertNil(record["secret"])
+            XCTAssertEqual(record.encryptedValues["secret"], "mySecret")
+        }
+    }
+    
+    func testSaveChangesInRecord_encryptedFields_changesAreSaved() {
+        
+        targetCoreDataStack = coreDataStack(modelName: "EncryptedModel")
+        persistenceCoreDataStack = coreDataStack(model: CoreDataAdapter.persistenceModel, concurrencyType: .privateQueueConcurrencyType)
+        
+        let adapter = createAdapter(persistenceStack: persistenceCoreDataStack, targetContext: targetCoreDataStack.managedObjectContext)
+        
+        let record = CKRecord(recordType: "EntityWithEncryptedFields", recordID: CKRecord.ID(recordName: "EntityWithEncryptedFields.myID", zoneID: recordZoneID))
+        record["name"] = "name"
+        record.encryptedValues["secret"] = "mySecret"
+        
+        waitUntilSynced(adapter: adapter, downloaded: [record], deleted: [])
+        
+        let object = try? targetCoreDataStack.managedObjectContext.executeFetchRequest(entityName: "EntityWithEncryptedFields").first as? EntityWithEncryptedFields
+        XCTAssertNotNil(object)
+        if let object = object {
+            XCTAssertEqual(object.name, "name")
+            XCTAssertEqual(object.secret, "mySecret")
+            XCTAssertEqual(object.identifier, "myID")
+        }
+    }
+}
+
+// MARK: - Utilities
+
 extension CoreDataAdapterTests: CoreDataAdapterDelegate, CoreDataAdapterConflictResolutionDelegate {
     func coreDataAdapter(_ adapter: CoreDataAdapter, requestsContextSaveWithCompletion completion: (Error?) -> ()) {
         didCallRequestContextSave = true

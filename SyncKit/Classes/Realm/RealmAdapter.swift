@@ -131,6 +131,8 @@ struct ObjectUpdate {
     var pendingTrackingUpdates = [ObjectUpdate]()
     var childRelationships = [String: Array<ChildRelationship>]()
     var modelTypes = [String: RLMObject.Type]()
+    var entityEncryptedFields = [String: Set<String>]()
+    
     @objc public private(set) var hasChanges = false
     
     /* Should be initialized on main queue */
@@ -144,6 +146,7 @@ struct ObjectUpdate {
         
         executeOnMainQueue {
             setupTypeNamesLookup()
+            setupEncryptedFields()
             setup()
             setupChildrenRelationshipsLookup()
         }
@@ -188,6 +191,18 @@ struct ObjectUpdate {
             }
         }
     }
+    
+    func setupEncryptedFields() {
+        if #available(iOS 15, OSX 12, *) {
+            targetRealmConfiguration.objectClasses?.forEach { objectType in
+                if let objectType = objectType as? RLMObject.Type,
+                   let encryptedType = objectType as? EncryptedObject.Type {
+                    entityEncryptedFields[objectType.className()] = Set(encryptedType.encryptedFields())
+                }
+            }
+        }
+    }
+
     
     func setup() {
         
@@ -616,22 +631,29 @@ struct ObjectUpdate {
             return
         }
         
-        let value = record[key]
-        if let reference = value as? CKRecord.Reference {
-            // Save relationship to be applied after all records have been downloaded and persisted
-            // to ensure target of the relationship has already been created
-            let recordName = reference.recordID.recordName
-            let separatorRange = recordName.range(of: ".")!
-            let objectIdentifier = String(recordName[separatorRange.upperBound...])
-            savePendingRelationship(name: key, syncedEntity: syncedEntity, targetIdentifier: objectIdentifier, realm: realmProvider.persistenceRealm)
-        } else if let asset = value as? CKAsset {
-            if let fileURL = asset.fileURL,
-                let data =  NSData(contentsOf: fileURL) {
-                object.setValue(data, forKey: key)
+        if let encrypted = entityEncryptedFields[syncedEntity.entityType],
+           encrypted.contains(key) {
+            if #available(iOS 15, OSX 12, *) {
+                object.setValue(record.encryptedValues[key], forKey: key)
             }
         } else {
-            // If property is not a relationship or property is nil
-            object.setValue(value, forKey: key)
+            let value = record[key]
+            if let reference = value as? CKRecord.Reference {
+                // Save relationship to be applied after all records have been downloaded and persisted
+                // to ensure target of the relationship has already been created
+                let recordName = reference.recordID.recordName
+                let separatorRange = recordName.range(of: ".")!
+                let objectIdentifier = String(recordName[separatorRange.upperBound...])
+                savePendingRelationship(name: key, syncedEntity: syncedEntity, targetIdentifier: objectIdentifier, realm: realmProvider.persistenceRealm)
+            } else if let asset = value as? CKAsset {
+                if let fileURL = asset.fileURL,
+                    let data =  NSData(contentsOf: fileURL) {
+                    object.setValue(data, forKey: key)
+                }
+            } else {
+                // If property is not a relationship or property is nil
+                object.setValue(value, forKey: key)
+            }
         }
     }
     
@@ -851,6 +873,8 @@ struct ObjectUpdate {
             parentKey = type(of: childObject).parentKey()
         }
         
+        let encryptedFields = entityEncryptedFields[syncedEntity.entityType]
+        
         var parent: RLMObject? = nil
         
         for property in object!.objectSchema.properties {
@@ -881,18 +905,25 @@ struct ObjectUpdate {
                 property.type != RLMPropertyType.linkingObjects &&
                 !(property.name == objectClass.primaryKey()!) {
                     
-                    let value = object!.value(forKey: property.name)
-                    if property.type == RLMPropertyType.data,
-                        let data = value as? Data,
-                        forceDataTypeInsteadOfAsset == false  {
-                        
-                        let fileURL = self.tempFileManager.store(data: data)
-                        let asset = CKAsset(fileURL: fileURL)
-                        record[property.name] = asset
-                    } else if value == nil {
-                        record[property.name] = nil
-                    } else if let recordValue = value as? CKRecordValue {
-                        record[property.name] = recordValue
+                    if let encrypted = encryptedFields,
+                       encrypted.contains(property.name) {
+                        if #available(iOS 15, OSX 12, *) {
+                            record.encryptedValues[property.name] = object!.value(forKey: property.name) as? CKRecordValue
+                        }
+                    } else {
+                        let value = object!.value(forKey: property.name)
+                        if property.type == RLMPropertyType.data,
+                            let data = value as? Data,
+                            forceDataTypeInsteadOfAsset == false  {
+                            
+                            let fileURL = self.tempFileManager.store(data: data)
+                            let asset = CKAsset(fileURL: fileURL)
+                            record[property.name] = asset
+                        } else if value == nil {
+                            record[property.name] = nil
+                        } else if let recordValue = value as? CKRecordValue {
+                            record[property.name] = recordValue
+                        }
                     }
                 }
             }
