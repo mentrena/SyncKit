@@ -24,6 +24,7 @@
 		640C334F22A98F7F00A85508 /* CoreDataAdapter+Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 640C334E22A98F7F00A85508 /* CoreDataAdapter+Notifications.swift */; };
 		640C335122AC099200A85508 /* DefaultCoreDataAdapterDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 640C335022AC099200A85508 /* DefaultCoreDataAdapterDelegate.swift */; };
 		640C335322AC0ABC00A85508 /* CoreDataMultiFetchedResultsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 640C335222AC0ABC00A85508 /* CoreDataMultiFetchedResultsController.swift */; };
+		64277F6E271330F20073B69F /* PrimaryKeyValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64277F6D271330F20073B69F /* PrimaryKeyValue.swift */; };
 		6433B36022BE497F00EAC16C /* CloudKitSynchronizer+CoreData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6433B35F22BE497F00EAC16C /* CloudKitSynchronizer+CoreData.swift */; };
 		6433B36222BE4AA300EAC16C /* DefaultCoreDataStackProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6433B36122BE4AA300EAC16C /* DefaultCoreDataStackProvider.swift */; };
 		6433B36722BE4D0900EAC16C /* DefaultCoreDataAdapterProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6433B36622BE4D0900EAC16C /* DefaultCoreDataAdapterProvider.swift */; };
@@ -68,6 +69,7 @@
 		640C334E22A98F7F00A85508 /* CoreDataAdapter+Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "CoreDataAdapter+Notifications.swift"; path = "../../../../../SyncKit/Classes/CoreData/CoreDataAdapter+Notifications.swift"; sourceTree = "<group>"; };
 		640C335022AC099200A85508 /* DefaultCoreDataAdapterDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DefaultCoreDataAdapterDelegate.swift; path = ../../../../../SyncKit/Classes/CoreData/DefaultCoreDataAdapterDelegate.swift; sourceTree = "<group>"; };
 		640C335222AC0ABC00A85508 /* CoreDataMultiFetchedResultsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CoreDataMultiFetchedResultsController.swift; path = ../../../../../SyncKit/Classes/CoreData/CoreDataMultiFetchedResultsController.swift; sourceTree = "<group>"; };
+		64277F6D271330F20073B69F /* PrimaryKeyValue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PrimaryKeyValue.swift; path = ../../../../../SyncKit/Classes/CoreData/PrimaryKeyValue.swift; sourceTree = "<group>"; };
 		6433B35F22BE497F00EAC16C /* CloudKitSynchronizer+CoreData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "CloudKitSynchronizer+CoreData.swift"; path = "../../../../../SyncKit/Classes/CoreData/CloudKitSynchronizer+CoreData.swift"; sourceTree = "<group>"; };
 		6433B36122BE4AA300EAC16C /* DefaultCoreDataStackProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DefaultCoreDataStackProvider.swift; path = ../../../../../SyncKit/Classes/CoreData/DefaultCoreDataStackProvider.swift; sourceTree = "<group>"; };
 		6433B36622BE4D0900EAC16C /* DefaultCoreDataAdapterProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DefaultCoreDataAdapterProvider.swift; path = ../../../../../SyncKit/Classes/CoreData/DefaultCoreDataAdapterProvider.swift; sourceTree = "<group>"; };
@@ -155,6 +157,7 @@
 				640C335222AC0ABC00A85508 /* CoreDataMultiFetchedResultsController.swift */,
 				64B3A3B922B54AEF00E4E942 /* QSManagedObjectContext.swift */,
 				6433B36622BE4D0900EAC16C /* DefaultCoreDataAdapterProvider.swift */,
+				64277F6D271330F20073B69F /* PrimaryKeyValue.swift */,
 				6433B3FA22C0068E00EAC16C /* QSCloudKitSyncModel.xcdatamodeld */,
 			);
 			path = CoreData;
@@ -301,6 +304,7 @@
 				640C334522A44C0400A85508 /* CoreDataAdapter.swift in Sources */,
 				6433B3FE22C0068E00EAC16C /* QSCloudKitSyncModel.xcdatamodeld in Sources */,
 				640C335322AC0ABC00A85508 /* CoreDataMultiFetchedResultsController.swift in Sources */,
+				64277F6E271330F20073B69F /* PrimaryKeyValue.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

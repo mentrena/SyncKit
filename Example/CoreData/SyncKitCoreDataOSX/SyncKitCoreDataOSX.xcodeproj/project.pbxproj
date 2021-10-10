@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		64277F70271330FF0073B69F /* PrimaryKeyValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64277F6F271330FF0073B69F /* PrimaryKeyValue.swift */; };
 		6435A457251C89F400A6167A /* ModifyRecordsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6435A456251C89F400A6167A /* ModifyRecordsOperation.swift */; };
 		648D93E522CBEF4D00C01529 /* FetchDatabaseChangesOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 648D93E222CBEF4D00C01529 /* FetchDatabaseChangesOperation.swift */; };
 		648D93E622CBEF4D00C01529 /* FetchZoneChangesOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 648D93E322CBEF4D00C01529 /* FetchZoneChangesOperation.swift */; };
@@ -48,6 +49,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		64277F6F271330FF0073B69F /* PrimaryKeyValue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PrimaryKeyValue.swift; path = ../../../../../SyncKit/Classes/CoreData/PrimaryKeyValue.swift; sourceTree = "<group>"; };
 		6433B37F22C001D200EAC16C /* SyncKitCoreDataOSX.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SyncKitCoreDataOSX.h; sourceTree = "<group>"; };
 		6433B38022C001D200EAC16C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6433B3FF22C006CF00EAC16C /* CloudKitSynchronizer+CoreData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "CloudKitSynchronizer+CoreData.swift"; path = "../../../../../SyncKit/Classes/CoreData/CloudKitSynchronizer+CoreData.swift"; sourceTree = "<group>"; };
@@ -155,6 +157,7 @@
 				6433B40A22C006D000EAC16C /* QSServerToken+CoreDataProperties.swift */,
 				6433B40522C006D000EAC16C /* QSSyncedEntity+CoreDataClass.swift */,
 				6433B40C22C006D000EAC16C /* QSSyncedEntity+CoreDataProperties.swift */,
+				64277F6F271330FF0073B69F /* PrimaryKeyValue.swift */,
 			);
 			path = CoreData;
 			sourceTree = "<group>";
@@ -298,6 +301,7 @@
 				648D93F522CBEF5600C01529 /* QSCoder.swift in Sources */,
 				649236F622C7C1460074A142 /* QSRecord+CoreDataProperties.swift in Sources */,
 				649236F122C7C1430074A142 /* NSManagedObjectContext+Fetch.swift in Sources */,
+				64277F70271330FF0073B69F /* PrimaryKeyValue.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
