@@ -22,7 +22,9 @@ let package = Package(
             dependencies: [],
             path: ".",
             sources: ["SyncKit/Classes/CoreData"],
-            resources: [.process("SyncKit/Classes/CoreData")]
+            resources: [
+                .process("SyncKit/Classes/CoreData/QSCloudKitSyncModel.xcdatamodeld")
+            ]
         ),
          .target(
             name: "SyncKit/Realm",
