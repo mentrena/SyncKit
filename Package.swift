@@ -36,7 +36,7 @@ let package = Package(
             name: "SyncKit/RealmSwift",
             dependencies: [
                 .byName(name: "RealmSwift"),
-                .byName(name: "Realm"])
+                .byName(name: "Realm")
             ]
             path: ".",
             sources: ["SyncKit/Classes/RealmSwift"]
