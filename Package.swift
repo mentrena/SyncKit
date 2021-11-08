@@ -1,4 +1,4 @@
-// swift-tools-version:5.1
+// swift-tools-version:5.3
 import PackageDescription
 
 let package = Package(
@@ -20,20 +20,28 @@ let package = Package(
         .target(
             name: "SyncKit/CoreData",
             dependencies: [],
-            path: ".",
-            sources: ["SyncKit/Classes/CoreData"]
+            path: "SyncKit/Classes/CoreData",
+            resources: [
+                .process("QSCloudKitSyncModel.xcdatamodeld")
+            ],
+            swiftSettings: [
+                .define("SPM")
+            ]
         ),
          .target(
             name: "SyncKit/Realm",
-            dependencies: ["Realm"],
-            path: ".",
-            sources: ["SyncKit/Classes/Realm"]
+            dependencies: [
+                .product(name: "Realm", package: "realm-cocoa")
+            ],
+            path: "SyncKit/Classes/Realm"
         ),
         .target(
             name: "SyncKit/RealmSwift",
-            dependencies: ["RealmSwift", "Realm"],
-            path: ".",
-            sources: ["SyncKit/Classes/RealmSwift"]
+            dependencies: [
+                .product(name: "RealmSwift", package: "realm-cocoa"),
+                .product(name: "Realm", package: "realm-cocoa")
+            ],
+            path: "SyncKit/Classes/RealmSwift"
         )
     ],
     swiftLanguageVersions: [.v5]

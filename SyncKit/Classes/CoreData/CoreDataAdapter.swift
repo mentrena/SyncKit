@@ -64,7 +64,11 @@ import CloudKit
 
     /// The `NSManagedObjectModel` used by the model adapter to keep track of changes, internally.
     @objc class var persistenceModel: NSManagedObjectModel {
+        #if SPM
+        let modelURL = Bundle.module.url(forResource: "QSCloudKitSyncModel", withExtension: "momd")
+        #else
         let modelURL = Bundle(for: CoreDataAdapter.self).url(forResource: "QSCloudKitSyncModel", withExtension: "momd")
+        #endif
         return NSManagedObjectModel(contentsOf: modelURL!)!
     }
     
