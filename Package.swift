@@ -23,6 +23,9 @@ let package = Package(
             path: "SyncKit/Classes/CoreData",
             resources: [
                 .process("QSCloudKitSyncModel.xcdatamodeld")
+            ],
+            swiftSettings: [
+                .define("SPM")
             ]
         ),
          .target(
