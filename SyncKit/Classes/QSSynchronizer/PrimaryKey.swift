@@ -31,7 +31,7 @@ import Foundation
 /**
  *  Can be adopted by classes to use CloudKit encryption for some fields
  */
-@available(iOS 15, OSX 12, *)
+@available(iOS 15, OSX 12, watchOS 8.0, *)
 @objc public protocol EncryptedObject: AnyObject {
     
     /// Name of the fields that should use encryption

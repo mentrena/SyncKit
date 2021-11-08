@@ -193,7 +193,7 @@ struct ObjectUpdate {
     }
     
     func setupEncryptedFields() {
-        if #available(iOS 15, OSX 12, *) {
+        if #available(iOS 15, OSX 12, watchOS 8.0, *) {
             targetRealmConfiguration.objectClasses?.forEach { objectType in
                 if let objectType = objectType as? RLMObject.Type,
                    let encryptedType = objectType as? EncryptedObject.Type {
@@ -519,7 +519,7 @@ struct ObjectUpdate {
         return getSyncedEntity(objectIdentifier: identifier, realm: realm)
     }
     
-    @available(iOS 15, OSX 12, *)
+    @available(iOS 15, OSX 12, watchOS 8.0, *)
     func syncedEntityForRecordZoneShare(realm: RLMRealm) -> SyncedEntity? {
         return getSyncedEntity(objectIdentifier: CKRecordNameZoneWideShare, realm: realm)
     }
@@ -633,7 +633,7 @@ struct ObjectUpdate {
         
         if let encrypted = entityEncryptedFields[syncedEntity.entityType],
            encrypted.contains(key) {
-            if #available(iOS 15, OSX 12, *) {
+            if #available(iOS 15, OSX 12, watchOS 8.0, *) {
                 object.setValue(record.encryptedValues[key], forKey: key)
             }
         } else {
@@ -780,7 +780,7 @@ struct ObjectUpdate {
         
         qsRecord?.encodedRecord = encodedRecord(share, onlySystemFields: false)
     }
-    @available(iOS 15, OSX 12, *)
+    @available(iOS 15, OSX 12, watchOS 8.0, *)
     func saveShareForRecordZone(share: CKShare, realmProvider: RealmProvider) {
         var entity = syncedEntityForRecordZoneShare(realm: realmProvider.persistenceRealm)
         var qsRecord: Record!
@@ -907,7 +907,7 @@ struct ObjectUpdate {
                     
                     if let encrypted = encryptedFields,
                        encrypted.contains(property.name) {
-                        if #available(iOS 15, OSX 12, *) {
+                        if #available(iOS 15, OSX 12, watchOS 8.0, *) {
                             record.encryptedValues[property.name] = object!.value(forKey: property.name) as? CKRecordValue
                         }
                     } else {
@@ -1360,7 +1360,7 @@ struct ObjectUpdate {
         return records ?? []
     }
     
-    @available(iOS 15.0, OSX 12, *)
+    @available(iOS 15.0, OSX 12, watchOS 8.0, *)
     public func shareForRecordZone() -> CKShare? {
         guard realmProvider != nil else {
             return nil
@@ -1380,7 +1380,7 @@ struct ObjectUpdate {
     /// Store CKShare for the record zone.
     /// - Parameters:
     ///   - share: `CKShare` object to save.
-    @available(iOS 15.0, OSX 12, *)
+    @available(iOS 15.0, OSX 12, watchOS 8.0, *)
     public func saveShareForRecordZone(share: CKShare) {
         guard realmProvider != nil else {
             return
@@ -1394,7 +1394,7 @@ struct ObjectUpdate {
     }
     
     /// Delete existing `CKShare` for adapter's record zone.
-    @available(iOS 15.0, OSX 12, *)
+    @available(iOS 15.0, OSX 12, watchOS 8.0, *)
     public func deleteShareForRecordZone() {
         guard realmProvider != nil else {
             return

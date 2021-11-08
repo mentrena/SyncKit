@@ -317,7 +317,7 @@ extension CoreDataAdapter {
         }
     }
     
-    @available(iOS 15.0, OSX 12, *)
+    @available(iOS 15.0, OSX 12, watchOS 8.0, *)
     public func shareForRecordZone() -> CKShare? {
         var record: CKShare?
         privateContext.performAndWait {
@@ -331,7 +331,7 @@ extension CoreDataAdapter {
     /// Store CKShare for the record zone.
     /// - Parameters:
     ///   - share: `CKShare` object to save.
-    @available(iOS 15.0, OSX 12, *)
+    @available(iOS 15.0, OSX 12, watchOS 8.0, *)
     public func saveShareForRecordZone(share: CKShare) {
         privateContext.performAndWait {
             self.saveShareForRecordZoneEntity(share: share)
@@ -340,7 +340,7 @@ extension CoreDataAdapter {
     }
     
     /// Delete existing `CKShare` for adapter's record zone.
-    @available(iOS 15.0, OSX 12, *)
+    @available(iOS 15.0, OSX 12, watchOS 8.0, *)
     public func deleteShareForRecordZone() {
         privateContext.performAndWait {
             if let share = syncedEntityForRecordZoneShare() {

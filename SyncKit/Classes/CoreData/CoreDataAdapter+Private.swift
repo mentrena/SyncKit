@@ -188,7 +188,7 @@ extension CoreDataAdapter {
         return fetched?.first
     }
     
-    @available(iOS 15.0, OSX 12, *)
+    @available(iOS 15.0, OSX 12, watchOS 8.0, *)
     func syncedEntityForRecordZoneShare() -> QSSyncedEntity? {
         let fetched = try? self.privateContext.executeFetchRequest(entityName: "QSSyncedEntity",
                                                                    predicate: NSPredicate(format: "identifier == %@", CKRecordNameZoneWideShare),
@@ -282,7 +282,7 @@ extension CoreDataAdapter {
         qsRecord.encodedRecord = QSCoder.shared.encode(share) as NSData
     }
     
-    @available(iOS 15.0, OSX 12, *)
+    @available(iOS 15.0, OSX 12, watchOS 8.0, *)
     func saveShareForRecordZoneEntity(share: CKShare) {
         var entity = syncedEntityForRecordZoneShare()
         var qsRecord: QSRecord!
@@ -362,7 +362,7 @@ extension CoreDataAdapter {
                         record[attributeName] = transformed
                     } else if let encrypted = encryptedFields,
                               encrypted.contains(attributeName) {
-                        if #available(iOS 15, OSX 12, *) {
+                        if #available(iOS 15, OSX 12, watchOS 8.0, *) {
                             record.encryptedValues[attributeName] = value as? CKRecordValueProtocol
                         }
                         // Else not possible, since the EncryptedObject protocol is only declared for CloudKit versions that support encryption
@@ -522,7 +522,7 @@ extension CoreDataAdapter {
         
         if let encrypted = encryptedFields,
            encrypted.contains(attributeName) {
-            if #available(iOS 15, OSX 12, *) {
+            if #available(iOS 15, OSX 12, watchOS 8.0, *) {
                 object.setValue(record.encryptedValues[attributeName], forKey: attributeName)
             }
             // Else not possible, since the EncryptedObject protocol is only declared for CloudKit versions that support encryption

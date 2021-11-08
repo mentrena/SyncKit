@@ -216,7 +216,7 @@ extension CoreDataAdapter {
     }
     
     private func setupEncryptedFields() {
-        if #available(iOS 15, OSX 12, *) {
+        if #available(iOS 15, OSX 12, watchOS 8.0, *) {
             targetContext.performAndWait {
                 guard let entities = self.targetContext.persistentStoreCoordinator?.managedObjectModel.entities else { return }
                 for entityDescription in entities {

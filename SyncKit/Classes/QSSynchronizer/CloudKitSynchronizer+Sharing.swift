@@ -243,7 +243,7 @@ import CloudKit
      - Parameter zoneID  The record zone ID.
      - Returns: `CKShare` stored for the given object.
      */
-    @available(iOS 15.0, OSX 12, *)
+    @available(iOS 15.0, OSX 12, watchOS 8.0, *)
     @objc func share(forRecordZoneID zoneID: CKRecordZone.ID) -> CKShare? {
         guard let modelAdapter = modelAdapter(forRecordZoneID: zoneID) else {
             return nil
@@ -259,7 +259,7 @@ import CloudKit
      
         This method should be called by your `UICloudSharingControllerDelegate`, when `cloudSharingControllerDidSaveShare` is called.
      */
-    @available(iOS 15.0, OSX 12, *)
+    @available(iOS 15.0, OSX 12, watchOS 8.0, *)
     @objc func cloudSharingControllerDidSaveShare(_ share: CKShare, forRecordZoneID zoneID: CKRecordZone.ID) {
         guard let modelAdapter = modelAdapter(forRecordZoneID: zoneID) else {
             return
@@ -273,7 +273,7 @@ import CloudKit
         - zoneID  The record zone ID.
      This method should be called by your `UICloudSharingControllerDelegate`, when `cloudSharingControllerDidStopSharing` is called.
      */
-    @available(iOS 15.0, OSX 12, *)
+    @available(iOS 15.0, OSX 12, watchOS 8.0, *)
     @objc func cloudSharingControllerDidStopSharing(forRecordZoneID zoneID: CKRecordZone.ID) {
         guard let modelAdapter = modelAdapter(forRecordZoneID: zoneID) else {
             return
@@ -291,7 +291,7 @@ import CloudKit
         - completion: Closure that gets called with an optional error when the operation is completed.
      
      */
-    @available(iOS 15.0, OSX 12, *)
+    @available(iOS 15.0, OSX 12, watchOS 8.0, *)
     @objc func share(recordZoneID: CKRecordZone.ID, publicPermission: CKShare.ParticipantPermission, participants: [CKShare.Participant], completion: ((CKShare?, Error?) -> ())?) {
         guard !syncing else {
             completion?(nil, CloudKitSynchronizer.SyncError.alreadySyncing)
@@ -356,7 +356,7 @@ import CloudKit
         - recordZoneID  The ID of the record zone to unshare.
         - completion Closure that gets called on completion.
      */
-    @available(iOS 15.0, OSX 12, *)
+    @available(iOS 15.0, OSX 12, watchOS 8.0, *)
     @objc func removeShare(recordZoneID: CKRecordZone.ID, completion: ((Error?) -> ())?) {
         guard !syncing else {
             completion?(CloudKitSynchronizer.SyncError.alreadySyncing)
