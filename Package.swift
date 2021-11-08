@@ -20,8 +20,6 @@ let package = Package(
         .target(
             name: "SyncKit/CoreData",
             dependencies: [],
-            path: ".",
-            exclude: ["Example"],
             sources: ["SyncKit/Classes/CoreData"],
             resources: [
                 .process("SyncKit/Classes/CoreData/QSCloudKitSyncModel.xcdatamodeld")
@@ -32,8 +30,6 @@ let package = Package(
             dependencies: [
                 .product(name: "Realm", package: "realm-cocoa")
             ],
-            path: ".",
-            exclude: ["Example"],
             sources: ["SyncKit/Classes/Realm"]
         ),
         .target(
@@ -42,8 +38,6 @@ let package = Package(
                 .product(name: "RealmSwift", package: "realm-cocoa"),
                 .product(name: "Realm", package: "realm-cocoa")
             ],
-            path: ".",
-            exclude: ["Example"],
             sources: ["SyncKit/Classes/RealmSwift"]
         )
     ],
