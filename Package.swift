@@ -21,7 +21,8 @@ let package = Package(
             name: "SyncKit/CoreData",
             dependencies: [],
             path: ".",
-            sources: ["SyncKit/Classes/CoreData"]
+            sources: ["SyncKit/Classes/CoreData"],
+            resources: [.process("SyncKit/Classes/CoreData")]
         ),
          .target(
             name: "SyncKit/Realm",
