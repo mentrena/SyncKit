@@ -175,4 +175,23 @@ class MockModelAdapter: NSObject, ModelAdapter {
     func recordsToUpdateParentRelationshipsForRoot(_ object: AnyObject) -> [CKRecord] {
         return recordsToUpdateParentRelationshipForRootValue ?? []
     }
+    
+    var shareForRecordZoneValue: CKShare?
+    var shareForRecordZoneCalled = false
+    func shareForRecordZone() -> CKShare? {
+        shareForRecordZoneCalled = true
+        return shareForRecordZoneValue
+    }
+        
+    var saveShareForRecordZoneCalled = false
+    func saveShareForRecordZone(share: CKShare) {
+        saveShareForRecordZoneCalled = true
+        shareForRecordZoneValue = share
+    }
+    
+    var deleteShareForRecordZoneCalled = false
+    func deleteShareForRecordZone() {
+        deleteShareForRecordZoneCalled = true
+        shareForRecordZoneValue = nil
+    }
 }

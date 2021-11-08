@@ -19,6 +19,10 @@ import CloudKit
         return nil
     }
     
+    fileprivate func modelAdapter(forRecordZoneID zoneID: CKRecordZone.ID) -> ModelAdapter? {
+        return modelAdapters.first { $0.recordZoneID == zoneID }
+    }
+    
     /**
      Returns the locally stored `CKShare` for a given model object.
      - Parameter object  The model object.
@@ -220,6 +224,168 @@ import CloudKit
                             }
                         }
                     })
+                    
+                } else {
+                    
+                    DispatchQueue.main.async {
+                        self.syncing = false
+                        completion?(operationError)
+                    }
+                }
+            }
+        }
+        
+        database.add(operation)
+    }
+    
+    /**
+     Returns the locally stored `CKShare` for a given record zone.
+     - Parameter zoneID  The record zone ID.
+     - Returns: `CKShare` stored for the given object.
+     */
+    @available(iOS 15.0, OSX 12, *)
+    @objc func share(forRecordZoneID zoneID: CKRecordZone.ID) -> CKShare? {
+        guard let modelAdapter = modelAdapter(forRecordZoneID: zoneID) else {
+            return nil
+        }
+        return modelAdapter.shareForRecordZone()
+    }
+    
+    /**
+     Saves the given `CKShare` locally for the given record zone ID.
+     - Parameters:
+        - share The `CKShare`.
+        - zoneID  The record zone ID..
+     
+        This method should be called by your `UICloudSharingControllerDelegate`, when `cloudSharingControllerDidSaveShare` is called.
+     */
+    @available(iOS 15.0, OSX 12, *)
+    @objc func cloudSharingControllerDidSaveShare(_ share: CKShare, forRecordZoneID zoneID: CKRecordZone.ID) {
+        guard let modelAdapter = modelAdapter(forRecordZoneID: zoneID) else {
+            return
+        }
+        modelAdapter.saveShareForRecordZone(share: share)
+    }
+    
+    /**
+     Deletes any `CKShare` locally stored  for the given record zone ID
+     - Parameters:
+        - zoneID  The record zone ID.
+     This method should be called by your `UICloudSharingControllerDelegate`, when `cloudSharingControllerDidStopSharing` is called.
+     */
+    @available(iOS 15.0, OSX 12, *)
+    @objc func cloudSharingControllerDidStopSharing(forRecordZoneID zoneID: CKRecordZone.ID) {
+        guard let modelAdapter = modelAdapter(forRecordZoneID: zoneID) else {
+            return
+        }
+        
+        modelAdapter.deleteShareForRecordZone()
+    }
+    
+    /**
+     Returns a  `CKShare` for the given record zone. If one does not exist, it creates and uploads a new
+     - Parameters:
+        - recordZoneID The ID of the record zone to share.
+        - publicPermission  The permissions to be used for the new share.
+        - participants: The participants to add to this share.
+        - completion: Closure that gets called with an optional error when the operation is completed.
+     
+     */
+    @available(iOS 15.0, OSX 12, *)
+    @objc func share(recordZoneID: CKRecordZone.ID, publicPermission: CKShare.ParticipantPermission, participants: [CKShare.Participant], completion: ((CKShare?, Error?) -> ())?) {
+        guard !syncing else {
+            completion?(nil, CloudKitSynchronizer.SyncError.alreadySyncing)
+            return
+        }
+
+        guard let modelAdapter = modelAdapter(forRecordZoneID: recordZoneID) else {
+                completion?(nil, CloudKitSynchronizer.SyncError.recordNotFound)
+                return
+        }
+
+        if let share = modelAdapter.shareForRecordZone() {
+            completion?(share, nil)
+            return
+        }
+
+        syncing = true
+
+        let share = CKShare(recordZoneID: recordZoneID)
+        share.publicPermission = publicPermission
+        for participant in participants {
+            share.addParticipant(participant)
+        }
+
+        addMetadata(to: [share])
+
+        let operation = ModifyRecordsOperation(database: database, records: [share], recordIDsToDelete: nil) { (savedRecords, deleted, conflicted, operationError) in
+            self.dispatchQueue.async {
+                
+                if operationError == nil,
+                   let share = savedRecords?.first(where: { $0 is CKShare}) as? CKShare {
+                    
+                    modelAdapter.saveShareForRecordZone(share: share)
+                    DispatchQueue.main.async {
+                        self.syncing = false
+                        completion?(share, nil)
+                    }
+                    
+                } else if let error = operationError,
+                          self.isServerRecordChangedError(error as NSError),
+                          !conflicted.isEmpty,
+                          let share = conflicted.first as? CKShare {
+                    modelAdapter.saveShareForRecordZone(share: share)
+                    DispatchQueue.main.async {
+                        self.syncing = false
+                        completion?(share, nil)
+                    }
+                } else {
+                    DispatchQueue.main.async {
+                        self.syncing = false
+                        completion?(nil, operationError)
+                    }
+                }
+            }
+        }
+        runOperation(operation)
+    }
+    
+    /**
+     Removes the existing `CKShare` for the record zone and deletes it from CloudKit.
+     - Parameters:
+        - recordZoneID  The ID of the record zone to unshare.
+        - completion Closure that gets called on completion.
+     */
+    @available(iOS 15.0, OSX 12, *)
+    @objc func removeShare(recordZoneID: CKRecordZone.ID, completion: ((Error?) -> ())?) {
+        guard !syncing else {
+            completion?(CloudKitSynchronizer.SyncError.alreadySyncing)
+            return
+        }
+        
+        guard let modelAdapter = modelAdapter(forRecordZoneID: recordZoneID),
+            let share = modelAdapter.shareForRecordZone() else {
+                completion?(nil)
+                return
+        }
+        
+        syncing = true
+        
+        let operation = CKModifyRecordsOperation(recordsToSave: [], recordIDsToDelete: [share.recordID])
+        operation.modifyRecordsCompletionBlock = { savedRecords, deletedRecordIDs, operationError in
+            
+            self.dispatchQueue.async {
+                
+                if let deletedRecordID = deletedRecordIDs?.first,
+                   deletedRecordID == share.recordID,
+                   operationError == nil {
+                    
+                    modelAdapter.deleteShareForRecordZone()
+                    
+                    DispatchQueue.main.async {
+                        self.syncing = false
+                        completion?(nil)
+                    }
                     
                 } else {
                     

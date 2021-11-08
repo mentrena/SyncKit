@@ -1,0 +1,479 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 52;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		6435C37F2727193800299327 /* SyncKitRealm.h in Headers */ = {isa = PBXBuildFile; fileRef = 6435C37D2727193800299327 /* SyncKitRealm.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6435C3942727196400299327 /* CloudKitSynchronizer+Private.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6435C3872727196400299327 /* CloudKitSynchronizer+Private.swift */; };
+		6435C3952727196400299327 /* ModelAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6435C3882727196400299327 /* ModelAdapter.swift */; };
+		6435C3962727196400299327 /* CloudKitDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6435C3892727196400299327 /* CloudKitDatabase.swift */; };
+		6435C3972727196400299327 /* PrimaryKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6435C38A2727196400299327 /* PrimaryKey.swift */; };
+		6435C3982727196400299327 /* KeyValueStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6435C38B2727196400299327 /* KeyValueStore.swift */; };
+		6435C3992727196400299327 /* SyncedEntityState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6435C38C2727196400299327 /* SyncedEntityState.swift */; };
+		6435C39A2727196400299327 /* TempFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6435C38D2727196400299327 /* TempFileManager.swift */; };
+		6435C39B2727196400299327 /* CloudKitSynchronizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6435C38E2727196400299327 /* CloudKitSynchronizer.swift */; };
+		6435C39C2727196400299327 /* QSCoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6435C38F2727196400299327 /* QSCoder.swift */; };
+		6435C39D2727196400299327 /* CloudKitSynchronizer+Sync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6435C3902727196400299327 /* CloudKitSynchronizer+Sync.swift */; };
+		6435C39E2727196400299327 /* BackupDetection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6435C3912727196400299327 /* BackupDetection.swift */; };
+		6435C39F2727196400299327 /* CloudKitSynchronizer+Subscriptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6435C3922727196400299327 /* CloudKitSynchronizer+Subscriptions.swift */; };
+		6435C3A02727196400299327 /* CloudKitSynchronizer+Sharing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6435C3932727196400299327 /* CloudKitSynchronizer+Sharing.swift */; };
+		6435C3A52727196E00299327 /* FetchZoneChangesOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6435C3A12727196E00299327 /* FetchZoneChangesOperation.swift */; };
+		6435C3A62727196E00299327 /* CloudKitSynchronizerOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6435C3A22727196E00299327 /* CloudKitSynchronizerOperation.swift */; };
+		6435C3A72727196E00299327 /* FetchDatabaseChangesOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6435C3A32727196E00299327 /* FetchDatabaseChangesOperation.swift */; };
+		6435C3A82727196E00299327 /* ModifyRecordsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6435C3A42727196E00299327 /* ModifyRecordsOperation.swift */; };
+		6435C3B42727197800299327 /* SyncedEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6435C3A92727197700299327 /* SyncedEntity.swift */; };
+		6435C3B52727197800299327 /* PendingRelationship.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6435C3AA2727197700299327 /* PendingRelationship.swift */; };
+		6435C3B62727197800299327 /* DefaultRealmProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6435C3AB2727197700299327 /* DefaultRealmProvider.swift */; };
+		6435C3B72727197800299327 /* RLMSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6435C3AC2727197700299327 /* RLMSupport.swift */; };
+		6435C3B82727197800299327 /* DefaultRealmSwiftAdapterProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6435C3AD2727197700299327 /* DefaultRealmSwiftAdapterProvider.swift */; };
+		6435C3B92727197800299327 /* ServerToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6435C3AE2727197700299327 /* ServerToken.swift */; };
+		6435C3BA2727197800299327 /* CloudKitSynchronizer+MultiRealmResultsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6435C3AF2727197700299327 /* CloudKitSynchronizer+MultiRealmResultsController.swift */; };
+		6435C3BB2727197800299327 /* MultiRealmResultsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6435C3B02727197700299327 /* MultiRealmResultsController.swift */; };
+		6435C3BC2727197800299327 /* RealmAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6435C3B12727197700299327 /* RealmAdapter.swift */; };
+		6435C3BD2727197800299327 /* CloudKitSynchronizer+Realm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6435C3B22727197800299327 /* CloudKitSynchronizer+Realm.swift */; };
+		6435C3BE2727197800299327 /* Record.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6435C3B32727197800299327 /* Record.swift */; };
+		6435C3C1272719A400299327 /* Realm.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6435C3C0272719A400299327 /* Realm.xcframework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		6435C37A2727193800299327 /* SyncKitRealm.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SyncKitRealm.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		6435C37D2727193800299327 /* SyncKitRealm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SyncKitRealm.h; sourceTree = "<group>"; };
+		6435C37E2727193800299327 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6435C3872727196400299327 /* CloudKitSynchronizer+Private.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "CloudKitSynchronizer+Private.swift"; path = "../../../../../SyncKit/Classes/QSSynchronizer/CloudKitSynchronizer+Private.swift"; sourceTree = "<group>"; };
+		6435C3882727196400299327 /* ModelAdapter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ModelAdapter.swift; path = ../../../../../SyncKit/Classes/QSSynchronizer/ModelAdapter.swift; sourceTree = "<group>"; };
+		6435C3892727196400299327 /* CloudKitDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CloudKitDatabase.swift; path = ../../../../../SyncKit/Classes/QSSynchronizer/CloudKitDatabase.swift; sourceTree = "<group>"; };
+		6435C38A2727196400299327 /* PrimaryKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PrimaryKey.swift; path = ../../../../../SyncKit/Classes/QSSynchronizer/PrimaryKey.swift; sourceTree = "<group>"; };
+		6435C38B2727196400299327 /* KeyValueStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = KeyValueStore.swift; path = ../../../../../SyncKit/Classes/QSSynchronizer/KeyValueStore.swift; sourceTree = "<group>"; };
+		6435C38C2727196400299327 /* SyncedEntityState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SyncedEntityState.swift; path = ../../../../../SyncKit/Classes/QSSynchronizer/SyncedEntityState.swift; sourceTree = "<group>"; };
+		6435C38D2727196400299327 /* TempFileManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TempFileManager.swift; path = ../../../../../SyncKit/Classes/QSSynchronizer/TempFileManager.swift; sourceTree = "<group>"; };
+		6435C38E2727196400299327 /* CloudKitSynchronizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CloudKitSynchronizer.swift; path = ../../../../../SyncKit/Classes/QSSynchronizer/CloudKitSynchronizer.swift; sourceTree = "<group>"; };
+		6435C38F2727196400299327 /* QSCoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = QSCoder.swift; path = ../../../../../SyncKit/Classes/QSSynchronizer/QSCoder.swift; sourceTree = "<group>"; };
+		6435C3902727196400299327 /* CloudKitSynchronizer+Sync.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "CloudKitSynchronizer+Sync.swift"; path = "../../../../../SyncKit/Classes/QSSynchronizer/CloudKitSynchronizer+Sync.swift"; sourceTree = "<group>"; };
+		6435C3912727196400299327 /* BackupDetection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BackupDetection.swift; path = ../../../../../SyncKit/Classes/QSSynchronizer/BackupDetection.swift; sourceTree = "<group>"; };
+		6435C3922727196400299327 /* CloudKitSynchronizer+Subscriptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "CloudKitSynchronizer+Subscriptions.swift"; path = "../../../../../SyncKit/Classes/QSSynchronizer/CloudKitSynchronizer+Subscriptions.swift"; sourceTree = "<group>"; };
+		6435C3932727196400299327 /* CloudKitSynchronizer+Sharing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "CloudKitSynchronizer+Sharing.swift"; path = "../../../../../SyncKit/Classes/QSSynchronizer/CloudKitSynchronizer+Sharing.swift"; sourceTree = "<group>"; };
+		6435C3A12727196E00299327 /* FetchZoneChangesOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FetchZoneChangesOperation.swift; path = ../../../../../SyncKit/Classes/QSSynchronizer/Operations/FetchZoneChangesOperation.swift; sourceTree = "<group>"; };
+		6435C3A22727196E00299327 /* CloudKitSynchronizerOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CloudKitSynchronizerOperation.swift; path = ../../../../../SyncKit/Classes/QSSynchronizer/Operations/CloudKitSynchronizerOperation.swift; sourceTree = "<group>"; };
+		6435C3A32727196E00299327 /* FetchDatabaseChangesOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FetchDatabaseChangesOperation.swift; path = ../../../../../SyncKit/Classes/QSSynchronizer/Operations/FetchDatabaseChangesOperation.swift; sourceTree = "<group>"; };
+		6435C3A42727196E00299327 /* ModifyRecordsOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ModifyRecordsOperation.swift; path = ../../../../../SyncKit/Classes/QSSynchronizer/Operations/ModifyRecordsOperation.swift; sourceTree = "<group>"; };
+		6435C3A92727197700299327 /* SyncedEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SyncedEntity.swift; path = ../../../../../SyncKit/Classes/Realm/SyncedEntity.swift; sourceTree = "<group>"; };
+		6435C3AA2727197700299327 /* PendingRelationship.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PendingRelationship.swift; path = ../../../../../SyncKit/Classes/Realm/PendingRelationship.swift; sourceTree = "<group>"; };
+		6435C3AB2727197700299327 /* DefaultRealmProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DefaultRealmProvider.swift; path = ../../../../../SyncKit/Classes/Realm/DefaultRealmProvider.swift; sourceTree = "<group>"; };
+		6435C3AC2727197700299327 /* RLMSupport.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RLMSupport.swift; path = ../../../../../SyncKit/Classes/Realm/RLMSupport.swift; sourceTree = "<group>"; };
+		6435C3AD2727197700299327 /* DefaultRealmSwiftAdapterProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DefaultRealmSwiftAdapterProvider.swift; path = ../../../../../SyncKit/Classes/Realm/DefaultRealmSwiftAdapterProvider.swift; sourceTree = "<group>"; };
+		6435C3AE2727197700299327 /* ServerToken.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ServerToken.swift; path = ../../../../../SyncKit/Classes/Realm/ServerToken.swift; sourceTree = "<group>"; };
+		6435C3AF2727197700299327 /* CloudKitSynchronizer+MultiRealmResultsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "CloudKitSynchronizer+MultiRealmResultsController.swift"; path = "../../../../../SyncKit/Classes/Realm/CloudKitSynchronizer+MultiRealmResultsController.swift"; sourceTree = "<group>"; };
+		6435C3B02727197700299327 /* MultiRealmResultsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MultiRealmResultsController.swift; path = ../../../../../SyncKit/Classes/Realm/MultiRealmResultsController.swift; sourceTree = "<group>"; };
+		6435C3B12727197700299327 /* RealmAdapter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RealmAdapter.swift; path = ../../../../../SyncKit/Classes/Realm/RealmAdapter.swift; sourceTree = "<group>"; };
+		6435C3B22727197800299327 /* CloudKitSynchronizer+Realm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "CloudKitSynchronizer+Realm.swift"; path = "../../../../../SyncKit/Classes/Realm/CloudKitSynchronizer+Realm.swift"; sourceTree = "<group>"; };
+		6435C3B32727197800299327 /* Record.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Record.swift; path = ../../../../../SyncKit/Classes/Realm/Record.swift; sourceTree = "<group>"; };
+		6435C3C0272719A400299327 /* Realm.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Realm.xcframework; path = "../../../Carthage/Checkouts/realm-cocoa/build/Realm.xcframework"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		6435C3772727193800299327 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6435C3C1272719A400299327 /* Realm.xcframework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		6435C3702727193800299327 = {
+			isa = PBXGroup;
+			children = (
+				6435C37C2727193800299327 /* SyncKitRealm */,
+				6435C37B2727193800299327 /* Products */,
+				6435C3BF272719A400299327 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		6435C37B2727193800299327 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6435C37A2727193800299327 /* SyncKitRealm.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		6435C37C2727193800299327 /* SyncKitRealm */ = {
+			isa = PBXGroup;
+			children = (
+				6435C3862727194300299327 /* Realm */,
+				6435C3852727193E00299327 /* Core */,
+				6435C37D2727193800299327 /* SyncKitRealm.h */,
+				6435C37E2727193800299327 /* Info.plist */,
+			);
+			path = SyncKitRealm;
+			sourceTree = "<group>";
+		};
+		6435C3852727193E00299327 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				6435C3912727196400299327 /* BackupDetection.swift */,
+				6435C3892727196400299327 /* CloudKitDatabase.swift */,
+				6435C38E2727196400299327 /* CloudKitSynchronizer.swift */,
+				6435C3872727196400299327 /* CloudKitSynchronizer+Private.swift */,
+				6435C3932727196400299327 /* CloudKitSynchronizer+Sharing.swift */,
+				6435C3922727196400299327 /* CloudKitSynchronizer+Subscriptions.swift */,
+				6435C3902727196400299327 /* CloudKitSynchronizer+Sync.swift */,
+				6435C38B2727196400299327 /* KeyValueStore.swift */,
+				6435C3882727196400299327 /* ModelAdapter.swift */,
+				6435C38A2727196400299327 /* PrimaryKey.swift */,
+				6435C38F2727196400299327 /* QSCoder.swift */,
+				6435C38C2727196400299327 /* SyncedEntityState.swift */,
+				6435C38D2727196400299327 /* TempFileManager.swift */,
+				6435C3A22727196E00299327 /* CloudKitSynchronizerOperation.swift */,
+				6435C3A32727196E00299327 /* FetchDatabaseChangesOperation.swift */,
+				6435C3A12727196E00299327 /* FetchZoneChangesOperation.swift */,
+				6435C3A42727196E00299327 /* ModifyRecordsOperation.swift */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		6435C3862727194300299327 /* Realm */ = {
+			isa = PBXGroup;
+			children = (
+				6435C3AF2727197700299327 /* CloudKitSynchronizer+MultiRealmResultsController.swift */,
+				6435C3B22727197800299327 /* CloudKitSynchronizer+Realm.swift */,
+				6435C3AB2727197700299327 /* DefaultRealmProvider.swift */,
+				6435C3AD2727197700299327 /* DefaultRealmSwiftAdapterProvider.swift */,
+				6435C3B02727197700299327 /* MultiRealmResultsController.swift */,
+				6435C3AA2727197700299327 /* PendingRelationship.swift */,
+				6435C3B12727197700299327 /* RealmAdapter.swift */,
+				6435C3B32727197800299327 /* Record.swift */,
+				6435C3AC2727197700299327 /* RLMSupport.swift */,
+				6435C3AE2727197700299327 /* ServerToken.swift */,
+				6435C3A92727197700299327 /* SyncedEntity.swift */,
+			);
+			path = Realm;
+			sourceTree = "<group>";
+		};
+		6435C3BF272719A400299327 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				6435C3C0272719A400299327 /* Realm.xcframework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		6435C3752727193800299327 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6435C37F2727193800299327 /* SyncKitRealm.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		6435C3792727193800299327 /* SyncKitRealm */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6435C3822727193800299327 /* Build configuration list for PBXNativeTarget "SyncKitRealm" */;
+			buildPhases = (
+				6435C3752727193800299327 /* Headers */,
+				6435C3762727193800299327 /* Sources */,
+				6435C3772727193800299327 /* Frameworks */,
+				6435C3782727193800299327 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SyncKitRealm;
+			productName = SyncKitRealm;
+			productReference = 6435C37A2727193800299327 /* SyncKitRealm.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		6435C3712727193800299327 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1250;
+				TargetAttributes = {
+					6435C3792727193800299327 = {
+						CreatedOnToolsVersion = 12.5.1;
+						LastSwiftMigration = 1250;
+					};
+				};
+			};
+			buildConfigurationList = 6435C3742727193800299327 /* Build configuration list for PBXProject "SyncKitRealmFramework" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 6435C3702727193800299327;
+			productRefGroup = 6435C37B2727193800299327 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				6435C3792727193800299327 /* SyncKitRealm */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		6435C3782727193800299327 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		6435C3762727193800299327 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6435C3A62727196E00299327 /* CloudKitSynchronizerOperation.swift in Sources */,
+				6435C3A52727196E00299327 /* FetchZoneChangesOperation.swift in Sources */,
+				6435C3BB2727197800299327 /* MultiRealmResultsController.swift in Sources */,
+				6435C3B62727197800299327 /* DefaultRealmProvider.swift in Sources */,
+				6435C3B42727197800299327 /* SyncedEntity.swift in Sources */,
+				6435C3982727196400299327 /* KeyValueStore.swift in Sources */,
+				6435C3A82727196E00299327 /* ModifyRecordsOperation.swift in Sources */,
+				6435C3B82727197800299327 /* DefaultRealmSwiftAdapterProvider.swift in Sources */,
+				6435C3B52727197800299327 /* PendingRelationship.swift in Sources */,
+				6435C3972727196400299327 /* PrimaryKey.swift in Sources */,
+				6435C39B2727196400299327 /* CloudKitSynchronizer.swift in Sources */,
+				6435C39F2727196400299327 /* CloudKitSynchronizer+Subscriptions.swift in Sources */,
+				6435C39D2727196400299327 /* CloudKitSynchronizer+Sync.swift in Sources */,
+				6435C39E2727196400299327 /* BackupDetection.swift in Sources */,
+				6435C3A02727196400299327 /* CloudKitSynchronizer+Sharing.swift in Sources */,
+				6435C3BC2727197800299327 /* RealmAdapter.swift in Sources */,
+				6435C39A2727196400299327 /* TempFileManager.swift in Sources */,
+				6435C3962727196400299327 /* CloudKitDatabase.swift in Sources */,
+				6435C3BE2727197800299327 /* Record.swift in Sources */,
+				6435C3B92727197800299327 /* ServerToken.swift in Sources */,
+				6435C3942727196400299327 /* CloudKitSynchronizer+Private.swift in Sources */,
+				6435C3B72727197800299327 /* RLMSupport.swift in Sources */,
+				6435C3BA2727197800299327 /* CloudKitSynchronizer+MultiRealmResultsController.swift in Sources */,
+				6435C3992727196400299327 /* SyncedEntityState.swift in Sources */,
+				6435C39C2727196400299327 /* QSCoder.swift in Sources */,
+				6435C3952727196400299327 /* ModelAdapter.swift in Sources */,
+				6435C3BD2727197800299327 /* CloudKitSynchronizer+Realm.swift in Sources */,
+				6435C3A72727196E00299327 /* FetchDatabaseChangesOperation.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		6435C3802727193800299327 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		6435C3812727193800299327 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		6435C3832727193800299327 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 2UHP7K87SQ;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = SyncKitRealm/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.mentrena.SyncKitRealm;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		6435C3842727193800299327 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 2UHP7K87SQ;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = SyncKitRealm/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.mentrena.SyncKitRealm;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		6435C3742727193800299327 /* Build configuration list for PBXProject "SyncKitRealmFramework" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6435C3802727193800299327 /* Debug */,
+				6435C3812727193800299327 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6435C3822727193800299327 /* Build configuration list for PBXNativeTarget "SyncKitRealm" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6435C3832727193800299327 /* Debug */,
+				6435C3842727193800299327 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 6435C3712727193800299327 /* Project object */;
+}

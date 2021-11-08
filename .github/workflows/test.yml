@@ -9,19 +9,21 @@ on:
 jobs:
   test:
 
-    runs-on: macos-latest
+    runs-on: macos-11
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Pods Core Data
-      run: pod install --repo-update --project-directory=Example/CoreData/
-    - name: Pods Realm
-      run: pod install --repo-update --project-directory=Example/Realm/
-    - name: Pods RealmSwift
-      run: pod install --repo-update --project-directory=Example/RealmSwift/
-    - name: Test Core Data
-      run: set -o pipefail && xcodebuild test -workspace Example/CoreData/SyncKitCoreData.xcworkspace -scheme SyncKitCoreDataExample -sdk iphonesimulator14.4 -destination 'platform=iOS Simulator,name=iPhone 11,OS=14.4' ONLY_ACTIVE_ARCH=YES | xcpretty
-    - name: Test Realm
-      run: set -o pipefail && xcodebuild test -workspace Example/Realm/SyncKitRealm.xcworkspace -scheme SyncKitRealmExample -sdk iphonesimulator14.4 -destination 'platform=iOS Simulator,name=iPhone 11,OS=14.4' ONLY_ACTIVE_ARCH=YES | xcpretty
-    - name: Test Realm Swift
-      run: set -o pipefail && xcodebuild test -workspace Example/RealmSwift/SyncKitRealmSwift.xcworkspace -scheme SyncKitRealmSwiftExample -sdk iphonesimulator14.4 -destination 'platform=iOS Simulator,name=iPhone 11,OS=14.4' ONLY_ACTIVE_ARCH=YES | xcpretty
+      - name: "Select Xcode 13.1"
+        run: sudo xcode-select -s "/Applications/Xcode_13.1.app"
+      - uses: actions/checkout@v2
+      - name: Pods Core Data
+        run: pod install --repo-update --project-directory=Example/CoreData/
+      - name: Pods Realm
+        run: pod install --repo-update --project-directory=Example/Realm/
+      - name: Pods RealmSwift
+        run: pod install --repo-update --project-directory=Example/RealmSwift/
+      - name: Test Core Data
+        run: set -o pipefail && xcodebuild test -workspace Example/CoreData/SyncKitCoreData.xcworkspace -scheme SyncKitCoreDataExample -sdk iphonesimulator15.0 -destination 'platform=iOS Simulator,name=iPhone 11,OS=15.0' ONLY_ACTIVE_ARCH=YES | xcpretty
+      - name: Test Realm
+        run: set -o pipefail && xcodebuild test -workspace Example/Realm/SyncKitRealm.xcworkspace -scheme SyncKitRealmExample -sdk iphonesimulator15.0 -destination 'platform=iOS Simulator,name=iPhone 11,OS=15.0' ONLY_ACTIVE_ARCH=YES | xcpretty
+      - name: Test Realm Swift
+        run: set -o pipefail && xcodebuild test -workspace Example/RealmSwift/SyncKitRealmSwift.xcworkspace -scheme SyncKitRealmSwiftExample -sdk iphonesimulator15.0 -destination 'platform=iOS Simulator,name=iPhone 11,OS=15.0' ONLY_ACTIVE_ARCH=YES | xcpretty

@@ -18,6 +18,9 @@
 		640C33EB22AD913300A85508 /* Array+OrderInsensitiveCompare.swift in Sources */ = {isa = PBXBuildFile; fileRef = 640C33EA22AD913300A85508 /* Array+OrderInsensitiveCompare.swift */; };
 		640C33ED22AD92CF00A85508 /* TestError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 640C33EC22AD92CF00A85508 /* TestError.swift */; };
 		6413ECF62559B36600BDC1DB /* RecordProcessingDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6413ECF52559B36600BDC1DB /* RecordProcessingDelegate.swift */; };
+		6430AD6B26C1804500E8880D /* EncryptedModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6430AD6926C1804500E8880D /* EncryptedModel.xcdatamodeld */; };
+		6430AD6E26C180F600E8880D /* EntityWithEncryptedFields+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6430AD6C26C180F600E8880D /* EntityWithEncryptedFields+CoreDataClass.swift */; };
+		6430AD6F26C180F600E8880D /* EntityWithEncryptedFields+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6430AD6D26C180F600E8880D /* EntityWithEncryptedFields+CoreDataProperties.swift */; };
 		6433B35D22BE489300EAC16C /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6433B35C22BE489300EAC16C /* CloudKit.framework */; };
 		6433B36E22BFC99500EAC16C /* CoreDataSharedCompanyInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6433B36D22BFC99500EAC16C /* CoreDataSharedCompanyInteractor.swift */; };
 		6433B37122BFC9CD00EAC16C /* CoreDataSharedCompanyWireframe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6433B37022BFC9CD00EAC16C /* CoreDataSharedCompanyWireframe.swift */; };
@@ -113,6 +116,9 @@
 		640C33EA22AD913300A85508 /* Array+OrderInsensitiveCompare.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+OrderInsensitiveCompare.swift"; sourceTree = "<group>"; };
 		640C33EC22AD92CF00A85508 /* TestError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestError.swift; sourceTree = "<group>"; };
 		6413ECF52559B36600BDC1DB /* RecordProcessingDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordProcessingDelegate.swift; sourceTree = "<group>"; };
+		6430AD6A26C1804500E8880D /* EncryptedModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = EncryptedModel.xcdatamodel; sourceTree = "<group>"; };
+		6430AD6C26C180F600E8880D /* EntityWithEncryptedFields+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "EntityWithEncryptedFields+CoreDataClass.swift"; sourceTree = "<group>"; };
+		6430AD6D26C180F600E8880D /* EntityWithEncryptedFields+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "EntityWithEncryptedFields+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		6433B35B22BE470D00EAC16C /* SyncKitCoreDataExample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SyncKitCoreDataExample.entitlements; sourceTree = "<group>"; };
 		6433B35C22BE489300EAC16C /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		6433B36D22BFC99500EAC16C /* CoreDataSharedCompanyInteractor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataSharedCompanyInteractor.swift; sourceTree = "<group>"; };
@@ -250,6 +256,7 @@
 		640C33D522AC499E00A85508 /* SyncKitCoreDataExampleTests */ = {
 			isa = PBXGroup;
 			children = (
+				6430AD6826C1802A00E8880D /* Encrypted */,
 				64C77BEC2640441400A6BC3D /* UUIDPrimaryKey */,
 				64C77BE42640337C00A6BC3D /* IntPrimaryKey */,
 				64B46BE122B95C900017268F /* Transformable */,
@@ -285,6 +292,16 @@
 				644164AE26B0383500ED033B /* MockCloudKitSynchronizerDelegate.swift */,
 			);
 			path = Mocks;
+			sourceTree = "<group>";
+		};
+		6430AD6826C1802A00E8880D /* Encrypted */ = {
+			isa = PBXGroup;
+			children = (
+				6430AD6C26C180F600E8880D /* EntityWithEncryptedFields+CoreDataClass.swift */,
+				6430AD6D26C180F600E8880D /* EntityWithEncryptedFields+CoreDataProperties.swift */,
+				6430AD6926C1804500E8880D /* EncryptedModel.xcdatamodeld */,
+			);
+			path = Encrypted;
 			sourceTree = "<group>";
 		};
 		6433B36F22BFC9B900EAC16C /* Shared */ = {
@@ -649,9 +666,11 @@
 				64B3A3AA22B0626200E4E942 /* CloudKitSynchronizerTests.swift in Sources */,
 				64C77BE72640338C00A6BC3D /* IntPrimaryKeyModel.xcdatamodeld in Sources */,
 				640C33E222AD837000A85508 /* QSCloudKitSynchronizerOperationTests.swift in Sources */,
+				6430AD6B26C1804500E8880D /* EncryptedModel.xcdatamodeld in Sources */,
 				64B46BF522B9629A0017268F /* QSTestEntity+CoreDataClass.swift in Sources */,
 				64CFAF2D22CD26E4009CF1F1 /* QSCompany+CoreDataProperties.swift in Sources */,
 				64369247232EB25A004393B1 /* QSTestEntity2+CoreDataProperties.swift in Sources */,
+				6430AD6E26C180F600E8880D /* EntityWithEncryptedFields+CoreDataClass.swift in Sources */,
 				64B3A38422AEF0D800E4E942 /* MockManagedObjectContext.swift in Sources */,
 				64B3A3B622B51F0100E4E942 /* CoreDataAdapterTests.swift in Sources */,
 				644164AF26B0383500ED033B /* MockCloudKitSynchronizerDelegate.swift in Sources */,
@@ -677,6 +696,7 @@
 				64A452DA264C2A2300133F64 /* QSEmployee_UUID+CoreDataClass.swift in Sources */,
 				64B3A38222AEF0A500E4E942 /* DefaultCoreDataAdapterDelegateTests.swift in Sources */,
 				64B3A3B422B3B1E200E4E942 /* TestUtilities.swift in Sources */,
+				6430AD6F26C180F600E8880D /* EntityWithEncryptedFields+CoreDataProperties.swift in Sources */,
 				64B3A3AE22B1A26500E4E942 /* QSObject.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -923,6 +943,16 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
+		6430AD6926C1804500E8880D /* EncryptedModel.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				6430AD6A26C1804500E8880D /* EncryptedModel.xcdatamodel */,
+			);
+			currentVersion = 6430AD6A26C1804500E8880D /* EncryptedModel.xcdatamodel */;
+			path = EncryptedModel.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
 		64B3A3A222B0293800E4E942 /* QSExample.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (

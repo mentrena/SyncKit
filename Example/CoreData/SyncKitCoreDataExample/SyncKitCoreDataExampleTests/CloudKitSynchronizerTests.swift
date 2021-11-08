@@ -827,6 +827,79 @@ class CloudKitSynchronizerTests: XCTestCase {
         XCTAssertEqual(operationCount, 2)
     }
     
+    @available(iOS 15, OSX 12, *)
+    func testCloudSharingControllerDidChangeShareForRecordZone_callsSaveOnAdapter() {
+        
+        let share = CKShare(recordZoneID: recordZoneID)
+        
+        synchronizer.cloudSharingControllerDidSaveShare(share, forRecordZoneID: recordZoneID)
+        
+        let savedShare = mockAdapter.shareForRecordZoneValue
+        XCTAssertEqual(share, savedShare)
+        XCTAssertTrue(mockAdapter.saveShareForRecordZoneCalled)
+    }
+    
+    @available(iOS 15, OSX 12, *)
+    func testCloudSharingControllerDidDeleteShareForRecordZone_callsDeleteOnAdapter() {
+
+        let share = CKShare(recordZoneID: recordZoneID)
+        mockAdapter.shareForRecordZoneValue = share
+        
+        synchronizer.cloudSharingControllerDidStopSharing(forRecordZoneID: recordZoneID)
+        
+        XCTAssertNil(mockAdapter.shareForRecordZoneValue)
+        XCTAssertTrue(mockAdapter.deleteShareForRecordZoneCalled)
+    }
+    
+    @available(iOS 15, OSX 12, *)
+    func testShareRecordZone_notYetShared_uploadsShare() {
+        
+        let expectation = self.expectation(description: "did upload")
+        var uploadedRecords: [CKRecord] = []
+        mockDatabase.modifyRecordsOperationEnqueuedBlock = { operation in
+            uploadedRecords = operation.recordsToSave ?? []
+        }
+        
+        synchronizer.share(recordZoneID: recordZoneID, publicPermission: .readWrite, participants: []) { _, _ in
+            expectation.fulfill()
+        }
+        
+        waitForExpectations(timeout: 1, handler: nil)
+        
+        let uploadedShare = uploadedRecords.first as? CKShare
+        
+        XCTAssertNotNil(mockAdapter.shareForRecordZoneValue)
+        XCTAssertEqual(mockAdapter.shareForRecordZoneValue, uploadedShare)
+    }
+    
+    @available(iOS 15, OSX 12, *)
+    func testShareRecordZone_serverRecordChanged_updatesLocalShare() {
+        
+        let expectation = self.expectation(description: "did upload")
+        var uploadedRecords: [CKRecord] = []
+        
+        var operationCount = 0
+        mockDatabase.modifyRecordsOperationEnqueuedBlock = { operation in
+            uploadedRecords = operation.recordsToSave ?? []
+            operationCount += 1
+        }
+        
+        mockDatabase.serverChangedRecordBlock = { record in
+            return record
+        }
+        
+        synchronizer.share(recordZoneID: recordZoneID, publicPermission: .readWrite, participants: []) { _, _ in
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: 1, handler: nil)
+        
+        let uploadedShare = uploadedRecords.first as? CKShare
+
+        XCTAssertNotNil(uploadedShare)
+        XCTAssertEqual(mockAdapter.shareForRecordZoneValue, uploadedShare)
+        XCTAssertTrue(mockAdapter.saveShareForRecordZoneCalled)
+    }
+    
     func testSynchronize_callsDelegateMethods() {
         let expectation = self.expectation(description: "sync finished")
         let objects = objectArray(range: 1...4)

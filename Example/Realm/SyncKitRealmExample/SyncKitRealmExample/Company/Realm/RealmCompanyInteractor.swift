@@ -78,8 +78,8 @@ class RealmCompanyInteractor: CompanyInteractor {
     
     func update(companies: RLMResults<QSCompany>?) {
         let translatedCompanies = companies?.map {
-            Company(name: $0.name,
-                    identifier: Identifier.string(value: $0.identifier!),
+            Company(name: ($0 as! QSCompany).name,
+                    identifier: Identifier.string(value: ($0 as! QSCompany).identifier),
                     isSharing: self.shareController?.isObjectShared(object: $0) ?? false,
                     isShared: false)
             } ?? []

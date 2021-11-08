@@ -132,6 +132,7 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
     var pendingTrackingUpdates = [ObjectUpdate]()
     var childRelationships = [String: Array<ChildRelationship>]()
     var modelTypes = [String: Object.Type]()
+    var entityEncryptedFields = [String: Set<String>]()
     public private(set) var hasChanges = false
     
     /* Should be initialized on main queue */
@@ -145,6 +146,7 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
         
         executeOnMainQueue {
             setupTypeNamesLookup()
+            setupEncryptedFields()
             setup()
             setupChildrenRelationshipsLookup()
         }
@@ -186,6 +188,16 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
         targetRealmConfiguration.objectTypes?.forEach { objectType in
 
             modelTypes[objectType.className()] = objectType as? Object.Type
+        }
+    }
+    
+    func setupEncryptedFields() {
+        if #available(iOS 15, OSX 12, *) {
+            targetRealmConfiguration.objectTypes?.forEach { objectType in
+                if let encryptedEntity = objectType as? EncryptedObject.Type {
+                    entityEncryptedFields[objectType.className()] = Set(encryptedEntity.encryptedFields())
+                }
+            }
         }
     }
     
@@ -518,6 +530,11 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
         return getSyncedEntity(objectIdentifier: identifier, realm: realm)
     }
     
+    @available(iOS 15, OSX 12, *)
+    func syncedEntityForRecordZoneShare(realm: Realm) -> SyncedEntity? {
+        return getSyncedEntity(objectIdentifier: CKRecordNameZoneWideShare, realm: realm)
+    }
+    
     func getStringIdentifier(for object: Object, usingPrimaryKey key: String) -> String {
 
         let objectId = object.value(forKey: key)
@@ -624,24 +641,31 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
             return
         }
         
-        let value = record[key]
-        if let reference = value as? CKRecord.Reference {
-            // Save relationship to be applied after all records have been downloaded and persisted
-            // to ensure target of the relationship has already been created
-            let recordName = reference.recordID.recordName
-            let separatorRange = recordName.range(of: ".")!
-            let objectIdentifier = String(recordName[separatorRange.upperBound...])
-            savePendingRelationship(name: key, syncedEntity: syncedEntity, targetIdentifier: objectIdentifier, realm: realmProvider.persistenceRealm)
-        } else if let asset = value as? CKAsset {
-            if let fileURL = asset.fileURL,
-                let data =  NSData(contentsOf: fileURL) {
-                object.setValue(data, forKey: key)
+        if let encrypted = entityEncryptedFields[syncedEntity.entityType],
+           encrypted.contains(key) {
+            if #available(iOS 15, OSX 12, *) {
+                object.setValue(record.encryptedValues[key], forKey: key)
             }
-        } else if value != nil || object.objectSchema[key]?.isOptional == true {
-            // If property is not a relationship or value is nil and property is optional.
-            // If value is nil and property is non-optional, it is ignored. This is something that could happen
-            // when extending an object model with a new non-optional property, when an old record is applied to the object.
-            object.setValue(value, forKey: key)
+        } else {
+            let value = record[key]
+            if let reference = value as? CKRecord.Reference {
+                // Save relationship to be applied after all records have been downloaded and persisted
+                // to ensure target of the relationship has already been created
+                let recordName = reference.recordID.recordName
+                let separatorRange = recordName.range(of: ".")!
+                let objectIdentifier = String(recordName[separatorRange.upperBound...])
+                savePendingRelationship(name: key, syncedEntity: syncedEntity, targetIdentifier: objectIdentifier, realm: realmProvider.persistenceRealm)
+            } else if let asset = value as? CKAsset {
+                if let fileURL = asset.fileURL,
+                    let data =  NSData(contentsOf: fileURL) {
+                    object.setValue(data, forKey: key)
+                }
+            } else if value != nil || object.objectSchema[key]?.isOptional == true {
+                // If property is not a relationship or value is nil and property is optional.
+                // If value is nil and property is non-optional, it is ignored. This is something that could happen
+                // when extending an object model with a new non-optional property, when an old record is applied to the object.
+                object.setValue(value, forKey: key)
+            }
         }
     }
     
@@ -770,9 +794,31 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
         qsRecord?.encodedRecord = encodedRecord(share, onlySystemFields: false)
     }
     
-    func getShare(for entity: SyncedEntity) -> CKShare? {
+    @available(iOS 15, OSX 12, *)
+    func saveShareForRecordZone(share: CKShare, realmProvider: RealmProvider) {
+        var entity = syncedEntityForRecordZoneShare(realm: realmProvider.persistenceRealm)
+        var qsRecord: Record!
+        if entity == nil {
+            entity = createSyncedEntity(for: share, realmProvider: realmProvider)
+            qsRecord = Record()
+            realmProvider.persistenceRealm.add(qsRecord)
+            entity?.record = qsRecord
+        } else {
+            qsRecord = entity?.record
+        }
         
-        if let recordData = entity.share?.record?.encodedRecord {
+        qsRecord.encodedRecord = encodedRecord(share, onlySystemFields: false)
+    }
+    
+    func getShare(for entity: SyncedEntity) -> CKShare? {
+        guard let share = entity.share else {
+            return nil
+        }
+        return getStoredShare(inShareEntity: share)
+    }
+    
+    func getStoredShare(inShareEntity entity: SyncedEntity) -> CKShare? {
+        if let recordData = entity.record?.encodedRecord {
             let unarchiver = NSKeyedUnarchiver(forReadingWith: recordData)
             let share = CKShare(coder: unarchiver)
             unarchiver.finishDecoding()
@@ -813,7 +859,10 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
             var entity: SyncedEntity! = syncedEntity
             while entity != nil && entity.state == state.rawValue && !includedEntityIDs.contains(entity.identifier) {
                 var parentEntity: SyncedEntity? = nil
-                let record = recordToUpload(syncedEntity: entity, realmProvider: realmProvider, parentSyncedEntity: &parentEntity)
+                guard let record = recordToUpload(syncedEntity: entity, realmProvider: realmProvider, parentSyncedEntity: &parentEntity) else {
+                    entity = nil
+                    continue
+                }
                 resultArray.append(record)
                 includedEntityIDs.insert(entity.identifier)
                 entity = parentEntity
@@ -823,7 +872,7 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
         return resultArray
     }
     
-    func recordToUpload(syncedEntity: SyncedEntity, realmProvider: RealmProvider, parentSyncedEntity: inout SyncedEntity?) -> CKRecord {
+    func recordToUpload(syncedEntity: SyncedEntity, realmProvider: RealmProvider, parentSyncedEntity: inout SyncedEntity?) -> CKRecord? {
         
         let record = getRecord(for: syncedEntity) ?? CKRecord(recordType: syncedEntity.entityType, recordID: CKRecord.ID(recordName: syncedEntity.identifier, zoneID: zoneID))
         
@@ -833,6 +882,15 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
         let object = realmProvider.targetRealm.object(ofType: objectClass, forPrimaryKey: objectIdentifier)
         let entityState = syncedEntity.state
         
+        guard let object = object else {
+            // Object does not exist, but tracking syncedEntity thinks it does.
+            // We mark it as deleted so the iCloud record will get deleted too
+            try? realmProvider.persistenceRealm.write {
+                syncedEntity.entityState = .deleted
+            }
+            return nil
+        }
+        
         let changedKeys = (syncedEntity.changedKeys ?? "").components(separatedBy: ",")
         
         var parentKey: String?
@@ -840,25 +898,27 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
             parentKey = type(of: childObject).parentKey()
         }
         
+        let encryptedFields = entityEncryptedFields[syncedEntity.entityType]
+        
         var parent: Object? = nil
         
-        for property in object!.objectSchema.properties {
+        for property in object.objectSchema.properties {
             
             if (entityState == SyncedEntityState.new.rawValue || changedKeys.contains(property.name)) {
                 
                 if let recordProcessingDelegate = recordProcessingDelegate,
-                   !recordProcessingDelegate.shouldProcessPropertyBeforeUpload(propertyName: property.name, object: object!, record: record) {
+                   !recordProcessingDelegate.shouldProcessPropertyBeforeUpload(propertyName: property.name, object: object, record: record) {
                     continue
                 }
                 
                 if property.type == PropertyType.object {
-                    if let target = object?.value(forKey: property.name) as? Object {
+                    if let target = object.value(forKey: property.name) as? Object {
                         
                         let targetIdentifier = self.getStringIdentifier(for: target, usingPrimaryKey: primaryKey)
                         let referenceIdentifier = "\(property.objectClassName!).\(targetIdentifier)"
                         let recordID = CKRecord.ID(recordName: referenceIdentifier, zoneID: zoneID)
                         // if we set the parent we must make the action .deleteSelf, otherwise we get errors if we ever try to delete the parent record
-                        let action: CKRecord.Reference.Action = parentKey == property.name ? .deleteSelf : .none
+                        let action: CKRecord.ReferenceAction = parentKey == property.name ? .deleteSelf : .none
                         let recordReference = CKRecord.Reference(recordID: recordID, action: action)
                         record[property.name] = recordReference;
                         if parentKey == property.name {
@@ -869,18 +929,25 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
                             property.type != PropertyType.linkingObjects &&
                             !(property.name == objectClass.primaryKey()!) {
                     
-                    let value = object!.value(forKey: property.name)
-                    if property.type == PropertyType.data,
-                        let data = value as? Data,
-                        forceDataTypeInsteadOfAsset == false  {
-                        
-                        let fileURL = self.tempFileManager.store(data: data)
-                        let asset = CKAsset(fileURL: fileURL)
-                        record[property.name] = asset
-                    } else if value == nil {
-                        record[property.name] = nil
-                    } else if let recordValue = value as? CKRecordValue {
-                        record[property.name] = recordValue
+                    if let encrypted = encryptedFields,
+                       encrypted.contains(property.name) {
+                        if #available(iOS 15, OSX 12, *) {
+                            record.encryptedValues[property.name] = object.value(forKey: property.name) as? CKRecordValue
+                        }
+                    } else {
+                        let value = object.value(forKey: property.name)
+                        if property.type == PropertyType.data,
+                            let data = value as? Data,
+                            forceDataTypeInsteadOfAsset == false  {
+                            
+                            let fileURL = self.tempFileManager.store(data: data)
+                            let asset = CKAsset(fileURL: fileURL)
+                            record[property.name] = asset
+                        } else if value == nil {
+                            record[property.name] = nil
+                        } else if let recordValue = value as? CKRecordValue {
+                            record[property.name] = recordValue
+                        }
                     }
                 }
             }
@@ -905,7 +972,10 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
 
         var records = [CKRecord]()
         var parent: SyncedEntity?
-        records.append(recordToUpload(syncedEntity: syncedEntity, realmProvider: realmProvider, parentSyncedEntity: &parent))
+        guard let record = recordToUpload(syncedEntity: syncedEntity, realmProvider: realmProvider, parentSyncedEntity: &parent) else {
+            return []
+        }
+        records.append(record)
         
         if let relationships = childRelationships[syncedEntity.entityType] {
             for relationship in relationships {
@@ -1313,4 +1383,58 @@ public class RealmSwiftAdapter: NSObject, ModelAdapter {
         
         return records ?? []
     }
+    
+    @available(iOS 15.0, OSX 12, *)
+    public func shareForRecordZone() -> CKShare? {
+        guard realmProvider != nil else {
+            return nil
+        }
+        
+        var share: CKShare?
+        
+        executeOnMainQueue {
+            if let syncedEntity = syncedEntityForRecordZoneShare(realm: self.realmProvider.persistenceRealm) {
+                share = getStoredShare(inShareEntity: syncedEntity)
+            }
+        }
+        
+        return share
+    }
+    
+    /// Store CKShare for the record zone.
+    /// - Parameters:
+    ///   - share: `CKShare` object to save.
+    @available(iOS 15.0, OSX 12, *)
+    public func saveShareForRecordZone(share: CKShare) {
+        guard realmProvider != nil else {
+            return
+        }
+        
+        executeOnMainQueue {
+            self.realmProvider.persistenceRealm.beginWrite()
+            self.saveShareForRecordZone(share: share, realmProvider: self.realmProvider)
+            try? self.realmProvider.persistenceRealm.commitWrite()
+        }
+    }
+    
+    /// Delete existing `CKShare` for adapter's record zone.
+    @available(iOS 15.0, OSX 12, *)
+    public func deleteShareForRecordZone() {
+        guard realmProvider != nil else {
+            return
+        }
+        
+        executeOnMainQueue {
+            if let syncedEntity = syncedEntityForRecordZoneShare(realm: self.realmProvider.persistenceRealm) {
+                
+                self.realmProvider.persistenceRealm.beginWrite()
+                if let record = syncedEntity.record {
+                    self.realmProvider.persistenceRealm.delete(record)
+                }
+                self.realmProvider.persistenceRealm.delete(syncedEntity)
+                try? self.realmProvider.persistenceRealm.commitWrite()
+            }
+        }
+    }
+
 }

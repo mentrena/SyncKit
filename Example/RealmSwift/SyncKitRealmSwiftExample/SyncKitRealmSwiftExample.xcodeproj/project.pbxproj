@@ -12,6 +12,7 @@
 		640C33BA22AC48C700A85508 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 640C33B922AC48C700A85508 /* AppDelegate.swift */; };
 		640C33C422AC48C800A85508 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 640C33C322AC48C800A85508 /* Assets.xcassets */; };
 		6413ECEA2559AB7100BDC1DB /* RecordProcessingDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6413ECE92559AB7100BDC1DB /* RecordProcessingDelegate.swift */; };
+		6430AD7126C1878F00E8880D /* EntityWithEncryptedFields.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6430AD7026C1878F00E8880D /* EntityWithEncryptedFields.swift */; };
 		6433B3DE22C0051700EAC16C /* EmployeePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6433B3D822C0051700EAC16C /* EmployeePresenter.swift */; };
 		6433B3DF22C0051700EAC16C /* EmployeeCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6433B3D922C0051700EAC16C /* EmployeeCellViewModel.swift */; };
 		6433B3E022C0051700EAC16C /* EmployeeInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6433B3DA22C0051700EAC16C /* EmployeeInteractor.swift */; };
@@ -106,6 +107,7 @@
 		640C33D422AC499E00A85508 /* SyncKitRealmSwiftExampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SyncKitRealmSwiftExampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		640C33D822AC499E00A85508 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6413ECE92559AB7100BDC1DB /* RecordProcessingDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordProcessingDelegate.swift; sourceTree = "<group>"; };
+		6430AD7026C1878F00E8880D /* EntityWithEncryptedFields.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityWithEncryptedFields.swift; sourceTree = "<group>"; };
 		6433B3D822C0051700EAC16C /* EmployeePresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EmployeePresenter.swift; path = ../../../../Common/Employee/EmployeePresenter.swift; sourceTree = "<group>"; };
 		6433B3D922C0051700EAC16C /* EmployeeCellViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EmployeeCellViewModel.swift; path = ../../../../Common/Employee/EmployeeCellViewModel.swift; sourceTree = "<group>"; };
 		6433B3DA22C0051700EAC16C /* EmployeeInteractor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EmployeeInteractor.swift; path = ../../../../Common/Employee/EmployeeInteractor.swift; sourceTree = "<group>"; };
@@ -234,6 +236,7 @@
 				64B3A3B322B3B1E200E4E942 /* TestUtilities.swift */,
 				6492364122C3F8970074A142 /* SyncKitRealmSwiftTests.swift */,
 				6413ECE92559AB7100BDC1DB /* RecordProcessingDelegate.swift */,
+				6430AD7026C1878F00E8880D /* EntityWithEncryptedFields.swift */,
 			);
 			path = SyncKitRealmSwiftExampleTests;
 			sourceTree = "<group>";
@@ -589,6 +592,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6430AD7126C1878F00E8880D /* EntityWithEncryptedFields.swift in Sources */,
 				6413ECEA2559AB7100BDC1DB /* RecordProcessingDelegate.swift in Sources */,
 				6492364222C3F8980074A142 /* SyncKitRealmSwiftTests.swift in Sources */,
 				64B3A3B422B3B1E200E4E942 /* TestUtilities.swift in Sources */,

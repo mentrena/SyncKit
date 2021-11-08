@@ -8,6 +8,7 @@
 
 import Foundation
 import CoreData
+import CloudKit
 import SyncKit
 
 class RecordProcessingDelegate: CoreDataAdapterRecordProcessing {

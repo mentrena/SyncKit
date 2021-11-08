@@ -159,6 +159,20 @@ class SyncKitRealmSwiftTests: XCTestCase, RealmSwiftAdapterDelegate {
         }
     }
     
+    @discardableResult
+    func waitUntilSynced(adapter: ModelAdapter, downloaded: [CKRecord] = [], deleted: [CKRecord.ID] = []) -> (updated: [CKRecord], deleted: [CKRecord.ID]) {
+        let expectation = self.expectation(description: "synced")
+        var updatedRecordsResult: [CKRecord]!
+        var deletedRecordIDsResult: [CKRecord.ID]!
+        fullySync(adapter: adapter, downloaded: downloaded, deleted: deleted) { (updatedRecords, deletedRecordIDs, _) in
+            updatedRecordsResult = updatedRecords
+            deletedRecordIDsResult = deletedRecordIDs
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: 1, handler: nil)
+        return (updatedRecordsResult ?? [], deletedRecordIDsResult ?? [])
+    }
+    
     struct TestCase {
         let keyType: PropertyType
         let values: [String: Any]!
@@ -1281,7 +1295,6 @@ class SyncKitRealmSwiftTests: XCTestCase, RealmSwiftAdapterDelegate {
             let share = CKShare(rootRecord: record!)
             
             adapter.save(share: share, for: company!)
-            adapter.save(share: share, for: company!)
             
             let share2 = adapter.share(for: company!)
             XCTAssertNotNil(share2)
@@ -1395,6 +1408,100 @@ class SyncKitRealmSwiftTests: XCTestCase, RealmSwiftAdapterDelegate {
             XCTAssertTrue(record.recordID.recordName.contains("com1") ||
                 record.recordID.recordName.contains("emp1") ||
                 record.recordID.recordName.contains("emp2"))
+        }
+    }
+    
+    @available(iOS 15, OSX 12, *)
+    func testShareForRecordZone_noShare_returnsNil() {
+        let cases = TestCase.defaultCases
+        cases.forEach { tc in
+            let (_, adapter, _, _) = defaultTestObjects(testCase: tc, name: "61")
+            let share = adapter.shareForRecordZone()
+            XCTAssertNil(share)
+        }
+    }
+    
+    @available(iOS 15, OSX 12, *)
+    func testShareForRecordZone_saveShareCalled_returnsShare() {
+        
+        let cases = TestCase.defaultCases
+        cases.forEach { tc in
+            let (_, adapter, _, _) = defaultTestObjects(testCase: tc, name: "62")
+            
+            let share = CKShare(recordZoneID: adapter.recordZoneID)
+            
+            adapter.saveShareForRecordZone(share: share)
+            
+            let share2 = adapter.shareForRecordZone()
+            XCTAssertNotNil(share2)
+        }
+    }
+    
+    @available(iOS 15, OSX 12, *)
+    func testShareForRecordZone_shareDeleted_returnsNil() {
+        
+        let cases = TestCase.defaultCases
+        cases.forEach { tc in
+            let (_, adapter, _, _) = defaultTestObjects(testCase: tc, name: "63")
+            
+            
+            let share = CKShare(recordZoneID: adapter.recordZoneID)
+            
+            adapter.saveShareForRecordZone(share: share)
+            
+            XCTAssertNotNil(adapter.shareForRecordZone())
+            
+            adapter.deleteShareForRecordZone()
+            
+            XCTAssertNil(adapter.shareForRecordZone())
+        }
+    }
+    
+    @available(iOS 15, OSX 12, *)
+    func testSaveChangesInRecords_includesShareForRecordZone_savesShare() {
+        
+        let cases = TestCase.defaultCases
+        cases.forEach { tc in
+            let (_, adapter, _, _) = defaultTestObjects(testCase: tc, name: "64", insertCompany: false, insertEmployee: false)
+
+            let shareRecord = CKShare(recordZoneID: adapter.recordZoneID)
+            
+            let expectation = self.expectation(description: "synced")
+            fullySync(adapter: adapter, downloaded: [shareRecord], deleted: []) { (_, _, _) in
+                expectation.fulfill()
+            }
+            
+            waitForExpectations(timeout: 1, handler: nil)
+            
+            let share = adapter.shareForRecordZone()
+            
+            XCTAssertNotNil(share)
+            XCTAssertTrue(share?.recordID.recordName == CKRecordNameZoneWideShare)
+        }
+    }
+    
+    @available(iOS 15, OSX 12, *)
+    func testDeleteRecordsWithIDs_containsShareForRecordZone_deletesShare() {
+        let cases = TestCase.defaultCases
+        cases.forEach { tc in
+            let (_, adapter, _, _) = defaultTestObjects(testCase: tc, name: "65")
+            
+            let share = CKShare(recordZoneID: adapter.recordZoneID)
+            
+            adapter.saveShareForRecordZone(share: share)
+            
+            let savedShare = adapter.shareForRecordZone()
+            XCTAssertNotNil(savedShare)
+            
+            let expectation = self.expectation(description: "synced")
+            fullySync(adapter: adapter, downloaded: [], deleted: [share.recordID]) { (_, _, _) in
+                expectation.fulfill()
+            }
+            
+            waitForExpectations(timeout: 1, handler: nil)
+            
+            let updatedShare = adapter.shareForRecordZone()
+            XCTAssertNil(updatedShare)
         }
     }
     
@@ -1553,5 +1660,59 @@ class SyncKitRealmSwiftTests: XCTestCase, RealmSwiftAdapterDelegate {
         let companies = realm.objects(QSCompany.self)
         
         XCTAssertEqual(companies.first?.name, "company1")
+    }
+}
+
+// MARK: - Encrypted fields
+@available(iOS 15, OSX 12, *)
+extension SyncKitRealmSwiftTests {
+    
+    func testRecordsToUpload_encryptedFields_areEncryptedInRecord() {
+        var configuration = Realm.Configuration()
+        configuration.inMemoryIdentifier = "t100"
+        configuration.objectTypes = [EntityWithEncryptedFields.self]
+        let realm = try! Realm(configuration: configuration)
+        
+        insertObject(values: ["identifier": "1", "name": "company1", "secret": "mySecret"],
+                     realm: realm,
+                     objectType: EntityWithEncryptedFields.self)
+        
+        let adapter = realmAdapter(targetConfiguration: realm.configuration,
+                                   persistenceConfiguration: persistenceConfigurationWith(identifier: "p100"))
+        
+        adapter.prepareToImport()
+        let records = adapter.recordsToUpload(limit: 10)
+        adapter.didFinishImport(with: nil)
+        
+        XCTAssertTrue(records.count > 0)
+        if let record = records.first {
+            XCTAssertEqual(record["name"] as? String, "company1")
+            XCTAssertNil(record["secret"])
+            XCTAssertEqual(record.encryptedValues["secret"], "mySecret")
+        }
+    }
+    
+    func testSaveChangesInRecord_encryptedFields_changesAreSaved() {
+        var configuration = Realm.Configuration()
+        configuration.inMemoryIdentifier = "t101"
+        configuration.objectTypes = [EntityWithEncryptedFields.self]
+        let realm = try! Realm(configuration: configuration)
+        
+        let adapter = realmAdapter(targetConfiguration: realm.configuration,
+                                   persistenceConfiguration: persistenceConfigurationWith(identifier: "p101"))
+        
+        let record = CKRecord(recordType: "EntityWithEncryptedFields", recordID: CKRecord.ID(recordName: "EntityWithEncryptedFields.myID", zoneID: adapter.recordZoneID))
+        record["name"] = "name"
+        record.encryptedValues["secret"] = "mySecret"
+        
+        waitUntilSynced(adapter: adapter, downloaded: [record], deleted: [])
+        
+        let object = realm.objects(EntityWithEncryptedFields.self).first
+        XCTAssertNotNil(object)
+        if let object = object {
+            XCTAssertEqual(object.name, "name")
+            XCTAssertEqual(object.identifier, "myID")
+            XCTAssertEqual(object.secret, "mySecret")
+        }
     }
 }

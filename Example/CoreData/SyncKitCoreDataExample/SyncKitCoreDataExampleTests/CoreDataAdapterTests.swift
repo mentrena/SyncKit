@@ -739,6 +739,65 @@ extension CoreDataAdapterTests {
         XCTAssertNotNil(empRecord)
         XCTAssertNotNil(emp2Record)
     }
+    
+    @available(iOS 15, OSX 12, *)
+    func testShareForRecordZone_noShare_returnsNil() {
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            let adapter = createAdapter()
+            let share = adapter.shareForRecordZone()
+            XCTAssertNil(share)
+        }
+    }
+    
+    @available(iOS 15, OSX 12, *)
+    func testShareForRecordZone_saveShareCalled_returnsShare() {
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            let adapter = createAdapter()
+            let share = CKShare(recordZoneID: recordZoneID)
+            adapter.saveShareForRecordZone(share: share)
+            let share2 = adapter.shareForRecordZone()
+            XCTAssertNotNil(share2)
+        }
+    }
+    
+    @available(iOS 15, OSX 12, *)
+    func testShareForRecordZone_shareDeleted_returnsNil() {
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            let adapter = createAdapter()
+            let share = CKShare(recordZoneID: recordZoneID)
+            adapter.saveShareForRecordZone(share: share)
+            adapter.deleteShareForRecordZone()
+            XCTAssertNil(adapter.shareForRecordZone())
+        }
+    }
+    
+    @available(iOS 15, OSX 12, *)
+    func testSaveChangesInRecords_includesShareForRecordZone_savesShare() {
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            let adapter = createAdapter()
+            let shareRecord = CKShare(recordZoneID: recordZoneID)
+            waitUntilSynced(adapter: adapter, downloaded: [shareRecord])
+            let share = adapter.shareForRecordZone()
+            XCTAssertNotNil(share)
+            XCTAssertEqual(share?.recordID.recordName, CKRecordNameZoneWideShare)
+        }
+    }
+    
+    @available(iOS 15, OSX 12, *)
+    func testDeleteRecordsWithIDs_containsShareForRecordZone_deletesShare() {
+        TestCase.defaultCases.forEach { tc in
+            setUpCoreData(testCase: tc)
+            let adapter = createAdapter()
+            let share = CKShare(recordZoneID: recordZoneID)
+            adapter.saveShareForRecordZone(share: share)
+            waitUntilSynced(adapter: adapter, deleted: [share.recordID])
+            XCTAssertNil(adapter.shareForRecordZone())
+        }
+    }
 }
 
 // MARK: - Transformable
@@ -872,6 +931,57 @@ extension CoreDataAdapterTests {
         }
     }
 }
+
+// MARK: - Field encryption
+
+@available(iOS 15, OSX 12, *)
+extension CoreDataAdapterTests {
+    func testRecordsToUpload_encryptedFields_areEncryptedInRecord() {
+        
+        targetCoreDataStack = coreDataStack(modelName: "EncryptedModel")
+        persistenceCoreDataStack = coreDataStack(model: CoreDataAdapter.persistenceModel, concurrencyType: .privateQueueConcurrencyType)
+        
+        let objectID = UUID().uuidString
+        insert(entityType: "EntityWithEncryptedFields", properties: ["name": "name", "identifier": objectID, "secret": "mySecret"], context: targetCoreDataStack.managedObjectContext)
+        
+        let adapter = createAdapter(persistenceStack: persistenceCoreDataStack, targetContext: targetCoreDataStack.managedObjectContext)
+        
+        let (records, _) = waitUntilSynced(adapter: adapter)
+        
+        let record = records.first
+        XCTAssertNotNil(record)
+        if let record = record {
+            XCTAssertEqual(record["name"], "name")
+            XCTAssertEqual(record.recordID.recordName, "EntityWithEncryptedFields.\(objectID)")
+            XCTAssertNil(record["secret"])
+            XCTAssertEqual(record.encryptedValues["secret"], "mySecret")
+        }
+    }
+    
+    func testSaveChangesInRecord_encryptedFields_changesAreSaved() {
+        
+        targetCoreDataStack = coreDataStack(modelName: "EncryptedModel")
+        persistenceCoreDataStack = coreDataStack(model: CoreDataAdapter.persistenceModel, concurrencyType: .privateQueueConcurrencyType)
+        
+        let adapter = createAdapter(persistenceStack: persistenceCoreDataStack, targetContext: targetCoreDataStack.managedObjectContext)
+        
+        let record = CKRecord(recordType: "EntityWithEncryptedFields", recordID: CKRecord.ID(recordName: "EntityWithEncryptedFields.myID", zoneID: recordZoneID))
+        record["name"] = "name"
+        record.encryptedValues["secret"] = "mySecret"
+        
+        waitUntilSynced(adapter: adapter, downloaded: [record], deleted: [])
+        
+        let object = try? targetCoreDataStack.managedObjectContext.executeFetchRequest(entityName: "EntityWithEncryptedFields").first as? EntityWithEncryptedFields
+        XCTAssertNotNil(object)
+        if let object = object {
+            XCTAssertEqual(object.name, "name")
+            XCTAssertEqual(object.secret, "mySecret")
+            XCTAssertEqual(object.identifier, "myID")
+        }
+    }
+}
+
+// MARK: - Utilities
 
 extension CoreDataAdapterTests: CoreDataAdapterDelegate, CoreDataAdapterConflictResolutionDelegate {
     func coreDataAdapter(_ adapter: CoreDataAdapter, requestsContextSaveWithCompletion completion: (Error?) -> ()) {

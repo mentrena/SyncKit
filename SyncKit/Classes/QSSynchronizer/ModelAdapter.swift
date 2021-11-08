@@ -118,6 +118,17 @@ public extension Notification.Name {
     /// - Parameter object: Model object.
     @available(iOS 10.0, OSX 10.12, *) func deleteShare(for object: AnyObject)
     
+    /// - Returns: CKShare for the adapter's record zone, if one exists.
+    @available(iOS 15.0, OSX 12, *) func shareForRecordZone() -> CKShare?
+    
+    /// Store CKShare for the record zone.
+    /// - Parameters:
+    ///   - share: `CKShare` object to save.
+    @available(iOS 15.0, OSX 12, *) func saveShareForRecordZone(share: CKShare)
+    
+    /// Delete existing `CKShare` for adapter's record zone.
+    @available(iOS 15.0, OSX 12, *) func deleteShareForRecordZone()
+    
     /// Returns a list of records for the given object and any parent records, recursively.
     /// - Parameter object: Model object.
     /// - Returns: Array of `CKRecord`

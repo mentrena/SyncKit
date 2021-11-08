@@ -188,6 +188,14 @@ extension CoreDataAdapter {
         return fetched?.first
     }
     
+    @available(iOS 15.0, OSX 12, *)
+    func syncedEntityForRecordZoneShare() -> QSSyncedEntity? {
+        let fetched = try? self.privateContext.executeFetchRequest(entityName: "QSSyncedEntity",
+                                                                   predicate: NSPredicate(format: "identifier == %@", CKRecordNameZoneWideShare),
+                                                                   fetchLimit: 1) as? [QSSyncedEntity]
+        return fetched?.first
+    }
+    
     func fetchEntities(state: SyncedEntityState) -> [QSSyncedEntity] {
         return try! privateContext.executeFetchRequest(entityName: "QSSyncedEntity", predicate: NSPredicate(format: "state == %lud", state.rawValue)) as! [QSSyncedEntity]
     }
@@ -247,8 +255,15 @@ extension CoreDataAdapter {
     }
     
     func storedShare(for entity: QSSyncedEntity) -> CKShare? {
+        guard let share = entity.share else {
+            return nil
+        }
+        return storedShare(inShareEntity: share)
+    }
+    
+    func storedShare(inShareEntity entity: QSSyncedEntity) -> CKShare? {
         var share: CKShare?
-        if let shareData = entity.share?.record?.encodedRecord {
+        if let shareData = entity.record?.encodedRecord {
             share = QSCoder.shared.decode(from: shareData as Data)
         }
         return share
@@ -264,6 +279,22 @@ extension CoreDataAdapter {
         } else {
             qsRecord = entity.share?.record
         }
+        qsRecord.encodedRecord = QSCoder.shared.encode(share) as NSData
+    }
+    
+    @available(iOS 15.0, OSX 12, *)
+    func saveShareForRecordZoneEntity(share: CKShare) {
+        var entity = syncedEntityForRecordZoneShare()
+        var qsRecord: QSRecord!
+        if entity == nil {
+            entity = createSyncedEntity(share: share)
+            qsRecord = QSRecord(entity: NSEntityDescription.entity(forEntityName: "QSRecord", in: privateContext)!,
+                                insertInto: privateContext)
+            entity?.record = qsRecord
+        } else {
+            qsRecord = entity?.record
+        }
+
         qsRecord.encodedRecord = QSCoder.shared.encode(share) as NSData
     }
     
@@ -308,6 +339,7 @@ extension CoreDataAdapter {
             originalObject = self.managedObject(entityName: entityType, identifier: objectID, context: context)
             entityDescription = NSEntityDescription.entity(forEntityName: entityType, in: context)
             let primaryKey = self.identifierFieldName(forEntity: entityType)
+            let encryptedFields = self.entityEncryptedFields[entityType]
             // Add attributes
             entityDescription.attributesByName.forEach({ (attributeName, attributeDescription) in
                 if attributeName != primaryKey &&
@@ -328,6 +360,12 @@ extension CoreDataAdapter {
                         let value = value,
                         let transformed = self.transformedValue(value, valueTransformerName: attributeDescription.valueTransformerName) as? CKRecordValueProtocol{
                         record[attributeName] = transformed
+                    } else if let encrypted = encryptedFields,
+                              encrypted.contains(attributeName) {
+                        if #available(iOS 15, OSX 12, *) {
+                            record.encryptedValues[attributeName] = value as? CKRecordValueProtocol
+                        }
+                        // Else not possible, since the EncryptedObject protocol is only declared for CloudKit versions that support encryption
                     } else {
                         record[attributeName] = value as? CKRecordValueProtocol
                     }
@@ -480,18 +518,28 @@ extension CoreDataAdapter {
             return
         }
         
-        let value = record[attributeName]
-        if let value = value as? CKAsset {
-            guard let url = value.fileURL,
-            let data = try? Data(contentsOf: url) else { return }
-            object.setValue(data, forKey: attributeName)
-        } else if let value = value,
-            attributeDescription.attributeType == .transformableAttributeType {
-            object.setValue(reverseTransformedValue(value,
-                                                    valueTransformerName: attributeDescription.valueTransformerName),
-                            forKey: attributeName)
+        let encryptedFields = entityEncryptedFields[object.entity.name!]
+        
+        if let encrypted = encryptedFields,
+           encrypted.contains(attributeName) {
+            if #available(iOS 15, OSX 12, *) {
+                object.setValue(record.encryptedValues[attributeName], forKey: attributeName)
+            }
+            // Else not possible, since the EncryptedObject protocol is only declared for CloudKit versions that support encryption
         } else {
-            object.setValue(value, forKey: attributeName)
+            let value = record[attributeName]
+            if let value = value as? CKAsset {
+                guard let url = value.fileURL,
+                      let data = try? Data(contentsOf: url) else { return }
+                object.setValue(data, forKey: attributeName)
+            } else if let value = value,
+                      attributeDescription.attributeType == .transformableAttributeType {
+                object.setValue(reverseTransformedValue(value,
+                                                        valueTransformerName: attributeDescription.valueTransformerName),
+                                forKey: attributeName)
+            } else {
+                object.setValue(value, forKey: attributeName)
+            }
         }
     }
     
