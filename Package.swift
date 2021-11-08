@@ -27,7 +27,7 @@ let package = Package(
          .target(
             name: "SyncKit/Realm",
             dependencies: [
-                .byName(name: "Realm")
+                .product(name: "Realm", package: "realm-cocoa")
             ],
             path: ".",
             sources: ["SyncKit/Classes/Realm"]
@@ -35,8 +35,8 @@ let package = Package(
         .target(
             name: "SyncKit/RealmSwift",
             dependencies: [
-                .byName(name: "RealmSwift"),
-                .byName(name: "Realm")
+                .product(name: "RealmSwift", package: "realm-cocoa"),
+                .product(name: "Realm", package: "realm-cocoa")
             ],
             path: ".",
             sources: ["SyncKit/Classes/RealmSwift"]
