@@ -63,6 +63,12 @@ extension CoreDataAdapter {
     func transformedValue(_ value: Any, valueTransformerName: String?) -> Any? {
         if let valueTransformerName = valueTransformerName {
             let transformer = ValueTransformer(forName: NSValueTransformerName(valueTransformerName))
+            if #available(iOS 12.0, *) {
+                if let secureUnarchiveTransformer = transformer as? NSSecureUnarchiveFromDataTransformer
+                {
+                    return secureUnarchiveTransformer.reverseTransformedValue(value)
+                }
+            }
             return transformer?.transformedValue(value)
         } else {
             return QSCoder.shared.data(from: value)
@@ -72,6 +78,12 @@ extension CoreDataAdapter {
     func reverseTransformedValue(_ value: Any, valueTransformerName: String?) -> Any? {
         if let valueTransformerName = valueTransformerName {
             let transformer = ValueTransformer(forName: NSValueTransformerName(valueTransformerName))
+            if #available(iOS 12.0, *) {
+                if let secureUnarchiveTransformer = transformer as? NSSecureUnarchiveFromDataTransformer
+                {
+                    return secureUnarchiveTransformer.transformedValue(value)
+                }
+            }
             return transformer?.reverseTransformedValue(value)
         } else if let data = value as? Data {
             return QSCoder.shared.object(from: data)
