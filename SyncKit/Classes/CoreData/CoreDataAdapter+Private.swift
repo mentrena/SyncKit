@@ -63,7 +63,7 @@ extension CoreDataAdapter {
     func transformedValue(_ value: Any, valueTransformerName: String?) -> Any? {
         if let valueTransformerName = valueTransformerName {
             let transformer = ValueTransformer(forName: NSValueTransformerName(valueTransformerName))
-            if #available(iOS 12.0, *) {
+            if #available(iOS 12.0, OSX 10.14, watchOS 5.0, *) {
                 if let secureUnarchiveTransformer = transformer as? NSSecureUnarchiveFromDataTransformer
                 {
                     return secureUnarchiveTransformer.reverseTransformedValue(value)
@@ -78,7 +78,7 @@ extension CoreDataAdapter {
     func reverseTransformedValue(_ value: Any, valueTransformerName: String?) -> Any? {
         if let valueTransformerName = valueTransformerName {
             let transformer = ValueTransformer(forName: NSValueTransformerName(valueTransformerName))
-            if #available(iOS 12.0, *) {
+            if #available(iOS 12.0, OSX 10.14, watchOS 5.0, *) {
                 if let secureUnarchiveTransformer = transformer as? NSSecureUnarchiveFromDataTransformer
                 {
                     return secureUnarchiveTransformer.transformedValue(value)
