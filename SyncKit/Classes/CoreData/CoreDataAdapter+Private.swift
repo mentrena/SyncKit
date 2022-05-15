@@ -64,8 +64,10 @@ extension CoreDataAdapter {
         if let valueTransformerName = valueTransformerName {
             let transformer = ValueTransformer(forName: NSValueTransformerName(valueTransformerName))
             return transformer?.transformedValue(value)
+        } else if let data = value as? Data {
+            return QSCoder.shared.object(from: data)
         } else {
-            return QSCoder.shared.data(from: value)
+            return nil
         }
     }
     
@@ -73,10 +75,8 @@ extension CoreDataAdapter {
         if let valueTransformerName = valueTransformerName {
             let transformer = ValueTransformer(forName: NSValueTransformerName(valueTransformerName))
             return transformer?.reverseTransformedValue(value)
-        } else if let data = value as? Data {
-            return QSCoder.shared.object(from: data)
         } else {
-            return nil
+            return QSCoder.shared.data(from: value)
         }
     }
     
@@ -358,7 +358,7 @@ extension CoreDataAdapter {
                         record[attributeName] = asset
                     } else if attributeDescription.attributeType == .transformableAttributeType,
                         let value = value,
-                        let transformed = self.transformedValue(value, valueTransformerName: attributeDescription.valueTransformerName) as? CKRecordValueProtocol{
+                              let transformed = self.reverseTransformedValue(value, valueTransformerName: attributeDescription.valueTransformerName) as? CKRecordValueProtocol{
                         record[attributeName] = transformed
                     } else if let encrypted = encryptedFields,
                               encrypted.contains(attributeName) {
@@ -534,8 +534,8 @@ extension CoreDataAdapter {
                 object.setValue(data, forKey: attributeName)
             } else if let value = value,
                       attributeDescription.attributeType == .transformableAttributeType {
-                object.setValue(reverseTransformedValue(value,
-                                                        valueTransformerName: attributeDescription.valueTransformerName),
+                object.setValue(transformedValue(value,
+                                                 valueTransformerName: attributeDescription.valueTransformerName),
                                 forKey: attributeName)
             } else {
                 object.setValue(value, forKey: attributeName)

@@ -22,17 +22,24 @@ class QSNamesTransformer: ValueTransformer {
     }
     
     override class func transformedValueClass() -> AnyClass {
-        return NSData.self
+        NSData.self
+    }
+
+    override class func allowsReverseTransformation() -> Bool {
+        true
     }
     
     override func transformedValue(_ value: Any?) -> Any? {
         QSNamesTransformer.transformedValueCalled = true
-        return NSKeyedArchiver.archivedData(withRootObject: value)
+        guard let data = value as? Data else {
+            return nil
+        }
+        return NSKeyedUnarchiver.unarchiveObject(with: data)
     }
     
     override func reverseTransformedValue(_ value: Any?) -> Any? {
         QSNamesTransformer.reverseTransformedValueCalled = true
-        return NSKeyedUnarchiver.unarchiveObject(with: value as! Data)
+        return NSKeyedArchiver.archivedData(withRootObject: value)
     }
 }
 
