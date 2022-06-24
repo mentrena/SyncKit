@@ -63,20 +63,36 @@ extension CoreDataAdapter {
     func transformedValue(_ value: Any, valueTransformerName: String?) -> Any? {
         if let valueTransformerName = valueTransformerName {
             let transformer = ValueTransformer(forName: NSValueTransformerName(valueTransformerName))
-            return transformer?.transformedValue(value)
-        } else if let data = value as? Data {
-            return QSCoder.shared.object(from: data)
+            if #available(iOS 12.0, OSX 10.14, watchOS 5.0, *) {
+                if let secureUnarchiveTransformer = transformer as? NSSecureUnarchiveFromDataTransformer {
+                    return secureUnarchiveTransformer.reverseTransformedValue(value)
+                } else {
+                    return transformer?.transformedValue(value)
+                }
+            } else {
+                return transformer?.transformedValue(value)
+            }
         } else {
-            return nil
+            return QSCoder.shared.data(from: value)
         }
     }
     
     func reverseTransformedValue(_ value: Any, valueTransformerName: String?) -> Any? {
         if let valueTransformerName = valueTransformerName {
             let transformer = ValueTransformer(forName: NSValueTransformerName(valueTransformerName))
-            return transformer?.reverseTransformedValue(value)
+            if #available(iOS 12.0, OSX 10.14, watchOS 5.0, *) {
+                 if let secureUnarchiveTransformer = transformer as? NSSecureUnarchiveFromDataTransformer {
+                     return secureUnarchiveTransformer.transformedValue(value)
+                 } else {
+                     return transformer?.reverseTransformedValue(value)
+                 }
+            } else {
+                return transformer?.reverseTransformedValue(value)
+            }
+        } else if let data = value as? Data {
+            return QSCoder.shared.object(from: data)
         } else {
-            return QSCoder.shared.data(from: value)
+            return nil
         }
     }
     
@@ -357,8 +373,11 @@ extension CoreDataAdapter {
                         let asset = CKAsset(fileURL: fileURL)
                         record[attributeName] = asset
                     } else if attributeDescription.attributeType == .transformableAttributeType,
-                        let value = value,
-                              let transformed = self.reverseTransformedValue(value, valueTransformerName: attributeDescription.valueTransformerName) as? CKRecordValueProtocol{
+                              let value = value,
+                              let transformed = self.transformedValue(
+                                value,
+                                valueTransformerName: attributeDescription.valueTransformerName
+                              ) as? CKRecordValueProtocol {
                         record[attributeName] = transformed
                     } else if let encrypted = encryptedFields,
                               encrypted.contains(attributeName) {
@@ -534,8 +553,8 @@ extension CoreDataAdapter {
                 object.setValue(data, forKey: attributeName)
             } else if let value = value,
                       attributeDescription.attributeType == .transformableAttributeType {
-                object.setValue(transformedValue(value,
-                                                 valueTransformerName: attributeDescription.valueTransformerName),
+                object.setValue(reverseTransformedValue(value,
+                                                        valueTransformerName: attributeDescription.valueTransformerName),
                                 forKey: attributeName)
             } else {
                 object.setValue(value, forKey: attributeName)
