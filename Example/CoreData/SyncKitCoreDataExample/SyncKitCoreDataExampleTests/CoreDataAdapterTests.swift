@@ -814,16 +814,10 @@ extension CoreDataAdapterTests {
         let adapter = createAdapter()
         let records = waitUntilSynced(adapter: adapter).updated
         XCTAssertEqual(records.count, 1)
-        XCTAssertFalse(QSNamesTransformer.transformedValueCalled)
-        XCTAssertTrue(QSNamesTransformer.reverseTransformedValueCalled)
-
-        let record = records.first!
-        guard let namesData = record["names"] as? Data else {
-            XCTFail("Record property should be of data type")
-            return
-        }
-        let names = (try? NSKeyedUnarchiver.unarchivedObject(ofClass: NSArray.self, from: namesData)) as? [String]
-        XCTAssertEqual(names, ["1", "2"])
+        XCTAssertTrue(QSNamesTransformer.transformedValueCalled)
+        XCTAssertFalse(QSNamesTransformer.reverseTransformedValueCalled)
+        let transformed = QSNamesTransformer().transformedValue(["1", "2"]) as? NSData
+        XCTAssertEqual(records.first?["names"], transformed)
     }
     
     func testSaveChangesInRecords_transformableProperty_usesValueTransformer() {
@@ -832,7 +826,7 @@ extension CoreDataAdapterTests {
         let adapter = createAdapter()
         let record = CKRecord(recordType: "QSTestEntity", recordID: CKRecord.ID(recordName: "QSTestEntity.ent1"))
         record["identifier"] = "ent1"
-        record["names"] = QSNamesTransformer().reverseTransformedValue(["1", "2", "3"]) as? CKRecordValueProtocol
+        record["names"] = QSNamesTransformer().transformedValue(["1", "2", "3"]) as? CKRecordValueProtocol
         
         QSNamesTransformer.resetValues()
 
@@ -843,8 +837,53 @@ extension CoreDataAdapterTests {
         let testEntity = objects?.first
         XCTAssertEqual(testEntity?.identifier, "ent1")
         XCTAssertEqual(testEntity?.names, ["1", "2", "3"])
-        XCTAssertFalse(QSNamesTransformer.reverseTransformedValueCalled)
-        XCTAssertTrue(QSNamesTransformer.transformedValueCalled)
+        XCTAssertTrue(QSNamesTransformer.reverseTransformedValueCalled)
+        XCTAssertFalse(QSNamesTransformer.transformedValueCalled)
+    }
+
+    func testRecordsToUploadWithLimit_secureTransformableProperty_usesValueTransformer() {
+        QSSecureNamesTransformer.register()
+        QSSecureNamesTransformer.resetValues()
+        targetCoreDataStack = coreDataStack(modelName: "QSTransformableTestModel")
+
+        insert(entityType: "QSTestEntity3",
+               properties: ["identifier": "identifier",
+                            "names": ["1", "2"]],
+               context: targetCoreDataStack.managedObjectContext)
+        let adapter = createAdapter()
+        let records = waitUntilSynced(adapter: adapter).updated
+        XCTAssertEqual(records.count, 1)
+        XCTAssertFalse(QSSecureNamesTransformer.transformedValueCalled)
+        XCTAssertTrue(QSSecureNamesTransformer.reverseTransformedValueCalled)
+
+        let record = records.first!
+        guard let namesData = record["names"] as? Data else {
+            XCTFail("Record property should be of data type")
+            return
+        }
+        let names = (try? NSKeyedUnarchiver.unarchivedObject(ofClass: NSArray.self, from: namesData)) as? [String]
+        XCTAssertEqual(names, ["1", "2"])
+    }
+
+    func testSaveChangesInRecords_secureTransformableProperty_usesValueTransformer() {
+        QSSecureNamesTransformer.register()
+        targetCoreDataStack = coreDataStack(modelName: "QSTransformableTestModel")
+        let adapter = createAdapter()
+        let record = CKRecord(recordType: "QSTestEntity3", recordID: CKRecord.ID(recordName: "QSTestEntity3.ent1"))
+        record["identifier"] = "ent1"
+        record["names"] = QSSecureNamesTransformer().reverseTransformedValue(["1", "2", "3"]) as? CKRecordValueProtocol
+
+        QSSecureNamesTransformer.resetValues()
+
+        waitUntilSynced(adapter: adapter, downloaded: [record])
+
+        let objects = try! targetCoreDataStack.managedObjectContext.executeFetchRequest(entityName: "QSTestEntity3") as? [QSTestEntity3]
+        XCTAssertEqual(objects?.count, 1)
+        let testEntity = objects?.first
+        XCTAssertEqual(testEntity?.identifier, "ent1")
+        XCTAssertEqual(testEntity?.names, ["1", "2", "3"])
+        XCTAssertFalse(QSSecureNamesTransformer.reverseTransformedValueCalled)
+        XCTAssertTrue(QSSecureNamesTransformer.transformedValueCalled)
     }
     
     func testRecordsToUploadWithLimit_transformablePropertyNoValueTransformer_usesKeyedArchiver() {
